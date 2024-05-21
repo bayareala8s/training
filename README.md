@@ -1,7 +1,3 @@
-Sure! Below is a detailed description for the GitHub repository "training" located at [https://github.com/bayareala8s/training](https://github.com/bayareala8s/training).
-
----
-
 # Training Repository for Data Structures, Algorithms, and Data Engineering
 
 Welcome to the Training Repository for Data Structures, Algorithms, and Data Engineering! This repository contains comprehensive training materials, examples, exercises, and projects designed to help learners master essential concepts in data structures, algorithms, and data engineering, with a focus on implementation using Python and Microsoft Azure.
