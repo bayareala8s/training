@@ -9,7 +9,7 @@ Welcome to the Training Repository for Data Structures, Algorithms, and Data Eng
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Contributing](#contributing)
-- [License](#license)
+
 
 ## Overview
 
