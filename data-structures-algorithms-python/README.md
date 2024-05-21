@@ -158,9 +158,6 @@ Total: 24 hours (1440 minutes)
 - Final exam covering Weeks 7-11.
 - Final project presentation and report.
 
-### Recommended Textbooks and Resources
-- "Data Structures and Algorithms in Python" by Michael T. Goodrich, Roberto Tamassia, and Michael H. Goldwasser.
-- "Introduction to Algorithms" by Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Clifford Stein.
-- Online resources and documentation from the Python Software Foundation.
+
 
 This course structure provides a balanced mix of theoretical understanding and practical implementation, equipping students with the skills needed to excel in computer science and software development roles.
