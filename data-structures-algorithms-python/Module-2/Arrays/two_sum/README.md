@@ -108,3 +108,34 @@ print(two_sum(nums, target))  # Output: [0, 1]
 
 By using a hash map, we efficiently solve the problem in O(n) time complexity, where n is the number of elements in the array. 
 The visual diagrams help illustrate each step of the process, showing how we build and use the hash map to find the solution.
+
+The space complexity of the provided solution to the "Two Sum" problem is O(n), where n is the number of elements in the input array `nums`. Here's a detailed explanation:
+
+### Space Complexity Analysis
+
+1. **Dictionary `num_to_index`**:
+   - The dictionary `num_to_index` is used to store each element of the array and its corresponding index.
+   - In the worst case, where no two elements sum up to the target until the last element is processed, all n elements of the array will be stored in the dictionary.
+   - Therefore, the space required for the dictionary is O(n).
+
+2. **Additional Variables**:
+   - The function uses a few additional variables (`i`, `num`, `complement`) which all require constant space.
+   - However, these do not depend on the input size and therefore contribute O(1) to the space complexity.
+
+### Total Space Complexity
+
+Combining the space required for the dictionary and the constant space for the additional variables, the total space complexity of the solution is:
+
+\[ \text{Space Complexity} = O(n) \]
+
+This means that the space used by the algorithm grows linearly with the size of the input array.
+
+### Detailed Breakdown
+
+1. **Input Array**: The space used by the input array `nums` is not considered part of the algorithm's space complexity because it is given as input.
+2. **Dictionary**: Stores up to `n` key-value pairs, where `n` is the number of elements in `nums`.
+3. **Variables**: A constant number of extra variables, which do not grow with the input size.
+
+### Conclusion
+
+The space complexity of the provided solution is O(n) due to the usage of the dictionary `num_to_index` to store the indices of the elements seen so far. This space complexity is optimal for this approach, as it allows us to achieve the desired O(n) time complexity for finding the two indices that sum up to the target.
