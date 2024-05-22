@@ -20,14 +20,6 @@ print(result)  # Output: 'a'
 
 import unittest
 
-def first_duplicate_char(s):
-    seen = set()
-    for char in s:
-        if char in seen:
-            return char
-        seen.add(char)
-    return None  # This line should never be reached because it is guaranteed there will be a duplicate character
-
 class TestFirstDuplicateChar(unittest.TestCase):
     def test_example_case(self):
         self.assertEqual(first_duplicate_char("abca"), 'a')
