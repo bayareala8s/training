@@ -178,7 +178,7 @@ class TestTwoSum(unittest.TestCase):
     def test_large_numbers(self):
         nums = [1000000, 500000, -1500000, 2000000]
         target = 500000
-        self.assertEqual(two_sum(nums, target), [1, 2])
+        self.assertEqual(two_sum(nums, target), [2, 3])
 
     def test_single_element(self):
         nums = [1]
