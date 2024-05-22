@@ -1,4 +1,4 @@
-Certainly! Let's solve the problem of finding the first character to appear twice in a string. We'll use a set to keep track of characters we've seen so far. As we iterate through the string, we'll check if the character is already in the set. If it is, we've found our answer. If not, we'll add the character to the set.
+Let's solve the problem of finding the first character to appear twice in a string. We'll use a set to keep track of characters we've seen so far. As we iterate through the string, we'll check if the character is already in the set. If it is, we've found our answer. If not, we'll add the character to the set.
 
 Here is a step-by-step visual explanation:
 
