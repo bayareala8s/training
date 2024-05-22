@@ -139,3 +139,118 @@ This means that the space used by the algorithm grows linearly with the size of 
 ### Conclusion
 
 The space complexity of the provided solution is O(n) due to the usage of the dictionary `num_to_index` to store the indices of the elements seen so far. This space complexity is optimal for this approach, as it allows us to achieve the desired O(n) time complexity for finding the two indices that sum up to the target.
+
+
+Certainly! Here are unit test cases for the `two_sum` function using Python's built-in `unittest` framework. The test cases cover various scenarios, including positive cases, edge cases, and cases where no solution exists.
+
+### Unit Test Cases
+
+```python
+import unittest
+
+def two_sum(nums, target):
+    num_to_index = {}
+    for index, num in enumerate(nums):
+        complement = target - num
+        if complement in num_to_index:
+            return [num_to_index[complement], index]
+        num_to_index[num] = index
+    return []
+
+class TestTwoSum(unittest.TestCase):
+    def test_basic_case(self):
+        nums = [2, 7, 11, 15]
+        target = 9
+        self.assertEqual(two_sum(nums, target), [0, 1])
+
+    def test_multiple_pairs(self):
+        nums = [1, 2, 3, 4, 5]
+        target = 6
+        result = two_sum(nums, target)
+        self.assertTrue(result in [[1, 3], [0, 4]])
+
+    def test_negative_numbers(self):
+        nums = [-1, -2, -3, -4, -5]
+        target = -8
+        self.assertEqual(two_sum(nums, target), [2, 4])
+
+    def test_no_solution(self):
+        nums = [1, 2, 3, 4, 5]
+        target = 10
+        self.assertEqual(two_sum(nums, target), [])
+
+    def test_same_element_twice(self):
+        nums = [3, 3]
+        target = 6
+        self.assertEqual(two_sum(nums, target), [0, 1])
+
+    def test_large_numbers(self):
+        nums = [1000000, 500000, -1500000, 2000000]
+        target = 500000
+        self.assertEqual(two_sum(nums, target), [1, 2])
+
+    def test_single_element(self):
+        nums = [1]
+        target = 2
+        self.assertEqual(two_sum(nums, target), [])
+
+    def test_empty_array(self):
+        nums = []
+        target = 0
+        self.assertEqual(two_sum(nums, target), [])
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### Explanation of Test Cases
+
+1. **Basic Case**: 
+   - Input: `nums = [2, 7, 11, 15]`, `target = 9`
+   - Expected Output: `[0, 1]`
+   - Explanation: The numbers at indices 0 and 1 add up to 9.
+
+2. **Multiple Pairs**:
+   - Input: `nums = [1, 2, 3, 4, 5]`, `target = 6`
+   - Expected Output: One of `[[1, 3], [0, 4]]`
+   - Explanation: Both pairs (2, 4) and (1, 5) add up to 6.
+
+3. **Negative Numbers**:
+   - Input: `nums = [-1, -2, -3, -4, -5]`, `target = -8`
+   - Expected Output: `[2, 4]`
+   - Explanation: The numbers at indices 2 and 4 add up to -8.
+
+4. **No Solution**:
+   - Input: `nums = [1, 2, 3, 4, 5]`, `target = 10`
+   - Expected Output: `[]`
+   - Explanation: No two numbers add up to 10.
+
+5. **Same Element Twice**:
+   - Input: `nums = [3, 3]`, `target = 6`
+   - Expected Output: `[0, 1]`
+   - Explanation: The same element at indices 0 and 1 add up to 6.
+
+6. **Large Numbers**:
+   - Input: `nums = [1000000, 500000, -1500000, 2000000]`, `target = 500000`
+   - Expected Output: `[1, 2]`
+   - Explanation: The numbers at indices 1 and 2 add up to 500000.
+
+7. **Single Element**:
+   - Input: `nums = [1]`, `target = 2`
+   - Expected Output: `[]`
+   - Explanation: There is only one element, so no pair exists.
+
+8. **Empty Array**:
+   - Input: `nums = []`, `target = 0`
+   - Expected Output: `[]`
+   - Explanation: The array is empty, so no pair exists.
+
+### Running the Tests
+
+To run these tests, save the code in a file named `test_two_sum.py` and execute the file using Python:
+
+```bash
+python test_two_sum.py
+```
+
+The `unittest` framework will run the tests and provide a report indicating whether the tests passed or failed. This approach ensures that the `two_sum` function is thoroughly tested for various input scenarios.
