@@ -258,7 +258,7 @@ Iterate nums_set:
 Return unique_numbers -> [5, 10]
 ```
 
-Sure, here are some unit test cases for the `find_unique_numbers` function. These tests cover a variety of scenarios to ensure the function works correctly.
+Here are some unit test cases for the `find_unique_numbers` function. These tests cover a variety of scenarios to ensure the function works correctly.
 
 ```python
 import unittest
