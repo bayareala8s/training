@@ -1,7 +1,8 @@
-Here is the detailed training course for an AWS Solution Architect:
-
 ### AWS Solution Architect Training Course Outline
 
+The AWS Solution Architect training offered is designed to provide comprehensive knowledge and hands-on experience for individuals aiming to become proficient AWS Solution Architects. This training covers a wide range of AWS services, architectural best practices, and real-world use cases.
+
+Here is the detailed training course for an AWS Solution Architect:
 
 
 #### Module 1: Introduction to AWS (Duration: 10 hours)
