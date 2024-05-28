@@ -1,6 +1,8 @@
-Certainly! Here is the detailed training course for an AWS Solution Architect with a total duration of 120 hours:
+Here is the detailed training course for an AWS Solution Architect:
 
 ### AWS Solution Architect Training Course Outline
+
+
 
 #### Module 1: Introduction to AWS (Duration: 10 hours)
 - **Overview of Cloud Computing** (2 hours)
