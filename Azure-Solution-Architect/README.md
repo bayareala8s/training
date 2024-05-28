@@ -104,13 +104,11 @@ Here is the detailed training course for an Azure Solution Architect with a tota
   - Azure Cost Management and Billing (3.5 hours)
   - Budgets and Cost Alerts (3.5 hours)
 
-#### Module 10: Exam Preparation and Best Practices (Duration: 10 hours)
-- **Azure Certified Solution Architect Exam Overview** (5 hours)
-  - Exam Structure and Content (2.5 hours)
-  - Sample Questions and Practice Exams (2.5 hours)
-- **Best Practices** (5 hours)
-  - Azure Well-Architected Framework (2.5 hours)
-  - Real-World Case Studies and Architectures (2.5 hours)
+#### Module 10: Best Practices (Duration: 10 hours)
+
+- **Best Practices** (10 hours)
+  - Azure Well-Architected Framework (5 hours)
+  - Real-World Case Studies and Architectures (5 hours)
 
 ### Additional Resources and Activities
 - **Hands-On Labs and Projects** (Throughout the Course) (Variable)
@@ -127,8 +125,5 @@ Here is the detailed training course for an Azure Solution Architect with a tota
 - **Total Duration:** 120 hours
   - **Weekly Commitment:** Approximately 10-12 hours of study and practice over 10 weeks
 
-### Certification
-- **Certification Exam:** Azure Solutions Architect Expert
-- **Exam Preparation:** Comprehensive review sessions and practice tests
 
 This course outline provides a structured learning path with detailed time allocations in hours for each topic, ensuring thorough coverage and ample time for understanding and practice within a total duration of 120 hours.
