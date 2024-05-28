@@ -1,4 +1,4 @@
-### Azure DevOps with Terraform Training Plan (72 Hours)
+### Azure DevOps with Terraform Training(72 Hours)
 
 #### **Module 1: Introduction to Azure DevOps (6 Hours)**
 - **Overview of Azure DevOps Services (1 Hour)**
