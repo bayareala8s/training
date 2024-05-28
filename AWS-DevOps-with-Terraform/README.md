@@ -1,4 +1,4 @@
-### AWS DevOps with Terraform - Detailed Training Plan (72 Hours)
+### AWS DevOps with Terraform - Detailed Training(72 Hours)
 
 #### **Module 1: Introduction to AWS and DevOps (8 Hours)**
 1. **Overview of AWS and DevOps (2 Hours)**
