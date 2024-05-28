@@ -101,9 +101,7 @@
   - Deploying Complex Infrastructures
 
 #### **Module 7: Final Assessment and Review (4 Hours)**
-- **Assessment (2 Hours)**
-  - Practical Exam on Azure DevOps and Terraform
-- **Review and Q&A (2 Hours)**
+- **Review and Q&A (4 Hours)**
   - Review Key Concepts
   - Q&A Session for Clarifications
 
