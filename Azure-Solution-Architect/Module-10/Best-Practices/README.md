@@ -96,3 +96,404 @@ Here are some real-world examples that illustrate the application of the Azure W
 **Outcome:** Northwind Traders enhanced their security posture, achieving compliance with GDPR and significantly reducing the risk of data breaches.
 
 These examples demonstrate how different organizations have successfully applied the Azure Well-Architected Framework to optimize costs, improve operational excellence, enhance performance efficiency, ensure reliability, and bolster security.
+
+Below are detailed Terraform scripts for each of the real-world examples provided. These scripts will help you implement the various solutions on Azure.
+
+### 1. Cost Optimization: Contoso Retail
+
+**Auto-Scaling for Azure App Service**
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "contoso-retail-rg"
+  location = "East US"
+}
+
+resource "azurerm_app_service_plan" "asp" {
+  name                = "contoso-asp"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+  maximum_elastic_worker_count = 10
+}
+
+resource "azurerm_app_service" "app" {
+  name                = "contoso-app"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id = azurerm_app_service_plan.asp.id
+
+  site_config {
+    always_on = true
+  }
+}
+
+resource "azurerm_monitor_autoscale_setting" "autoscale" {
+  name                = "contoso-autoscale"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  target_resource_id  = azurerm_app_service_plan.asp.id
+
+  profile {
+    name = "defaultProfile"
+    capacity {
+      minimum = "1"
+      maximum = "10"
+      default = "1"
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "CpuPercentage"
+        metric_resource_id = azurerm_app_service_plan.asp.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = 70
+      }
+
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "CpuPercentage"
+        metric_resource_id = azurerm_app_service_plan.asp.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = 30
+      }
+
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+  }
+}
+```
+
+### 2. Operational Excellence: Fabrikam Insurance
+
+**Azure DevOps Pipeline for CI/CD**
+
+This script assumes you have a project in Azure DevOps and a repository set up. The pipeline file `azure-pipelines.yml` is committed to your repository.
+
+```yaml
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '5.x'
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- script: |
+    dotnet build --configuration $(buildConfiguration)
+  displayName: 'Build'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    azureSubscription: '<Azure Service Connection>'
+    appType: 'webApp'
+    WebAppName: '<Your Web App Name>'
+    package: '$(Build.ArtifactStagingDirectory)/drop'
+```
+
+### 3. Performance Efficiency: Tailwind Traders
+
+**Azure Cache for Redis and CDN**
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "tailwind-traders-rg"
+  location = "West US"
+}
+
+resource "azurerm_redis_cache" "redis" {
+  name                = "tailwind-redis"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  capacity            = 1
+  family              = "C"
+  sku_name            = "Basic"
+}
+
+resource "azurerm_cdn_profile" "cdn_profile" {
+  name                = "tailwind-cdn-profile"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Standard_Microsoft"
+}
+
+resource "azurerm_cdn_endpoint" "cdn_endpoint" {
+  name                = "tailwind-cdn-endpoint"
+  resource_group_name = azurerm_resource_group.rg.name
+  profile_name        = azurerm_cdn_profile.cdn_profile.name
+  location            = azurerm_resource_group.rg.location
+  origins {
+    name      = "origin-storage"
+    host_name = "your-storage-account.blob.core.windows.net"
+  }
+}
+```
+
+### 4. Reliability: Adventure Works
+
+**Availability Zones and Disaster Recovery with Site Recovery**
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "adventure-works-rg"
+  location = "Central US"
+}
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = "adventure-vnet"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "default"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_public_ip" "public_ip" {
+  name                = "adventure-public-ip"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+  zones               = ["1", "2", "3"]
+}
+
+resource "azurerm_network_interface" "nic" {
+  name                = "adventure-nic"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.public_ip.id
+  }
+}
+
+resource "azurerm_virtual_machine" "vm" {
+  name                  = "adventure-vm"
+  location              = azurerm_resource_group.rg.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  network_interface_ids = [azurerm_network_interface.nic.id]
+  vm_size               = "Standard_DS1_v2"
+  availability_set_id   = azurerm_availability_set.avset.id
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name              = "myosdisk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = "adminuser"
+    admin_password = "Password1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+}
+
+resource "azurerm_site_recovery_replication_policy" "policy" {
+  name                = "adventure-replication-policy"
+  resource_group_name = azurerm_resource_group.rg.name
+  recovery_vault_name = azurerm_recovery_services_vault.vault.name
+  replication_frequency_in_seconds = 30
+  recovery_point_retention_in_hours = 24
+  app_consistent_snapshot_frequency_in_hours = 4
+}
+
+resource "azurerm_site_recovery_protection_container_mapping" "mapping" {
+  name                = "adventure-mapping"
+  resource_group_name = azurerm_resource_group.rg.name
+  recovery_vault_name = azurerm_recovery_services_vault.vault.name
+  source_protection_container_id = azurerm_site_recovery_protection_container.source.id
+  target_protection_container_id = azurerm_site_recovery_protection_container.target.id
+  policy_id = azurerm_site_recovery_replication_policy.policy.id
+}
+```
+
+### 5. Security: Northwind Traders
+
+**Azure Active Directory and Network Security**
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "northwind-traders-rg"
+  location = "North Europe"
+}
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = "northwind-vnet"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm
+
+_resource_group.rg.name
+  address_space       = ["10.1.0.0/16"]
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "default"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.1.1.0/24"]
+}
+
+resource "azurerm_network_security_group" "nsg" {
+  name                = "northwind-nsg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  security_rule {
+    name                       = "AllowSSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_network_interface" "nic" {
+  name                = "northwind-nic"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.public_ip.id
+  }
+
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
+resource "azurerm_virtual_machine" "vm" {
+  name                  = "northwind-vm"
+  location              = azurerm_resource_group.rg.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  network_interface_ids = [azurerm_network_interface.nic.id]
+  vm_size               = "Standard_B1ms"
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name              = "myosdisk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = "adminuser"
+    admin_password = "Password1234!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+}
+
+resource "azurerm_key_vault" "kv" {
+  name                = "northwind-kv"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  sku_name            = "standard"
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+
+    key_permissions = ["get", "list"]
+    secret_permissions = ["get", "list"]
+    certificate_permissions = ["get", "list"]
+  }
+}
+
+resource "azurerm_active_directory_domain_service" "adds" {
+  name                = "northwind-adds"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  domain_name         = "northwindtraders.com"
+  sku                 = "standard"
+}
+```
+
+These Terraform scripts provide a starting point for implementing the solutions described in the real-world examples. Modify them according to your specific requirements and environment.
