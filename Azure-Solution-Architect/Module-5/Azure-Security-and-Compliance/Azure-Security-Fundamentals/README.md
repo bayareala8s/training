@@ -316,3 +316,619 @@ resource "azurerm_storage_account" "example" {
 
 ### Conclusion
 These Terraform scripts can be used as templates to configure essential security features in Azure. Modify the parameters and values according to your specific needs and organizational requirements. Integrating these configurations ensures a secure cloud environment, aligned with Azure Security Fundamentals.
+
+Certainly! Here are Terraform scripts tailored for the specific real-world scenarios provided earlier.
+
+### 1. **Finance Industry: Protecting Sensitive Financial Data**
+
+#### Setup Azure AD, Network Security Group, Key Vault, and SQL Database Encryption
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+provider "azuread" {
+  version = "~> 1.0"
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "finance-resources"
+  location = "East US"
+}
+
+# Azure AD Group and User
+resource "azuread_group" "finance_group" {
+  name        = "finance-group"
+  description = "Group for finance department."
+}
+
+resource "azuread_user" "finance_user" {
+  user_principal_name = "finance.user@yourdomain.com"
+  display_name        = "Finance User"
+  mail_nickname       = "financeuser"
+  password            = "complex_password_here"
+}
+
+# Network Security Group
+resource "azurerm_network_security_group" "finance_nsg" {
+  name                = "finance-nsg"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  security_rule {
+    name                       = "Allow-SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+# Key Vault
+resource "azurerm_key_vault" "finance_key_vault" {
+  name                        = "finance-key-vault"
+  location                    = azurerm_resource_group.example.location
+  resource_group_name         = azurerm_resource_group.example.name
+  enabled_for_disk_encryption = true
+  tenant_id                   = "<your-tenant-id>"
+
+  sku_name = "standard"
+
+  soft_delete_enabled = true
+
+  access_policy {
+    tenant_id = "<your-tenant-id>"
+    object_id = "<your-object-id>"
+
+    key_permissions = [
+      "get",
+      "list",
+    ]
+
+    secret_permissions = [
+      "get",
+      "list",
+    ]
+
+    certificate_permissions = [
+      "get",
+      "list",
+    ]
+  }
+}
+
+# SQL Server with Encryption
+resource "azurerm_sql_server" "finance_sql_server" {
+  name                         = "finance-sql-server"
+  resource_group_name          = azurerm_resource_group.example.name
+  location                     = azurerm_resource_group.example.location
+  version                      = "12.0"
+  administrator_login          = "adminuser"
+  administrator_login_password = "P@ssw0rd1234"
+
+  threat_detection_policy {
+    state                      = "Enabled"
+    email_addresses            = ["admin@yourdomain.com"]
+    retention_days             = 30
+    use_server_default         = true
+  }
+}
+
+resource "azurerm_sql_database" "finance_sql_database" {
+  name                = "finance-sql-database"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  server_name         = azurerm_sql_server.finance_sql_server.name
+  edition             = "Standard"
+  requested_service_objective_name = "S1"
+
+  extended_auditing_policy {
+    storage_account_access_key = azurerm_storage_account.example.primary_access_key
+    storage_endpoint           = azurerm_storage_account.example.primary_blob_endpoint
+    retention_in_days          = 6
+  }
+}
+
+resource "azurerm_storage_account" "example" {
+  name                     = "examplestorageacct"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  enable_blob_encryption = true
+  enable_file_encryption = true
+
+  tags = {
+    environment = "production"
+  }
+}
+```
+
+### 2. **Healthcare Industry: Ensuring Patient Data Privacy**
+
+#### Setup Azure AD, Key Vault, Storage Encryption, and Compliance Policies
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+provider "azuread" {
+  version = "~> 1.0"
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "healthcare-resources"
+  location = "West US"
+}
+
+# Azure AD Group and User
+resource "azuread_group" "healthcare_group" {
+  name        = "healthcare-group"
+  description = "Group for healthcare department."
+}
+
+resource "azuread_user" "healthcare_user" {
+  user_principal_name = "healthcare.user@yourdomain.com"
+  display_name        = "Healthcare User"
+  mail_nickname       = "healthcareuser"
+  password            = "complex_password_here"
+}
+
+# Key Vault
+resource "azurerm_key_vault" "healthcare_key_vault" {
+  name                        = "healthcare-key-vault"
+  location                    = azurerm_resource_group.example.location
+  resource_group_name         = azurerm_resource_group.example.name
+  enabled_for_disk_encryption = true
+  tenant_id                   = "<your-tenant-id>"
+
+  sku_name = "premium"
+
+  soft_delete_enabled = true
+
+  access_policy {
+    tenant_id = "<your-tenant-id>"
+    object_id = "<your-object-id>"
+
+    key_permissions = [
+      "get",
+      "list",
+    ]
+
+    secret_permissions = [
+      "get",
+      "list",
+    ]
+
+    certificate_permissions = [
+      "get",
+      "list",
+    ]
+  }
+}
+
+# Storage Account with Encryption
+resource "azurerm_storage_account" "healthcare_storage" {
+  name                     = "healthcarestorageacct"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  enable_blob_encryption = true
+  enable_file_encryption = true
+
+  tags = {
+    environment = "production"
+  }
+}
+
+# Compliance Policy
+resource "azurerm_policy_definition" "healthcare_compliance" {
+  name         = "healthcare-compliance-policy"
+  policy_type  = "Custom"
+  mode         = "All"
+  display_name = "Healthcare Compliance Policy"
+  description  = "Policy to enforce healthcare compliance requirements."
+
+  policy_rule = <<POLICY_RULE
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+      },
+      {
+        "not": {
+          "field": "tags['department']",
+          "equals": "healthcare"
+        }
+      }
+    ]
+  },
+  "then": {
+    "effect": "deny"
+  }
+}
+POLICY_RULE
+}
+
+resource "azurerm_policy_assignment" "healthcare_policy_assignment" {
+  name                 = "healthcare-policy-assignment"
+  scope                = azurerm_resource_group.example.id
+  policy_definition_id = azurerm_policy_definition.healthcare_compliance.id
+}
+```
+
+### 3. **Retail Industry: Securing Online Transaction Systems**
+
+#### Setup Azure AD B2C, NSG, Key Vault, and Application Security
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+provider "azuread" {
+  version = "~> 1.0"
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "retail-resources"
+  location = "Central US"
+}
+
+# Azure AD B2C
+resource "azurerm_b2c_directory" "example" {
+  name                  = "exampleb2c"
+  resource_group_name   = azurerm_resource_group.example.name
+  location              = azurerm_resource_group.example.location
+  tenant_id             = "<your-tenant-id>"
+  sku                   = "P1"
+}
+
+resource "azurerm_b2c_tenant" "example" {
+  name       = "exampleb2c"
+  location   = azurerm_resource_group.example.location
+  sku        = "P1"
+  admin_email = "admin@yourdomain.com"
+}
+
+# Network Security Group
+resource "azurerm_network_security_group" "retail_nsg" {
+  name                = "retail-nsg"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  security_rule {
+    name                       = "Allow-HTTPS"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow-HTTP"
+    priority                   = 200
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+# Key Vault
+resource "azurerm_key_vault" "retail_key_vault" {
+  name                        = "retail-key-vault"
+  location                    = azurerm_resource_group.example.location
+  resource_group_name         = azurerm_resource_group.example.name
+  enabled_for_disk_encryption = true
+  tenant_id                   = "<your-tenant-id>"
+
+  sku_name
+
+ = "standard"
+
+  soft_delete_enabled = true
+
+  access_policy {
+    tenant_id = "<your-tenant-id>"
+    object_id = "<your-object-id>"
+
+    key_permissions = [
+      "get",
+      "list",
+    ]
+
+    secret_permissions = [
+      "get",
+      "list",
+    ]
+
+    certificate_permissions = [
+      "get",
+      "list",
+    ]
+  }
+}
+
+# Application Security
+resource "azurerm_app_service_environment" "example" {
+  name                = "example-ase"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  subnet_id           = "<your-subnet-id>"
+}
+
+resource "azurerm_app_service_plan" "example" {
+  name                = "example-app-service-plan"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  kind                = "Windows"
+  reserved            = true
+  ase_id              = azurerm_app_service_environment.example.id
+  sku {
+    tier     = "Premium"
+    size     = "P2v2"
+  }
+}
+
+resource "azurerm_app_service" "example" {
+  name                = "example-app-service"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  app_service_plan_id = azurerm_app_service_plan.example.id
+  app_settings = {
+    "WEBSITE_RUN_FROM_PACKAGE" = "1"
+  }
+  site_config {
+    dotnet_framework_version = "v4.0"
+  }
+}
+```
+
+### 4. **Manufacturing Industry: Securing IoT Devices and Production Data**
+
+#### Setup Azure AD, NSG, Key Vault, and IoT Hub Security
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+provider "azuread" {
+  version = "~> 1.0"
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "manufacturing-resources"
+  location = "North Europe"
+}
+
+# Azure AD Group and User
+resource "azuread_group" "manufacturing_group" {
+  name        = "manufacturing-group"
+  description = "Group for manufacturing department."
+}
+
+resource "azuread_user" "manufacturing_user" {
+  user_principal_name = "manufacturing.user@yourdomain.com"
+  display_name        = "Manufacturing User"
+  mail_nickname       = "manufacturinguser"
+  password            = "complex_password_here"
+}
+
+# Network Security Group
+resource "azurerm_network_security_group" "manufacturing_nsg" {
+  name                = "manufacturing-nsg"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  security_rule {
+    name                       = "Allow-IoT"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "8883"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+# Key Vault
+resource "azurerm_key_vault" "manufacturing_key_vault" {
+  name                        = "manufacturing-key-vault"
+  location                    = azurerm_resource_group.example.location
+  resource_group_name         = azurerm_resource_group.example.name
+  enabled_for_disk_encryption = true
+  tenant_id                   = "<your-tenant-id>"
+
+  sku_name = "standard"
+
+  soft_delete_enabled = true
+
+  access_policy {
+    tenant_id = "<your-tenant-id>"
+    object_id = "<your-object-id>"
+
+    key_permissions = [
+      "get",
+      "list",
+    ]
+
+    secret_permissions = [
+      "get",
+      "list",
+    ]
+
+    certificate_permissions = [
+      "get",
+      "list",
+    ]
+  }
+}
+
+# IoT Hub
+resource "azurerm_iothub" "example" {
+  name                = "example-iothub"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku {
+    name     = "S1"
+    capacity = 1
+  }
+  fallback_route {
+    enabled      = true
+    source       = "DeviceMessages"
+    condition    = "true"
+    endpoint_names = ["events"]
+    route_to_hub = true
+  }
+  tags = {
+    environment = "production"
+  }
+}
+
+resource "azurerm_iothub_shared_access_policy" "example" {
+  name                = "example-sap"
+  resource_group_name = azurerm_resource_group.example.name
+  iothub_name         = azurerm_iothub.example.name
+  permissions         = ["RegistryWrite", "ServiceConnect", "DeviceConnect"]
+}
+```
+
+### 5. **Education Sector: Securing Remote Learning Platforms**
+
+#### Setup Azure AD, NSG, Storage Encryption, and Compliance Policies
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+provider "azuread" {
+  version = "~> 1.0"
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "education-resources"
+  location = "Australia East"
+}
+
+# Azure AD Group and User
+resource "azuread_group" "education_group" {
+  name        = "education-group"
+  description = "Group for education department."
+}
+
+resource "azuread_user" "education_user" {
+  user_principal_name = "education.user@yourdomain.com"
+  display_name        = "Education User"
+  mail_nickname       = "educationuser"
+  password            = "complex_password_here"
+}
+
+# Network Security Group
+resource "azurerm_network_security_group" "education_nsg" {
+  name                = "education-nsg"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+
+  security_rule {
+    name                       = "Allow-HTTPS"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow-HTTP"
+    priority                   = 200
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+# Storage Account with Encryption
+resource "azurerm_storage_account" "education_storage" {
+  name                     = "educationstorageacct"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  enable_blob_encryption = true
+  enable_file_encryption = true
+
+  tags = {
+    environment = "production"
+  }
+}
+
+# Compliance Policy
+resource "azurerm_policy_definition" "education_compliance" {
+  name         = "education-compliance-policy"
+  policy_type  = "Custom"
+  mode         = "All"
+  display_name = "Education Compliance Policy"
+  description  = "Policy to enforce education compliance requirements."
+
+  policy_rule = <<POLICY_RULE
+{
+  "if": {
+    "allOf": [
+      {
+        "field": "type",
+        "equals": "Microsoft.Compute/virtualMachines"
+      },
+      {
+        "not": {
+          "field": "tags['department']",
+          "equals": "education"
+        }
+      }
+    ]
+  },
+  "then": {
+    "effect": "deny"
+  }
+}
+POLICY_RULE
+}
+
+resource "azurerm_policy_assignment" "education_policy_assignment" {
+  name                 = "education-policy-assignment"
+  scope                = azurerm_resource_group.example.id
+  policy_definition_id = azurerm_policy_definition.education_compliance.id
+}
+```
+
+These Terraform scripts can be tailored further to meet specific requirements and configurations for your organization. Adjust the values as necessary to match your resource names, locations, and other parameters.
