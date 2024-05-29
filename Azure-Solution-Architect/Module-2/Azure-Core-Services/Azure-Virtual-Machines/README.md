@@ -152,3 +152,447 @@ A global retail company needs a scalable and reliable infrastructure to support 
 ### Summary
 
 These examples illustrate how Azure VNet can be utilized in various real-world scenarios to create secure, scalable, and highly available cloud infrastructure. By leveraging features like subnets, NSGs, VPN Gateway, ExpressRoute, Azure Firewall, and Azure Policy, organizations can design and implement robust network architectures tailored to their specific needs and compliance requirements.
+
+Below are Terraform scripts for setting up Azure VNets for each of the real-world examples provided. Each script includes defining the VNets, subnets, NSGs, and additional required components.
+
+### 1. E-commerce Platform
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "ecommerce" {
+  name     = "ecommerce-rg"
+  location = "West US"
+}
+
+resource "azurerm_virtual_network" "ecommerce_vnet" {
+  name                = "ecommerce-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.ecommerce.location
+  resource_group_name = azurerm_resource_group.ecommerce.name
+}
+
+resource "azurerm_subnet" "web" {
+  name                 = "web-subnet"
+  resource_group_name  = azurerm_resource_group.ecommerce.name
+  virtual_network_name = azurerm_virtual_network.ecommerce_vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_subnet" "app" {
+  name                 = "app-subnet"
+  resource_group_name  = azurerm_resource_group.ecommerce.name
+  virtual_network_name = azurerm_virtual_network.ecommerce_vnet.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+resource "azurerm_subnet" "db" {
+  name                 = "db-subnet"
+  resource_group_name  = azurerm_resource_group.ecommerce.name
+  virtual_network_name = azurerm_virtual_network.ecommerce_vnet.name
+  address_prefixes     = ["10.0.3.0/24"]
+}
+
+resource "azurerm_network_security_group" "web_nsg" {
+  name                = "web-nsg"
+  location            = azurerm_resource_group.ecommerce.location
+  resource_group_name = azurerm_resource_group.ecommerce.name
+}
+
+resource "azurerm_network_security_group" "app_nsg" {
+  name                = "app-nsg"
+  location            = azurerm_resource_group.ecommerce.location
+  resource_group_name = azurerm_resource_group.ecommerce.name
+}
+
+resource "azurerm_network_security_group" "db_nsg" {
+  name                = "db-nsg"
+  location            = azurerm_resource_group.ecommerce.location
+  resource_group_name = azurerm_resource_group.ecommerce.name
+}
+
+resource "azurerm_subnet_network_security_group_association" "web_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.web.id
+  network_security_group_id = azurerm_network_security_group.web_nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "app_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.app.id
+  network_security_group_id = azurerm_network_security_group.app_nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "db_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.db.id
+  network_security_group_id = azurerm_network_security_group.db_nsg.id
+}
+
+resource "azurerm_public_ip" "lb_public_ip" {
+  name                = "lb-public-ip"
+  location            = azurerm_resource_group.ecommerce.location
+  resource_group_name = azurerm_resource_group.ecommerce.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_lb" "ecommerce_lb" {
+  name                = "ecommerce-lb"
+  location            = azurerm_resource_group.ecommerce.location
+  resource_group_name = azurerm_resource_group.ecommerce.name
+  sku                 = "Standard"
+
+  frontend_ip_configuration {
+    name                 = "LoadBalancerFrontEnd"
+    public_ip_address_id = azurerm_public_ip.lb_public_ip.id
+  }
+}
+
+resource "azurerm_lb_backend_address_pool" "bpepool" {
+  name                = "BackendAddressPool"
+  resource_group_name = azurerm_resource_group.ecommerce.name
+  loadbalancer_id     = azurerm_lb.ecommerce_lb.id
+}
+
+resource "azurerm_lb_probe" "tcp_probe" {
+  name                = "tcp_probe"
+  resource_group_name = azurerm_resource_group.ecommerce.name
+  loadbalancer_id     = azurerm_lb.ecommerce_lb.id
+  protocol            = "Tcp"
+  port                = 80
+  interval_in_seconds = 5
+  number_of_probes    = 2
+}
+
+resource "azurerm_lb_rule" "lb_rule" {
+  name                           = "http_rule"
+  resource_group_name            = azurerm_resource_group.ecommerce.name
+  loadbalancer_id                = azurerm_lb.ecommerce_lb.id
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  frontend_ip_configuration_name = "LoadBalancerFrontEnd"
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.bpepool.id
+  probe_id                       = azurerm_lb_probe.tcp_probe.id
+}
+```
+
+### 2. Healthcare System
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "healthcare" {
+  name     = "healthcare-rg"
+  location = "East US"
+}
+
+resource "azurerm_virtual_network" "healthcare_vnet" {
+  name                = "healthcare-vnet"
+  address_space       = ["10.1.0.0/16"]
+  location            = azurerm_resource_group.healthcare.location
+  resource_group_name = azurerm_resource_group.healthcare.name
+}
+
+resource "azurerm_subnet" "sensitive_data" {
+  name                 = "sensitive-data-subnet"
+  resource_group_name  = azurerm_resource_group.healthcare.name
+  virtual_network_name = azurerm_virtual_network.healthcare_vnet.name
+  address_prefixes     = ["10.1.1.0/24"]
+}
+
+resource "azurerm_subnet" "app_services" {
+  name                 = "app-services-subnet"
+  resource_group_name  = azurerm_resource_group.healthcare.name
+  virtual_network_name = azurerm_virtual_network.healthcare_vnet.name
+  address_prefixes     = ["10.1.2.0/24"]
+}
+
+resource "azurerm_subnet" "backend_services" {
+  name                 = "backend-services-subnet"
+  resource_group_name  = azurerm_resource_group.healthcare.name
+  virtual_network_name = azurerm_virtual_network.healthcare_vnet.name
+  address_prefixes     = ["10.1.3.0/24"]
+}
+
+resource "azurerm_network_security_group" "sensitive_data_nsg" {
+  name                = "sensitive-data-nsg"
+  location            = azurerm_resource_group.healthcare.location
+  resource_group_name = azurerm_resource_group.healthcare.name
+}
+
+resource "azurerm_network_security_group" "app_services_nsg" {
+  name                = "app-services-nsg"
+  location            = azurerm_resource_group.healthcare.location
+  resource_group_name = azurerm_resource_group.healthcare.name
+}
+
+resource "azurerm_network_security_group" "backend_services_nsg" {
+  name                = "backend-services-nsg"
+  location            = azurerm_resource_group.healthcare.location
+  resource_group_name = azurerm_resource_group.healthcare.name
+}
+
+resource "azurerm_subnet_network_security_group_association" "sensitive_data_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.sensitive_data.id
+  network_security_group_id = azurerm_network_security_group.sensitive_data_nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "app_services_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.app_services.id
+  network_security_group_id = azurerm_network_security_group.app_services_nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "backend_services_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.backend_services.id
+  network_security_group_id = azurerm_network_security_group.backend_services_nsg.id
+}
+
+resource "azurerm_private_endpoint" "storage_endpoint" {
+  name                = "storage-private-endpoint"
+  location            = azurerm_resource_group.healthcare.location
+  resource_group_name = azurerm_resource_group.healthcare.name
+  subnet_id           = azurerm_subnet.sensitive_data.id
+
+  private_service_connection {
+    name                           = "storageConnection"
+    private_connection_resource_id = azurerm_storage_account.example.id
+    subresource_names              = ["blob"]
+  }
+}
+```
+
+### 3. Financial Services
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "financial" {
+  name     = "financial-rg"
+  location = "Central US"
+}
+
+resource "azurerm_virtual_network" "financial_vnet" {
+  name                = "financial-vnet"
+  address_space       = ["10.2.0.0/16"]
+  location            = azurerm_resource_group.financial.location
+  resource_group_name = azurerm_resource_group.financial.name
+}
+
+resource "azurerm_subnet" "core_banking" {
+  name                 = "core-banking-subnet"
+  resource_group_name  = azurerm_resource_group.financial.name
+  virtual_network_name = azur
+
+erm_virtual_network.financial_vnet.name
+  address_prefixes     = ["10.2.1.0/24"]
+}
+
+resource "azurerm_subnet" "customer_data" {
+  name                 = "customer-data-subnet"
+  resource_group_name  = azurerm_resource_group.financial.name
+  virtual_network_name = azurerm_virtual_network.financial_vnet.name
+  address_prefixes     = ["10.2.2.0/24"]
+}
+
+resource "azurerm_subnet" "analytics_reporting" {
+  name                 = "analytics-reporting-subnet"
+  resource_group_name  = azurerm_resource_group.financial.name
+  virtual_network_name = azurerm_virtual_network.financial_vnet.name
+  address_prefixes     = ["10.2.3.0/24"]
+}
+
+resource "azurerm_network_security_group" "core_banking_nsg" {
+  name                = "core-banking-nsg"
+  location            = azurerm_resource_group.financial.location
+  resource_group_name = azurerm_resource_group.financial.name
+}
+
+resource "azurerm_network_security_group" "customer_data_nsg" {
+  name                = "customer-data-nsg"
+  location            = azurerm_resource_group.financial.location
+  resource_group_name = azurerm_resource_group.financial.name
+}
+
+resource "azurerm_network_security_group" "analytics_reporting_nsg" {
+  name                = "analytics-reporting-nsg"
+  location            = azurerm_resource_group.financial.location
+  resource_group_name = azurerm_resource_group.financial.name
+}
+
+resource "azurerm_subnet_network_security_group_association" "core_banking_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.core_banking.id
+  network_security_group_id = azurerm_network_security_group.core_banking_nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "customer_data_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.customer_data.id
+  network_security_group_id = azurerm_network_security_group.customer_data_nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "analytics_reporting_subnet_nsg" {
+  subnet_id                 = azurerm_subnet.analytics_reporting.id
+  network_security_group_id = azurerm_network_security_group.analytics_reporting_nsg.id
+}
+
+resource "azurerm_firewall" "financial_firewall" {
+  name                = "financial-firewall"
+  location            = azurerm_resource_group.financial.location
+  resource_group_name = azurerm_resource_group.financial.name
+  sku {
+    tier = "Standard"
+  }
+}
+
+resource "azurerm_firewall_network_rule_collection" "example" {
+  name                = "example-firewall-rules"
+  azure_firewall_name = azurerm_firewall.financial_firewall.name
+  resource_group_name = azurerm_resource_group.financial.name
+  priority            = 100
+  action              = "Allow"
+
+  rule {
+    name                  = "allow-http"
+    protocol              = "TCP"
+    source_addresses      = ["*"]
+    destination_addresses = ["*"]
+    destination_ports     = ["80"]
+  }
+}
+```
+
+### 4. Global Retail Company
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "retail_us" {
+  name     = "retail-us-rg"
+  location = "West US"
+}
+
+resource "azurerm_resource_group" "retail_europe" {
+  name     = "retail-europe-rg"
+  location = "West Europe"
+}
+
+resource "azurerm_virtual_network" "retail_us_vnet" {
+  name                = "retail-us-vnet"
+  address_space       = ["10.3.0.0/16"]
+  location            = azurerm_resource_group.retail_us.location
+  resource_group_name = azurerm_resource_group.retail_us.name
+}
+
+resource "azurerm_virtual_network" "retail_europe_vnet" {
+  name                = "retail-europe-vnet"
+  address_space       = ["10.4.0.0/16"]
+  location            = azurerm_resource_group.retail_europe.location
+  resource_group_name = azurerm_resource_group.retail_europe.name
+}
+
+resource "azurerm_subnet" "us_web" {
+  name                 = "us-web-subnet"
+  resource_group_name  = azurerm_resource_group.retail_us.name
+  virtual_network_name = azurerm_virtual_network.retail_us_vnet.name
+  address_prefixes     = ["10.3.1.0/24"]
+}
+
+resource "azurerm_subnet" "us_app" {
+  name                 = "us-app-subnet"
+  resource_group_name  = azurerm_resource_group.retail_us.name
+  virtual_network_name = azurerm_virtual_network.retail_us_vnet.name
+  address_prefixes     = ["10.3.2.0/24"]
+}
+
+resource "azurerm_subnet" "us_db" {
+  name                 = "us-db-subnet"
+  resource_group_name  = azurerm_resource_group.retail_us.name
+  virtual_network_name = azurerm_virtual_network.retail_us_vnet.name
+  address_prefixes     = ["10.3.3.0/24"]
+}
+
+resource "azurerm_subnet" "europe_web" {
+  name                 = "europe-web-subnet"
+  resource_group_name  = azurerm_resource_group.retail_europe.name
+  virtual_network_name = azurerm_virtual_network.retail_europe_vnet.name
+  address_prefixes     = ["10.4.1.0/24"]
+}
+
+resource "azurerm_subnet" "europe_app" {
+  name                 = "europe-app-subnet"
+  resource_group_name  = azurerm_resource_group.retail_europe.name
+  virtual_network_name = azurerm_virtual_network.retail_europe_vnet.name
+  address_prefixes     = ["10.4.2.0/24"]
+}
+
+resource "azurerm_subnet" "europe_db" {
+  name                 = "europe-db-subnet"
+  resource_group_name  = azurerm_resource_group.retail_europe.name
+  virtual_network_name = azurerm_virtual_network.retail_europe_vnet.name
+  address_prefixes     = ["10.4.3.0/24"]
+}
+
+resource "azurerm_virtual_network_peering" "us_europe_peering" {
+  name                      = "us-europe-peering"
+  resource_group_name       = azurerm_resource_group.retail_us.name
+  virtual_network_name      = azurerm_virtual_network.retail_us_vnet.name
+  remote_virtual_network_id = azurerm_virtual_network.retail_europe_vnet.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+  allow_gateway_transit        = false
+}
+
+resource "azurerm_virtual_network_peering" "europe_us_peering" {
+  name                      = "europe-us-peering"
+  resource_group_name       = azurerm_resource_group.retail_europe.name
+  virtual_network_name      = azurerm_virtual_network.retail_europe_vnet.name
+  remote_virtual_network_id = azurerm_virtual_network.retail_us_vnet.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+  allow_gateway_transit        = false
+}
+
+resource "azurerm_traffic_manager_profile" "retail_tm" {
+  name                = "retail-traffic-manager"
+  resource_group_name = azurerm_resource_group.retail_us.name
+  location            = "global"
+  traffic_routing_method = "Performance"
+  dns_config {
+    relative_name = "retailapp"
+    ttl           = 60
+  }
+  monitor_config {
+    protocol = "HTTP"
+    port     = 80
+    path     = "/"
+  }
+}
+
+resource "azurerm_traffic_manager_endpoint" "us_endpoint" {
+  name                = "us-endpoint"
+  resource_group_name = azurerm_resource_group.retail_us.name
+  profile_name        = azurerm_traffic_manager_profile.retail_tm.name
+  type                = "azureEndpoints"
+  target_resource_id  = azurerm_public_ip.us_public_ip.id
+  endpoint_location   = azurerm_resource_group.retail_us.location
+  priority            = 1
+}
+
+resource "azurerm_traffic_manager_endpoint" "europe_endpoint" {
+  name                = "europe-endpoint"
+  resource_group_name = azurerm_resource_group.retail_europe.name
+  profile_name        = azurerm_traffic_manager_profile.retail_tm.name
+  type                = "azureEndpoints"
+  target_resource_id  = azurerm_public_ip.europe_public_ip.id
+  endpoint_location   = azurerm_resource_group.retail_europe.location
+  priority            = 2
+}
+```
+
+These scripts provide a starting point for setting up the described architectures. They include the creation of resource groups, VNets, subnets, NSGs, load balancers, firewalls, private endpoints, and traffic management profiles as applicable to each scenario. Customize these scripts further to meet specific requirements, such as adding more detailed NSG rules, setting up VM instances, or other Azure resources.
