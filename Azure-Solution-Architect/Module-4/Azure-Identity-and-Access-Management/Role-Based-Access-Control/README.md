@@ -220,3 +220,600 @@ A university uses Azure to host its student information system (SIS) and learnin
 - Students can access their personal data and course materials without affecting other users.
 
 These examples illustrate how RBAC in Azure can be tailored to meet the specific needs of different industries and organizational structures, ensuring secure and efficient access to resources.
+
+
+Certainly! Here are Terraform scripts for each of the real-world examples provided:
+
+### Example 1: Healthcare Industry
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "healthcare-rg"
+  location = "East US"
+}
+
+resource "azurerm_sql_server" "example" {
+  name                         = "sqlserverexample"
+  resource_group_name          = azurerm_resource_group.example.name
+  location                     = azurerm_resource_group.example.location
+  version                      = "12.0"
+  administrator_login          = "sqladmin"
+  administrator_login_password = "P@ssw0rd1234"
+}
+
+resource "azurerm_sql_database" "example" {
+  name                = "sqldatabaseexample"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  server_name         = azurerm_sql_server.example.name
+  edition             = "Basic"
+}
+
+resource "azurerm_role_assignment" "dba" {
+  scope                = azurerm_sql_server.example.id
+  role_definition_name = "Contributor"
+  principal_id         = var.dba_principal_id
+}
+
+resource "azurerm_role_assignment" "medical_staff" {
+  scope                = azurerm_sql_database.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.medical_staff_principal_id
+}
+
+resource "azurerm_role_assignment" "it_support" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Contributor"
+  principal_id         = var.it_support_principal_id
+}
+```
+
+### Example 2: Financial Services
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "financial-rg"
+  location = "West US"
+}
+
+resource "azurerm_app_service_plan" "example" {
+  name                = "example-appserviceplan"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+
+resource "azurerm_app_service" "example" {
+  name                = "example-appservice"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  app_service_plan_id = azurerm_app_service_plan.example.id
+}
+
+resource "azurerm_storage_account" "example" {
+  name                     = "examplestorageacc"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_role_assignment" "admin" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Owner"
+  principal_id         = var.admin_principal_id
+}
+
+resource "azurerm_role_assignment" "trader" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Contributor"
+  principal_id         = var.trader_principal_id
+}
+
+resource "azurerm_role_assignment" "analyst" {
+  scope                = azurerm_storage_account.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.analyst_principal_id
+}
+```
+
+### Example 3: Manufacturing Industry
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "manufacturing-rg"
+  location = "Central US"
+}
+
+resource "azurerm_iothub" "example" {
+  name                = "example-iothub"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku {
+    name     = "S1"
+    capacity = 1
+  }
+}
+
+resource "azurerm_storage_account" "example" {
+  name                     = "examplestorageacc"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_role_assignment" "iot_engineer" {
+  scope                = azurerm_iothub.example.id
+  role_definition_name = "Owner"
+  principal_id         = var.iot_engineer_principal_id
+}
+
+resource "azurerm_role_assignment" "production_manager" {
+  scope                = azurerm_storage_account.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.production_manager_principal_id
+}
+```
+
+### Example 4: Education Sector
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "example" {
+  name     = "education-rg"
+  location = "East US 2"
+}
+
+resource "azurerm_sql_server" "example" {
+  name                         = "sqlserverexample"
+  resource_group_name          = azurerm_resource_group.example.name
+  location                     = azurerm_resource_group.example.location
+  version                      = "12.0"
+  administrator_login          = "sqladmin"
+  administrator_login_password = "P@ssw0rd1234"
+}
+
+resource "azurerm_sql_database" "example" {
+  name                = "sqldatabaseexample"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  server_name         = azurerm_sql_server.example.name
+  edition             = "Basic"
+}
+
+resource "azurerm_app_service_plan" "example" {
+  name                = "example-appserviceplan"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+
+resource "azurerm_app_service" "example" {
+  name                = "example-appservice"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  app_service_plan_id = azurerm_app_service_plan.example.id
+}
+
+resource "azurerm_role_assignment" "sys_admin" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Owner"
+  principal_id         = var.sys_admin_principal_id
+}
+
+resource "azurerm_role_assignment" "faculty" {
+  scope                = azurerm_sql_database.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.faculty_principal_id
+}
+
+resource "azurerm_role_assignment" "student" {
+  scope                = azurerm_sql_database.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.student_principal_id
+}
+```
+
+### Variables Definition Example
+
+For each of these Terraform scripts, you will need to define the variables for the principal IDs (e.g., `dba_principal_id`, `trader_principal_id`, etc.). Here's an example of how you can define these variables in a `variables.tf` file:
+
+```hcl
+variable "dba_principal_id" {
+  description = "Principal ID for the DBA role"
+  type        = string
+}
+
+variable "medical_staff_principal_id" {
+  description = "Principal ID for the Medical Staff role"
+  type        = string
+}
+
+variable "it_support_principal_id" {
+  description = "Principal ID for the IT Support role"
+  type        = string
+}
+
+variable "admin_principal_id" {
+  description = "Principal ID for the Admin role"
+  type        = string
+}
+
+variable "trader_principal_id" {
+  description = "Principal ID for the Trader role"
+  type        = string
+}
+
+variable "analyst_principal_id" {
+  description = "Principal ID for the Analyst role"
+  type        = string
+}
+
+variable "iot_engineer_principal_id" {
+  description = "Principal ID for the IoT Engineer role"
+  type        = string
+}
+
+variable "production_manager_principal_id" {
+  description = "Principal ID for the Production Manager role"
+  type        = string
+}
+
+variable "sys_admin_principal_id" {
+  description = "Principal ID for the System Administrator role"
+  type        = string
+}
+
+variable "faculty_principal_id" {
+  description = "Principal ID for the Faculty role"
+  type        = string
+}
+
+variable "student_principal_id" {
+  description = "Principal ID for the Student role"
+  type        = string
+}
+```
+
+This setup ensures that the necessary roles are assigned to the appropriate security principals, aligning with the specific needs of each industry scenario.
+
+
+Certainly! Here are detailed explanations for each of the Terraform scripts provided:
+
+### Example 1: Healthcare Industry
+
+#### Explanation:
+In this example, we are managing access to an Azure SQL Database for different roles within a healthcare provider.
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+```
+- **Provider block**: Configures the Azure provider to interact with Azure resources.
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "healthcare-rg"
+  location = "East US"
+}
+```
+- **Resource Group**: A container that holds related resources for the healthcare solution.
+
+```hcl
+resource "azurerm_sql_server" "example" {
+  name                         = "sqlserverexample"
+  resource_group_name          = azurerm_resource_group.example.name
+  location                     = azurerm_resource_group.example.location
+  version                      = "12.0"
+  administrator_login          = "sqladmin"
+  administrator_login_password = "P@ssw0rd1234"
+}
+```
+- **SQL Server**: Sets up an Azure SQL Server to host the database.
+
+```hcl
+resource "azurerm_sql_database" "example" {
+  name                = "sqldatabaseexample"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  server_name         = azurerm_sql_server.example.name
+  edition             = "Basic"
+}
+```
+- **SQL Database**: Creates a SQL Database within the SQL Server.
+
+```hcl
+resource "azurerm_role_assignment" "dba" {
+  scope                = azurerm_sql_server.example.id
+  role_definition_name = "Contributor"
+  principal_id         = var.dba_principal_id
+}
+```
+- **Role Assignment for DBA**: Assigns the Contributor role to the DBA principal at the SQL Server scope, allowing full management of the server.
+
+```hcl
+resource "azurerm_role_assignment" "medical_staff" {
+  scope                = azurerm_sql_database.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.medical_staff_principal_id
+}
+```
+- **Role Assignment for Medical Staff**: Assigns the Reader role to the Medical Staff principal at the SQL Database scope, allowing read-only access to patient data.
+
+```hcl
+resource "azurerm_role_assignment" "it_support" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Contributor"
+  principal_id         = var.it_support_principal_id
+}
+```
+- **Role Assignment for IT Support**: Assigns the Contributor role to the IT Support principal at the Resource Group scope, allowing management of infrastructure resources within the resource group.
+
+### Example 2: Financial Services
+
+#### Explanation:
+In this example, we are controlling access to resources related to a trading platform for different roles within a financial services company.
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+```
+- **Provider block**: Configures the Azure provider to interact with Azure resources.
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "financial-rg"
+  location = "West US"
+}
+```
+- **Resource Group**: A container that holds related resources for the financial solution.
+
+```hcl
+resource "azurerm_app_service_plan" "example" {
+  name                = "example-appserviceplan"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+```
+- **App Service Plan**: Configures the App Service Plan for hosting web applications.
+
+```hcl
+resource "azurerm_app_service" "example" {
+  name                = "example-appservice"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  app_service_plan_id = azurerm_app_service_plan.example.id
+}
+```
+- **App Service**: Creates an App Service for hosting a web application.
+
+```hcl
+resource "azurerm_storage_account" "example" {
+  name                     = "examplestorageacc"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+```
+- **Storage Account**: Sets up a storage account for storing data.
+
+```hcl
+resource "azurerm_role_assignment" "admin" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Owner"
+  principal_id         = var.admin_principal_id
+}
+```
+- **Role Assignment for Admin**: Assigns the Owner role to the Admin principal at the Resource Group scope, allowing full management of all resources within the resource group.
+
+```hcl
+resource "azurerm_role_assignment" "trader" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Contributor"
+  principal_id         = var.trader_principal_id
+}
+```
+- **Role Assignment for Trader**: Assigns the Contributor role to the Trader principal at the Resource Group scope, allowing access to trading applications and tools.
+
+```hcl
+resource "azurerm_role_assignment" "analyst" {
+  scope                = azurerm_storage_account.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.analyst_principal_id
+}
+```
+- **Role Assignment for Analyst**: Assigns the Reader role to the Analyst principal at the Storage Account scope, allowing read-only access to financial data.
+
+### Example 3: Manufacturing Industry
+
+#### Explanation:
+In this example, we are managing access to IoT resources and production data for different roles within a manufacturing company.
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+```
+- **Provider block**: Configures the Azure provider to interact with Azure resources.
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "manufacturing-rg"
+  location = "Central US"
+}
+```
+- **Resource Group**: A container that holds related resources for the manufacturing solution.
+
+```hcl
+resource "azurerm_iothub" "example" {
+  name                = "example-iothub"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku {
+    name     = "S1"
+    capacity = 1
+  }
+}
+```
+- **IoT Hub**: Sets up an IoT Hub to manage IoT devices.
+
+```hcl
+resource "azurerm_storage_account" "example" {
+  name                     = "examplestorageacc"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+```
+- **Storage Account**: Configures a storage account for storing IoT data.
+
+```hcl
+resource "azurerm_role_assignment" "iot_engineer" {
+  scope                = azurerm_iothub.example.id
+  role_definition_name = "Owner"
+  principal_id         = var.iot_engineer_principal_id
+}
+```
+- **Role Assignment for IoT Engineer**: Assigns the Owner role to the IoT Engineer principal at the IoT Hub scope, allowing full management of IoT devices and data.
+
+```hcl
+resource "azurerm_role_assignment" "production_manager" {
+  scope                = azurerm_storage_account.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.production_manager_principal_id
+}
+```
+- **Role Assignment for Production Manager**: Assigns the Reader role to the Production Manager principal at the Storage Account scope, allowing read-only access to production data.
+
+### Example 4: Education Sector
+
+#### Explanation:
+In this example, we are managing access to resources related to a student information system (SIS) and learning management system (LMS) for different roles within a university.
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+```
+- **Provider block**: Configures the Azure provider to interact with Azure resources.
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "education-rg"
+  location = "East US 2"
+}
+```
+- **Resource Group**: A container that holds related resources for the education solution.
+
+```hcl
+resource "azurerm_sql_server" "example" {
+  name                         = "sqlserverexample"
+  resource_group_name          = azurerm_resource_group.example.name
+  location                     = azurerm_resource_group.example.location
+  version                      = "12.0"
+  administrator_login          = "sqladmin"
+  administrator_login_password = "P@ssw0rd1234"
+}
+```
+- **SQL Server**: Sets up an Azure SQL Server to host the database for the SIS and LMS.
+
+```hcl
+resource "azurerm_sql_database" "example" {
+  name                = "sqldatabaseexample"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  server_name         = azurerm_sql_server.example.name
+  edition             = "Basic"
+}
+```
+- **SQL Database**: Creates a SQL Database within the SQL Server.
+
+```hcl
+resource "azurerm_app_service_plan"
+
+ "example" {
+  name                = "example-appserviceplan"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+```
+- **App Service Plan**: Configures the App Service Plan for hosting web applications.
+
+```hcl
+resource "azurerm_app_service" "example" {
+  name                = "example-appservice"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  app_service_plan_id = azurerm_app_service_plan.example.id
+}
+```
+- **App Service**: Creates an App Service for hosting the LMS and SIS web applications.
+
+```hcl
+resource "azurerm_role_assignment" "sys_admin" {
+  scope                = azurerm_resource_group.example.id
+  role_definition_name = "Owner"
+  principal_id         = var.sys_admin_principal_id
+}
+```
+- **Role Assignment for System Administrator**: Assigns the Owner role to the System Administrator principal at the Resource Group scope, allowing full management of all resources within the resource group.
+
+```hcl
+resource "azurerm_role_assignment" "faculty" {
+  scope                = azurerm_sql_database.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.faculty_principal_id
+}
+```
+- **Role Assignment for Faculty**: Assigns the Reader role to the Faculty principal at the SQL Database scope, allowing read-only access to student records and course materials.
+
+```hcl
+resource "azurerm_role_assignment" "student" {
+  scope                = azurerm_sql_database.example.id
+  role_definition_name = "Reader"
+  principal_id         = var.student_principal_id
+}
+```
+- **Role Assignment for Student**: Assigns the Reader role to the Student principal at the SQL Database scope, allowing read-only access to personal records and course materials.
+
+### Variables Definition Example
+
+To manage the principal IDs, you will need to define variables in a separate `variables.tf` file, as shown in the previous response.
+
+### Summary
+
+Each of these Terraform scripts is designed to configure the necessary Azure resources and assign RBAC roles to appropriate security principals based on the specific requirements of different industries. These scripts help ensure that access to resources is managed securely and efficiently, aligning with the principles of least privilege and role-based access control.
