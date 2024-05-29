@@ -1162,3 +1162,431 @@ Here is a detailed explanation of the Azure services mentioned in the case studi
   - **Flexible Development:** Supports multiple programming languages including C#, Java, JavaScript, Python, and PowerShell.
 
 These services collectively form a robust and scalable cloud infrastructure, enabling businesses to build, deploy, and manage applications efficiently on the Azure platform.
+
+
+Below are some Terraform scripts to deploy Azure services as described in the architectures. These scripts cover different components such as Azure Kubernetes Service (AKS), Azure SQL Database, Azure Blob Storage, and more. Each script is designed to be a basic implementation, which can be further customized as per specific requirements.
+
+### 1. Azure Kubernetes Service (AKS)
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "aks" {
+  name     = "aks-resource-group"
+  location = "West Europe"
+}
+
+resource "azurerm_kubernetes_cluster" "aks" {
+  name                = "aks-cluster"
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
+  dns_prefix          = "aks"
+
+  default_node_pool {
+    name       = "default"
+    node_count = 1
+    vm_size    = "Standard_DS2_v2"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin = "azure"
+    dns_service_ip = "10.2.0.10"
+    service_cidr   = "10.2.0.0/24"
+    docker_bridge_cidr = "172.17.0.1/16"
+  }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "aks" {
+  name                  = "default"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_DS2_v2"
+  node_count            = 1
+}
+```
+
+### 2. Azure SQL Database
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "sql" {
+  name     = "sql-resource-group"
+  location = "West Europe"
+}
+
+resource "azurerm_sql_server" "sql" {
+  name                         = "sqlserver"
+  resource_group_name          = azurerm_resource_group.sql.name
+  location                     = azurerm_resource_group.sql.location
+  version                      = "12.0"
+  administrator_login          = "adminuser"
+  administrator_login_password = "AdminPassword123"
+}
+
+resource "azurerm_sql_database" "sql" {
+  name                = "sqldatabase"
+  resource_group_name = azurerm_resource_group.sql.name
+  location            = azurerm_resource_group.sql.location
+  server_name         = azurerm_sql_server.sql.name
+  edition             = "Basic"
+  requested_service_objective_name = "Basic"
+}
+```
+
+### 3. Azure Blob Storage
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "storage" {
+  name     = "storage-resource-group"
+  location = "West Europe"
+}
+
+resource "azurerm_storage_account" "storage" {
+  name                     = "mystorageaccount"
+  resource_group_name      = azurerm_resource_group.storage.name
+  location                 = azurerm_resource_group.storage.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "container" {
+  name                  = "mycontainer"
+  storage_account_name  = azurerm_storage_account.storage.name
+  container_access_type = "private"
+}
+```
+
+### 4. Azure IoT Hub
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "iothub" {
+  name     = "iothub-resource-group"
+  location = "West Europe"
+}
+
+resource "azurerm_iothub" "iothub" {
+  name                = "iothub"
+  resource_group_name = azurerm_resource_group.iothub.name
+  location            = azurerm_resource_group.iothub.location
+  sku {
+    name     = "S1"
+    capacity = 1
+  }
+  tags = {
+    environment = "testing"
+  }
+}
+```
+
+### 5. Azure Key Vault
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "keyvault" {
+  name     = "keyvault-resource-group"
+  location = "West Europe"
+}
+
+resource "azurerm_key_vault" "keyvault" {
+  name                = "keyvault"
+  location            = azurerm_resource_group.keyvault.location
+  resource_group_name = azurerm_resource_group.keyvault.name
+  tenant_id           = "<tenant_id>"
+  sku_name            = "standard"
+
+  access_policy {
+    tenant_id = "<tenant_id>"
+    object_id = "<object_id>"
+
+    secret_permissions = [
+      "get",
+      "list",
+    ]
+
+    key_permissions = [
+      "get",
+      "list",
+    ]
+  }
+}
+```
+
+### 6. Azure Data Factory
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "datafactory" {
+  name     = "datafactory-resource-group"
+  location = "West Europe"
+}
+
+resource "azurerm_data_factory" "datafactory" {
+  name                = "datafactory"
+  location            = azurerm_resource_group.datafactory.location
+  resource_group_name = azurerm_resource_group.datafactory.name
+}
+```
+
+These scripts provide a foundation for deploying various Azure services using Terraform. You can customize and extend these scripts to fit your specific infrastructure requirements and configurations.
+
+
+Here are detailed explanations for each of the Terraform scripts provided:
+
+### 1. Azure Kubernetes Service (AKS)
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+```
+- **Provider Configuration:** Configures the Azure Resource Manager (ARM) provider, which allows Terraform to interact with Azure resources.
+
+```hcl
+resource "azurerm_resource_group" "aks" {
+  name     = "aks-resource-group"
+  location = "West Europe"
+}
+```
+- **Resource Group:** Defines a new resource group named `aks-resource-group` in the `West Europe` location. A resource group is a container that holds related resources for an Azure solution.
+
+```hcl
+resource "azurerm_kubernetes_cluster" "aks" {
+  name                = "aks-cluster"
+  location            = azurerm_resource_group.aks.location
+  resource_group_name = azurerm_resource_group.aks.name
+  dns_prefix          = "aks"
+  
+  default_node_pool {
+    name       = "default"
+    node_count = 1
+    vm_size    = "Standard_DS2_v2"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin = "azure"
+    dns_service_ip = "10.2.0.10"
+    service_cidr   = "10.2.0.0/24"
+    docker_bridge_cidr = "172.17.0.1/16"
+  }
+}
+```
+- **AKS Cluster:** Creates an Azure Kubernetes Service (AKS) cluster named `aks-cluster`.
+  - **Location:** Specifies the location of the AKS cluster.
+  - **DNS Prefix:** Sets the DNS prefix for the cluster.
+  - **Default Node Pool:** Configures a default node pool with one node of size `Standard_DS2_v2`.
+  - **Identity:** Uses a system-assigned managed identity for the AKS cluster.
+  - **Network Profile:** Configures network settings, including network plugin, DNS service IP, service CIDR, and Docker bridge CIDR.
+
+```hcl
+resource "azurerm_kubernetes_cluster_node_pool" "aks" {
+  name                  = "default"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_DS2_v2"
+  node_count            = 1
+}
+```
+- **Node Pool:** Defines an additional node pool for the AKS cluster.
+
+### 2. Azure SQL Database
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "sql" {
+  name     = "sql-resource-group"
+  location = "West Europe"
+}
+```
+- **Resource Group:** Creates a resource group named `sql-resource-group` in the `West Europe` location.
+
+```hcl
+resource "azurerm_sql_server" "sql" {
+  name                         = "sqlserver"
+  resource_group_name          = azurerm_resource_group.sql.name
+  location                     = azurerm_resource_group.sql.location
+  version                      = "12.0"
+  administrator_login          = "adminuser"
+  administrator_login_password = "AdminPassword123"
+}
+```
+- **SQL Server:** Creates an Azure SQL Server instance named `sqlserver`.
+  - **Administrator Login:** Sets the administrator username and password for the SQL Server.
+
+```hcl
+resource "azurerm_sql_database" "sql" {
+  name                = "sqldatabase"
+  resource_group_name = azurerm_resource_group.sql.name
+  location            = azurerm_resource_group.sql.location
+  server_name         = azurerm_sql_server.sql.name
+  edition             = "Basic"
+  requested_service_objective_name = "Basic"
+}
+```
+- **SQL Database:** Creates a SQL Database named `sqldatabase` on the SQL Server.
+  - **Edition and Service Objective:** Specifies the database edition and service level.
+
+### 3. Azure Blob Storage
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "storage" {
+  name     = "storage-resource-group"
+  location = "West Europe"
+}
+```
+- **Resource Group:** Creates a resource group named `storage-resource-group` in the `West Europe` location.
+
+```hcl
+resource "azurerm_storage_account" "storage" {
+  name                     = "mystorageaccount"
+  resource_group_name      = azurerm_resource_group.storage.name
+  location                 = azurerm_resource_group.storage.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+```
+- **Storage Account:** Creates a storage account named `mystorageaccount`.
+  - **Account Tier and Replication Type:** Specifies the storage account tier (Standard) and replication type (Locally Redundant Storage, LRS).
+
+```hcl
+resource "azurerm_storage_container" "container" {
+  name                  = "mycontainer"
+  storage_account_name  = azurerm_storage_account.storage.name
+  container_access_type = "private"
+}
+```
+- **Storage Container:** Creates a storage container named `mycontainer` in the storage account.
+  - **Container Access Type:** Sets the access level to private.
+
+### 4. Azure IoT Hub
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "iothub" {
+  name     = "iothub-resource-group"
+  location = "West Europe"
+}
+```
+- **Resource Group:** Creates a resource group named `iothub-resource-group` in the `West Europe` location.
+
+```hcl
+resource "azurerm_iothub" "iothub" {
+  name                = "iothub"
+  resource_group_name = azurerm_resource_group.iothub.name
+  location            = azurerm_resource_group.iothub.location
+  sku {
+    name     = "S1"
+    capacity = 1
+  }
+  tags = {
+    environment = "testing"
+  }
+}
+```
+- **IoT Hub:** Creates an IoT Hub named `iothub`.
+  - **SKU:** Specifies the IoT Hub SKU (S1) and capacity.
+  - **Tags:** Adds tags for categorization and management.
+
+### 5. Azure Key Vault
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "keyvault" {
+  name     = "keyvault-resource-group"
+  location = "West Europe"
+}
+```
+- **Resource Group:** Creates a resource group named `keyvault-resource-group` in the `West Europe` location.
+
+```hcl
+resource "azurerm_key_vault" "keyvault" {
+  name                = "keyvault"
+  location            = azurerm_resource_group.keyvault.location
+  resource_group_name = azurerm_resource_group.keyvault.name
+  tenant_id           = "<tenant_id>"
+  sku_name            = "standard"
+
+  access_policy {
+    tenant_id = "<tenant_id>"
+    object_id = "<object_id>"
+
+    secret_permissions = [
+      "get",
+      "list",
+    ]
+
+    key_permissions = [
+      "get",
+      "list",
+    ]
+  }
+}
+```
+- **Key Vault:** Creates an Azure Key Vault named `keyvault`.
+  - **SKU:** Specifies the Key Vault SKU (standard).
+  - **Access Policy:** Configures access policies for managing secrets and keys.
+    - **Permissions:** Grants permissions to get and list secrets and keys.
+
+### 6. Azure Data Factory
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "datafactory" {
+  name     = "datafactory-resource-group"
+  location = "West Europe"
+}
+```
+- **Resource Group:** Creates a resource group named `datafactory-resource-group` in the `West Europe` location.
+
+```hcl
+resource "azurerm_data_factory" "datafactory" {
+  name                = "datafactory"
+  location            = azurerm_resource_group.datafactory.location
+  resource_group_name = azurerm_resource_group.datafactory.name
+}
+```
+- **Data Factory:** Creates an Azure Data Factory instance named `datafactory`.
+  - **Location:** Specifies the location of the Data Factory.
+  - **Resource Group:** Associates the Data Factory with the specified resource group.
+
+These Terraform scripts provide the basic configurations needed to deploy the specified Azure services. They can be further customized with additional settings and configurations as per specific project requirements.
