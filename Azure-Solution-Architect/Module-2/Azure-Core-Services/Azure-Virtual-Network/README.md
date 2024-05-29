@@ -646,3 +646,153 @@ These scripts provide a starting point for setting up the described architecture
 
 By leveraging the appropriate Azure networking solutions, organizations can meet their specific needs for connectivity, security, and performance in a variety of real-world scenarios.
 
+### Terraform Scripts for VNet Peering and VPN Gateway
+
+#### VNet Peering
+
+Here's a Terraform script to set up VNet peering between two VNets in Azure.
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "example-resources"
+  location = "West Europe"
+}
+
+resource "azurerm_virtual_network" "vnet1" {
+  name                = "vnet1"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_virtual_network" "vnet2" {
+  name                = "vnet2"
+  address_space       = ["10.1.0.0/16"]
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_virtual_network_peering" "vnet1-to-vnet2" {
+  name                      = "vnet1-to-vnet2"
+  resource_group_name       = azurerm_resource_group.rg.name
+  virtual_network_name      = azurerm_virtual_network.vnet1.name
+  remote_virtual_network_id = azurerm_virtual_network.vnet2.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+  allow_gateway_transit        = false
+  use_remote_gateways          = false
+}
+
+resource "azurerm_virtual_network_peering" "vnet2-to-vnet1" {
+  name                      = "vnet2-to-vnet1"
+  resource_group_name       = azurerm_resource_group.rg.name
+  virtual_network_name      = azurerm_virtual_network.vnet2.name
+  remote_virtual_network_id = azurerm_virtual_network.vnet1.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic      = true
+  allow_gateway_transit        = false
+  use_remote_gateways          = false
+}
+```
+
+#### VPN Gateway
+
+Here’s a Terraform script to set up a VPN Gateway for a Site-to-Site connection between an Azure VNet and an on-premises network.
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "example-resources"
+  location = "East US"
+}
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = "example-vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "GatewaySubnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_public_ip" "gateway_ip" {
+  name                = "example-pip"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_virtual_network_gateway" "gateway" {
+  name                = "example-gateway"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  type     = "Vpn"
+  vpn_type = "RouteBased"
+
+  active_active             = false
+  enable_bgp                = false
+  gateway_default_site      = null
+  sku                       = "VpnGw1"
+  generation                = "Generation1"
+  ip_configuration {
+    name                          = "vnetGatewayConfig"
+    public_ip_address_id          = azurerm_public_ip.gateway_ip.id
+    private_ip_address_allocation = "Dynamic"
+    subnet_id                     = azurerm_subnet.subnet.id
+  }
+}
+
+resource "azurerm_local_network_gateway" "onprem" {
+  name                = "example-local-network"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  gateway_address    = "52.52.52.52"
+  address_space      = ["10.2.0.0/16"]
+}
+
+resource "azurerm_virtual_network_gateway_connection" "vpn_connection" {
+  name                = "example-connection"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  type                     = "IPsec"
+  virtual_network_gateway_id = azurerm_virtual_network_gateway.gateway.id
+  local_network_gateway_id   = azurerm_local_network_gateway.onprem.id
+  connection_protocol        = "IKEv2"
+  shared_key                = "your-shared-key"
+}
+```
+
+### Explanation:
+
+#### VNet Peering Script:
+
+1. **Providers and Resource Groups**: Sets up the Azure provider and creates a resource group.
+2. **Virtual Networks**: Defines two VNets (`vnet1` and `vnet2`) with different address spaces.
+3. **VNet Peering**: Establishes bidirectional peering between the two VNets. Each `azurerm_virtual_network_peering` resource defines the peering connection from one VNet to the other, allowing traffic to flow between them.
+
+#### VPN Gateway Script:
+
+1. **Providers and Resource Groups**: Sets up the Azure provider and creates a resource group.
+2. **Virtual Network and Subnet**: Defines a VNet and a subnet specifically for the VPN Gateway (`GatewaySubnet`).
+3. **Public IP Address**: Creates a dynamic public IP address for the VPN Gateway.
+4. **Virtual Network Gateway**: Configures the VPN Gateway with route-based VPN type and associates it with the public IP and subnet.
+5. **Local Network Gateway**: Defines the on-premises network with its public IP address and address space.
+6. **VPN Gateway Connection**: Establishes a Site-to-Site VPN connection between the Azure VNet and the on-premises network using the shared key.
+
+These Terraform scripts can be customized according to your specific requirements and deployed using the `terraform apply` command.
+
