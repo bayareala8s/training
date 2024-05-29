@@ -595,4 +595,4 @@ resource "azurerm_traffic_manager_endpoint" "europe_endpoint" {
 }
 ```
 
-These scripts provide a starting point for setting up the described architectures. They include the creation of resource groups, VNets, subnets, NSGs, load balancers, firewalls, private endpoints, and traffic management profiles as applicable to each scenario. Customize these scripts further to meet specific requirements, such as adding more detailed NSG rules, setting up VM instances, or other Azure resources.
+These scripts provide a starting point for setting up the described architectures. They include the creation of resource groups, VNets, subnets, NSGs, load balancers, firewalls, private endpoints, and traffic management profiles as applicable to each scenario.
