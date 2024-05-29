@@ -499,7 +499,7 @@ resource "azurerm_active_directory_domain_service" "adds" {
 These Terraform scripts provide a starting point for implementing the solutions described in the real-world examples. Modify them according to your specific requirements and environment.
 
 
-Sure! Let's go through each of the Terraform scripts in detail.
+Let's go through each of the Terraform scripts in detail.
 
 ### 1. Cost Optimization: Contoso Retail
 
