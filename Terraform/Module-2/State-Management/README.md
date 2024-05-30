@@ -284,3 +284,223 @@ A company initially started with local state files but now needs to migrate to a
 - The state is successfully migrated from local to remote, enabling better management and collaboration.
 
 These examples illustrate practical scenarios of managing Terraform state for different needs, including secure remote state storage, handling multiple environments, and migrating state from local to remote. Each example emphasizes best practices such as using remote state, enabling state locking, and organizing configurations effectively.
+
+
+### Detailed Step-by-Step Terraform Scripts for Real-World Examples
+
+#### **Example 1: Using S3 as a Remote Backend with State Locking**
+
+**Step 1: Create S3 Bucket and DynamoDB Table**
+
+1. **Create S3 Bucket:**
+   ```bash
+   aws s3api create-bucket --bucket my-terraform-state-bucket --region us-west-2
+   ```
+
+2. **Create DynamoDB Table:**
+   ```bash
+   aws dynamodb create-table \
+     --table-name my-terraform-lock-table \
+     --attribute-definitions AttributeName=LockID,AttributeType=S \
+     --key-schema AttributeName=LockID,KeyType=HASH \
+     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+   ```
+
+**Step 2: Configure Backend in Terraform**
+
+**`main.tf`:**
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state-bucket"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-west-2"
+    dynamodb_table = "my-terraform-lock-table"
+    encrypt        = true
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_s3_bucket" "example" {
+  bucket = "example-bucket"
+  acl    = "private"
+}
+```
+
+**Step 3: Initialize the Backend**
+```bash
+terraform init
+```
+
+**Step 4: Apply Configuration**
+```bash
+terraform apply
+```
+
+---
+
+#### **Example 2: Managing State for Multi-Environment Deployments**
+
+**Step 1: Directory Structure**
+
+```
+├── environments
+│   ├── dev
+│   │   └── main.tf
+│   ├── staging
+│   │   └── main.tf
+│   └── prod
+│       └── main.tf
+└── modules
+    └── app
+        └── main.tf
+```
+
+**Step 2: Backend Configuration for Each Environment**
+
+- **Dev Environment (`environments/dev/main.tf`):**
+  ```hcl
+  terraform {
+    backend "s3" {
+      bucket         = "my-terraform-state-bucket"
+      key            = "dev/terraform.tfstate"
+      region         = "us-west-2"
+      dynamodb_table = "my-terraform-lock-table"
+      encrypt        = true
+    }
+  }
+
+  module "app" {
+    source = "../../modules/app"
+    env    = "dev"
+  }
+  ```
+
+- **Staging Environment (`environments/staging/main.tf`):**
+  ```hcl
+  terraform {
+    backend "s3" {
+      bucket         = "my-terraform-state-bucket"
+      key            = "staging/terraform.tfstate"
+      region         = "us-west-2"
+      dynamodb_table = "my-terraform-lock-table"
+      encrypt        = true
+    }
+  }
+
+  module "app" {
+    source = "../../modules/app"
+    env    = "staging"
+  }
+  ```
+
+- **Prod Environment (`environments/prod/main.tf`):**
+  ```hcl
+  terraform {
+    backend "s3" {
+      bucket         = "my-terraform-state-bucket"
+      key            = "prod/terraform.tfstate"
+      region         = "us-west-2"
+      dynamodb_table = "my-terraform-lock-table"
+      encrypt        = true
+    }
+  }
+
+  module "app" {
+    source = "../../modules/app"
+    env    = "prod"
+  }
+  ```
+
+**Module Configuration (`modules/app/main.tf`):**
+```hcl
+variable "env" {
+  description = "The environment for this configuration"
+}
+
+resource "aws_s3_bucket" "example" {
+  bucket = "example-bucket-${var.env}"
+  acl    = "private"
+}
+```
+
+**Step 3: Initialize and Apply for Each Environment**
+
+- **Dev Environment:**
+  ```bash
+  cd environments/dev
+  terraform init
+  terraform apply
+  ```
+
+- **Staging Environment:**
+  ```bash
+  cd environments/staging
+  terraform init
+  terraform apply
+  ```
+
+- **Prod Environment:**
+  ```bash
+  cd environments/prod
+  terraform init
+  terraform apply
+  ```
+
+---
+
+#### **Example 3: Migrating Local State to Remote State**
+
+**Step 1: Existing Local State Configuration (`main.tf`):**
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+}
+```
+
+**Step 2: Apply Initial Configuration**
+```bash
+terraform init
+terraform apply
+```
+
+**Step 3: Update to Remote Backend**
+
+Update `main.tf`:
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state-bucket"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-west-2"
+    dynamodb_table = "my-terraform-lock-table"
+    encrypt        = true
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+}
+```
+
+**Step 4: Migrate State to Remote Backend**
+```bash
+terraform init -migrate-state
+```
+
+---
+
+These step-by-step scripts provide clear instructions for setting up and managing Terraform state across various real-world scenarios, ensuring secure and efficient state management practices.
