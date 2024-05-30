@@ -1,4 +1,4 @@
-### Terraform Training Plan (72 Hours)
+### Terraform Training (72 Hours)
 
 #### **Module 1: Introduction to Infrastructure as Code and Terraform (6 Hours)**
 1. **Overview of Infrastructure as Code (IaC) (1 Hour)**
