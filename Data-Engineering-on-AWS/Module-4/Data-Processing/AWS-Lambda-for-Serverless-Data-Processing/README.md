@@ -862,3 +862,343 @@ output "lambda_function_name" {
 ### Summary
 
 By following these steps, you have set up a real-time stream processing pipeline using AWS Lambda and Kinesis. The Terraform script handles the creation of the Kinesis stream, IAM role, Lambda function, and necessary permissions and triggers. Whenever a new record is put into the Kinesis stream, the Lambda function will be triggered to process the record.
+
+
+# Step-by-Step Guide for Creating a Backend for Mobile Applications with AWS Lambda, API Gateway, and DynamoDB
+
+This guide will walk you through setting up a serverless backend for mobile applications using AWS Lambda, API Gateway, and DynamoDB. We will cover the following steps:
+
+1. **Setting Up the Environment**
+2. **Creating a DynamoDB Table**
+3. **Setting Up IAM Roles**
+4. **Creating and Deploying a Lambda Function**
+5. **Creating an API with API Gateway**
+6. **Connecting API Gateway to Lambda**
+7. **Testing the Setup**
+
+## 1. Setting Up the Environment
+
+### Prerequisites
+- AWS Account
+- AWS CLI installed and configured
+- Terraform installed
+
+## 2. Creating a DynamoDB Table
+
+### Step 1: Create a DynamoDB Table
+1. Log in to the AWS Management Console.
+2. Navigate to the DynamoDB service.
+3. Click on "Create table".
+4. Enter the following settings:
+   - Table name: `MobileAppUsers`
+   - Primary key: `userId` (String)
+5. Configure other settings as needed (e.g., read/write capacity).
+6. Click on "Create table".
+
+## 3. Setting Up IAM Roles
+
+### Step 2: Create an IAM Role
+1. Go to the IAM console.
+2. Click on "Roles" in the left sidebar.
+3. Click on "Create role".
+4. Choose "AWS service" and select "Lambda".
+5. Click on "Next: Permissions".
+6. Attach the following policies:
+   - `AWSLambdaBasicExecutionRole`
+   - `AmazonDynamoDBFullAccess`
+7. Click on "Next: Tags", then "Next: Review".
+8. Enter a role name (e.g., `LambdaDynamoDBAccessRole`).
+9. Click on "Create role".
+
+## 4. Creating and Deploying a Lambda Function
+
+### Step 3: Create a Lambda Function
+1. Navigate to the AWS Lambda console.
+2. Click on "Create function".
+3. Choose "Author from scratch".
+4. Configure the following settings:
+   - Function name: `UserHandlerLambda`
+   - Runtime: Python 3.x (or any other supported runtime)
+   - Role: Choose the IAM role created earlier (`LambdaDynamoDBAccessRole`)
+5. Click on "Create function".
+
+### Step 4: Write the Lambda Function Code
+Create a file named `user_handler_lambda.py` with the following content:
+
+```python
+import json
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('MobileAppUsers')
+
+def lambda_handler(event, context):
+    http_method = event['httpMethod']
+    
+    if http_method == 'POST':
+        return create_user(event)
+    elif http_method == 'GET':
+        return get_user(event)
+    else:
+        return {
+            'statusCode': 400,
+            'body': json.dumps('Unsupported method')
+        }
+
+def create_user(event):
+    body = json.loads(event['body'])
+    user_id = body['userId']
+    user_name = body['userName']
+    
+    table.put_item(
+        Item={
+            'userId': user_id,
+            'userName': user_name
+        }
+    )
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps(f'User {user_name} created successfully')
+    }
+
+def get_user(event):
+    user_id = event['queryStringParameters']['userId']
+    
+    response = table.get_item(
+        Key={
+            'userId': user_id
+        }
+    )
+    
+    if 'Item' in response:
+        return {
+            'statusCode': 200,
+            'body': json.dumps(response['Item'])
+        }
+    else:
+        return {
+            'statusCode': 404,
+            'body': json.dumps(f'User with ID {user_id} not found')
+        }
+```
+
+### Step 5: Create a Deployment Package
+Zip the `user_handler_lambda.py` file into a deployment package:
+
+```bash
+zip user_handler_lambda.zip user_handler_lambda.py
+```
+
+### Step 6: Deploy the Lambda Function
+1. Upload the deployment package to the Lambda function.
+2. Click on "Deploy".
+
+## 5. Creating an API with API Gateway
+
+### Step 7: Create an API
+1. Navigate to the API Gateway console.
+2. Click on "Create API".
+3. Choose "REST API" and click "Build".
+4. Enter the following settings:
+   - API name: `MobileAppAPI`
+   - Endpoint Type: Regional
+5. Click on "Create API".
+
+### Step 8: Create a Resource
+1. In the API Gateway console, click on "Resources" in the left sidebar.
+2. Click on "Create Resource".
+3. Enter the following settings:
+   - Resource Name: `users`
+   - Resource Path: `users`
+4. Click on "Create Resource".
+
+### Step 9: Create Methods
+1. Select the `users` resource.
+2. Click on "Create Method" and select `POST`.
+3. Click on the checkmark.
+4. Configure the following settings:
+   - Integration Type: Lambda Function
+   - Use Lambda Proxy Integration: Checked
+   - Lambda Function: `UserHandlerLambda`
+5. Click on "Save" and confirm the permissions.
+6. Repeat the above steps to create a `GET` method for the `users` resource.
+
+## 6. Connecting API Gateway to Lambda
+
+### Step 10: Deploy the API
+1. In the API Gateway console, click on "Actions" and select "Deploy API".
+2. Enter the following settings:
+   - Deployment stage: `prod`
+3. Click on "Deploy".
+
+### Step 11: Note the Invoke URL
+1. After deploying the API, note the Invoke URL displayed on the stage editor page. This URL will be used to test the API.
+
+## 7. Testing the Setup
+
+### Step 12: Test the POST Method
+Use a tool like Postman or `curl` to send a POST request to the API:
+
+```bash
+curl -X POST \
+  https://{api-id}.execute-api.{region}.amazonaws.com/prod/users \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "userId": "1",
+        "userName": "John Doe"
+      }'
+```
+
+### Step 13: Test the GET Method
+Use a tool like Postman or `curl` to send a GET request to the API:
+
+```bash
+curl -X GET \
+  'https://{api-id}.execute-api.{region}.amazonaws.com/prod/users?userId=1'
+```
+
+## Terraform Script
+
+### Step 14: Create the Terraform Configuration File
+
+Create a file named `main.tf` and add the following content:
+
+```hcl
+provider "aws" {
+  region = "us-east-1"  # Change to your preferred region
+}
+
+resource "aws_dynamodb_table" "mobile_app_users" {
+  name           = "MobileAppUsers"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "userId"
+
+  attribute {
+    name = "userId"
+    type = "S"
+  }
+}
+
+resource "aws_iam_role" "lambda_dynamodb_role" {
+  name = "lambda_dynamodb_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+      Effect    = "Allow"
+      Sid       = ""
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role       = aws_iam_role.lambda_dynamodb_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "dynamodb_full_access" {
+  role       = aws_iam_role.lambda_dynamodb_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
+resource "aws_lambda_function" "user_handler_lambda" {
+  function_name = "UserHandlerLambda"
+  role          = aws_iam_role.lambda_dynamodb_role.arn
+  handler       = "user_handler_lambda.lambda_handler"
+  runtime       = "python3.8"
+  
+  filename = "user_handler_lambda.zip"
+
+  source_code_hash = filebase64sha256("user_handler_lambda.zip")
+}
+
+resource "aws_api_gateway_rest_api" "mobile_app_api" {
+  name        = "MobileAppAPI"
+  description = "API for mobile application backend"
+}
+
+resource "aws_api_gateway_resource" "users_resource" {
+  rest_api_id = aws_api_gateway_rest_api.mobile_app_api.id
+  parent_id   = aws_api_gateway_rest_api.mobile_app_api.root_resource_id
+  path_part   = "users"
+}
+
+resource "aws_api_gateway_method" "post_method" {
+  rest_api_id   = aws_api_gateway_rest_api.mobile_app_api.id
+  resource_id   = aws_api_gateway_resource.users_resource.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "post_integration" {
+  rest_api_id = aws_api_gateway_rest_api.mobile_app_api.id
+  resource_id = aws_api_gateway_resource.users_resource.id
+  http_method = aws_api_gateway_method.post_method.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.user_handler_lambda.invoke_arn
+}
+
+resource "aws_api_gateway_method" "get_method" {
+  rest_api_id   = aws_api_gateway_rest_api.mobile_app_api.id
+  resource_id   = aws
+
+_api_gateway_resource.users_resource.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "get_integration" {
+  rest_api_id = aws_api_gateway_rest_api.mobile_app_api.id
+  resource_id = aws_api_gateway_resource.users_resource.id
+  http_method = aws_api_gateway_method.get_method.http_method
+  type        = "AWS_PROXY"
+  uri         = aws_lambda_function.user_handler_lambda.invoke_arn
+}
+
+resource "aws_lambda_permission" "api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.user_handler_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.mobile_app_api.execution_arn}/*/*"
+}
+
+resource "aws_api_gateway_deployment" "api_deployment" {
+  depends_on = [
+    aws_api_gateway_integration.post_integration,
+    aws_api_gateway_integration.get_integration
+  ]
+
+  rest_api_id = aws_api_gateway_rest_api.mobile_app_api.id
+  stage_name  = "prod"
+}
+
+output "api_invoke_url" {
+  value = "${aws_api_gateway_deployment.api_deployment.invoke_url}/prod"
+}
+```
+
+### Step 15: Initialize and Apply the Terraform Configuration
+
+1. Initialize the Terraform configuration:
+
+    ```bash
+    terraform init
+    ```
+
+2. Apply the Terraform configuration:
+
+    ```bash
+    terraform apply
+    ```
+
+   Type `yes` when prompted to confirm the creation of resources.
+
+### Summary
+
+By following these steps, you have set up a serverless backend for a mobile application using AWS Lambda, API Gateway, and DynamoDB. The Terraform script handles the creation of the DynamoDB table, IAM role, Lambda function, API Gateway resources, and necessary permissions and integrations. This setup allows you to create and retrieve user data through a RESTful API.
