@@ -393,3 +393,279 @@ zip lambda.zip lambda_function.py
 ### Summary
 
 By following these steps, you have used Terraform to set up an AWS environment for real-time file processing with AWS Lambda and S3. The Terraform script handles the creation of the S3 bucket, IAM role, Lambda function, and necessary permissions and notifications. Whenever a new file is uploaded to the S3 bucket, the Lambda function will be triggered to process the file.
+
+
+# Step-by-Step Guide for Data Transformation and ETL with AWS Lambda, S3, and Glue
+
+This guide will walk you through setting up a data transformation and ETL pipeline using AWS Lambda, S3, and AWS Glue. We will cover the following steps:
+
+1. **Setting Up the Environment**
+2. **Creating an S3 Bucket**
+3. **Setting Up IAM Roles**
+4. **Creating and Deploying a Lambda Function**
+5. **Configuring S3 Event Notification**
+6. **Creating and Running a Glue Job**
+7. **Testing the Setup**
+
+## 1. Setting Up the Environment
+
+### Prerequisites
+- AWS Account
+- AWS CLI installed and configured
+- Terraform installed
+
+## 2. Creating an S3 Bucket
+
+### Step 1: Create an S3 Bucket
+1. Log in to the AWS Management Console.
+2. Navigate to the S3 service.
+3. Click on "Create bucket".
+4. Enter a unique bucket name (e.g., `my-etl-source-bucket` for source data and `my-etl-target-bucket` for transformed data).
+5. Choose the region and configure other settings as needed.
+6. Click on "Create bucket".
+
+## 3. Setting Up IAM Roles
+
+### Step 2: Create IAM Roles
+1. Go to the IAM console.
+2. Click on "Roles" in the left sidebar.
+3. Click on "Create role".
+4. Choose "AWS service" and select "Lambda".
+5. Click on "Next: Permissions".
+6. Attach the following policies:
+   - `AWSLambdaBasicExecutionRole`
+   - `AmazonS3FullAccess`
+   - `AWSGlueServiceRole`
+7. Click on "Next: Tags", then "Next: Review".
+8. Enter a role name (e.g., `LambdaGlueS3AccessRole`).
+9. Click on "Create role".
+
+## 4. Creating and Deploying a Lambda Function
+
+### Step 3: Create a Lambda Function
+1. Navigate to the AWS Lambda console.
+2. Click on "Create function".
+3. Choose "Author from scratch".
+4. Configure the following settings:
+   - Function name: `ETLTriggerLambda`
+   - Runtime: Python 3.x (or any other supported runtime)
+   - Role: Choose the IAM role created earlier (`LambdaGlueS3AccessRole`)
+5. Click on "Create function".
+
+### Step 4: Write the Lambda Function Code
+Create a file named `etl_trigger_lambda.py` with the following content:
+
+```python
+import json
+import boto3
+
+glue = boto3.client('glue')
+
+def lambda_handler(event, context):
+    # Start Glue Job
+    response = glue.start_job_run(
+        JobName='my-glue-job'  # Replace with your Glue job name
+    )
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Glue job started')
+    }
+```
+
+### Step 5: Create a Deployment Package
+Zip the `etl_trigger_lambda.py` file into a deployment package:
+
+```bash
+zip etl_trigger_lambda.zip etl_trigger_lambda.py
+```
+
+### Step 6: Deploy the Lambda Function
+1. Upload the deployment package to the Lambda function.
+2. Click on "Deploy".
+
+## 5. Configuring S3 Event Notification
+
+### Step 7: Set Up S3 Event Notification
+1. Go to the S3 console and navigate to your source bucket (`my-etl-source-bucket`).
+2. Click on the "Properties" tab.
+3. Scroll down to the "Event notifications" section and click on "Create event notification".
+4. Enter a name for the notification (e.g., `FileUploadNotification`).
+5. Configure the following settings:
+   - Event types: Select "All object create events".
+   - Destination: Choose "Lambda function" and select `ETLTriggerLambda`.
+6. Click on "Save changes".
+
+## 6. Creating and Running a Glue Job
+
+### Step 8: Create a Glue Crawler
+1. Navigate to the AWS Glue console.
+2. Click on "Crawlers" in the left sidebar and then "Add crawler".
+3. Configure the crawler to scan your source S3 bucket (`my-etl-source-bucket`).
+4. Define a new database for the crawler results.
+5. Run the crawler to populate the Glue Data Catalog.
+
+### Step 9: Create a Glue Job
+1. Navigate to the AWS Glue console.
+2. Click on "Jobs" in the left sidebar and then "Add job".
+3. Configure the job with the following settings:
+   - Name: `my-glue-job`
+   - IAM Role: Choose the IAM role created earlier (`LambdaGlueS3AccessRole`)
+   - Type: Spark
+4. In the script editor, write a transformation script. For example, `etl_script.py`:
+
+```python
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+
+# Define the source
+source_df = glueContext.create_dynamic_frame.from_catalog(
+    database="my-database",
+    table_name="my-table"
+)
+
+# Transform data (Example: select specific columns)
+transformed_df = source_df.select_fields(['column1', 'column2'])
+
+# Define the target
+target_path = "s3://my-etl-target-bucket/transformed-data/"
+
+# Write the transformed data to the target
+glueContext.write_dynamic_frame.from_options(
+    frame=transformed_df,
+    connection_type="s3",
+    connection_options={"path": target_path},
+    format="json"
+)
+
+job.commit()
+```
+
+4. Save and run the Glue job.
+
+## 7. Testing the Setup
+
+### Step 10: Upload a Test File to S3
+1. Navigate to the S3 console and go to your source bucket (`my-etl-source-bucket`).
+2. Click on "Upload".
+3. Choose a test file from your local system.
+4. Click on "Upload".
+
+### Step 11: Verify Lambda and Glue Execution
+1. Go to the AWS Lambda console.
+2. Select your Lambda function (`ETLTriggerLambda`).
+3. Click on the "Monitor" tab and then "View logs in CloudWatch".
+4. Check the CloudWatch logs to see the output of your Lambda function.
+
+### Step 12: Verify Transformed Data in Target S3 Bucket
+1. Navigate to the S3 console and go to your target bucket (`my-etl-target-bucket`).
+2. Verify that the transformed data is present in the specified location.
+
+## Terraform Script
+
+### Step 13: Create the Terraform Configuration File
+
+Create a file named `main.tf` and add the following content:
+
+```hcl
+provider "aws" {
+  region = "us-east-1"  # Change to your preferred region
+}
+
+resource "aws_s3_bucket" "source_bucket" {
+  bucket = "my-etl-source-bucket"
+  acl    = "private"
+}
+
+resource "aws_s3_bucket" "target_bucket" {
+  bucket = "my-etl-target-bucket"
+  acl    = "private"
+}
+
+resource "aws_iam_role" "lambda_glue_s3_role" {
+  name = "lambda_glue_s3_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+      Effect    = "Allow"
+      Sid       = ""
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role       = aws_iam_role.lambda_glue_s3_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "s3_full_access" {
+  role       = aws_iam_role.lambda_glue_s3_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "glue_service_role" {
+  role       = aws_iam_role.lambda_glue_s3_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+}
+
+resource "aws_lambda_function" "etl_trigger_lambda" {
+  function_name = "ETLTriggerLambda"
+  role          = aws_iam_role.lambda_glue_s3_role.arn
+  handler       = "etl_trigger_lambda.lambda_handler"
+  runtime       = "python3.8"
+  
+  filename = "etl_trigger_lambda.zip"
+
+  source_code_hash = filebase64sha256("etl_trigger_lambda.zip")
+}
+
+resource "aws_s3_bucket_notification" "source_bucket_notification" {
+  bucket = aws_s3_bucket.source_bucket.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.etl_trigger_lambda.arn
+    events              = ["s3:ObjectCreated:*"]
+  }
+}
+
+resource "aws_lambda_permission" "allow_s3" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.etl_trigger_lambda.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.source_bucket.arn
+}
+
+output "source_s3_bucket_name" {
+ 
+
+ value = aws_s3_bucket.source_bucket.bucket
+}
+
+output "target_s3_bucket_name" {
+  value = aws_s3_bucket.target_bucket.bucket
+}
+
+output "lambda_function_name" {
+  value = aws_lambda_function.etl_trigger_lambda.function_name
+}
+```
+
+### Summary
+
+By following these steps, you have set up a data transformation and ETL pipeline using AWS Lambda, S3, and AWS Glue. The Terraform script handles the creation of the S3 buckets, IAM role, Lambda function, and necessary permissions and notifications. Whenever a new file is uploaded to the source S3 bucket, the Lambda function will trigger an AWS Glue job to transform the data and store it in the target S3 bucket.
