@@ -1707,3 +1707,183 @@ Amazon Route 53 is a scalable and highly available Domain Name System (DNS) web 
 ---
 
 By following this step-by-step guide, you can effectively create and manage DNS records using Amazon Route 53, ensuring high availability, performance, and reliability for your domain and associated services.
+
+
+Below are Terraform scripts to set up DNS management using Amazon Route 53. This includes creating a hosted zone, adding different types of DNS records, and configuring health checks.
+
+### 1. Setting Up a Hosted Zone
+
+Create a `main.tf` file and add the following code to set up a hosted zone in Route 53:
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_route53_zone" "example" {
+  name = "example.com"
+}
+```
+
+### 2. Adding DNS Records
+
+You can add various DNS records to your hosted zone by appending the following code to your `main.tf` file.
+
+#### A Record
+
+```hcl
+resource "aws_route53_record" "www" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "www.example.com"
+  type    = "A"
+  ttl     = "300"
+  records = ["192.0.2.1"]
+}
+```
+
+#### CNAME Record
+
+```hcl
+resource "aws_route53_record" "blog" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "blog.example.com"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["example.com"]
+}
+```
+
+#### MX Record
+
+```hcl
+resource "aws_route53_record" "mail" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "example.com"
+  type    = "MX"
+  ttl     = "300"
+  records = ["10 mail.example.com"]
+}
+```
+
+#### TXT Record
+
+```hcl
+resource "aws_route53_record" "txt" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "example.com"
+  type    = "TXT"
+  ttl     = "300"
+  records = ["v=spf1 include:example.com ~all"]
+}
+```
+
+### 3. Configuring Health Checks
+
+#### Create Health Check
+
+```hcl
+resource "aws_route53_health_check" "example" {
+  fqdn              = "www.example.com"
+  port              = 80
+  type              = "HTTP"
+  resource_path     = "/"
+  failure_threshold = 3
+}
+```
+
+#### Associate Health Check with DNS Record
+
+```hcl
+resource "aws_route53_record" "www_health_checked" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "www.example.com"
+  type    = "A"
+  ttl     = "300"
+  records = ["192.0.2.1"]
+
+  health_check_id = aws_route53_health_check.example.id
+}
+```
+
+### 4. Using Routing Policies
+
+#### Weighted Routing Policy
+
+```hcl
+resource "aws_route53_record" "weighted_example1" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "example.com"
+  type    = "A"
+  ttl     = "300"
+  records = ["192.0.2.1"]
+
+  set_identifier = "example1"
+  weight         = 70
+}
+
+resource "aws_route53_record" "weighted_example2" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "example.com"
+  type    = "A"
+  ttl     = "300"
+  records = ["192.0.2.2"]
+
+  set_identifier = "example2"
+  weight         = 30
+}
+```
+
+#### Latency-based Routing Policy
+
+```hcl
+resource "aws_route53_record" "latency_example_us" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "example.com"
+  type    = "A"
+  ttl     = "300"
+  records = ["192.0.2.1"]
+
+  set_identifier   = "us-east-1"
+  latency_routing_policy = {
+    region = "us-east-1"
+  }
+}
+
+resource "aws_route53_record" "latency_example_eu" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "example.com"
+  type    = "A"
+  ttl     = "300"
+  records = ["192.0.2.2"]
+
+  set_identifier   = "eu-west-1"
+  latency_routing_policy = {
+    region = "eu-west-1"
+  }
+}
+```
+
+### 5. Applying the Configuration
+
+1. **Initialize Terraform:**
+   ```bash
+   terraform init
+   ```
+
+2. **Validate the Configuration:**
+   ```bash
+   terraform validate
+   ```
+
+3. **Apply the Configuration:**
+   ```bash
+   terraform apply
+   ```
+
+4. **Destroy the Configuration:**
+   If you need to remove the resources:
+   ```bash
+   terraform destroy
+   ```
+
+This Terraform configuration sets up a hosted zone, various DNS records, health checks, and different routing policies using Amazon Route 53. Adjust the values as needed to fit your specific use case.
