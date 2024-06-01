@@ -141,3 +141,89 @@ Let's build a VPC architecture for a sample web application.
    - Regularly audit security group rules, network ACLs, and IAM policies.
 
 By following this detailed guide, you can set up a secure, scalable, and robust VPC architecture on AWS tailored to your application's needs.
+
+
+Certainly! Below is a text-based visual representation of a VPC architecture for a sample web application:
+
+```
++--------------------------+                                         +--------------------------+
+|       Public Subnet 1    |                                         |       Public Subnet 2    |
+|       (10.0.1.0/24)      |                                         |       (10.0.3.0/24)      |
+|                          |                                         |                          |
+|   +------------------+   |                                         |   +------------------+   |
+|   |  Web Server 1    |   |                                         |   |  Web Server 2    |   |
+|   |  (EC2 Instance)  |   |                                         |   |  (EC2 Instance)  |   |
+|   +------------------+   |                                         |   +------------------+   |
+|         |   |             |                                         |         |   |             |
+|         |   +-------------+------------+                   +--------+---------+   |             |
+|         |                  |            |                   |          |            |             |
+|         |                  |            |                   |          |            |             |
+|   +-----+------------------+------+     |                   |    +-----+------------+-----+      |
+|   | Internet Gateway (IGW)        |     |                   |    |  NAT Gateway (NGW)      |      |
+|   +-------------------------------+     |                   |    +-------------------------+      |
+|                                        |                   |                                          |
++--------------------------+             |                   |                                          |
+|       Private Subnet 1   |             |                   |       Private Subnet 2   |              |
+|       (10.0.2.0/24)      |             |                   |       (10.0.4.0/24)      |              |
+|                          |             |                   |                          |              |
+|   +------------------+   |             |                   |   +------------------+   |              |
+|   |  App Server 1    |   |             |                   |   |  App Server 2    |   |              |
+|   |  (EC2 Instance)  |   |             |                   |   |  (EC2 Instance)  |   |              |
+|   +------------------+   |             |                   |   +------------------+   |              |
+|                          |             |                   |                          |              |
+|   +------------------+   |             |                   |   +------------------+   |              |
+|   |  DB Server 1     |   |             |                   |   |  DB Server 2     |   |              |
+|   |  (EC2 Instance)  |   |             |                   |   |  (EC2 Instance)  |   |              |
+|   +------------------+   |             |                   |   +------------------+   |              |
+|                          |             |                   |                          |              |
++--------------------------+             |                   +--------------------------+              |
+                                          |                                                                      |
+                                          +--------------------------------------------------------------+
+                                                                                       |
+                                                                                       |
+                                                                               +-------------------+
+                                                                               |   Route Table     |
+                                                                               |   (Public)        |
+                                                                               |   +-------------+ |
+                                                                               |   |  0.0.0.0/0  | |
+                                                                               |   | -> IGW      | |
+                                                                               |   +-------------+ |
+                                                                               +-------------------+
+                                                                                       |
+                                                                                       |
+                                                                               +-------------------+
+                                                                               |   Route Table     |
+                                                                               |   (Private)       |
+                                                                               |   +-------------+ |
+                                                                               |   |  0.0.0.0/0  | |
+                                                                               |   | -> NGW      | |
+                                                                               |   +-------------+ |
+                                                                               +-------------------+
+```
+
+### Description:
+
+- **Public Subnet 1 & 2**:
+  - Contains Web Servers (EC2 instances) accessible from the internet.
+  - Connected to an Internet Gateway (IGW) for internet access.
+
+- **Private Subnet 1 & 2**:
+  - Contains Application Servers and Database Servers (EC2 instances) not directly accessible from the internet.
+  - Connected to a NAT Gateway (NGW) for outgoing internet access, such as updates and patches.
+
+- **Internet Gateway (IGW)**:
+  - Allows public subnets to communicate with the internet.
+
+- **NAT Gateway (NGW)**:
+  - Allows instances in the private subnets to connect to the internet without being directly accessible from the internet.
+
+- **Route Tables**:
+  - Public Route Table: Routes internet traffic (0.0.0.0/0) to the Internet Gateway.
+  - Private Route Table: Routes internet traffic (0.0.0.0/0) to the NAT Gateway.
+
+- **Security Groups (Not explicitly shown in diagram)**:
+  - Web Security Group: Allows HTTP/HTTPS and SSH traffic.
+  - App Security Group: Allows traffic from the Web Security Group.
+  - DB Security Group: Allows traffic from the App Security Group.
+
+This visual text diagram provides a simplified view of how a VPC can be structured to host a web application with multiple tiers (web, application, database), ensuring security and high availability by leveraging public and private subnets, route tables, and gateways.
