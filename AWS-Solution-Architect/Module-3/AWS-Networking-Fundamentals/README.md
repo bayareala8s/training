@@ -1258,4 +1258,294 @@ Load balancers distribute incoming application or network traffic across multipl
 By following these steps and best practices, you can effectively set up and manage load balancers in AWS, ensuring high availability, reliability, and scalability for your applications.
 
 
+### Terraform Scripts for Setting up Load Balancers in AWS
 
+This section provides Terraform scripts for setting up both an Application Load Balancer (ALB) and a Network Load Balancer (NLB) in AWS.
+
+---
+
+### Application Load Balancer (ALB) Setup
+
+#### Step 1: Initialize Terraform
+
+Create a directory for your Terraform files and initialize Terraform.
+
+```bash
+mkdir terraform-alb-setup
+cd terraform-alb-setup
+terraform init
+```
+
+#### Step 2: Create `main.tf` File
+
+Create a `main.tf` file with the following content:
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = "main-vpc"
+  }
+}
+
+resource "aws_subnet" "public" {
+  count = 2
+  vpc_id = aws_vpc.main.id
+  cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet-${count.index}"
+  }
+}
+
+resource "aws_security_group" "alb_sg" {
+  vpc_id = aws_vpc.main.id
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
+}
+
+resource "aws_instance" "web" {
+  count = 2
+  ami = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id = element(aws_subnet.public[*].id, count.index)
+  security_groups = ["${aws_security_group.alb_sg.name}"]
+
+  tags = {
+    Name = "web-instance-${count.index}"
+  }
+
+  user_data = <<-EOF
+              #!/bin/bash
+              echo "Hello, World!" > /var/www/html/index.html
+              yum install -y httpd
+              service httpd start
+              chkconfig httpd on
+              EOF
+}
+
+resource "aws_lb" "app" {
+  name               = "app-load-balancer"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = aws_subnet.public[*].id
+
+  tags = {
+    Name = "app-load-balancer"
+  }
+}
+
+resource "aws_lb_target_group" "app" {
+  name     = "app-target-group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
+
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 5
+    path                = "/"
+    interval            = 30
+    matcher             = "200"
+  }
+
+  tags = {
+    Name = "app-target-group"
+  }
+}
+
+resource "aws_lb_listener" "app" {
+  load_balancer_arn = aws_lb.app.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app.arn
+  }
+}
+
+resource "aws_lb_target_group_attachment" "app" {
+  count            = 2
+  target_group_arn = aws_lb_target_group.app.arn
+  target_id        = element(aws_instance.web[*].id, count.index)
+  port             = 80
+}
+```
+
+#### Step 3: Apply the Configuration
+
+```bash
+terraform apply
+```
+
+This script sets up an ALB with two EC2 instances as targets in a public subnet.
+
+---
+
+### Network Load Balancer (NLB) Setup
+
+#### Step 1: Initialize Terraform
+
+Create a directory for your Terraform files and initialize Terraform.
+
+```bash
+mkdir terraform-nlb-setup
+cd terraform-nlb-setup
+terraform init
+```
+
+#### Step 2: Create `main.tf` File
+
+Create a `main.tf` file with the following content:
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+
+  tags = {
+    Name = "main-vpc"
+  }
+}
+
+resource "aws_subnet" "public" {
+  count = 2
+  vpc_id = aws_vpc.main.id
+  cidr_block = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet-${count.index}"
+  }
+}
+
+resource "aws_security_group" "nlb_sg" {
+  vpc_id = aws_vpc.main.id
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "nlb-sg"
+  }
+}
+
+resource "aws_instance" "web" {
+  count = 2
+  ami = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id = element(aws_subnet.public[*].id, count.index)
+  security_groups = ["${aws_security_group.nlb_sg.name}"]
+
+  tags = {
+    Name = "web-instance-${count.index}"
+  }
+
+  user_data = <<-EOF
+              #!/bin/bash
+              echo "Hello, World!" > /var/www/html/index.html
+              yum install -y httpd
+              service httpd start
+              chkconfig httpd on
+              EOF
+}
+
+resource "aws_lb" "network" {
+  name               = "network-load-balancer"
+  internal           = false
+  load_balancer_type = "network"
+  subnets            = aws_subnet.public[*].id
+
+  tags = {
+    Name = "network-load-balancer"
+  }
+}
+
+resource "aws_lb_target_group" "network" {
+  name     = "network-target-group"
+  port     = 80
+  protocol = "TCP"
+  vpc_id   = aws_vpc.main.id
+
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 10
+    interval            = 30
+    protocol            = "TCP"
+  }
+
+  tags = {
+    Name = "network-target-group"
+  }
+}
+
+resource "aws_lb_listener" "network" {
+  load_balancer_arn = aws_lb.network.arn
+  port              = 80
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.network.arn
+  }
+}
+
+resource "aws_lb_target_group_attachment" "network" {
+  count            = 2
+  target_group_arn = aws_lb_target_group.network.arn
+  target_id        = element(aws_instance.web[*].id, count.index)
+  port             = 80
+}
+```
+
+#### Step 3: Apply the Configuration
+
+```bash
+terraform apply
+```
+
+This script sets up an NLB with two EC2 instances as targets in a public subnet.
+
+---
+
+These Terraform scripts automate the setup of Application Load Balancers and Network Load Balancers in AWS, providing high availability and scalability for your applications.
