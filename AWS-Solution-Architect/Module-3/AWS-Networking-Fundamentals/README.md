@@ -769,3 +769,295 @@ Security Groups and Network ACLs (NACLs) are fundamental components for managing
 ---
 
 By following this step-by-step guide, you can effectively configure and manage Security Groups and Network ACLs in AWS, ensuring robust network security for your cloud infrastructure.
+
+
+Here are Terraform scripts for configuring a Security Group and a Network ACL in AWS. These scripts include setting up a VPC, subnets, a security group, and a network ACL.
+
+### Terraform Script for VPC, Subnets, Security Group, and Network ACL
+
+#### 1. VPC and Subnets
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "main-vpc"
+  }
+}
+
+resource "aws_subnet" "public" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet"
+  }
+}
+
+resource "aws_subnet" "private" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+
+  tags = {
+    Name = "private-subnet"
+  }
+}
+```
+
+#### 2. Security Group
+
+```hcl
+resource "aws_security_group" "web_sg" {
+  name        = "web-sg"
+  description = "Allow inbound HTTP and HTTPS traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web-sg"
+  }
+}
+```
+
+#### 3. Network ACL
+
+```hcl
+resource "aws_network_acl" "public_acl" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "public-acl"
+  }
+}
+
+resource "aws_network_acl_rule" "allow_http_inbound" {
+  network_acl_id = aws_network_acl.public_acl.id
+  rule_number    = 100
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 80
+  to_port        = 80
+}
+
+resource "aws_network_acl_rule" "allow_https_inbound" {
+  network_acl_id = aws_network_acl.public_acl.id
+  rule_number    = 110
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 443
+  to_port        = 443
+}
+
+resource "aws_network_acl_rule" "allow_all_outbound" {
+  network_acl_id = aws_network_acl.public_acl.id
+  rule_number    = 100
+  egress         = true
+  protocol       = "-1"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_subnet_network_acl_association" "public_acl_association" {
+  subnet_id     = aws_subnet.public.id
+  network_acl_id = aws_network_acl.public_acl.id
+}
+```
+
+#### 4. Launch an EC2 Instance
+
+```hcl
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0" # Replace with your desired AMI ID
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.public.id
+  security_groups = [aws_security_group.web_sg.name]
+
+  tags = {
+    Name = "web-instance"
+  }
+}
+```
+
+### Complete Terraform Script
+
+Below is the complete script combining all the components:
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+# VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "main-vpc"
+  }
+}
+
+# Subnets
+resource "aws_subnet" "public" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet"
+  }
+}
+
+resource "aws_subnet" "private" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+
+  tags = {
+    Name = "private-subnet"
+  }
+}
+
+# Security Group
+resource "aws_security_group" "web_sg" {
+  name        = "web-sg"
+  description = "Allow inbound HTTP and HTTPS traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web-sg"
+  }
+}
+
+# Network ACL
+resource "aws_network_acl" "public_acl" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "public-acl"
+  }
+}
+
+resource "aws_network_acl_rule" "allow_http_inbound" {
+  network_acl_id = aws_network_acl.public_acl.id
+  rule_number    = 100
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 80
+  to_port        = 80
+}
+
+resource "aws_network_acl_rule" "allow_https_inbound" {
+  network_acl_id = aws_network_acl.public_acl.id
+  rule_number    = 110
+  egress         = false
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 443
+  to_port        = 443
+}
+
+resource "aws_network_acl_rule" "allow_all_outbound" {
+  network_acl_id = aws_network_acl.public_acl.id
+  rule_number    = 100
+  egress         = true
+  protocol       = "-1"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0"
+  from_port      = 0
+  to_port        = 0
+}
+
+resource "aws_subnet_network_acl_association" "public_acl_association" {
+  subnet_id     = aws_subnet.public.id
+  network_acl_id = aws_network_acl.public_acl.id
+}
+
+# EC2 Instance
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0" # Replace with your desired AMI ID
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.public.id
+  security_groups = [aws_security_group.web_sg.name]
+
+  tags = {
+    Name = "web-instance"
+  }
+}
+```
+
+### Instructions to Apply the Script
+
+1. **Initialize Terraform:**
+   ```bash
+   terraform init
+   ```
+
+2. **Validate the Configuration:**
+   ```bash
+   terraform validate
+   ```
+
+3. **Apply the Configuration:**
+   ```bash
+   terraform apply
+   ```
+
+4. **Destroy the Infrastructure (if needed):**
+   ```bash
+   terraform destroy
+   ```
+
+By following these steps and using the provided scripts, you can effectively configure a VPC, subnets, security groups, and network ACLs in AWS using Terraform.
