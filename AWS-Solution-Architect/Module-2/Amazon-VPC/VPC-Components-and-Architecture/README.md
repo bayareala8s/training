@@ -1135,3 +1135,289 @@ output "emr_cluster_id" {
    ```
 
 This Terraform configuration sets up a secure and scalable architecture for a media streaming company's big data analytics on AWS. It includes public and private subnets, an Internet Gateway, a NAT Gateway, and an Amazon EMR cluster for big data processing. Adjust the CIDR blocks, instance types, AMI IDs, and other parameters as needed to fit your specific requirements.
+
+
+Below are Terraform scripts to set up a VPC for a media streaming company aiming to perform big data analytics on AWS. This setup includes a VPC with public and private subnets, an Internet Gateway, NAT Gateway, and necessary route tables and security groups. Additionally, it sets up an Amazon EMR cluster for big data processing.
+
+### 1. **Main Terraform Configuration File (main.tf)**
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "media-streaming-vpc"
+  }
+}
+
+resource "aws_subnet" "public_subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "public-subnet-1"
+  }
+}
+
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-east-1b"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "public-subnet-2"
+  }
+}
+
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1a"
+  tags = {
+    Name = "private-subnet-1"
+  }
+}
+
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.4.0/24"
+  availability_zone = "us-east-1b"
+  tags = {
+    Name = "private-subnet-2"
+  }
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "media-streaming-igw"
+  }
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public_subnet_1.id
+  tags = {
+    Name = "media-streaming-nat"
+  }
+}
+
+resource "aws_eip" "nat" {
+  vpc = true
+}
+
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+  tags = {
+    Name = "public-route-table"
+  }
+}
+
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+  tags = {
+    Name = "private-route-table"
+  }
+}
+
+resource "aws_route_table_association" "public_subnet_1_rt_association" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "public_subnet_2_rt_association" {
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "private_subnet_1_rt_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "private_subnet_2_rt_association" {
+  subnet_id      = aws_subnet.private_subnet_2.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_security_group" "emr_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "emr-sg"
+  }
+}
+
+resource "aws_emr_cluster" "emr" {
+  name          = "media-streaming-emr-cluster"
+  release_label = "emr-6.3.0"
+
+  applications = [
+    "Hadoop",
+    "Spark"
+  ]
+
+  service_role = aws_iam_role.emr_service_role.name
+  ec2_attributes {
+    instance_profile = aws_iam_instance_profile.emr_instance_profile.name
+    subnet_id        = aws_subnet.private_subnet_1.id
+  }
+
+  master_instance_group {
+    instance_type = "m5.xlarge"
+  }
+
+  core_instance_group {
+    instance_type = "m5.xlarge"
+    instance_count = 2
+  }
+
+  tags = {
+    Name = "media-streaming-emr-cluster"
+  }
+
+  visible_to_all_users = true
+  termination_protection = false
+}
+
+resource "aws_iam_role" "emr_service_role" {
+  name = "emr_service_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "elasticmapreduce.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "emr_service_policy_attachment" {
+  role       = aws_iam_role.emr_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceRole"
+}
+
+resource "aws_iam_instance_profile" "emr_instance_profile" {
+  name = "emr_instance_profile"
+  role = aws_iam_role.emr_instance_role.name
+}
+
+resource "aws_iam_role" "emr_instance_role" {
+  name = "emr_instance_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "emr_instance_policy_attachment" {
+  role       = aws_iam_role.emr_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
+}
+```
+
+### 2. **Variables File (variables.tf)**
+
+```hcl
+variable "region" {
+  description = "The AWS region to deploy resources in"
+  default     = "us-east-1"
+}
+```
+
+### 3. **Outputs File (outputs.tf)**
+
+```hcl
+output "vpc_id" {
+  value = aws_vpc.main.id
+}
+
+output "public_subnet_1_id" {
+  value = aws_subnet.public_subnet_1.id
+}
+
+output "public_subnet_2_id" {
+  value = aws_subnet.public_subnet_2.id
+}
+
+output "private_subnet_1_id" {
+  value = aws_subnet.private_subnet_1.id
+}
+
+output "private_subnet_2_id" {
+  value = aws_subnet.private_subnet_2.id
+}
+
+output "internet_gateway_id" {
+  value = aws_internet_gateway.igw.id
+}
+
+output "nat_gateway_id" {
+  value = aws_nat_gateway.nat.id
+}
+
+output "emr_cluster_id" {
+  value = aws_emr_cluster.emr.id
+}
+```
+
+### Steps to Deploy
+
+1. **Initialize Terraform**:
+   ```sh
+   terraform init
+   ```
+
+2. **Plan the Deployment**:
+   ```sh
+   terraform plan
+   ```
+
+3. **Apply the Deployment**:
+   ```sh
+   terraform apply
+   ```
+
+This Terraform configuration sets up a secure and scalable architecture for a media streaming company's big data analytics on AWS. It includes public and private subnets, an Internet Gateway, a NAT Gateway, and an Amazon EMR cluster for big data processing. Adjust the CIDR blocks, instance types, AMI IDs, and other parameters as needed to fit your specific requirements.
