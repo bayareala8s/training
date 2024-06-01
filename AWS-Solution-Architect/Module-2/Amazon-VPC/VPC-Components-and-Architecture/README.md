@@ -525,3 +525,327 @@ output "db_instance_private_ip" {
    ```
 
 This Terraform configuration sets up a highly available, secure, and scalable architecture for an e-commerce company on AWS. It includes public and private subnets spread across two availability zones, an internet gateway for public access, a NAT gateway for outbound access from private subnets, and security groups to control access between the web, application, and database servers. Adjust the AMI IDs, instance types, and other parameters as needed to fit your specific requirements.
+
+
+Below are Terraform scripts for setting up a Hybrid Cloud Environment for a Financial Services company. This setup includes a VPC with public and private subnets, an Internet Gateway, a VPN Gateway for secure connections to the on-premises data center, and necessary route tables and security groups.
+
+### 1. **Main Terraform Configuration File (main.tf)**
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  tags = {
+    Name = "financial-services-vpc"
+  }
+}
+
+resource "aws_subnet" "public_subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "public-subnet-1"
+  }
+}
+
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-east-1b"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "public-subnet-2"
+  }
+}
+
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1a"
+  tags = {
+    Name = "private-subnet-1"
+  }
+}
+
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.4.0/24"
+  availability_zone = "us-east-1b"
+  tags = {
+    Name = "private-subnet-2"
+  }
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "financial-services-igw"
+  }
+}
+
+resource "aws_vpn_gateway" "vpn_gw" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "financial-services-vpn-gw"
+  }
+}
+
+resource "aws_customer_gateway" "cg" {
+  bgp_asn    = 65000
+  ip_address = "203.0.113.12" # Replace with the actual public IP address of your on-premises VPN device
+  type       = "ipsec.1"
+  tags = {
+    Name = "financial-services-cg"
+  }
+}
+
+resource "aws_vpn_connection" "vpn" {
+  customer_gateway_id = aws_customer_gateway.cg.id
+  vpn_gateway_id      = aws_vpn_gateway.vpn_gw.id
+  type                = "ipsec.1"
+  static_routes_only  = true
+
+  tags = {
+    Name = "financial-services-vpn"
+  }
+}
+
+resource "aws_vpn_connection_route" "route" {
+  vpn_connection_id = aws_vpn_connection.vpn.id
+  destination_cidr_block = "192.168.1.0/24" # Replace with the actual on-premises network CIDR block
+}
+
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+  tags = {
+    Name = "public-route-table"
+  }
+}
+
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "192.168.1.0/24" # Replace with the actual on-premises network CIDR block
+    gateway_id = aws_vpn_gateway.vpn_gw.id
+  }
+  tags = {
+    Name = "private-route-table"
+  }
+}
+
+resource "aws_route_table_association" "public_subnet_1_rt_association" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "public_subnet_2_rt_association" {
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "private_subnet_1_rt_association" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "private_subnet_2_rt_association" {
+  subnet_id      = aws_subnet.private_subnet_2.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_security_group" "web_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web-sg"
+  }
+}
+
+resource "aws_security_group" "app_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "app-sg"
+  }
+}
+
+resource "aws_security_group" "db_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.app_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "db-sg"
+  }
+}
+
+resource "aws_instance" "web" {
+  ami                    = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.public_subnet_1.id
+  security_groups        = [aws_security_group.web_sg.name]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "web-server"
+  }
+}
+
+resource "aws_instance" "app" {
+  ami                    = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.private_subnet_1.id
+  security_groups        = [aws_security_group.app_sg.name]
+
+  tags = {
+    Name = "app-server"
+  }
+}
+
+resource "aws_instance" "db" {
+  ami                    = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.private_subnet_2.id
+  security_groups        = [aws_security_group.db_sg.name]
+
+  tags = {
+    Name = "db-server"
+  }
+}
+```
+
+### 2. **Variables File (variables.tf)**
+
+```hcl
+variable "region" {
+  description = "The AWS region to deploy resources in"
+  default     = "us-east-1"
+}
+```
+
+### 3. **Outputs File (outputs.tf)**
+
+```hcl
+output "vpc_id" {
+  value = aws_vpc.main.id
+}
+
+output "public_subnet_1_id" {
+  value = aws_subnet.public_subnet_1.id
+}
+
+output "public_subnet_2_id" {
+  value = aws_subnet.public_subnet_2.id
+}
+
+output "private_subnet_1_id" {
+  value = aws_subnet.private_subnet_1.id
+}
+
+output "private_subnet_2_id" {
+  value = aws_subnet.private_subnet_2.id
+}
+
+output "internet_gateway_id" {
+  value = aws_internet_gateway.igw.id
+}
+
+output "vpn_gateway_id" {
+  value = aws_vpn_gateway.vpn_gw.id
+}
+
+output "vpn_connection_id" {
+  value = aws_vpn_connection.vpn.id
+}
+
+output "web_instance_public_ip" {
+  value = aws_instance.web.public_ip
+}
+
+output "app_instance_private_ip" {
+  value =
+
+ aws_instance.app.private_ip
+}
+
+output "db_instance_private_ip" {
+  value = aws_instance.db.private_ip
+}
+```
+
+### Steps to Deploy
+
+1. **Initialize Terraform**:
+   ```sh
+   terraform init
+   ```
+
+2. **Plan the Deployment**:
+   ```sh
+   terraform plan
+   ```
+
+3. **Apply the Deployment**:
+   ```sh
+   terraform apply
+   ```
+
+This Terraform configuration sets up a Hybrid Cloud Environment for a financial services company, providing a secure and scalable architecture on AWS. It includes public and private subnets, an Internet Gateway for public access, a VPN Gateway for secure connections to the on-premises data center, and necessary route tables and security groups. Adjust the CIDR blocks, IP addresses, AMI IDs, instance types, and other parameters as needed to fit your specific requirements.
