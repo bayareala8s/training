@@ -146,3 +146,111 @@ This guide will cover the following topics:
 3. Store and retrieve data from DynamoDB.
 
 By following this guide, you will be able to harness the power of AWS Lambda for serverless data processing and build scalable, efficient, and cost-effective solutions.
+
+
+# Step-by-Step Guide for Real-time File Processing with AWS Lambda
+
+This guide will walk you through setting up a real-time file processing pipeline using AWS Lambda. We will cover the following steps:
+
+1. **Creating an S3 Bucket**
+2. **Setting Up IAM Role for Lambda**
+3. **Creating a Lambda Function**
+4. **Configuring S3 Event Notification**
+5. **Testing the Setup**
+
+## 1. Creating an S3 Bucket
+
+### Step 1: Create an S3 Bucket
+1. Log in to the AWS Management Console.
+2. Navigate to the S3 service.
+3. Click on "Create bucket".
+4. Enter a unique bucket name (e.g., `my-real-time-file-processing-bucket`).
+5. Choose the region and configure other settings as needed.
+6. Click on "Create bucket".
+
+## 2. Setting Up IAM Role for Lambda
+
+### Step 2: Create an IAM Role
+1. Go to the IAM console.
+2. Click on "Roles" in the left sidebar.
+3. Click on "Create role".
+4. Choose "AWS service" and select "Lambda".
+5. Click on "Next: Permissions".
+6. Attach the following policies:
+   - `AWSLambdaBasicExecutionRole`
+   - `AmazonS3ReadOnlyAccess`
+7. Click on "Next: Tags", then "Next: Review".
+8. Enter a role name (e.g., `LambdaS3AccessRole`).
+9. Click on "Create role".
+
+## 3. Creating a Lambda Function
+
+### Step 3: Create a Lambda Function
+1. Navigate to the AWS Lambda console.
+2. Click on "Create function".
+3. Choose "Author from scratch".
+4. Configure the following settings:
+   - Function name: `RealTimeFileProcessor`
+   - Runtime: Python 3.x (or any other supported runtime)
+   - Role: Choose the IAM role created earlier (`LambdaS3AccessRole`)
+5. Click on "Create function".
+
+### Step 4: Write the Lambda Function Code
+1. In the function code editor, write the following code:
+   ```python
+   import json
+   import boto3
+
+   s3 = boto3.client('s3')
+
+   def lambda_handler(event, context):
+       # Get the bucket name and file key from the event
+       bucket = event['Records'][0]['s3']['bucket']['name']
+       key = event['Records'][0]['s3']['object']['key']
+
+       # Fetch the file from S3
+       response = s3.get_object(Bucket=bucket, Key=key)
+       file_content = response['Body'].read().decode('utf-8')
+
+       # Process the file (for demonstration, we'll just print its content)
+       print(f"Processing file from bucket: {bucket}, key: {key}")
+       print(f"File content: {file_content}")
+
+       # You can add more processing logic here
+
+       return {
+           'statusCode': 200,
+           'body': json.dumps('File processed successfully')
+       }
+   ```
+2. Click on "Deploy".
+
+## 4. Configuring S3 Event Notification
+
+### Step 5: Set Up S3 Event Notification
+1. Go to the S3 console and navigate to your bucket (`my-real-time-file-processing-bucket`).
+2. Click on the "Properties" tab.
+3. Scroll down to the "Event notifications" section and click on "Create event notification".
+4. Enter a name for the notification (e.g., `FileUploadNotification`).
+5. Configure the following settings:
+   - Event types: Select "All object create events".
+   - Destination: Choose "Lambda function" and select `RealTimeFileProcessor`.
+6. Click on "Save changes".
+
+## 5. Testing the Setup
+
+### Step 6: Upload a Test File to S3
+1. Navigate to the S3 console and go to your bucket (`my-real-time-file-processing-bucket`).
+2. Click on "Upload".
+3. Choose a test file from your local system.
+4. Click on "Upload".
+
+### Step 7: Verify Lambda Execution
+1. Go to the AWS Lambda console.
+2. Select your Lambda function (`RealTimeFileProcessor`).
+3. Click on the "Monitor" tab and then "View logs in CloudWatch".
+4. Check the CloudWatch logs to see the output of your Lambda function. You should see logs indicating that the file was processed successfully and its content was printed.
+
+## Summary
+
+By following these steps, you have set up a real-time file processing pipeline using AWS Lambda and S3. Whenever a new file is uploaded to the S3 bucket, the Lambda function is triggered to process the file. This setup can be extended to include more complex processing logic as per your requirements.
