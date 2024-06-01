@@ -296,3 +296,515 @@ A media streaming service wants to ensure uninterrupted streaming experience wit
 
 These real-world examples illustrate how different types of applications can leverage AWS services and best practices to achieve high availability, security, and scalability.
 
+
+
+Here are the Terraform scripts for each of the real-world examples described:
+
+### Example 1: E-Commerce Website
+
+#### Terraform Script:
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+}
+
+resource "aws_subnet" "subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-east-1b"
+}
+
+resource "aws_subnet" "subnet_3" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1c"
+}
+
+resource "aws_security_group" "web_sg" {
+  name        = "web-sg"
+  description = "Allow web traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "web" {
+  count         = 3
+  ami           = "ami-0c55b159cbfafe1f0" // Example AMI ID
+  instance_type = "t3.micro"
+  subnet_id     = element([aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id], count.index)
+  security_groups = [aws_security_group.web_sg.id]
+}
+
+resource "aws_alb" "main" {
+  name            = "main-alb"
+  internal        = false
+  load_balancer_type = "application"
+  security_groups = [aws_security_group.web_sg.id]
+  subnets         = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id]
+}
+
+resource "aws_autoscaling_group" "web_asg" {
+  desired_capacity     = 3
+  max_size             = 6
+  min_size             = 3
+  vpc_zone_identifier  = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id]
+  launch_configuration = aws_launch_configuration.web_lc.id
+
+  tag {
+    key                 = "Name"
+    value               = "web-server"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_launch_configuration" "web_lc" {
+  name          = "web-lc"
+  image_id      = "ami-0c55b159cbfafe1f0" // Example AMI ID
+  instance_type = "t3.micro"
+  security_groups = [aws_security_group.web_sg.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_rds_instance" "main" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = "admin"
+  password             = "password"
+  multi_az             = true
+  publicly_accessible  = false
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  db_subnet_group_name = aws_db_subnet_group.main.name
+}
+
+resource "aws_db_subnet_group" "main" {
+  name       = "main"
+  subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id]
+}
+
+resource "aws_security_group" "db_sg" {
+  name        = "db-sg"
+  description = "Allow database traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+### Example 2: Financial Services Application
+
+#### Terraform Script:
+```hcl
+provider "aws" {
+  region = "eu-west-1"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "eu-west-1a"
+}
+
+resource "aws_subnet" "subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "eu-west-1b"
+}
+
+resource "aws_subnet" "subnet_3" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "eu-west-1c"
+}
+
+resource "aws_security_group" "web_sg" {
+  name        = "web-sg"
+  description = "Allow web traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "web" {
+  count         = 3
+  ami           = "ami-0c55b159cbfafe1f0" // Example AMI ID
+  instance_type = "t3.micro"
+  subnet_id     = element([aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id], count.index)
+  security_groups = [aws_security_group.web_sg.id]
+}
+
+resource "aws_alb" "main" {
+  name            = "main-alb"
+  internal        = false
+  load_balancer_type = "application"
+  security_groups = [aws_security_group.web_sg.id]
+  subnets         = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id]
+}
+
+resource "aws_autoscaling_group" "web_asg" {
+  desired_capacity     = 3
+  max_size             = 6
+  min_size             = 3
+  vpc_zone_identifier  = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id]
+  launch_configuration = aws_launch_configuration.web_lc.id
+
+  tag {
+    key                 = "Name"
+    value               = "web-server"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_launch_configuration" "web_lc" {
+  name          = "web-lc"
+  image_id      = "ami-0c55b159cbfafe1f0" // Example AMI ID
+  instance_type = "t3.micro"
+  security_groups = [aws_security_group.web_sg.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_aurora_cluster" "main" {
+  cluster_identifier = "aurora-cluster"
+  engine             = "aurora-mysql"
+  engine_version     = "5.7.mysql_aurora.2.03.4"
+  master_username    = "admin"
+  master_password    = "password"
+
+  db_subnet_group_name = aws_db_subnet_group.main.name
+
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+
+  depends_on = [aws_rds_cluster_instance.instance_1, aws_rds_cluster_instance.instance_2]
+}
+
+resource "aws_rds_cluster_instance" "instance_1" {
+  identifier        = "aurora-instance-1"
+  cluster_identifier = aws_aurora_cluster.main.id
+  instance_class    = "db.t3.medium"
+  engine            = aws_aurora_cluster.main.engine
+
+
+  engine_version    = aws_aurora_cluster.main.engine_version
+  publicly_accessible = false
+}
+
+resource "aws_rds_cluster_instance" "instance_2" {
+  identifier        = "aurora-instance-2"
+  cluster_identifier = aws_aurora_cluster.main.id
+  instance_class    = "db.t3.medium"
+  engine            = aws_aurora_cluster.main.engine
+  engine_version    = aws_aurora_cluster.main.engine_version
+  publicly_accessible = false
+}
+
+resource "aws_db_subnet_group" "main" {
+  name       = "main"
+  subnet_ids = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id, aws_subnet.subnet_3.id]
+}
+
+resource "aws_security_group" "db_sg" {
+  name        = "db-sg"
+  description = "Allow database traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+### Example 3: Media Streaming Service
+
+#### Terraform Script:
+```hcl
+provider "aws" {
+  region = "us-west-1"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "subnet_1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-west-1a"
+}
+
+resource "aws_subnet" "subnet_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-west-1b"
+}
+
+resource "aws_security_group" "web_sg" {
+  name        = "web-sg"
+  description = "Allow web traffic"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "web" {
+  count         = 2
+  ami           = "ami-0c55b159cbfafe1f0" // Example AMI ID
+  instance_type = "t3.micro"
+  subnet_id     = element([aws_subnet.subnet_1.id, aws_subnet.subnet_2.id], count.index)
+  security_groups = [aws_security_group.web_sg.id]
+}
+
+resource "aws_alb" "main" {
+  name            = "main-alb"
+  internal        = false
+  load_balancer_type = "application"
+  security_groups = [aws_security_group.web_sg.id]
+  subnets         = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
+}
+
+resource "aws_autoscaling_group" "web_asg" {
+  desired_capacity     = 2
+  max_size             = 4
+  min_size             = 2
+  vpc_zone_identifier  = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
+  launch_configuration = aws_launch_configuration.web_lc.id
+
+  tag {
+    key                 = "Name"
+    value               = "web-server"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_launch_configuration" "web_lc" {
+  name          = "web-lc"
+  image_id      = "ami-0c55b159cbfafe1f0" // Example AMI ID
+  instance_type = "t3.micro"
+  security_groups = [aws_security_group.web_sg.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_cloudfront_distribution" "media" {
+  origin {
+    domain_name = aws_s3_bucket.media.bucket_regional_domain_name
+    origin_id   = "media-s3-origin"
+  }
+
+  enabled             = true
+  default_cache_behavior {
+    target_origin_id       = "media-s3-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD"]
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
+resource "aws_s3_bucket" "media" {
+  bucket = "media-bucket"
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_replication_configuration" "media" {
+  bucket = aws_s3_bucket.media.bucket
+
+  role = aws_iam_role.replication_role.arn
+
+  rule {
+    id     = "ReplicationRule"
+    status = "Enabled"
+
+    destination {
+      bucket = aws_s3_bucket.replica.arn
+    }
+  }
+}
+
+resource "aws_s3_bucket" "replica" {
+  bucket = "media-bucket-replica"
+  acl    = "private"
+  region = "eu-central-1"
+}
+
+resource "aws_iam_role" "replication_role" {
+  name = "replication-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "s3.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "replication_policy" {
+  name = "replication-policy"
+  role = aws_iam_role.replication_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetReplicationConfiguration",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.media.arn
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObjectVersion",
+          "s3:GetObjectVersionAcl"
+        ]
+        Resource = [
+          "${aws_s3_bucket.media.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ReplicateObject",
+          "s3:ReplicateDelete",
+          "s3:ReplicateTags"
+        ]
+        Resource = [
+          "${aws_s3_bucket.replica.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+```
+
+These scripts provide a foundation for deploying high-availability architectures on AWS for different scenarios. You can further customize them based on specific requirements and best practices.
