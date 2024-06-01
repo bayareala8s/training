@@ -212,3 +212,620 @@ Feel free to reach out if you need further details on any specific aspect of des
 ### Conclusion
 
 These real-world examples demonstrate how various AWS services can be combined to build highly available and fault-tolerant architectures. By leveraging AWS's robust infrastructure and managed services, organizations can ensure their applications remain resilient, secure, and performant under varying conditions.
+
+
+### Real-World Example 1: E-Commerce Website
+
+#### Terraform Script for E-Commerce Website
+
+1. **Setup the Project Directory Structure**
+
+   ```
+   e-commerce-website/
+   ├── main.tf
+   ├── variables.tf
+   ├── outputs.tf
+   └── ec2.tf
+   ```
+
+2. **main.tf**
+
+   ```hcl
+   provider "aws" {
+     region = "us-west-2"
+   }
+
+   resource "aws_vpc" "main" {
+     cidr_block = "10.0.0.0/16"
+   }
+
+   resource "aws_subnet" "public" {
+     count             = 2
+     vpc_id            = aws_vpc.main.id
+     cidr_block        = "10.0.${count.index}.0/24"
+     availability_zone = element(data.aws_availability_zones.available.names, count.index)
+     map_public_ip_on_launch = true
+   }
+
+   resource "aws_internet_gateway" "gw" {
+     vpc_id = aws_vpc.main.id
+   }
+
+   resource "aws_route_table" "public" {
+     vpc_id = aws_vpc.main.id
+
+     route {
+       cidr_block = "0.0.0.0/0"
+       gateway_id = aws_internet_gateway.gw.id
+     }
+   }
+
+   resource "aws_route_table_association" "public" {
+     count          = 2
+     subnet_id      = element(aws_subnet.public.*.id, count.index)
+     route_table_id = aws_route_table.public.id
+   }
+
+   module "elb" {
+     source  = "terraform-aws-modules/elb/aws"
+     version = "~> 2.0"
+
+     name = "web-traffic"
+
+     subnets         = aws_subnet.public[*].id
+     security_groups = [aws_security_group.elb.id]
+
+     listener = [
+       {
+         instance_port     = 80
+         instance_protocol = "HTTP"
+         lb_port           = 80
+         lb_protocol       = "HTTP"
+       },
+     ]
+
+     health_check = {
+       target              = "HTTP:80/"
+       interval            = 30
+       timeout             = 5
+       healthy_threshold   = 2
+       unhealthy_threshold = 2
+     }
+
+     access_logs = {
+       bucket = "my-elb-logs"
+       prefix = "alb"
+       enabled = true
+     }
+   }
+
+   resource "aws_security_group" "elb" {
+     name        = "allow_web_traffic"
+     description = "Allow web traffic"
+     vpc_id      = aws_vpc.main.id
+
+     ingress {
+       from_port   = 80
+       to_port     = 80
+       protocol    = "tcp"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+
+     egress {
+       from_port   = 0
+       to_port     = 0
+       protocol    = "-1"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+   }
+   ```
+
+3. **variables.tf**
+
+   ```hcl
+   variable "region" {
+     description = "The AWS region to create resources in"
+     default     = "us-west-2"
+   }
+
+   variable "instance_type" {
+     description = "The instance type for the EC2 instances"
+     default     = "t2.micro"
+   }
+
+   variable "key_name" {
+     description = "The SSH key name to use for the EC2 instances"
+     default     = "my-key"
+   }
+   ```
+
+4. **outputs.tf**
+
+   ```hcl
+   output "elb_dns_name" {
+     value = module.elb.this_elb_dns_name
+   }
+   ```
+
+5. **ec2.tf**
+
+   ```hcl
+   resource "aws_security_group" "web" {
+     name        = "allow_http"
+     description = "Allow HTTP traffic"
+     vpc_id      = aws_vpc.main.id
+
+     ingress {
+       from_port   = 80
+       to_port     = 80
+       protocol    = "tcp"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+
+     egress {
+       from_port   = 0
+       to_port     = 0
+       protocol    = "-1"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+   }
+
+   resource "aws_instance" "web" {
+     count         = 2
+     ami           = "ami-0c55b159cbfafe1f0"
+     instance_type = var.instance_type
+     key_name      = var.key_name
+
+     subnet_id              = element(aws_subnet.public.*.id, count.index)
+     vpc_security_group_ids = [aws_security_group.web.id]
+
+     user_data = <<-EOF
+               #!/bin/bash
+               sudo yum update -y
+               sudo yum install -y httpd
+               sudo systemctl start httpd
+               sudo systemctl enable httpd
+               echo "Hello, World" > /var/www/html/index.html
+               EOF
+
+     tags = {
+       Name = "web-server-${count.index}"
+     }
+   }
+   ```
+
+### Real-World Example 2: Financial Services Application
+
+#### Terraform Script for Financial Services Application
+
+1. **Setup the Project Directory Structure**
+
+   ```
+   financial-services/
+   ├── main.tf
+   ├── variables.tf
+   ├── outputs.tf
+   └── lambda.tf
+   ```
+
+2. **main.tf**
+
+   ```hcl
+   provider "aws" {
+     region = "us-east-1"
+   }
+
+   resource "aws_vpc" "main" {
+     cidr_block = "10.0.0.0/16"
+   }
+
+   resource "aws_subnet" "public" {
+     count             = 2
+     vpc_id            = aws_vpc.main.id
+     cidr_block        = "10.0.${count.index}.0/24"
+     availability_zone = element(data.aws_availability_zones.available.names, count.index)
+     map_public_ip_on_launch = true
+   }
+
+   resource "aws_internet_gateway" "gw" {
+     vpc_id = aws_vpc.main.id
+   }
+
+   resource "aws_route_table" "public" {
+     vpc_id = aws_vpc.main.id
+
+     route {
+       cidr_block = "0.0.0.0/0"
+       gateway_id = aws_internet_gateway.gw.id
+     }
+   }
+
+   resource "aws_route_table_association" "public" {
+     count          = 2
+     subnet_id      = element(aws_subnet.public.*.id, count.index)
+     route_table_id = aws_route_table.public.id
+   }
+
+   module "api_gateway" {
+     source  = "terraform-aws-modules/apigateway-v2/aws"
+     version = "~> 1.0"
+
+     name = "transaction-api"
+   }
+
+   resource "aws_security_group" "api" {
+     name        = "allow_api_traffic"
+     description = "Allow API traffic"
+     vpc_id      = aws_vpc.main.id
+
+     ingress {
+       from_port   = 443
+       to_port     = 443
+       protocol    = "tcp"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+
+     egress {
+       from_port   = 0
+       to_port     = 0
+       protocol    = "-1"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+   }
+   ```
+
+3. **variables.tf**
+
+   ```hcl
+   variable "region" {
+     description = "The AWS region to create resources in"
+     default     = "us-east-1"
+   }
+
+   variable "lambda_memory_size" {
+     description = "The amount of memory for the Lambda function"
+     default     = 128
+   }
+
+   variable "lambda_timeout" {
+     description = "The timeout for the Lambda function"
+     default     = 60
+   }
+   ```
+
+4. **outputs.tf**
+
+   ```hcl
+   output "api_gateway_url" {
+     value = module.api_gateway.api_url
+   }
+   ```
+
+5. **lambda.tf**
+
+   ```hcl
+   resource "aws_iam_role" "lambda_exec" {
+     name = "lambda_exec_role"
+     assume_role_policy = <<-EOF
+       {
+         "Version": "2012-10-17",
+         "Statement": [
+           {
+             "Action": "sts:AssumeRole",
+             "Principal": {
+               "Service": "lambda.amazonaws.com"
+             },
+             "Effect": "Allow",
+             "Sid": ""
+           }
+         ]
+       }
+     EOF
+   }
+
+   resource "aws_iam_role_policy" "lambda_policy" {
+     name   = "lambda_policy"
+     role   = aws_iam_role.lambda_exec.id
+     policy = <<-EOF
+       {
+         "Version": "2012-10-17",
+         "Statement": [
+           {
+             "Action": [
+               "logs:CreateLogGroup",
+               "logs:CreateLogStream",
+               "logs:PutLogEvents"
+             ],
+             "Resource": "arn:aws:logs:*:*:*",
+             "Effect": "Allow"
+           }
+         ]
+       }
+     EOF
+   }
+
+   resource "aws_lambda_function" "transaction_processor" {
+     filename         = "lambda.zip"
+     function_name    = "TransactionProcessor"
+     role             = aws_iam_role.lambda_exec.arn
+     handler          = "index.handler"
+     runtime          = "nodejs12.x"
+    
+
+ memory_size      = var.lambda_memory_size
+     timeout          = var.lambda_timeout
+     source_code_hash = filebase64sha256("lambda.zip")
+
+     environment {
+       variables = {
+         STAGE = "dev"
+       }
+     }
+   }
+
+   resource "aws_api_gateway_integration" "lambda" {
+     rest_api_id             = module.api_gateway.rest_api_id
+     resource_id             = module.api_gateway.root_resource_id
+     http_method             = "POST"
+     integration_http_method = "POST"
+     type                    = "AWS_PROXY"
+     uri                     = aws_lambda_function.transaction_processor.invoke_arn
+   }
+
+   resource "aws_api_gateway_method" "method" {
+     rest_api_id   = module.api_gateway.rest_api_id
+     resource_id   = module.api_gateway.root_resource_id
+     http_method   = "POST"
+     authorization = "NONE"
+   }
+
+   resource "aws_lambda_permission" "api_gateway" {
+     statement_id  = "AllowAPIGatewayInvoke"
+     action        = "lambda:InvokeFunction"
+     function_name = aws_lambda_function.transaction_processor.function_name
+     principal     = "apigateway.amazonaws.com"
+     source_arn    = "${module.api_gateway.execution_arn}/*/*"
+   }
+   ```
+
+### Real-World Example 3: Media Streaming Service
+
+#### Terraform Script for Media Streaming Service
+
+1. **Setup the Project Directory Structure**
+
+   ```
+   media-streaming/
+   ├── main.tf
+   ├── variables.tf
+   ├── outputs.tf
+   └── ecs.tf
+   ```
+
+2. **main.tf**
+
+   ```hcl
+   provider "aws" {
+     region = "us-west-2"
+   }
+
+   resource "aws_vpc" "main" {
+     cidr_block = "10.0.0.0/16"
+   }
+
+   resource "aws_subnet" "public" {
+     count             = 2
+     vpc_id            = aws_vpc.main.id
+     cidr_block        = "10.0.${count.index}.0/24"
+     availability_zone = element(data.aws_availability_zones.available.names, count.index)
+     map_public_ip_on_launch = true
+   }
+
+   resource "aws_internet_gateway" "gw" {
+     vpc_id = aws_vpc.main.id
+   }
+
+   resource "aws_route_table" "public" {
+     vpc_id = aws_vpc.main.id
+
+     route {
+       cidr_block = "0.0.0.0/0"
+       gateway_id = aws_internet_gateway.gw.id
+     }
+   }
+
+   resource "aws_route_table_association" "public" {
+     count          = 2
+     subnet_id      = element(aws_subnet.public.*.id, count.index)
+     route_table_id = aws_route_table.public.id
+   }
+
+   resource "aws_security_group" "ecs" {
+     name        = "allow_http_https"
+     description = "Allow HTTP and HTTPS traffic"
+     vpc_id      = aws_vpc.main.id
+
+     ingress {
+       from_port   = 80
+       to_port     = 80
+       protocol    = "tcp"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+
+     ingress {
+       from_port   = 443
+       to_port     = 443
+       protocol    = "tcp"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+
+     egress {
+       from_port   = 0
+       to_port     = 0
+       protocol    = "-1"
+       cidr_blocks = ["0.0.0.0/0"]
+     }
+   }
+
+   resource "aws_iam_role" "ecs_task_execution" {
+     name = "ecs_task_execution_role"
+     assume_role_policy = <<-EOF
+       {
+         "Version": "2012-10-17",
+         "Statement": [
+           {
+             "Action": "sts:AssumeRole",
+             "Principal": {
+               "Service": "ecs-tasks.amazonaws.com"
+             },
+             "Effect": "Allow",
+             "Sid": ""
+           }
+         ]
+       }
+     EOF
+   }
+
+   resource "aws_iam_role_policy" "ecs_task_execution_policy" {
+     name   = "ecs_task_execution_policy"
+     role   = aws_iam_role.ecs_task_execution.id
+     policy = <<-EOF
+       {
+         "Version": "2012-10-17",
+         "Statement": [
+           {
+             "Action": [
+               "logs:CreateLogGroup",
+               "logs:CreateLogStream",
+               "logs:PutLogEvents",
+               "ecr:GetDownloadUrlForLayer",
+               "ecr:BatchGetImage",
+               "ecr:GetAuthorizationToken",
+               "s3:GetObject",
+               "s3:PutObject"
+             ],
+             "Resource": "*",
+             "Effect": "Allow"
+           }
+         ]
+       }
+     EOF
+   }
+   ```
+
+3. **variables.tf**
+
+   ```hcl
+   variable "region" {
+     description = "The AWS region to create resources in"
+     default     = "us-west-2"
+   }
+
+   variable "instance_type" {
+     description = "The instance type for the ECS instances"
+     default     = "t2.micro"
+   }
+
+   variable "key_name" {
+     description = "The SSH key name to use for the ECS instances"
+     default     = "my-key"
+   }
+   ```
+
+4. **outputs.tf**
+
+   ```hcl
+   output "ecs_cluster_arn" {
+     value = aws_ecs_cluster.main.arn
+   }
+   ```
+
+5. **ecs.tf**
+
+   ```hcl
+   resource "aws_ecs_cluster" "main" {
+     name = "media-streaming-cluster"
+   }
+
+   resource "aws_ecs_task_definition" "media_streaming" {
+     family                   = "media_streaming_task"
+     execution_role_arn       = aws_iam_role.ecs_task_execution.arn
+     container_definitions    = <<DEFINITION
+       [
+         {
+           "name": "media_streaming_container",
+           "image": "nginx",
+           "essential": true,
+           "memory": 256,
+           "cpu": 256,
+           "portMappings": [
+             {
+               "containerPort": 80,
+               "hostPort": 80
+             }
+           ]
+         }
+       ]
+     DEFINITION
+     requires_compatibilities = ["EC2"]
+     network_mode             = "awsvpc"
+   }
+
+   resource "aws_ecs_service" "media_streaming_service" {
+     name            = "media-streaming-service"
+     cluster         = aws_ecs_cluster.main.id
+     task_definition = aws_ecs_task_definition.media_streaming.arn
+     desired_count   = 2
+
+     launch_type = "EC2"
+
+     network_configuration {
+       subnets         = aws_subnet.public[*].id
+       security_groups = [aws_security_group.ecs.id]
+     }
+
+     load_balancer {
+       target_group_arn = aws_lb_target_group.media_streaming.arn
+       container_name   = "media_streaming_container"
+       container_port   = 80
+     }
+   }
+
+   resource "aws_lb" "media_streaming" {
+     name               = "media-streaming-lb"
+     internal           = false
+     load_balancer_type = "application"
+     security_groups    = [aws_security_group.ecs.id]
+     subnets            = aws_subnet.public[*].id
+
+     enable_deletion_protection = false
+   }
+
+   resource "aws_lb_target_group" "media_streaming" {
+     name        = "media-streaming-tg"
+     port        = 80
+     protocol    = "HTTP"
+     vpc_id      = aws_vpc.main.id
+
+     health_check {
+       interval            = 30
+       path                = "/"
+       timeout             = 5
+       healthy_threshold   = 5
+       unhealthy_threshold = 2
+     }
+   }
+
+   resource "aws_lb_listener" "http" {
+     load_balancer_arn = aws_lb.media_streaming.arn
+     port              = 80
+     protocol          = "HTTP"
+
+     default_action {
+       type             = "forward"
+       target_group_arn = aws_lb_target_group.media_streaming.arn
+     }
+   }
+   ```
+
+These scripts provide a comprehensive setup for each real-world example, leveraging various AWS services to achieve high availability and fault tolerance. You can further customize and extend these scripts based on specific requirements and configurations.
