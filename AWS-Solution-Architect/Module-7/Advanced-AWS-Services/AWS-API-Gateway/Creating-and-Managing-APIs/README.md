@@ -1053,3 +1053,195 @@ terraform apply
 ### Conclusion
 
 This Terraform script sets up a real-time chat application using AWS API Gateway (WebSocket API), AWS Lambda, and Amazon DynamoDB. The script includes resources for creating DynamoDB tables, IAM roles, Lambda functions, and API Gateway resources. This example can be extended with additional functionality and more complex business logic as needed.
+
+
+
+Here is a Terraform script to create an IoT data ingestion and processing pipeline using AWS IoT Core, AWS Lambda, Amazon Kinesis, and Amazon S3.
+
+### Prerequisites
+- Install [Terraform](https://www.terraform.io/downloads.html)
+- AWS CLI configured with appropriate IAM permissions
+- Basic understanding of Terraform and AWS services
+
+### Terraform Configuration
+
+#### Step 1: Create a `main.tf` file
+
+```hcl
+provider "aws" {
+  region = "us-west-2"  # Specify your AWS region
+}
+
+# Create an S3 bucket to store processed data
+resource "aws_s3_bucket" "iot_data_bucket" {
+  bucket = "iot-data-bucket-${random_id.bucket_id.hex}"
+}
+
+resource "random_id" "bucket_id" {
+  byte_length = 4
+}
+
+# Create a Kinesis stream for IoT data
+resource "aws_kinesis_stream" "iot_stream" {
+  name             = "iot_data_stream"
+  shard_count      = 1
+  retention_period = 24
+}
+
+# IAM Role for IoT Rule to publish to Kinesis
+resource "aws_iam_role" "iot_role" {
+  name = "iot_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "iot.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "iot_policy" {
+  name   = "iot_policy"
+  role   = aws_iam_role.iot_role.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "kinesis:PutRecord",
+        Effect = "Allow",
+        Resource = aws_kinesis_stream.iot_stream.arn
+      }
+    ]
+  })
+}
+
+# Create an IoT Topic Rule to send data to Kinesis
+resource "aws_iot_topic_rule" "iot_rule" {
+  name = "iot_data_rule"
+  sql  = "SELECT * FROM 'iot/data'"
+
+  action {
+    kinesis {
+      role_arn      = aws_iam_role.iot_role.arn
+      stream_name   = aws_kinesis_stream.iot_stream.name
+      partition_key = "${timestamp()}"
+    }
+  }
+}
+
+# IAM Role for Lambda
+resource "aws_iam_role" "lambda_exec_role" {
+  name = "lambda_exec_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    "arn:aws:iam::aws:policy/AmazonKinesisFullAccess",
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  ]
+}
+
+# Lambda Function to process data from Kinesis and store in S3
+resource "aws_lambda_function" "iot_lambda" {
+  filename         = "iot_lambda.zip"  # Path to your Lambda deployment package
+  function_name    = "iot_lambda"
+  role             = aws_iam_role.lambda_exec_role.arn
+  handler          = "index.handler"  # Update with your handler name
+  runtime          = "nodejs14.x"  # Update with your runtime
+  source_code_hash = filebase64sha256("iot_lambda.zip")
+
+  environment {
+    variables = {
+      BUCKET_NAME = aws_s3_bucket.iot_data_bucket.bucket
+    }
+  }
+}
+
+# Create Event Source Mapping for Kinesis to Lambda
+resource "aws_lambda_event_source_mapping" "kinesis_to_lambda" {
+  event_source_arn = aws_kinesis_stream.iot_stream.arn
+  function_name    = aws_lambda_function.iot_lambda.arn
+  starting_position = "LATEST"
+}
+
+output "s3_bucket_name" {
+  value = aws_s3_bucket.iot_data_bucket.bucket
+}
+
+output "iot_topic" {
+  value = "iot/data"
+}
+
+output "kinesis_stream_name" {
+  value = aws_kinesis_stream.iot_stream.name
+}
+```
+
+#### Step 2: Prepare the Lambda Function
+
+Create a simple Node.js Lambda function and package it into a ZIP file named `iot_lambda.zip`.
+
+**index.js:**
+
+```javascript
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+
+exports.handler = async (event) => {
+  const bucketName = process.env.BUCKET_NAME;
+  const records = event.Records;
+
+  for (const record of records) {
+    const payload = Buffer.from(record.kinesis.data, 'base64').toString('utf-8');
+    const timestamp = new Date().toISOString();
+    const key = `data/${timestamp}.json`;
+
+    const params = {
+      Bucket: bucketName,
+      Key: key,
+      Body: payload,
+      ContentType: 'application/json'
+    };
+
+    try {
+      await s3.putObject(params).promise();
+      console.log(`Successfully uploaded data to ${bucketName}/${key}`);
+    } catch (error) {
+      console.error(`Failed to upload data: ${error.message}`);
+    }
+  }
+
+  return `Successfully processed ${records.length} records.`;
+};
+```
+
+Create the ZIP file:
+
+```bash
+zip -r iot_lambda.zip index.js node_modules
+```
+
+#### Step 3: Initialize Terraform and Apply
+
+Run the following commands in your terminal:
+
+```bash
+terraform init
+terraform apply
+```
+
+### Conclusion
+
+This Terraform script sets up an IoT data ingestion and processing pipeline using AWS IoT Core, AWS Lambda, Amazon Kinesis, and Amazon S3. The script includes resources for creating an S3 bucket, Kinesis stream, IAM roles, Lambda functions, and IoT topic rules. This example can be extended with additional functionality and more complex business logic as needed.
