@@ -1202,3 +1202,46 @@ output "api_invoke_url" {
 ### Summary
 
 By following these steps, you have set up a serverless backend for a mobile application using AWS Lambda, API Gateway, and DynamoDB. The Terraform script handles the creation of the DynamoDB table, IAM role, Lambda function, API Gateway resources, and necessary permissions and integrations. This setup allows you to create and retrieve user data through a RESTful API.
+
+
+AWS Lambda is a powerful service for serverless data processing, but it comes with several limitations that you should be aware of. Here are the key limitations:
+
+### 1. **Execution Timeout**
+- **Maximum Execution Time**: AWS Lambda functions have a maximum execution timeout of 15 minutes. If your data processing task takes longer than this, you will need to break it into smaller tasks or use other AWS services such as AWS Step Functions to orchestrate longer-running workflows.
+
+### 2. **Resource Limits**
+- **Memory Allocation**: Lambda functions can be allocated memory between 128 MB to 10,240 MB (10 GB). If your data processing tasks require more memory, you may need to consider other services or architectures.
+- **Ephemeral Storage**: Each Lambda function has 512 MB of ephemeral storage in the `/tmp` directory. This storage is for temporary files only and is not persisted between invocations. For larger temporary storage needs, consider using Amazon S3.
+
+### 3. **Concurrency Limits**
+- **Account Concurrency Limits**: AWS enforces a default regional concurrency limit of 1,000 invocations per account. This can be increased by requesting a limit increase through AWS Support.
+- **Reserved Concurrency**: You can reserve a portion of your account’s concurrency limit for a specific function. However, reserving concurrency limits may affect other Lambda functions running in your account.
+
+### 4. **Cold Start Latency**
+- **Cold Starts**: When a Lambda function is invoked for the first time or after being idle, it experiences a cold start which can introduce latency. This is especially noticeable for functions with large deployment packages or those requiring a VPC connection.
+
+### 5. **Deployment Package Size**
+- **Deployment Package Size**: The maximum size of a Lambda deployment package is 50 MB (compressed) and 250 MB (uncompressed, including layers). For larger dependencies, you need to use Lambda layers or S3 to store the dependencies.
+
+### 6. **Limited Execution Environment**
+- **Execution Environment**: Lambda functions run in a stateless, constrained execution environment. There are restrictions on the available libraries and system calls, and you cannot use certain features like multi-threading or background processes in the same way you can with traditional servers.
+
+### 7. **Networking Constraints**
+- **VPC Networking**: If your Lambda function needs to access resources in a VPC, such as RDS instances, there may be added cold start latency and you must ensure proper subnet and security group configurations.
+- **Outbound Internet Access**: Lambda functions not running inside a VPC have automatic outbound internet access. However, if they are in a VPC, they need a NAT gateway or a NAT instance for outbound internet access.
+
+### 8. **Error Handling and Retries**
+- **Limited Retry Mechanisms**: While Lambda has built-in retry mechanisms for asynchronous invocations, these retries might not be sufficient for all use cases. You might need to implement additional error handling and retry logic.
+
+### 9. **Monitoring and Debugging**
+- **Limited Built-in Monitoring**: AWS CloudWatch provides basic logging and monitoring, but more detailed observability might require integrating with third-party tools or additional AWS services like X-Ray.
+
+### 10. **Cost Considerations**
+- **Cost**: While AWS Lambda can be cost-effective for many use cases, it might become expensive for workloads with high concurrency or long-running processes due to the pay-per-invocation and pay-per-duration pricing model.
+
+### 11. **Language and Runtime Support**
+- **Limited Language Support**: While AWS Lambda supports several popular languages (Node.js, Python, Java, Go, Ruby, .NET Core), it might not support every language or runtime version you need. Custom runtimes can be used, but they require additional maintenance.
+
+### Summary
+
+While AWS Lambda is a robust and scalable option for serverless data processing, it's essential to understand these limitations and design your applications accordingly. For tasks that exceed these limitations, you might need to consider using other AWS services or hybrid architectures.
