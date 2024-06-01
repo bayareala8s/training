@@ -1,4 +1,4 @@
-Sure, here's a detailed step-by-step guide to setting up AWS Transfer Family for SFTP. This guide will cover creating an SFTP server, configuring IAM roles and policies, setting up user accounts, and testing the setup.
+Here's a detailed step-by-step guide to setting up AWS Transfer Family for SFTP. This guide will cover creating an SFTP server, configuring IAM roles and policies, setting up user accounts, and testing the setup.
 
 ### Prerequisites
 
