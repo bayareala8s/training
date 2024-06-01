@@ -235,3 +235,207 @@ resource "aws_route" "vpn_route" {
 - Robust security measures to protect against threats and attacks.
 
 These examples demonstrate how AWS VPN can be leveraged to address various business needs, ensuring secure, reliable, and scalable network connections.
+
+
+Sure! Below are the Terraform scripts for each of the real-world examples.
+
+### **Example 1: Enterprise HQ and Branch Office Connectivity**
+
+#### **Terraform Script for HQ Site-to-Site VPN Setup**
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_vpc" "main_vpc" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_vpn_gateway" "vgw" {
+  vpc_id = aws_vpc.main_vpc.id
+}
+
+resource "aws_customer_gateway" "cgw_hq" {
+  bgp_asn    = 65000
+  ip_address = "198.51.100.1"  # Replace with HQ on-premises public IP
+  type       = "ipsec.1"
+}
+
+resource "aws_vpn_connection" "vpn_hq" {
+  customer_gateway_id = aws_customer_gateway.cgw_hq.id
+  vpn_gateway_id      = aws_vpn_gateway.vgw.id
+  type                = "ipsec.1"
+
+  static_routes_only = true
+
+  tags = {
+    Name = "hq-vpn-connection"
+  }
+}
+
+resource "aws_vpn_connection_route" "vpn_route_hq" {
+  vpn_connection_id      = aws_vpn_connection.vpn_hq.id
+  destination_cidr_block = "192.168.1.0/24"  # Replace with HQ on-premises subnet
+}
+
+resource "aws_route" "vpn_route_hq" {
+  route_table_id         = aws_vpc.main_vpc.main_route_table_id
+  destination_cidr_block = "192.168.1.0/24"  # Replace with HQ on-premises subnet
+  gateway_id             = aws_vpn_gateway.vgw.id
+}
+```
+
+#### **Terraform Script for Branch Office Site-to-Site VPN Setup**
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_customer_gateway" "cgw_branch" {
+  bgp_asn    = 65000
+  ip_address = "198.51.100.2"  # Replace with Branch Office on-premises public IP
+  type       = "ipsec.1"
+}
+
+resource "aws_vpn_connection" "vpn_branch" {
+  customer_gateway_id = aws_customer_gateway.cgw_branch.id
+  vpn_gateway_id      = aws_vpn_gateway.vgw.id
+  type                = "ipsec.1"
+
+  static_routes_only = true
+
+  tags = {
+    Name = "branch-vpn-connection"
+  }
+}
+
+resource "aws_vpn_connection_route" "vpn_route_branch" {
+  vpn_connection_id      = aws_vpn_connection.vpn_branch.id
+  destination_cidr_block = "192.168.2.0/24"  # Replace with Branch Office on-premises subnet
+}
+
+resource "aws_route" "vpn_route_branch" {
+  route_table_id         = aws_vpc.main_vpc.main_route_table_id
+  destination_cidr_block = "192.168.2.0/24"  # Replace with Branch Office on-premises subnet
+  gateway_id             = aws_vpn_gateway.vgw.id
+}
+```
+
+### **Example 2: Remote Workforce Access**
+
+#### **Terraform Script for Client VPN Endpoint Setup**
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_vpc" "main_vpc" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "vpn_subnet" {
+  vpc_id     = aws_vpc.main_vpc.id
+  cidr_block = "10.0.1.0/24"
+}
+
+resource "aws_security_group" "vpn_sg" {
+  vpc_id = aws_vpc.main_vpc.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_client_vpn_endpoint" "client_vpn" {
+  description               = "Client VPN Endpoint"
+  server_certificate_arn    = "arn:aws:acm:us-west-2:123456789012:certificate/abcd1234-efgh-5678-ijkl-9012mnopqrst"  # Replace with your ACM certificate ARN
+  authentication_options {
+    type                       = "certificate-authentication"
+    root_certificate_chain_arn = "arn:aws:acm:us-west-2:123456789012:certificate/abcd1234-efgh-5678-ijkl-9012mnopqrst"  # Replace with your ACM certificate ARN
+  }
+  connection_log_options {
+    enabled             = true
+    cloudwatch_log_group = "client-vpn-logs"
+    cloudwatch_log_stream = "client-vpn-log-stream"
+  }
+  dns_servers            = ["8.8.8.8"]
+  client_cidr_block      = "10.2.0.0/16"
+  split_tunnel           = false
+  security_group_ids     = [aws_security_group.vpn_sg.id]
+  vpc_id                 = aws_vpc.main_vpc.id
+  transport_protocol     = "udp"
+}
+
+resource "aws_client_vpn_network_association" "vpn_association" {
+  client_vpn_endpoint_id = aws_client_vpn_endpoint.client_vpn.id
+  subnet_id              = aws_subnet.vpn_subnet.id
+}
+
+resource "aws_client_vpn_authorization_rule" "vpn_auth_rule" {
+  client_vpn_endpoint_id = aws_client_vpn_endpoint.client_vpn.id
+  target_network_cidr    = "10.0.0.0/16"
+  authorize_all_groups   = true
+}
+```
+
+### **Example 3: E-commerce Company Hosting Online Store on AWS**
+
+#### **Terraform Script for Site-to-Site VPN Setup**
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_vpc" "ecommerce_vpc" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_vpn_gateway" "vgw" {
+  vpc_id = aws_vpc.ecommerce_vpc.id
+}
+
+resource "aws_customer_gateway" "cgw" {
+  bgp_asn    = 65000
+  ip_address = "198.51.100.3"  # Replace with e-commerce company on-premises public IP
+  type       = "ipsec.1"
+}
+
+resource "aws_vpn_connection" "vpn_connection" {
+  customer_gateway_id = aws_customer_gateway.cgw.id
+  vpn_gateway_id      = aws_vpn_gateway.vgw.id
+  type                = "ipsec.1"
+
+  static_routes_only = true
+
+  tags = {
+    Name = "ecommerce-vpn-connection"
+  }
+}
+
+resource "aws_vpn_connection_route" "vpn_route" {
+  vpn_connection_id      = aws_vpn_connection.vpn_connection.id
+  destination_cidr_block = "192.168.3.0/24"  # Replace with e-commerce company on-premises subnet
+}
+
+resource "aws_route" "vpn_route" {
+  route_table_id         = aws_vpc.ecommerce_vpc.main_route_table_id
+  destination_cidr_block = "192.168.3.0/24"  # Replace with e-commerce company on-premises subnet
+  gateway_id             = aws_vpn_gateway.vgw.id
+}
+```
+
+These Terraform scripts provide a starting point for configuring AWS VPN connections in various scenarios. Adjust the configurations as necessary to fit specific requirements, such as IP addresses, subnet CIDR blocks, and authentication methods.
