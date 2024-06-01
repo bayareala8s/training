@@ -363,3 +363,217 @@ Before you begin, ensure you have:
 ---
 
 By following this guide, you have successfully set up a VPC with public and private subnets, configured route tables, created an Internet Gateway and NAT Gateway, and launched EC2 instances within the VPC. This setup provides a robust foundation for building and deploying applications on AWS.
+
+
+Below is a complete Terraform script for setting up a VPC with public and private subnets, an Internet Gateway, a NAT Gateway, route tables, and security groups. This script also includes the creation of EC2 instances in both subnets.
+
+### Complete Terraform Script
+
+```hcl
+# Provider configuration
+provider "aws" {
+  region = "us-west-2"
+}
+
+# VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "main-vpc"
+  }
+}
+
+# Public Subnet
+resource "aws_subnet" "public" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet"
+  }
+}
+
+# Private Subnet
+resource "aws_subnet" "private" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+
+  tags = {
+    Name = "private-subnet"
+  }
+}
+
+# Internet Gateway
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "main-internet-gateway"
+  }
+}
+
+# NAT Gateway
+resource "aws_eip" "nat" {
+  vpc = true
+}
+
+resource "aws_nat_gateway" "main" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public.id
+
+  tags = {
+    Name = "main-nat-gateway"
+  }
+}
+
+# Public Route Table
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = "public-route-table"
+  }
+}
+
+# Private Route Table
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main.id
+  }
+
+  tags = {
+    Name = "private-route-table"
+  }
+}
+
+# Route Table Associations
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_route_table_association" "private" {
+  subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.private.id
+}
+
+# Security Group
+resource "aws_security_group" "web" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web-sg"
+  }
+}
+
+# EC2 Instances
+resource "aws_instance" "public" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.public.id
+  security_groups = [aws_security_group.web.name]
+
+  tags = {
+    Name = "public-instance"
+  }
+}
+
+resource "aws_instance" "private" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.private.id
+  security_groups = [aws_security_group.web.name]
+
+  tags = {
+    Name = "private-instance"
+  }
+}
+
+# Outputs
+output "vpc_id" {
+  value = aws_vpc.main.id
+}
+
+output "public_subnet_id" {
+  value = aws_subnet.public.id
+}
+
+output "private_subnet_id" {
+  value = aws_subnet.private.id
+}
+
+output "public_instance_id" {
+  value = aws_instance.public.id
+}
+
+output "private_instance_id" {
+  value = aws_instance.private.id
+}
+```
+
+### How to Use the Script
+
+1. **Install Terraform:**
+   - Follow the instructions on the [Terraform website](https://www.terraform.io/downloads) to install Terraform.
+
+2. **Configure AWS Credentials:**
+   - Ensure you have your AWS credentials configured. You can do this by setting environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) or by using the AWS CLI to configure credentials.
+
+3. **Save the Script:**
+   - Save the above script to a file named `main.tf`.
+
+4. **Initialize Terraform:**
+   ```bash
+   terraform init
+   ```
+
+5. **Validate Configuration:**
+   ```bash
+   terraform validate
+   ```
+
+6. **Apply the Configuration:**
+   ```bash
+   terraform apply
+   ```
+   - Confirm the apply by typing `yes` when prompted.
+
+7. **Verify Resources:**
+   - After the apply command completes, you can check the AWS Management Console to verify that the VPC, subnets, route tables, Internet Gateway, NAT Gateway, and EC2 instances have been created.
+
+### Notes
+
+- Adjust the `ami` value in the `aws_instance` resource to use a valid AMI ID for your region.
+- Modify security group rules and instance tags as needed.
+- This script uses a minimal configuration for demonstration purposes. In a production environment, you may need additional configurations and security settings.
