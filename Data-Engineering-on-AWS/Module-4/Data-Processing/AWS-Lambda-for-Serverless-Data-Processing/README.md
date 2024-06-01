@@ -669,3 +669,196 @@ output "lambda_function_name" {
 ### Summary
 
 By following these steps, you have set up a data transformation and ETL pipeline using AWS Lambda, S3, and AWS Glue. The Terraform script handles the creation of the S3 buckets, IAM role, Lambda function, and necessary permissions and notifications. Whenever a new file is uploaded to the source S3 bucket, the Lambda function will trigger an AWS Glue job to transform the data and store it in the target S3 bucket.
+
+
+# Step-by-Step Guide for Real-time Stream Processing with AWS Lambda and Kinesis
+
+This guide will walk you through setting up a real-time stream processing pipeline using AWS Lambda and Kinesis. We will cover the following steps:
+
+1. **Setting Up the Environment**
+2. **Creating a Kinesis Stream**
+3. **Setting Up IAM Roles**
+4. **Creating and Deploying a Lambda Function**
+5. **Configuring Kinesis to Trigger Lambda**
+6. **Testing the Setup**
+
+## 1. Setting Up the Environment
+
+### Prerequisites
+- AWS Account
+- AWS CLI installed and configured
+- Terraform installed
+
+## 2. Creating a Kinesis Stream
+
+### Step 1: Create a Kinesis Stream
+1. Log in to the AWS Management Console.
+2. Navigate to the Kinesis service.
+3. Click on "Create data stream".
+4. Enter a stream name (e.g., `my-kinesis-stream`).
+5. Set the number of shards (e.g., 1 for simplicity).
+6. Click on "Create data stream".
+
+## 3. Setting Up IAM Roles
+
+### Step 2: Create IAM Roles
+1. Go to the IAM console.
+2. Click on "Roles" in the left sidebar.
+3. Click on "Create role".
+4. Choose "AWS service" and select "Lambda".
+5. Click on "Next: Permissions".
+6. Attach the following policies:
+   - `AWSLambdaBasicExecutionRole`
+   - `AmazonKinesisReadOnlyAccess`
+7. Click on "Next: Tags", then "Next: Review".
+8. Enter a role name (e.g., `LambdaKinesisAccessRole`).
+9. Click on "Create role".
+
+## 4. Creating and Deploying a Lambda Function
+
+### Step 3: Create a Lambda Function
+1. Navigate to the AWS Lambda console.
+2. Click on "Create function".
+3. Choose "Author from scratch".
+4. Configure the following settings:
+   - Function name: `StreamProcessorLambda`
+   - Runtime: Python 3.x (or any other supported runtime)
+   - Role: Choose the IAM role created earlier (`LambdaKinesisAccessRole`)
+5. Click on "Create function".
+
+### Step 4: Write the Lambda Function Code
+Create a file named `stream_processor_lambda.py` with the following content:
+
+```python
+import json
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        # Decode the Kinesis data
+        payload = record['kinesis']['data']
+        decoded_payload = base64.b64decode(payload).decode('utf-8')
+        
+        # Process the payload (for demonstration, we'll just print it)
+        print(f"Decoded payload: {decoded_payload}")
+        
+        # You can add more processing logic here
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Processing completed')
+    }
+```
+
+### Step 5: Create a Deployment Package
+Zip the `stream_processor_lambda.py` file into a deployment package:
+
+```bash
+zip stream_processor_lambda.zip stream_processor_lambda.py
+```
+
+### Step 6: Deploy the Lambda Function
+1. Upload the deployment package to the Lambda function.
+2. Click on "Deploy".
+
+## 5. Configuring Kinesis to Trigger Lambda
+
+### Step 7: Set Up Kinesis Trigger
+1. Navigate to the AWS Lambda console.
+2. Select your Lambda function (`StreamProcessorLambda`).
+3. Click on the "Add trigger" button.
+4. Select "Kinesis" from the list of trigger sources.
+5. Configure the following settings:
+   - Kinesis stream: Choose the Kinesis stream created earlier (`my-kinesis-stream`).
+   - Batch size: 100 (default)
+   - Starting position: Latest
+6. Click on "Add".
+
+## 6. Testing the Setup
+
+### Step 8: Put Records into Kinesis Stream
+Use the AWS CLI to put records into the Kinesis stream:
+
+```bash
+aws kinesis put-record --stream-name my-kinesis-stream --partition-key "partitionKey" --data "Hello, Kinesis!"
+aws kinesis put-record --stream-name my-kinesis-stream --partition-key "partitionKey" --data "This is a test message."
+```
+
+### Step 9: Verify Lambda Execution
+1. Go to the AWS Lambda console.
+2. Select your Lambda function (`StreamProcessorLambda`).
+3. Click on the "Monitor" tab and then "View logs in CloudWatch".
+4. Check the CloudWatch logs to see the output of your Lambda function. You should see logs indicating that the payloads were decoded and printed.
+
+## Terraform Script
+
+### Step 10: Create the Terraform Configuration File
+
+Create a file named `main.tf` and add the following content:
+
+```hcl
+provider "aws" {
+  region = "us-east-1"  # Change to your preferred region
+}
+
+resource "aws_kinesis_stream" "kinesis_stream" {
+  name             = "my-kinesis-stream"
+  shard_count      = 1
+  retention_period = 24
+}
+
+resource "aws_iam_role" "lambda_kinesis_role" {
+  name = "lambda_kinesis_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+      Effect    = "Allow"
+      Sid       = ""
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  role       = aws_iam_role.lambda_kinesis_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "kinesis_read_access" {
+  role       = aws_iam_role.lambda_kinesis_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonKinesisReadOnlyAccess"
+}
+
+resource "aws_lambda_function" "stream_processor_lambda" {
+  function_name = "StreamProcessorLambda"
+  role          = aws_iam_role.lambda_kinesis_role.arn
+  handler       = "stream_processor_lambda.lambda_handler"
+  runtime       = "python3.8"
+  
+  filename = "stream_processor_lambda.zip"
+
+  source_code_hash = filebase64sha256("stream_processor_lambda.zip")
+}
+
+resource "aws_lambda_event_source_mapping" "kinesis_trigger" {
+  event_source_arn  = aws_kinesis_stream.kinesis_stream.arn
+  function_name     = aws_lambda_function.stream_processor_lambda.arn
+  starting_position = "LATEST"
+  batch_size        = 100
+}
+
+output "kinesis_stream_name" {
+  value = aws_kinesis_stream.kinesis_stream.name
+}
+
+output "lambda_function_name" {
+  value = aws_lambda_function.stream_processor_lambda.function_name
+}
+```
+
+### Summary
+
+By following these steps, you have set up a real-time stream processing pipeline using AWS Lambda and Kinesis. The Terraform script handles the creation of the Kinesis stream, IAM role, Lambda function, and necessary permissions and triggers. Whenever a new record is put into the Kinesis stream, the Lambda function will be triggered to process the record.
