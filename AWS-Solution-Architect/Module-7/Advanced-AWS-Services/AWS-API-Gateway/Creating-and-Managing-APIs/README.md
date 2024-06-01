@@ -432,4 +432,331 @@ This Terraform script sets up a serverless web application backend with AWS API 
 This example can be extended with additional methods (e.g., GET, PUT, DELETE) and more complex business logic as needed.
 
 
+Here is a Terraform script to create a microservices architecture for an e-commerce platform using AWS API Gateway, AWS Lambda, and Amazon RDS.
 
+### Prerequisites
+- Install [Terraform](https://www.terraform.io/downloads.html)
+- AWS CLI configured with appropriate IAM permissions
+- Basic understanding of Terraform and AWS services
+
+### Terraform Configuration
+
+#### Step 1: Create a `main.tf` file
+
+```hcl
+provider "aws" {
+  region = "us-west-2"  # Specify your AWS region
+}
+
+# VPC Setup
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "subnet1" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+  availability_zone = "us-west-2a"
+}
+
+resource "aws_subnet" "subnet2" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "us-west-2b"
+}
+
+# Security Group
+resource "aws_security_group" "lambda_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# RDS Setup
+resource "aws_db_instance" "db" {
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "mysql"
+  engine_version       = "8.0"
+  instance_class       = "db.t3.micro"
+  name                 = "ecommerce"
+  username             = "admin"
+  password             = "password"
+  parameter_group_name = "default.mysql8.0"
+  skip_final_snapshot  = true
+
+  vpc_security_group_ids = [aws_security_group.lambda_sg.id]
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+
+  publicly_accessible = true
+}
+
+resource "aws_db_subnet_group" "main" {
+  name       = "main"
+  subnet_ids = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
+
+  tags = {
+    Name = "Main DB Subnet Group"
+  }
+}
+
+# IAM Role for Lambda
+resource "aws_iam_role" "lambda_exec_role" {
+  name = "lambda_exec_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    "arn:aws:iam::aws:policy/AmazonRDSFullAccess",
+  ]
+}
+
+# Lambda Functions
+resource "aws_lambda_function" "products_lambda" {
+  filename         = "products_lambda.zip"  # Path to your Lambda deployment package
+  function_name    = "products_lambda"
+  role             = aws_iam_role.lambda_exec_role.arn
+  handler          = "index.handler"  # Update with your handler name
+  runtime          = "nodejs14.x"  # Update with your runtime
+  source_code_hash = filebase64sha256("products_lambda.zip")
+
+  environment {
+    variables = {
+      DB_HOST     = aws_db_instance.db.address
+      DB_NAME     = "ecommerce"
+      DB_USER     = "admin"
+      DB_PASSWORD = "password"
+    }
+  }
+}
+
+resource "aws_lambda_function" "orders_lambda" {
+  filename         = "orders_lambda.zip"  # Path to your Lambda deployment package
+  function_name    = "orders_lambda"
+  role             = aws_iam_role.lambda_exec_role.arn
+  handler          = "index.handler"  # Update with your handler name
+  runtime          = "nodejs14.x"  # Update with your runtime
+  source_code_hash = filebase64sha256("orders_lambda.zip")
+
+  environment {
+    variables = {
+      DB_HOST     = aws_db_instance.db.address
+      DB_NAME     = "ecommerce"
+      DB_USER     = "admin"
+      DB_PASSWORD = "password"
+    }
+  }
+}
+
+# API Gateway Setup
+resource "aws_api_gateway_rest_api" "api" {
+  name        = "ecommerce_api"
+  description = "API for e-commerce platform"
+}
+
+# Products Resource
+resource "aws_api_gateway_resource" "products_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = "products"
+}
+
+resource "aws_api_gateway_method" "products_method" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.products_resource.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "products_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.products_resource.id
+  http_method = aws_api_gateway_method.products_method.http_method
+  type        = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri         = aws_lambda_function.products_lambda.invoke_arn
+}
+
+# Orders Resource
+resource "aws_api_gateway_resource" "orders_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = "orders"
+}
+
+resource "aws_api_gateway_method" "orders_method" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.orders_resource.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "orders_integration" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.orders_resource.id
+  http_method = aws_api_gateway_method.orders_method.http_method
+  type        = "AWS_PROXY"
+  integration_http_method = "POST"
+  uri         = aws_lambda_function.orders_lambda.invoke_arn
+}
+
+# Deployment
+resource "aws_api_gateway_deployment" "api_deployment" {
+  depends_on = [
+    aws_api_gateway_integration.products_integration,
+    aws_api_gateway_integration.orders_integration
+  ]
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = "prod"
+}
+
+resource "aws_lambda_permission" "api_gateway_invoke_products" {
+  statement_id  = "AllowAPIGatewayInvokeProducts"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.products_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "api_gateway_invoke_orders" {
+  statement_id  = "AllowAPIGatewayInvokeOrders"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.orders_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
+}
+
+output "api_endpoint" {
+  value = "${aws_api_gateway_deployment.api_deployment.invoke_url}"
+}
+```
+
+#### Step 2: Prepare the Lambda Functions
+
+Create two simple Node.js Lambda functions and package them into ZIP files named `products_lambda.zip` and `orders_lambda.zip`.
+
+**products_lambda/index.js:**
+
+```javascript
+const mysql = require('mysql');
+
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
+});
+
+exports.handler = async (event) => {
+  const promise = new Promise((resolve, reject) => {
+    db.query('SELECT * FROM products', (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+
+  try {
+    const results = await promise;
+    return {
+      statusCode: 200,
+      body: JSON.stringify(results)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Could not retrieve products' })
+    };
+  }
+};
+```
+
+**orders_lambda/index.js:**
+
+```javascript
+const mysql = require('mysql');
+
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
+});
+
+exports.handler = async (event) => {
+  const body = JSON.parse(event.body);
+  const { productId, quantity } = body;
+
+  const promise = new Promise((resolve, reject) => {
+    const query = 'INSERT INTO orders (productId, quantity) VALUES (?, ?)';
+    db.query(query, [productId, quantity], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+
+  try {
+    const results =
+
+ await promise;
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Order created successfully' })
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Could not create order' })
+    };
+  }
+};
+```
+
+Create the ZIP files:
+
+```bash
+# For products_lambda
+zip -r products_lambda.zip index.js node_modules
+
+# For orders_lambda
+zip -r orders_lambda.zip index.js node_modules
+```
+
+#### Step 3: Initialize Terraform and Apply
+
+Run the following commands in your terminal:
+
+```bash
+terraform init
+terraform apply
+```
+
+### Conclusion
+
+This Terraform script sets up a microservices architecture for an e-commerce platform using AWS API Gateway, AWS Lambda, and Amazon RDS. The script includes resources for creating a VPC, security groups, RDS instance, IAM roles, Lambda functions, and API Gateway resources. This example can be extended with additional microservices and more complex business logic as needed.
