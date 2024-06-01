@@ -1061,3 +1061,201 @@ resource "aws_instance" "web" {
    ```
 
 By following these steps and using the provided scripts, you can effectively configure a VPC, subnets, security groups, and network ACLs in AWS using Terraform.
+
+
+## Step-by-Step Guide on Setting up Load Balancers in AWS
+
+### Table of Contents
+1. **Introduction to Load Balancers**
+2. **Types of Load Balancers in AWS**
+3. **Setting up an Application Load Balancer (ALB)**
+    - Step 1: Create Target Groups
+    - Step 2: Launch EC2 Instances
+    - Step 3: Create the Application Load Balancer
+    - Step 4: Configure Listener and Rules
+    - Step 5: Register Targets
+    - Step 6: Test the Load Balancer
+4. **Setting up a Network Load Balancer (NLB)**
+    - Step 1: Create Target Groups
+    - Step 2: Launch EC2 Instances
+    - Step 3: Create the Network Load Balancer
+    - Step 4: Configure Listener and Rules
+    - Step 5: Register Targets
+    - Step 6: Test the Load Balancer
+5. **Best Practices for Load Balancers**
+
+---
+
+### 1. Introduction to Load Balancers
+
+Load balancers distribute incoming application or network traffic across multiple targets, such as EC2 instances, containers, or IP addresses, to ensure high availability and reliability. AWS offers different types of load balancers to suit various needs.
+
+### 2. Types of Load Balancers in AWS
+
+- **Application Load Balancer (ALB):** Operates at the application layer (Layer 7) and is best suited for HTTP/HTTPS traffic.
+- **Network Load Balancer (NLB):** Operates at the transport layer (Layer 4) and is designed for high-performance and low-latency traffic.
+- **Classic Load Balancer (CLB):** Operates at both the transport layer (Layer 4) and application layer (Layer 7), but is being phased out in favor of ALB and NLB.
+
+---
+
+### 3. Setting up an Application Load Balancer (ALB)
+
+#### Step 1: Create Target Groups
+
+1. **Navigate to the EC2 Dashboard:**
+   - Open the AWS Management Console.
+   - Navigate to the EC2 Dashboard.
+
+2. **Create Target Group:**
+   - On the left sidebar, click "Target Groups."
+   - Click "Create target group."
+   - Choose "Instances" as the target type.
+   - Set the target group name (e.g., `my-alb-target-group`).
+   - Select the protocol and port (e.g., HTTP, port 80).
+   - Configure health checks (default is HTTP, path `/`).
+   - Click "Next" and then "Create target group."
+
+#### Step 2: Launch EC2 Instances
+
+1. **Launch Instances:**
+   - Launch at least two EC2 instances in different availability zones.
+   - Ensure the instances are in the same VPC as the ALB.
+
+2. **Install Web Server (Optional):**
+   - Connect to each EC2 instance and install a web server (e.g., Apache, Nginx).
+   - Ensure the web server is running and serving a test page.
+
+#### Step 3: Create the Application Load Balancer
+
+1. **Navigate to the Load Balancers Section:**
+   - On the EC2 Dashboard, click "Load Balancers" in the left sidebar.
+   - Click "Create Load Balancer."
+
+2. **Select Application Load Balancer:**
+   - Choose "Application Load Balancer."
+   - Click "Create."
+
+3. **Configure Load Balancer:**
+   - Name your load balancer (e.g., `my-application-load-balancer`).
+   - Choose the scheme (internet-facing or internal).
+   - Select the IP address type (IPv4 or dualstack).
+   - Choose the VPC and select at least two availability zones and subnets.
+
+4. **Configure Security Settings:**
+   - For HTTP, no SSL certificates are needed. For HTTPS, select or create an SSL certificate.
+   - Configure security groups to allow inbound traffic on port 80 (HTTP) or port 443 (HTTPS).
+
+#### Step 4: Configure Listener and Rules
+
+1. **Add Listener:**
+   - By default, an HTTP listener is added. You can add an HTTPS listener if needed.
+   - Click "Add listener" to add another protocol/port if required.
+
+2. **Configure Listener Rules:**
+   - Add rules to forward traffic to your target group created in Step 1.
+   - Review and adjust any default rules as necessary.
+
+#### Step 5: Register Targets
+
+1. **Register EC2 Instances:**
+   - Select the target group created in Step 1.
+   - Click "Register targets."
+   - Choose the EC2 instances you launched.
+   - Click "Include as pending below" and then "Register pending targets."
+
+#### Step 6: Test the Load Balancer
+
+1. **Obtain DNS Name:**
+   - Go to the "Load Balancers" section.
+   - Select your ALB and note the DNS name provided.
+
+2. **Test the ALB:**
+   - Open a web browser and enter the DNS name.
+   - You should see the test page from one of your EC2 instances, indicating the ALB is distributing traffic correctly.
+
+---
+
+### 4. Setting up a Network Load Balancer (NLB)
+
+#### Step 1: Create Target Groups
+
+1. **Navigate to the EC2 Dashboard:**
+   - Open the AWS Management Console.
+   - Navigate to the EC2 Dashboard.
+
+2. **Create Target Group:**
+   - On the left sidebar, click "Target Groups."
+   - Click "Create target group."
+   - Choose "Instances" as the target type.
+   - Set the target group name (e.g., `my-nlb-target-group`).
+   - Select the protocol and port (e.g., TCP, port 80).
+   - Configure health checks (default is TCP).
+   - Click "Next" and then "Create target group."
+
+#### Step 2: Launch EC2 Instances
+
+1. **Launch Instances:**
+   - Launch at least two EC2 instances in different availability zones.
+   - Ensure the instances are in the same VPC as the NLB.
+
+2. **Configure Services (Optional):**
+   - Ensure the services running on the instances are listening on the ports specified in the target group.
+
+#### Step 3: Create the Network Load Balancer
+
+1. **Navigate to the Load Balancers Section:**
+   - On the EC2 Dashboard, click "Load Balancers" in the left sidebar.
+   - Click "Create Load Balancer."
+
+2. **Select Network Load Balancer:**
+   - Choose "Network Load Balancer."
+   - Click "Create."
+
+3. **Configure Load Balancer:**
+   - Name your load balancer (e.g., `my-network-load-balancer`).
+   - Choose the scheme (internet-facing or internal).
+   - Select the IP address type (IPv4 or dualstack).
+   - Choose the VPC and select at least two availability zones and subnets.
+
+#### Step 4: Configure Listener and Rules
+
+1. **Add Listener:**
+   - By default, a TCP listener is added. Add other listeners if needed.
+
+2. **Configure Listener Rules:**
+   - Add rules to forward traffic to your target group created in Step 1.
+   - Review and adjust any default rules as necessary.
+
+#### Step 5: Register Targets
+
+1. **Register EC2 Instances:**
+   - Select the target group created in Step 1.
+   - Click "Register targets."
+   - Choose the EC2 instances you launched.
+   - Click "Include as pending below" and then "Register pending targets."
+
+#### Step 6: Test the Load Balancer
+
+1. **Obtain DNS Name:**
+   - Go to the "Load Balancers" section.
+   - Select your NLB and note the DNS name provided.
+
+2. **Test the NLB:**
+   - Open a web browser and enter the DNS name (or use a TCP client if using non-HTTP protocols).
+   - Ensure the traffic is correctly routed to your EC2 instances.
+
+---
+
+### 5. Best Practices for Load Balancers
+
+- **Use Health Checks:** Ensure health checks are properly configured to monitor the health of your targets and avoid routing traffic to unhealthy instances.
+- **Enable Cross-Zone Load Balancing:** This helps distribute traffic evenly across all registered instances in all enabled availability zones.
+- **Use Appropriate Load Balancer Types:** Choose the right type of load balancer based on your application's needs (e.g., ALB for HTTP/HTTPS, NLB for TCP/UDP).
+- **Secure Your Load Balancer:** Use security groups and network ACLs to restrict access to your load balancer. For ALBs, use SSL/TLS to encrypt traffic.
+- **Monitor Performance:** Use AWS CloudWatch to monitor the performance and metrics of your load balancer.
+- **Automate Scaling:** Configure Auto Scaling to dynamically adjust the number of instances based on traffic demand.
+
+By following these steps and best practices, you can effectively set up and manage load balancers in AWS, ensuring high availability, reliability, and scalability for your applications.
+
+
+
