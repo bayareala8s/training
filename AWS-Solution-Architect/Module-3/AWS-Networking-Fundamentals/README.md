@@ -577,3 +577,195 @@ output "private_instance_id" {
 - Adjust the `ami` value in the `aws_instance` resource to use a valid AMI ID for your region.
 - Modify security group rules and instance tags as needed.
 - This script uses a minimal configuration for demonstration purposes. In a production environment, you may need additional configurations and security settings.
+
+
+## Step-by-Step Guide on Configuring Security Groups and Network ACLs (NACLs) in AWS
+
+### Introduction
+
+Security Groups and Network ACLs (NACLs) are fundamental components for managing network security in AWS. Security Groups act as virtual firewalls for instances, controlling inbound and outbound traffic. Network ACLs provide an additional layer of security at the subnet level. This guide provides a detailed step-by-step process for configuring both Security Groups and NACLs.
+
+### Table of Contents
+1. **Understanding Security Groups and NACLs**
+    - Security Groups
+    - Network ACLs
+
+2. **Configuring Security Groups**
+    - Creating a Security Group
+    - Adding Rules to a Security Group
+    - Associating Security Groups with Instances
+
+3. **Configuring Network ACLs**
+    - Creating a Network ACL
+    - Adding Rules to a Network ACL
+    - Associating Network ACLs with Subnets
+
+4. **Best Practices**
+
+5. **Hands-on Lab Exercises**
+
+---
+
+### 1. Understanding Security Groups and NACLs
+
+#### Security Groups
+- **Function:** Act as a virtual firewall for EC2 instances, controlling inbound and outbound traffic.
+- **Scope:** Instance-level.
+- **State:** Stateful (automatically allows return traffic).
+- **Rules:** Allow rules only.
+
+#### Network ACLs
+- **Function:** Provide an additional layer of security at the subnet level, controlling inbound and outbound traffic.
+- **Scope:** Subnet-level.
+- **State:** Stateless (does not automatically allow return traffic).
+- **Rules:** Allow and deny rules.
+
+---
+
+### 2. Configuring Security Groups
+
+#### Creating a Security Group
+
+1. **Navigate to the EC2 Dashboard:**
+   - Open the AWS Management Console.
+   - Navigate to the EC2 Dashboard.
+
+2. **Create a Security Group:**
+   - In the left navigation pane, click on "Security Groups" under "Network & Security."
+   - Click on "Create security group."
+
+3. **Configure the Security Group:**
+   - **Name:** Enter a name for the security group (e.g., `MySecurityGroup`).
+   - **Description:** Provide a description for the security group.
+   - **VPC:** Select the VPC where the security group will be used.
+
+4. **Add Inbound Rules:**
+   - Click on "Add Rule."
+   - **Type:** Select the type of traffic (e.g., HTTP).
+   - **Protocol:** Select the protocol (e.g., TCP).
+   - **Port Range:** Specify the port range (e.g., 80).
+   - **Source:** Define the source IP or CIDR (e.g., `0.0.0.0/0` for all IPs).
+   - Repeat for additional rules as needed.
+
+5. **Add Outbound Rules:**
+   - Click on "Add Rule."
+   - **Type:** Select the type of traffic.
+   - **Protocol:** Select the protocol.
+   - **Port Range:** Specify the port range.
+   - **Destination:** Define the destination IP or CIDR.
+   - Repeat for additional rules as needed.
+
+6. **Create the Security Group:**
+   - Review the rules.
+   - Click on "Create security group."
+
+#### Associating Security Groups with Instances
+
+1. **Launch an EC2 Instance:**
+   - Navigate to the EC2 Dashboard.
+   - Click on "Launch Instance."
+   - Follow the wizard to configure the instance.
+
+2. **Assign the Security Group:**
+   - In the "Configure Security Group" step, select "Select an existing security group."
+   - Choose the security group you created (e.g., `MySecurityGroup`).
+   - Complete the instance launch process.
+
+3. **Modify Security Group for Running Instances:**
+   - Navigate to the EC2 Dashboard.
+   - Select the running instance.
+   - Click on "Actions," then "Security," and select "Change security groups."
+   - Choose the desired security group and click "Assign security groups."
+
+---
+
+### 3. Configuring Network ACLs
+
+#### Creating a Network ACL
+
+1. **Navigate to the VPC Dashboard:**
+   - Open the AWS Management Console.
+   - Navigate to the VPC Dashboard.
+
+2. **Create a Network ACL:**
+   - In the left navigation pane, click on "Network ACLs."
+   - Click on "Create Network ACL."
+
+3. **Configure the Network ACL:**
+   - **Name:** Enter a name for the network ACL (e.g., `MyNetworkACL`).
+   - **VPC:** Select the VPC where the network ACL will be used.
+   - Click "Create."
+
+#### Adding Rules to a Network ACL
+
+1. **Add Inbound Rules:**
+   - Select the network ACL.
+   - Click on the "Inbound Rules" tab.
+   - Click on "Edit Inbound Rules."
+   - **Rule Number:** Enter a rule number (e.g., 100).
+   - **Type:** Select the type of traffic (e.g., HTTP).
+   - **Protocol:** Select the protocol (e.g., TCP).
+   - **Port Range:** Specify the port range (e.g., 80).
+   - **Source:** Define the source IP or CIDR (e.g., `0.0.0.0/0` for all IPs).
+   - **Allow/Deny:** Choose whether to allow or deny the traffic.
+   - Repeat for additional rules as needed.
+   - Click "Save changes."
+
+2. **Add Outbound Rules:**
+   - Select the network ACL.
+   - Click on the "Outbound Rules" tab.
+   - Click on "Edit Outbound Rules."
+   - **Rule Number:** Enter a rule number.
+   - **Type:** Select the type of traffic.
+   - **Protocol:** Select the protocol.
+   - **Port Range:** Specify the port range.
+   - **Destination:** Define the destination IP or CIDR.
+   - **Allow/Deny:** Choose whether to allow or deny the traffic.
+   - Repeat for additional rules as needed.
+   - Click "Save changes."
+
+#### Associating Network ACLs with Subnets
+
+1. **Select a Subnet:**
+   - Navigate to the VPC Dashboard.
+   - Click on "Subnets."
+   - Select the subnet you want to associate with the network ACL.
+
+2. **Modify Network ACL Association:**
+   - Click on the "Actions" dropdown menu.
+   - Select "Edit network ACL association."
+   - Choose the network ACL you created (e.g., `MyNetworkACL`).
+   - Click "Save."
+
+---
+
+### 4. Best Practices
+
+- **Least Privilege:** Apply the principle of least privilege by allowing only the necessary traffic.
+- **Segmentation:** Use separate Security Groups and NACLs for different application tiers.
+- **Monitoring:** Enable VPC Flow Logs to monitor traffic and detect anomalies.
+- **Auditing:** Regularly review and audit Security Group and NACL rules.
+- **Automation:** Use IaC tools like CloudFormation or Terraform to manage Security Groups and NACLs.
+
+---
+
+### 5. Hands-on Lab Exercises
+
+#### Lab 1: Configuring Security Groups
+1. Create a Security Group for web servers.
+2. Add rules to allow HTTP (port 80) and HTTPS (port 443) traffic from the internet.
+3. Launch an EC2 instance and associate it with the Security Group.
+
+#### Lab 2: Configuring Network ACLs
+1. Create a Network ACL for a public subnet.
+2. Add rules to allow HTTP and HTTPS traffic inbound and outbound.
+3. Associate the Network ACL with a public subnet.
+
+#### Lab 3: Monitoring and Auditing
+1. Enable VPC Flow Logs for the VPC.
+2. Review the logs in CloudWatch to identify allowed and denied traffic.
+3. Audit the Security Group and NACL rules to ensure compliance with security policies.
+
+---
+
+By following this step-by-step guide, you can effectively configure and manage Security Groups and Network ACLs in AWS, ensuring robust network security for your cloud infrastructure.
