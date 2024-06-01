@@ -760,3 +760,296 @@ terraform apply
 ### Conclusion
 
 This Terraform script sets up a microservices architecture for an e-commerce platform using AWS API Gateway, AWS Lambda, and Amazon RDS. The script includes resources for creating a VPC, security groups, RDS instance, IAM roles, Lambda functions, and API Gateway resources. This example can be extended with additional microservices and more complex business logic as needed.
+
+
+Here is a Terraform script to create a real-time chat application using AWS API Gateway (WebSocket API), AWS Lambda, and Amazon DynamoDB.
+
+### Prerequisites
+- Install [Terraform](https://www.terraform.io/downloads.html)
+- AWS CLI configured with appropriate IAM permissions
+- Basic understanding of Terraform and AWS services
+
+### Terraform Configuration
+
+#### Step 1: Create a `main.tf` file
+
+```hcl
+provider "aws" {
+  region = "us-west-2"  # Specify your AWS region
+}
+
+# DynamoDB Table for storing WebSocket connection IDs
+resource "aws_dynamodb_table" "connections" {
+  name           = "connections"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "connectionId"
+  attribute {
+    name = "connectionId"
+    type = "S"
+  }
+  tags = {
+    Name = "connections-table"
+  }
+}
+
+# IAM Role for Lambda
+resource "aws_iam_role" "lambda_exec_role" {
+  name = "lambda_exec_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+    "arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess"
+  ]
+}
+
+# Lambda Functions
+resource "aws_lambda_function" "connect_lambda" {
+  filename         = "connect_lambda.zip"  # Path to your Lambda deployment package
+  function_name    = "connect_lambda"
+  role             = aws_iam_role.lambda_exec_role.arn
+  handler          = "index.handler"  # Update with your handler name
+  runtime          = "nodejs14.x"  # Update with your runtime
+  source_code_hash = filebase64sha256("connect_lambda.zip")
+}
+
+resource "aws_lambda_function" "disconnect_lambda" {
+  filename         = "disconnect_lambda.zip"  # Path to your Lambda deployment package
+  function_name    = "disconnect_lambda"
+  role             = aws_iam_role.lambda_exec_role.arn
+  handler          = "index.handler"  # Update with your handler name
+  runtime          = "nodejs14.x"  # Update with your runtime
+  source_code_hash = filebase64sha256("disconnect_lambda.zip")
+}
+
+resource "aws_lambda_function" "message_lambda" {
+  filename         = "message_lambda.zip"  # Path to your Lambda deployment package
+  function_name    = "message_lambda"
+  role             = aws_iam_role.lambda_exec_role.arn
+  handler          = "index.handler"  # Update with your handler name
+  runtime          = "nodejs14.x"  # Update with your runtime
+  source_code_hash = filebase64sha256("message_lambda.zip")
+}
+
+# API Gateway WebSocket API
+resource "aws_api_gatewayv2_api" "websocket_api" {
+  name          = "websocket_chat_api"
+  protocol_type = "WEBSOCKET"
+  route_selection_expression = "$request.body.action"
+}
+
+# Routes and Integrations
+resource "aws_api_gatewayv2_route" "connect_route" {
+  api_id    = aws_api_gatewayv2_api.websocket_api.id
+  route_key = "$connect"
+  target    = "integrations/${aws_api_gatewayv2_integration.connect_integration.id}"
+}
+
+resource "aws_api_gatewayv2_route" "disconnect_route" {
+  api_id    = aws_api_gatewayv2_api.websocket_api.id
+  route_key = "$disconnect"
+  target    = "integrations/${aws_api_gatewayv2_integration.disconnect_integration.id}"
+}
+
+resource "aws_api_gatewayv2_route" "message_route" {
+  api_id    = aws_api_gatewayv2_api.websocket_api.id
+  route_key = "sendMessage"
+  target    = "integrations/${aws_api_gatewayv2_integration.message_integration.id}"
+}
+
+resource "aws_api_gatewayv2_integration" "connect_integration" {
+  api_id           = aws_api_gatewayv2_api.websocket_api.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = aws_lambda_function.connect_lambda.invoke_arn
+}
+
+resource "aws_api_gatewayv2_integration" "disconnect_integration" {
+  api_id           = aws_api_gatewayv2_api.websocket_api.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = aws_lambda_function.disconnect_lambda.invoke_arn
+}
+
+resource "aws_api_gatewayv2_integration" "message_integration" {
+  api_id           = aws_api_gatewayv2_api.websocket_api.id
+  integration_type = "AWS_PROXY"
+  integration_uri  = aws_lambda_function.message_lambda.invoke_arn
+}
+
+# Deployment
+resource "aws_api_gatewayv2_stage" "websocket_stage" {
+  api_id      = aws_api_gatewayv2_api.websocket_api.id
+  name        = "prod"
+  deployment_id = aws_api_gatewayv2_deployment.websocket_deployment.id
+}
+
+resource "aws_api_gatewayv2_deployment" "websocket_deployment" {
+  api_id = aws_api_gatewayv2_api.websocket_api.id
+  depends_on = [
+    aws_api_gatewayv2_integration.connect_integration,
+    aws_api_gatewayv2_integration.disconnect_integration,
+    aws_api_gatewayv2_integration.message_integration
+  ]
+}
+
+# Lambda Permissions
+resource "aws_lambda_permission" "allow_apigw_connect" {
+  statement_id  = "AllowAPIGatewayInvokeConnect"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.connect_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gatewayv2_api.websocket_api.execution_arn}/*"
+}
+
+resource "aws_lambda_permission" "allow_apigw_disconnect" {
+  statement_id  = "AllowAPIGatewayInvokeDisconnect"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.disconnect_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gatewayv2_api.websocket_api.execution_arn}/*"
+}
+
+resource "aws_lambda_permission" "allow_apigw_message" {
+  statement_id  = "AllowAPIGatewayInvokeMessage"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.message_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gatewayv2_api.websocket_api.execution_arn}/*"
+}
+
+output "websocket_api_endpoint" {
+  value = "${aws_api_gatewayv2_stage.websocket_stage.invoke_url}"
+}
+```
+
+#### Step 2: Prepare the Lambda Functions
+
+Create three simple Node.js Lambda functions and package them into ZIP files named `connect_lambda.zip`, `disconnect_lambda.zip`, and `message_lambda.zip`.
+
+**connect_lambda/index.js:**
+
+```javascript
+const AWS = require('aws-sdk');
+const docClient = new AWS.DynamoDB.DocumentClient();
+
+exports.handler = async (event) => {
+  const connectionId = event.requestContext.connectionId;
+  
+  const params = {
+    TableName: 'connections',
+    Item: {
+      connectionId: connectionId
+    }
+  };
+  
+  try {
+    await docClient.put(params).promise();
+    return { statusCode: 200, body: 'Connected' };
+  } catch (error) {
+    return { statusCode: 500, body: 'Failed to connect: ' + JSON.stringify(error) };
+  }
+};
+```
+
+**disconnect_lambda/index.js:**
+
+```javascript
+const AWS = require('aws-sdk');
+const docClient = new AWS.DynamoDB.DocumentClient();
+
+exports.handler = async (event) => {
+  const connectionId = event.requestContext.connectionId;
+
+  const params = {
+    TableName: 'connections',
+    Key: {
+      connectionId: connectionId
+    }
+  };
+
+  try {
+    await docClient.delete(params).promise();
+    return { statusCode: 200, body: 'Disconnected' };
+  } catch (error) {
+    return { statusCode: 500, body: 'Failed to disconnect: ' + JSON.stringify(error) };
+  }
+};
+```
+
+**message_lambda/index.js:**
+
+```javascript
+const AWS = require('aws-sdk');
+const docClient = new AWS.DynamoDB.DocumentClient();
+const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+  endpoint: process.env.API_ENDPOINT
+});
+
+exports.handler = async (event) => {
+  const postData = JSON.parse(event.body).data;
+
+  const params = {
+    TableName: 'connections',
+    ProjectionExpression: 'connectionId'
+  };
+
+  try {
+    const data = await docClient.scan(params).promise();
+    const postCalls = data.Items.map(async ({ connectionId }) => {
+      try {
+        await apigwManagementApi.postToConnection({ ConnectionId: connectionId, Data: postData }).promise();
+      } catch (e) {
+        if (e.statusCode === 410) {
+          console.log(`Found stale connection, deleting ${connectionId}`);
+          await docClient.delete({ TableName: 'connections', Key: { connectionId } }).promise();
+        } else {
+          throw e;
+        }
+      }
+    });
+
+    await Promise.all(postCalls);
+
+    return { statusCode: 200, body: 'Data sent' };
+  } catch (error) {
+    return { statusCode: 500, body: 'Failed to send message: ' + JSON.stringify(error) };
+  }
+};
+``
+
+`
+
+Create the ZIP files:
+
+```bash
+# For connect_lambda
+zip -r connect_lambda.zip index.js node_modules
+
+# For disconnect_lambda
+zip -r disconnect_lambda.zip index.js node_modules
+
+# For message_lambda
+zip -r message_lambda.zip index.js node_modules
+```
+
+#### Step 3: Initialize Terraform and Apply
+
+Run the following commands in your terminal:
+
+```bash
+terraform init
+terraform apply
+```
+
+### Conclusion
+
+This Terraform script sets up a real-time chat application using AWS API Gateway (WebSocket API), AWS Lambda, and Amazon DynamoDB. The script includes resources for creating DynamoDB tables, IAM roles, Lambda functions, and API Gateway resources. This example can be extended with additional functionality and more complex business logic as needed.
