@@ -188,3 +188,178 @@ AWS CloudWatch monitors your AWS resources and applications in real time, provid
 ---
 
 This guide provides a comprehensive overview of AWS networking fundamentals, designed to equip you with the knowledge and skills necessary to manage and optimize your AWS network infrastructure.
+
+
+
+## Step-By-Step Guide on Setting up a VPC on AWS
+
+### Introduction
+
+Setting up a Virtual Private Cloud (VPC) in AWS allows you to create a logically isolated network within the AWS cloud. You can launch AWS resources such as EC2 instances into this VPC. This guide provides a detailed, step-by-step approach to setting up a VPC, including creating subnets, route tables, and configuring internet connectivity.
+
+### Table of Contents
+
+1. **Prerequisites**
+2. **Creating a VPC**
+3. **Creating Subnets**
+4. **Creating and Associating Route Tables**
+5. **Creating an Internet Gateway**
+6. **Creating a NAT Gateway**
+7. **Configuring Security Groups and Network ACLs**
+8. **Launching EC2 Instances in the VPC**
+9. **Verifying Connectivity**
+
+---
+
+### 1. Prerequisites
+
+Before you begin, ensure you have:
+- An AWS account
+- Necessary permissions to create and manage VPCs, subnets, and other network resources
+- AWS CLI installed (optional, for CLI-based setup)
+
+---
+
+### 2. Creating a VPC
+
+1. **Open the VPC Console:**
+   - Sign in to the AWS Management Console.
+   - Open the VPC dashboard by navigating to **Services** > **VPC**.
+
+2. **Create a VPC:**
+   - Click on **Your VPCs** in the left-hand navigation pane.
+   - Click on **Create VPC**.
+   - Enter a **Name tag** for your VPC.
+   - Provide a **CIDR block** (e.g., `10.0.0.0/16`).
+   - Select **Tenancy** (default or dedicated).
+   - Click **Create**.
+
+---
+
+### 3. Creating Subnets
+
+1. **Create Public Subnet:**
+   - Click on **Subnets** in the left-hand navigation pane.
+   - Click on **Create Subnet**.
+   - Select the **VPC** you just created.
+   - Enter a **Subnet name** (e.g., `Public Subnet`).
+   - Enter the **Availability Zone** (optional, to specify the zone).
+   - Provide a **CIDR block** (e.g., `10.0.1.0/24`).
+   - Click **Create**.
+
+2. **Create Private Subnet:**
+   - Repeat the above steps to create another subnet, this time naming it `Private Subnet` and using a different CIDR block (e.g., `10.0.2.0/24`).
+
+---
+
+### 4. Creating and Associating Route Tables
+
+1. **Create a Route Table:**
+   - Click on **Route Tables** in the left-hand navigation pane.
+   - Click on **Create route table**.
+   - Enter a **Name tag** for the route table (e.g., `Public Route Table`).
+   - Select the **VPC** you created.
+   - Click **Create**.
+
+2. **Add Route to Route Table:**
+   - Select the newly created route table.
+   - Click on the **Routes** tab.
+   - Click **Edit routes**.
+   - Add a route with **Destination** `0.0.0.0/0` and **Target** set to your Internet Gateway (created in step 5).
+   - Click **Save routes**.
+
+3. **Associate Route Table with Subnet:**
+   - Click on the **Subnet associations** tab.
+   - Click **Edit subnet associations**.
+   - Select your **Public Subnet**.
+   - Click **Save associations**.
+
+---
+
+### 5. Creating an Internet Gateway
+
+1. **Create Internet Gateway:**
+   - Click on **Internet Gateways** in the left-hand navigation pane.
+   - Click on **Create internet gateway**.
+   - Enter a **Name tag** (e.g., `MyInternetGateway`).
+   - Click **Create**.
+
+2. **Attach Internet Gateway to VPC:**
+   - Select the newly created Internet Gateway.
+   - Click **Actions** > **Attach to VPC**.
+   - Select your VPC.
+   - Click **Attach internet gateway**.
+
+---
+
+### 6. Creating a NAT Gateway
+
+1. **Allocate an Elastic IP Address:**
+   - Click on **Elastic IPs** in the left-hand navigation pane.
+   - Click on **Allocate Elastic IP address**.
+   - Click **Allocate** and note the Elastic IP address.
+
+2. **Create NAT Gateway:**
+   - Click on **NAT Gateways** in the left-hand navigation pane.
+   - Click on **Create NAT Gateway**.
+   - Select your **Public Subnet**.
+   - Select the **Elastic IP** you just allocated.
+   - Click **Create NAT gateway**.
+
+3. **Update Route Table for Private Subnet:**
+   - Go back to **Route Tables**.
+   - Create another route table for the private subnet (e.g., `Private Route Table`).
+   - Add a route with **Destination** `0.0.0.0/0` and **Target** set to the NAT Gateway.
+   - Associate this route table with your **Private Subnet**.
+
+---
+
+### 7. Configuring Security Groups and Network ACLs
+
+1. **Create Security Groups:**
+   - Click on **Security Groups** in the left-hand navigation pane.
+   - Click on **Create security group**.
+   - Enter a **Name** and **Description**.
+   - Select your **VPC**.
+   - Add inbound and outbound rules as needed (e.g., allowing SSH, HTTP, HTTPS).
+
+2. **Create Network ACLs:**
+   - Click on **Network ACLs** in the left-hand navigation pane.
+   - Click on **Create network ACL**.
+   - Enter a **Name** and select your **VPC**.
+   - Add inbound and outbound rules (e.g., allowing traffic on specific ports).
+   - Associate the NACL with the desired subnets.
+
+---
+
+### 8. Launching EC2 Instances in the VPC
+
+1. **Launch an EC2 Instance:**
+   - Navigate to **EC2 Dashboard** > **Instances**.
+   - Click on **Launch Instance**.
+   - Choose an AMI (Amazon Machine Image).
+   - Choose an instance type.
+   - Configure instance details:
+     - Select your **VPC**.
+     - Choose the **Subnet** (Public or Private).
+     - Assign a public IP (for public subnet).
+   - Add storage.
+   - Add tags.
+   - Configure security group (use the one created earlier).
+   - Review and launch.
+
+---
+
+### 9. Verifying Connectivity
+
+1. **Public Subnet Instance:**
+   - Ensure the instance in the public subnet has a public IP.
+   - Test connectivity by SSH-ing into the instance using the public IP.
+
+2. **Private Subnet Instance:**
+   - Ensure the instance in the private subnet does not have a public IP.
+   - Test connectivity by SSH-ing into the public instance and then into the private instance from there.
+
+---
+
+By following this guide, you have successfully set up a VPC with public and private subnets, configured route tables, created an Internet Gateway and NAT Gateway, and launched EC2 instances within the VPC. This setup provides a robust foundation for building and deploying applications on AWS.
