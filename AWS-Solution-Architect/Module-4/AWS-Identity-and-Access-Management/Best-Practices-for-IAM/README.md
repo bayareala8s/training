@@ -207,3 +207,300 @@ resource "aws_organizations_policy_attachment" "attach_deny_ec2" {
 ### Summary
 
 By following these best practices, you can enhance the security and manageability of your AWS environment. These practices help ensure that IAM is used effectively to control access, protect sensitive information, and comply with security standards. Implementing these practices using Terraform allows for automation and consistency in managing IAM resources.
+
+
+### Real-World Implementation of IAM Best Practices with Terraform
+
+Below is a detailed example of implementing IAM best practices in a real-world scenario using Terraform. This example covers creating users, groups, and roles, attaching policies, enabling MFA, and setting up monitoring and auditing.
+
+#### Scenario: Implementing IAM for a Web Application
+
+##### Requirements:
+1. **Users**: Create users for developers, admins, and contractors.
+2. **Groups**: Create groups for each role and assign appropriate permissions.
+3. **Roles**: Create roles for applications and cross-account access.
+4. **MFA**: Enable MFA for admins and developers.
+5. **Policies**: Define and attach policies following the principle of least privilege.
+6. **Monitoring**: Enable CloudTrail and Config for monitoring and auditing IAM activities.
+7. **Password Policies**: Enforce strong password policies.
+
+##### Terraform Script
+
+```hcl
+# Define variables for user and group names
+variable "user_names" {
+  type    = list(string)
+  default = ["developer", "admin", "contractor"]
+}
+
+variable "group_names" {
+  type    = list(string)
+  default = ["developer_group", "admin_group", "contractor_group"]
+}
+
+# Create IAM Users
+resource "aws_iam_user" "users" {
+  count = length(var.user_names)
+  name  = element(var.user_names, count.index)
+  tags = {
+    "Name" = element(var.user_names, count.index)
+  }
+}
+
+# Create IAM Groups
+resource "aws_iam_group" "groups" {
+  count = length(var.group_names)
+  name  = element(var.group_names, count.index)
+  tags = {
+    "Name" = element(var.group_names, count.index)
+  }
+}
+
+# Define Policies for each group
+
+# Developer policy document
+data "aws_iam_policy_document" "developer_policy" {
+  statement {
+    actions = [
+      "ec2:Describe*",
+      "s3:ListBucket",
+      "s3:GetObject",
+      "dynamodb:Scan",
+      "dynamodb:Query"
+    ]
+    resources = ["*"]
+  }
+}
+
+# Admin policy document
+data "aws_iam_policy_document" "admin_policy" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+  }
+}
+
+# Contractor policy document
+data "aws_iam_policy_document" "contractor_policy" {
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject"
+    ]
+    resources = [
+      "arn:aws:s3:::example-bucket",
+      "arn:aws:s3:::example-bucket/*"
+    ]
+  }
+}
+
+# Create IAM policies
+resource "aws_iam_policy" "developer_policy" {
+  name   = "developer_policy"
+  policy = data.aws_iam_policy_document.developer_policy.json
+}
+
+resource "aws_iam_policy" "admin_policy" {
+  name   = "admin_policy"
+  policy = data.aws_iam_policy_document.admin_policy.json
+}
+
+resource "aws_iam_policy" "contractor_policy" {
+  name   = "contractor_policy"
+  policy = data.aws_iam_policy_document.contractor_policy.json
+}
+
+# Attach policies to groups
+resource "aws_iam_group_policy_attachment" "developer_group_policy" {
+  group      = aws_iam_group.groups[0].name
+  policy_arn = aws_iam_policy.developer_policy.arn
+}
+
+resource "aws_iam_group_policy_attachment" "admin_group_policy" {
+  group      = aws_iam_group.groups[1].name
+  policy_arn = aws_iam_policy.admin_policy.arn
+}
+
+resource "aws_iam_group_policy_attachment" "contractor_group_policy" {
+  group      = aws_iam_group.groups[2].name
+  policy_arn = aws_iam_policy.contractor_policy.arn
+}
+
+# Add users to groups
+resource "aws_iam_user_group_membership" "developer_group_membership" {
+  user = aws_iam_user.users[0].name
+  groups = [
+    aws_iam_group.groups[0].name
+  ]
+}
+
+resource "aws_iam_user_group_membership" "admin_group_membership" {
+  user = aws_iam_user.users[1].name
+  groups = [
+    aws_iam_group.groups[1].name
+  ]
+}
+
+resource "aws_iam_user_group_membership" "contractor_group_membership" {
+  user = aws_iam_user.users[2].name
+  groups = [
+    aws_iam_group.groups[2].name
+  ]
+}
+
+# Enable MFA for Admin and Developer users
+resource "aws_iam_virtual_mfa_device" "admin_mfa" {
+  virtual_mfa_device_name = "admin_mfa"
+  user_name               = aws_iam_user.users[1].name
+}
+
+resource "aws_iam_virtual_mfa_device" "developer_mfa" {
+  virtual_mfa_device_name = "developer_mfa"
+  user_name               = aws_iam_user.users[0].name
+}
+
+# Create IAM Role for EC2 Instance
+data "aws_iam_policy_document" "app_policy" {
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "dynamodb:Query",
+      "dynamodb:Scan"
+    ]
+    resources = [
+      "arn:aws:s3:::example-bucket",
+      "arn:aws:s3:::example-bucket/*",
+      "arn:aws:dynamodb:region:account-id:table/ExampleTable"
+    ]
+  }
+}
+
+resource "aws_iam_role" "app_role" {
+  name = "AppRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_policy" "app_policy" {
+  name   = "app_policy"
+  policy = data.aws_iam_policy_document.app_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "app_role_policy" {
+  role       = aws_iam_role.app_role.name
+  policy_arn = aws_iam_policy.app_policy.arn
+}
+
+# Create IAM Instance Profile for EC2 Instance
+resource "aws_iam_instance_profile" "app_instance_profile" {
+  name = "AppInstanceProfile"
+  role = aws_iam_role.app_role.name
+}
+
+# Create EC2 Instance with IAM Role
+resource "aws_instance" "app_instance" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  iam_instance_profile = aws_iam_instance_profile.app_instance_profile.name
+
+  tags = {
+    Name = "AppInstance"
+  }
+}
+
+# Enable CloudTrail for logging and monitoring
+resource "aws_s3_bucket" "cloudtrail_bucket" {
+  bucket = "cloudtrail-logs-bucket"
+}
+
+resource "aws_cloudtrail" "trail" {
+  name                          = "example-trail"
+  s3_bucket_name                = aws_s3_bucket.cloudtrail_bucket.bucket
+  include_global_service_events = true
+  is_multi_region_trail         = true
+}
+
+# Enable AWS Config for monitoring changes
+resource "aws_config_configuration_recorder" "recorder" {
+  name     = "example"
+  role_arn = aws_iam_role.config_role.arn
+}
+
+resource "aws_config_delivery_channel" "delivery_channel" {
+  name           = "example"
+  s3_bucket_name = aws_s3_bucket.cloudtrail_bucket.bucket
+}
+
+resource "aws_iam_role" "config_role" {
+  name = "ConfigRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "config.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_policy" "config_policy" {
+  name   = "ConfigPolicy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:*",
+          "config:*"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "config_role_policy" {
+  role       = aws_iam_role.config_role.name
+  policy_arn = aws_iam_policy.config_policy.arn
+}
+
+# Enforce strong password policies
+resource "aws_iam_account_password_policy" "strict_policy" {
+  minimum_password_length        = 12
+  require_symbols                = true
+  require_numbers                = true
+  require_uppercase_characters   = true
+  require_lowercase_characters   = true
+  allow_users_to_change_password = true
+  max_password_age               = 90
+  password_reuse_prevention      = 5
+}
+```
+
+### Summary
+
+This Terraform script provides a comprehensive example of implementing IAM best practices for a web application in a real-world scenario. It covers:
+
+- Creating IAM users and groups.
+- Defining and attaching policies based on the principle of least privilege.
+- Enabling MFA for enhanced security.
+- Creating IAM roles for EC2 instances and cross-account access.
+- Setting up monitoring and auditing using CloudTrail and AWS Config.
+- Enforcing strong password policies.
+
+By following this example, you can ensure that your AWS environment is secure, compliant, and well-managed.
