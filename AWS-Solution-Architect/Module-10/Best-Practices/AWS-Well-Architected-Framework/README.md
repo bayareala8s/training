@@ -671,3 +671,130 @@ resource "aws_transfer_user" "sftp_user" {
 ```
 
 These detailed step-by-step implementations for various real-world scenarios demonstrate how to leverage AWS services to achieve high availability, security, performance efficiency, and cost optimization in an e-commerce application.
+
+
+Certainly! Here’s a detailed visual text diagram for an e-commerce application on AWS, based on the AWS Well-Architected Framework:
+
+```
+                            +-----------------------------+
+                            |        Users (Internet)     |
+                            +-------------+---------------+
+                                          |
+                                          v
+                            +-----------------------------+
+                            |    Amazon Route 53 (DNS)    |
+                            +-------------+---------------+
+                                          |
+                                          v
+                            +-----------------------------+
+                            | Elastic Load Balancer (ALB) |
+                            +-------------+---------------+
+                                          |
+            +-----------------------------+-----------------------------+
+            |                                                           |
+            v                                                           v
++-------------------------+                                 +-------------------------+
+| EC2 Instances (Web/App) |                                 | EC2 Instances (Web/App) |
+|   Auto Scaling Group    |                                 |   Auto Scaling Group    |
++-----------+-------------+                                 +-----------+-------------+
+            |                                                           |
+            +-----------+-----------------------------+-----------------+
+                        |                             |
+                        v                             v
+                +---------------+               +---------------+
+                | Public Subnet |               | Public Subnet |
+                | 10.0.1.0/24  |               | 10.0.2.0/24  |
+                +-------+-------+               +-------+-------+
+                        |                             |
+                        v                             v
+                +---------------+               +---------------+
+                |   NAT Gateway |               |   NAT Gateway |
+                +-------+-------+               +-------+-------+
+                        |                             |
+            +-----------+-------------+ +-------------+-----------+
+            |                         | |                         |
+            v                         v v                         v
++-------------------------+ +-------------------------+ +-------------------------+
+| EC2 Instances (App)     | | EC2 Instances (App)     | | EC2 Instances (App)     |
+|   Auto Scaling Group    | |   Auto Scaling Group    | |   Auto Scaling Group    |
++-----------+-------------+ +-----------+-------------+ +-----------+-------------+
+            |                             |                             |
+            +-----------+-----------------+-----------------------------+
+                        |
+                        v
+                +---------------+
+                | Private Subnet |
+                | 10.0.3.0/24   |
+                +-------+-------+
+                        |
+                        v
+                +---------------+
+                | Amazon RDS     |
+                |  (MySQL)      |
+                | Multi-AZ      |
+                +-------+-------+
+                        |
+            +-----------+-------------+
+            |                         |
+            v                         v
++-------------------------+ +-------------------------+
+| Read Replica (MySQL)    | | Read Replica (MySQL)    |
++-------------------------+ +-------------------------+
+
+                            +-----------------------------+
+                            |       Amazon S3 (Static)    |
+                            |   Bucket: my-ecommerce-     |
+                            |     static-content          |
+                            +-------------+---------------+
+                                          |
+                                          v
+                            +-----------------------------+
+                            |    Amazon CloudFront        |
+                            |   Distribution (CDN)        |
+                            +-----------------------------+
+
+                            +-----------------------------+
+                            | Amazon S3 (Transfer Bucket) |
+                            |  my-ecommerce-transfer-bucket|
+                            +-------------+---------------+
+                                          |
+                                          v
+                            +-----------------------------+
+                            | AWS Transfer Family (SFTP)  |
+                            +-----------------------------+
+                                          |
+                                          v
+                            +-----------------------------+
+                            |   Transfer User: sftp_user  |
+                            +-----------------------------+
+
+                            +-----------------------------+
+                            |    Amazon CloudWatch        |
+                            |  (Monitoring & Logging)     |
+                            +-------------+---------------+
+                                          |
+                                          v
+                            +-----------------------------+
+                            |       AWS CloudTrail        |
+                            |     (Audit & Compliance)    |
+                            +-----------------------------+
+```
+
+**Explanation:**
+
+1. **Users (Internet):** End users accessing the application via the internet.
+2. **Amazon Route 53:** DNS service to route user requests.
+3. **Elastic Load Balancer (ALB):** Distributes incoming traffic to EC2 instances.
+4. **EC2 Instances (Web/App):** Web and application servers running in Auto Scaling Groups for high availability.
+5. **Public Subnets:** Subnets with public IP addresses for load balancers and NAT gateways.
+6. **NAT Gateways:** Allows EC2 instances in private subnets to access the internet.
+7. **Private Subnets:** Subnets without public IP addresses for secure backend instances.
+8. **Amazon RDS (MySQL):** Multi-AZ database deployment for high availability.
+9. **Read Replicas:** For read-intensive operations, offloading reads from the primary database.
+10. **Amazon S3 (Static):** S3 bucket for storing static content.
+11. **Amazon CloudFront:** CDN for distributing static content globally.
+12. **Amazon S3 (Transfer Bucket):** S3 bucket for file transfers.
+13. **AWS Transfer Family (SFTP):** Secure file transfer service.
+14. **Transfer User (sftp_user):** User for accessing the SFTP server.
+15. **Amazon CloudWatch:** Monitoring and logging service.
+16. **AWS CloudTrail:** Service for auditing API calls and actions across the AWS account.
