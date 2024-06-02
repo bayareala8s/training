@@ -327,3 +327,222 @@ resource "aws_kms_key" "mykey" {
 ```
 
 These examples illustrate how to design and implement AWS architectures for different industries and use cases, ensuring high availability, security, and scalability. Each architecture is tailored to the specific needs of the business, leveraging AWS services effectively.
+
+
+Sure! Here are visual text diagrams along with detailed step-by-step explanations for each of the real-world examples provided:
+
+### 1. E-Commerce Company Hosting an Online Store
+
+#### Visual Text Diagram:
+```
+                             +-------------------------+
+                             |       Route 53          |
+                             +-------------------------+
+                                       |
+                                       |
+                             +-------------------------+
+                             |       CloudFront        |
+                             +-------------------------+
+                                       |
+                                       |
+                             +-------------------------+
+                             |       ELB               |
+                             +-------------------------+
+                              /              \
+                             /                \
+                   +----------------+    +----------------+
+                   |  Public Subnet |    |  Public Subnet |
+                   |  (us-east-1a)  |    |  (us-east-1b)  |
+                   +----------------+    +----------------+
+                          |                     |
+                          |                     |
++----------------+        |                     |        +----------------+
+|  NAT Gateway   |        |                     |        |  NAT Gateway   |
++----------------+        |                     |        +----------------+
+        |                 |                     |                 |
++----------------+  +------------+        +------------+  +----------------+
+| Bastion Host   |  | Web Server |        | Web Server |  | Bastion Host   |
++----------------+  +------------+        +------------+  +----------------+
+        |                 |                     |                 |
++----------------+  +----------------+  +----------------+  +----------------+
+|  Private Subnet|  |  Private Subnet |  |  Private Subnet |  |  Private Subnet |
+|  (us-east-1a)  |  |  (us-east-1a)  |  |  (us-east-1b)  |  |  (us-east-1b)  |
++----------------+  +----------------+  +----------------+  +----------------+
+                          |                     |                     |
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |     RDS        |    |     RDS        |    |     RDS        |
+                   | Multi-AZ (DB1) |    | Multi-AZ (DB1) |    | Multi-AZ (DB1) |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |      S3        |    |      S3        |    |      S3        |
+                   +----------------+    +----------------+    +----------------+
+```
+
+#### Step-by-Step Explanation:
+1. **Route 53**: DNS service to route user requests to CloudFront.
+2. **CloudFront**: CDN to cache content and deliver it quickly to users globally.
+3. **ELB (Elastic Load Balancer)**: Distributes incoming traffic to multiple web servers in different availability zones for redundancy and high availability.
+4. **Public Subnets**: Host NAT Gateways, Bastion Hosts, and Load Balancers.
+   - **NAT Gateway**: Allows instances in private subnets to access the internet for updates and patches.
+   - **Bastion Host**: Provides secure administrative access to the instances in private subnets.
+   - **Web Servers**: Host the application, deployed in auto-scaling groups.
+5. **Private Subnets**: Host EC2 instances for the application and databases.
+   - **Application Servers**: EC2 instances running the application.
+   - **RDS (Relational Database Service)**: Multi-AZ deployment for high availability of the database.
+6. **S3**: Storage for static content, backups, and logs.
+
+### 2. Media Streaming Service
+
+#### Visual Text Diagram:
+```
+                             +-------------------------+
+                             |       Route 53          |
+                             +-------------------------+
+                                       |
+                                       |
+                             +-------------------------+
+                             |       CloudFront        |
+                             +-------------------------+
+                                       |
+                                       |
+                             +-------------------------+
+                             |       ELB               |
+                             +-------------------------+
+                              /              \
+                             /                \
+                   +----------------+    +----------------+
+                   |  Public Subnet |    |  Public Subnet |
+                   |  (us-west-2a)  |    |  (us-west-2b)  |
+                   +----------------+    +----------------+
+                          |                     |
+                          |                     |
++----------------+        |                     |        +----------------+
+|  NAT Gateway   |        |                     |        |  NAT Gateway   |
++----------------+        |                     |        +----------------+
+        |                 |                     |                 |
++----------------+  +------------+        +------------+  +----------------+
+| Media Server   |  | Media Server |        | Media Server |  | Media Server   |
++----------------+  +------------+        +------------+  +----------------+
+        |                 |                     |                 |
++----------------+  +----------------+  +----------------+  +----------------+
+|  Private Subnet|  |  Private Subnet |  |  Private Subnet |  |  Private Subnet |
+|  (us-west-2a)  |  |  (us-west-2a)  |  |  (us-west-2b)  |  |  (us-west-2b)  |
++----------------+  +----------------+  +----------------+  +----------------+
+                          |                     |                     |
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |      S3        |    |      S3        |    |      S3        |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |  DynamoDB      |    |  DynamoDB      |    |  DynamoDB      |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   | ElasticTranscoder|    | ElasticTranscoder|    | ElasticTranscoder|
+                   +----------------+    +----------------+    +----------------+
+```
+
+#### Step-by-Step Explanation:
+1. **Route 53**: DNS service to route user requests to CloudFront.
+2. **CloudFront**: CDN to cache content and deliver it quickly to users globally.
+3. **ELB (Elastic Load Balancer)**: Distributes incoming traffic to multiple media servers in different availability zones for redundancy and high availability.
+4. **Public Subnets**: Host NAT Gateways, Media Servers, and Load Balancers.
+   - **NAT Gateway**: Allows instances in private subnets to access the internet for updates and patches.
+   - **Media Servers**: EC2 instances running the media streaming application, deployed in auto-scaling groups.
+5. **Private Subnets**: Host EC2 instances for media servers and databases.
+   - **S3**: Storage for media files.
+   - **DynamoDB**: NoSQL database for storing metadata about media files.
+   - **Elastic Transcoder**: To transcode media files into different formats for various devices.
+
+### 3. Financial Services Company
+
+#### Visual Text Diagram:
+```
+                             +-------------------------+
+                             |       Route 53          |
+                             +-------------------------+
+                                       |
+                                       |
+                             +-------------------------+
+                             |       Direct Connect    |
+                             +-------------------------+
+                                       |
+                                       |
+                             +-------------------------+
+                             |       VPC               |
+                             +-------------------------+
+                              /              \
+                             /                \
+                   +----------------+    +----------------+
+                   |  Public Subnet |    |  Public Subnet |
+                   |  (us-east-1a)  |    |  (us-east-1b)  |
+                   +----------------+    +----------------+
+                          |                     |
+                          |                     |
++----------------+        |                     |        +----------------+
+|  NAT Gateway   |        |                     |        |  NAT Gateway   |
++----------------+        |                     |        +----------------+
+        |                 |                     |                 |
++----------------+  +------------+        +------------+  +----------------+
+| Bastion Host   |  | Web Server |        | Web Server |  | Bastion Host   |
++----------------+  +------------+        +------------+  +----------------+
+        |                 |                     |                 |
++----------------+  +----------------+  +----------------+  +----------------+
+|  Private Subnet|  |  Private Subnet |  |  Private Subnet |  |  Private Subnet |
+|  (us-east-1a)  |  |  (us-east-1a)  |  |  (us-east-1b)  |  |  (us-east-1b)  |
++----------------+  +----------------+  +----------------+  +----------------+
+                          |                     |                     |
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |     RDS        |    |     RDS        |    |     RDS        |
+                   | Multi-AZ (DB1) |    | Multi-AZ (DB1) |    | Multi-AZ (DB1) |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |      S3        |    |      S3        |    |      S3        |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |      KMS       |    |      KMS       |    |      KMS       |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |    CloudHSM    |   
+
+ |    CloudHSM    |    |    CloudHSM    |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |   CloudTrail   |    |   CloudTrail   |    |   CloudTrail   |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |     Config     |    |     Config     |    |     Config     |
+                   +----------------+    +----------------+    +----------------+
+                          |                     |                     |
+                   +----------------+    +----------------+    +----------------+
+                   |      WAF       |    |      WAF       |    |      WAF       |
+                   +----------------+    +----------------+    +----------------+
+```
+
+#### Step-by-Step Explanation:
+1. **Route 53**: DNS service to route user requests to the application.
+2. **Direct Connect**: Provides a dedicated connection to the on-premises data center, ensuring secure and high-speed connectivity.
+3. **VPC**: Configured with public and private subnets across multiple availability zones for redundancy and high availability.
+4. **Public Subnets**: Host NAT Gateways, Bastion Hosts, and Load Balancers.
+   - **NAT Gateway**: Allows instances in private subnets to access the internet for updates and patches.
+   - **Bastion Host**: Provides secure administrative access to the instances in private subnets.
+   - **Web Servers**: Host the application, deployed in auto-scaling groups.
+5. **Private Subnets**: Host EC2 instances for the application and databases.
+   - **RDS (Relational Database Service)**: Multi-AZ deployment for high availability of the database.
+   - **S3**: Storage for static content, backups, and logs.
+   - **KMS**: Manages encryption keys for data at rest.
+   - **CloudHSM**: Hardware security module for cryptographic operations.
+6. **CloudTrail**: For logging and monitoring API calls to ensure compliance and security.
+7. **Config**: Monitors configuration changes and ensures compliance with policies.
+8. **WAF (Web Application Firewall)**: Provides additional security for the web application.
+
+These diagrams and explanations provide a detailed overview of each architecture and how different AWS services are used to meet specific requirements for each industry and use case.
