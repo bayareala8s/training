@@ -2342,4 +2342,232 @@ resource "aws_iam_role_policy_attachment" "firehose_policy" {
 These architectural patterns and Terraform scripts cover a wide range of AWS services, demonstrating different approaches to building scalable, secure, and efficient applications on AWS. Each script includes detailed steps and comments to guide you through the implementation process.
 
 
+Sure! Here are visual text diagrams with step-by-step details for each of the architectural patterns:
+
+### Architectural Pattern 1: Multi-Tier Architecture
+
+#### Visual Text Diagram:
+```
+                            +------------------------+
+                            |       Route 53         |
+                            +------------------------+
+                                      |
+                                      |
+                            +------------------------+
+                            |       ELB              |
+                            +------------------------+
+                             /             \
+                            /               \
+                 +----------------+   +----------------+
+                 |  Public Subnet |   |  Public Subnet |
+                 |  (us-east-1a)  |   |  (us-east-1b)  |
+                 +----------------+   +----------------+
+                        |                    |
+                        |                    |
+          +------------------+   +------------------+
+          | Web Server (EC2) |   | Web Server (EC2) |
+          +------------------+   +------------------+
+                        |                    |
+                        |                    |
+                 +----------------+   +----------------+
+                 |  Private Subnet|   |  Private Subnet|
+                 |  (us-east-1a)  |   |  (us-east-1b)  |
+                 +----------------+   +----------------+
+                        |                    |
+                        |                    |
+         +----------------------+  +----------------------+
+         | App Server (EC2)     |  | App Server (EC2)     |
+         +----------------------+  +----------------------+
+                        |                    |
+                        |                    |
+          +------------------+   +------------------+
+          | RDS (Multi-AZ)   |   | RDS (Multi-AZ)   |
+          +------------------+   +------------------+
+                        |                    |
+                        |                    |
+           +-------------------+  +-------------------+
+           | S3 (Static Content)|  | S3 (Backups/Logs)|
+           +-------------------+  +-------------------+
+```
+
+#### Step-by-Step Details:
+1. **Route 53**: DNS service to route traffic to the ELB.
+2. **ELB (Elastic Load Balancer)**: Distributes incoming traffic to the web servers in different availability zones.
+3. **Public Subnets**: Host the web servers.
+   - **Web Server (EC2)**: Handles the presentation layer of the application.
+4. **Private Subnets**: Host the application servers and RDS instances.
+   - **App Server (EC2)**: Handles the application logic layer.
+   - **RDS (Multi-AZ)**: Provides a highly available and fault-tolerant database solution.
+5. **S3 Buckets**:
+   - **Static Content**: Stores static files such as images and videos.
+   - **Backups/Logs**: Stores backups and log files.
+
+### Architectural Pattern 2: Serverless Architecture
+
+#### Visual Text Diagram:
+```
+                               +-------------------------+
+                               |       Route 53          |
+                               +-------------------------+
+                                         |
+                                         |
+                               +-------------------------+
+                               |       CloudFront        |
+                               +-------------------------+
+                                         |
+                                         |
+                               +-------------------------+
+                               |      API Gateway        |
+                               +-------------------------+
+                                /           |           \
+                               /            |            \
+                 +------------------+ +------------------+ +------------------+
+                 | Lambda Function  | | Lambda Function  | | Lambda Function  |
+                 +------------------+ +------------------+ +------------------+
+                         |                   |                   |
+                         |                   |                   |
+                 +-------------------+ +-------------------+ +-------------------+
+                 | DynamoDB Table    | | DynamoDB Table    | | DynamoDB Table    |
+                 +-------------------+ +-------------------+ +-------------------+
+                         |                   |                   |
+                         |                   |                   |
+               +------------------+ +------------------+ +------------------+
+               | S3 (Static Content)| | S3 (Static Content)| | S3 (Static Content)|
+               +------------------+ +------------------+ +------------------+
+```
+
+#### Step-by-Step Details:
+1. **Route 53**: DNS service to route traffic to CloudFront.
+2. **CloudFront**: CDN to cache content and deliver it quickly to users globally.
+3. **API Gateway**: Exposes HTTP endpoints to invoke Lambda functions.
+4. **Lambda Functions**: Stateless compute functions that handle business logic.
+5. **DynamoDB**: NoSQL database to store application data.
+6. **S3 Buckets**: Store static content for the application.
+
+### Architectural Pattern 3: Microservices Architecture
+
+#### Visual Text Diagram:
+```
+                             +---------------------------+
+                             |       Route 53            |
+                             +---------------------------+
+                                       |
+                                       |
+                             +---------------------------+
+                             |       API Gateway         |
+                             +---------------------------+
+                              /           |           \
+                             /            |            \
+              +-------------------+ +-------------------+ +-------------------+
+              | ECS Service       | | ECS Service       | | ECS Service       |
+              | (Microservice A)  | | (Microservice B)  | | (Microservice C)  |
+              +-------------------+ +-------------------+ +-------------------+
+                      |                     |                     |
+                      |                     |                     |
+        +-------------------+ +-------------------+ +-------------------+
+        | Private Subnet    | | Private Subnet    | | Private Subnet    |
+        | (us-west-2a)      | | (us-west-2b)      | | (us-west-2c)      |
+        +-------------------+ +-------------------+ +-------------------+
+                      |                     |                     |
+                      |                     |                     |
+             +--------------------+ +--------------------+ +--------------------+
+             | RDS (Database A)   | | RDS (Database B)   | | RDS (Database C)   |
+             +--------------------+ +--------------------+ +--------------------+
+                      |                     |                     |
+                      |                     |                     |
+          +-------------------+ +-------------------+ +-------------------+
+          | CloudWatch        | | CloudWatch        | | CloudWatch        |
+          | Logs & Metrics    | | Logs & Metrics    | | Logs & Metrics    |
+          +-------------------+ +-------------------+ +-------------------+
+                      |                     |                     |
+                      |                     |                     |
+            +------------------+ +------------------+ +------------------+
+            | CloudMap (Service)| | CloudMap (Service)| | CloudMap (Service)|
+            +------------------+ +------------------+ +------------------+
+```
+
+#### Step-by-Step Details:
+1. **Route 53**: DNS service to route traffic to API Gateway.
+2. **API Gateway**: Routes requests to different microservices.
+3. **ECS Services**: Host different microservices.
+   - **Microservice A, B, C**: Different microservices running on ECS.
+4. **Private Subnets**: Host RDS instances.
+   - **RDS (Database A, B, C)**: Databases for each microservice.
+5. **CloudWatch**: Monitors logs and metrics for the microservices.
+6. **CloudMap**: Provides service discovery for the microservices.
+
+### Architectural Pattern 4: Data Lake Architecture
+
+#### Visual Text Diagram:
+```
+                       +------------------------+
+                       |       Route 53         |
+                       +------------------------+
+                                 |
+                                 |
+                       +------------------------+
+                       |       CloudFront       |
+                       +------------------------+
+                                 |
+                                 |
+                       +------------------------+
+                       |         S3             |
+                       |  (Raw Data Storage)    |
+                       +------------------------+
+                                 |
+                                 |
+                       +------------------------+
+                       |       AWS Glue         |
+                       +------------------------+
+                        /         |          \
+                       /          |           \
+      +------------------+ +------------------+ +------------------+
+      |  AWS Glue ETL    | |  AWS Glue ETL    | |  AWS Glue ETL    |
+      +------------------+ +------------------+ +------------------+
+                |                   |                    |
+                |                   |                    |
+      +-------------------+ +-------------------+ +-------------------+
+      | S3 (Processed Data)| | S3 (Processed Data)| | S3 (Processed Data)|
+      +-------------------+ +-------------------+ +-------------------+
+                |                   |                    |
+                |                   |                    |
+      +-------------------+ +-------------------+ +-------------------+
+      |  Athena Queries   | |  Athena Queries   | |  Athena Queries   |
+      +-------------------+ +-------------------+ +-------------------+
+                |                   |                    |
+                |                   |                    |
+      +-------------------+ +-------------------+ +-------------------+
+      | Redshift Spectrum | | Redshift Spectrum | | Redshift Spectrum |
+      +-------------------+ +-------------------+ +-------------------+
+                |                   |                    |
+                |                   |                    |
+      +-------------------+ +-------------------+ +-------------------+
+      | Kinesis Streams   | | Kinesis Streams   | | Kinesis Streams   |
+      +-------------------+ +-------------------+ +-------------------+
+                |                   |                    |
+                |                   |                    |
+      +-------------------+ +-------------------+ +-------------------+
+      |  S3 (Curated Data)| |  S3 (Curated Data)| |  S3 (Curated Data)|
+      +-------------------+ +-------------------+ +-------------------+
+```
+
+#### Step-by-Step Details:
+1. **Route 53**: DNS service to route traffic to CloudFront.
+2. **CloudFront**: CDN to cache content and deliver it quickly to users globally.
+3. **S3 Buckets**:
+   - **Raw Data Storage**: Stores raw data.
+4. **AWS Glue**: Extract, transform, load (ETL) service.
+   - **AWS Glue ETL**: Processes raw data and stores it in the
+
+ processed data bucket.
+5. **S3 Buckets**:
+   - **Processed Data**: Stores processed data.
+6. **Athena**: Query the processed data stored in S3.
+7. **Redshift Spectrum**: Run SQL queries on the processed data in S3.
+8. **Kinesis**: Real-time data streaming into the data lake.
+   - **Kinesis Streams**: Streams data to the data lake.
+9. **S3 Buckets**:
+   - **Curated Data**: Stores curated data after further processing.
+
+These visual text diagrams with step-by-step details provide a clear overview of each architectural pattern, showing how different AWS services are integrated to build scalable, secure, and efficient applications.
 
