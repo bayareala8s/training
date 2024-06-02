@@ -222,3 +222,452 @@ resource "aws_security_group" "web" {
 This Terraform script sets up a VPC with two public subnets, an internet gateway, a public route table, and a security group allowing HTTP traffic.
 
 By following these real-world examples and integrating the AWS Well-Architected Framework, organizations can ensure their applications are secure, reliable, performant, and cost-effective.
+
+
+Here are additional real-world examples with step-by-step implementations for each of the AWS Well-Architected Framework pillars, focusing on various aspects of an e-commerce application.
+
+### Example 1: Implementing Auto Scaling for an E-commerce Application
+
+**Objective:** Ensure that the application can handle varying loads efficiently by automatically scaling the number of instances based on traffic.
+
+**Step-by-Step Implementation:**
+
+1. **Set Up Your VPC:**
+   - Create a VPC with public and private subnets across multiple Availability Zones.
+
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "public" {
+  count = 2
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)
+  availability_zone = element(["us-west-2a", "us-west-2b"], count.index)
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "private" {
+  count = 2
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index + 2)
+  availability_zone = element(["us-west-2a", "us-west-2b"], count.index)
+}
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route" "internet_access" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.main.id
+}
+
+resource "aws_route_table_association" "public" {
+  count = 2
+  subnet_id      = element(aws_subnet.public.*.id, count.index)
+  route_table_id = aws_route_table.public.id
+}
+```
+
+2. **Launch an EC2 Instance:**
+   - Create an EC2 instance in the public subnet with a security group allowing HTTP and SSH access.
+
+```hcl
+resource "aws_instance" "web" {
+  ami           = "ami-0abcdef1234567890"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.public[0].id
+  key_name      = "my-key"
+
+  tags = {
+    Name = "web-server"
+  }
+
+  security_groups = [aws_security_group.web.id]
+}
+
+resource "aws_security_group" "web" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+3. **Configure Auto Scaling:**
+   - Create a launch configuration and an Auto Scaling group to automatically adjust the number of instances based on load.
+
+```hcl
+resource "aws_launch_configuration" "web_config" {
+  name          = "web-launch-config"
+  image_id      = "ami-0abcdef1234567890"
+  instance_type = "t2.micro"
+  security_groups = [aws_security_group.web.id]
+  key_name      = "my-key"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_autoscaling_group" "web_asg" {
+  launch_configuration = aws_launch_configuration.web_config.id
+  min_size             = 1
+  max_size             = 3
+  desired_capacity     = 1
+  vpc_zone_identifier  = [aws_subnet.public[0].id, aws_subnet.public[1].id]
+
+  tag {
+    key                 = "Name"
+    value               = "web-server"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_autoscaling_policy" "scale_up" {
+  name                   = "scale-up"
+  scaling_adjustment     = 1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.web_asg.name
+}
+
+resource "aws_autoscaling_policy" "scale_down" {
+  name                   = "scale-down"
+  scaling_adjustment     = -1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.web_asg.name
+}
+```
+
+4. **Set Up Load Balancing:**
+   - Use an Elastic Load Balancer (ELB) to distribute traffic across multiple instances.
+
+```hcl
+resource "aws_lb" "web_lb" {
+  name               = "web-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.web.id]
+  subnets            = [aws_subnet.public[0].id, aws_subnet.public[1].id]
+
+  enable_deletion_protection = false
+}
+
+resource "aws_lb_target_group" "web_tg" {
+  name     = "web-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main.id
+
+  health_check {
+    interval            = 30
+    path                = "/"
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+  }
+}
+
+resource "aws_lb_listener" "web_listener" {
+  load_balancer_arn = aws_lb.web_lb.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web_tg.arn
+  }
+}
+
+resource "aws_autoscaling_attachment" "asg_attachment" {
+  autoscaling_group_name = aws_autoscaling_group.web_asg.name
+  alb_target_group_arn   = aws_lb_target_group.web_tg.arn
+}
+```
+
+### Example 2: Implementing Database High Availability with Amazon RDS
+
+**Objective:** Ensure the database layer is highly available and can automatically failover to a standby instance in case of a failure.
+
+**Step-by-Step Implementation:**
+
+1. **Set Up Amazon RDS:**
+   - Create an Amazon RDS instance with Multi-AZ deployment.
+
+```hcl
+resource "aws_db_instance" "default" {
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "mysql"
+  engine_version       = "8.0"
+  instance_class       = "db.t3.micro"
+  name                 = "mydb"
+  username             = "admin"
+  password             = "mypassword"
+  parameter_group_name = "default.mysql8.0"
+  multi_az             = true
+  publicly_accessible  = false
+  vpc_security_group_ids = [aws_security_group.rds.id]
+
+  db_subnet_group_name = aws_db_subnet_group.main.name
+}
+
+resource "aws_db_subnet_group" "main" {
+  name       = "main"
+  subnet_ids = [aws_subnet.private[0].id, aws_subnet.private[1].id]
+
+  tags = {
+    Name = "main"
+  }
+}
+
+resource "aws_security_group" "rds" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+2. **Enable Automated Backups:**
+   - Configure automated backups for the RDS instance.
+
+```hcl
+resource "aws_db_instance" "default" {
+  ...
+  backup_retention_period = 7
+  backup_window           = "02:00-03:00"
+  ...
+}
+```
+
+3. **Set Up Read Replicas:**
+   - Create a read replica for read-intensive workloads to offload the main database instance.
+
+```hcl
+resource "aws_db_instance" "replica" {
+  identifier             = "mydb-replica"
+  replicate_source_db    = aws_db_instance.default.id
+  instance_class         = "db.t3.micro"
+  publicly_accessible    = false
+  vpc_security_group_ids = [aws_security_group.rds.id]
+  db_subnet_group_name   = aws_db_subnet_group.main.name
+}
+```
+
+### Example 3: Implementing Content Delivery with Amazon CloudFront
+
+**Objective:** Improve the performance and reduce latency for serving static and dynamic content to global users.
+
+**Step-by-Step Implementation:**
+
+1. **Set Up an S3 Bucket:**
+   - Create an S3 bucket to store static content like images, CSS, and JavaScript files.
+
+```hcl
+resource "aws_s3_bucket
+
+" "static_content" {
+  bucket = "my-ecommerce-static-content"
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_object" "index" {
+  bucket = aws_s3_bucket.static_content.bucket
+  key    = "index.html"
+  source = "path/to/index.html"
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_object" "styles" {
+  bucket = aws_s3_bucket.static_content.bucket
+  key    = "styles.css"
+  source = "path/to/styles.css"
+  acl    = "public-read"
+}
+```
+
+2. **Create a CloudFront Distribution:**
+   - Distribute the static content globally using CloudFront.
+
+```hcl
+resource "aws_cloudfront_distribution" "cdn" {
+  origin {
+    domain_name = aws_s3_bucket.static_content.bucket_regional_domain_name
+    origin_id   = "s3-my-ecommerce-static-content"
+  }
+
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "E-commerce CDN"
+  default_root_object = "index.html"
+
+  default_cache_behavior {
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "s3-my-ecommerce-static-content"
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
+
+  price_class = "PriceClass_100"
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+```
+
+### Example 4: Implementing Secure Data Transfer with AWS Transfer Family
+
+**Objective:** Securely transfer files to and from Amazon S3 or Amazon EFS using protocols such as SFTP, FTPS, and FTP.
+
+**Step-by-Step Implementation:**
+
+1. **Set Up an S3 Bucket:**
+   - Create an S3 bucket to store transferred files.
+
+```hcl
+resource "aws_s3_bucket" "transfer_bucket" {
+  bucket = "my-ecommerce-transfer-bucket"
+  acl    = "private"
+}
+```
+
+2. **Create an AWS Transfer Family Server:**
+   - Set up an AWS Transfer Family server for SFTP.
+
+```hcl
+resource "aws_transfer_server" "sftp" {
+  identity_provider_type = "SERVICE_MANAGED"
+  endpoint_type          = "PUBLIC"
+  logging_role           = aws_iam_role.transfer_role.arn
+}
+
+resource "aws_iam_role" "transfer_role" {
+  name = "TransferRole"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "transfer.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "transfer_policy" {
+  role = aws_iam_role.transfer_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::my-ecommerce-transfer-bucket",
+        "arn:aws:s3:::my-ecommerce-transfer-bucket/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:log-group:/aws/transfer/*"
+    }
+  ]
+}
+EOF
+}
+```
+
+3. **Create a User for AWS Transfer Family:**
+   - Create a user and assign a home directory in the S3 bucket.
+
+```hcl
+resource "aws_transfer_user" "sftp_user" {
+  server_id = aws_transfer_server.sftp.id
+  user_name = "sftp_user"
+  role      = aws_iam_role.transfer_role.arn
+  home_directory = "/${aws_s3_bucket.transfer_bucket.bucket}/sftp_user"
+
+  home_directory_mappings {
+    entry  = "/"
+    target = "/${aws_s3_bucket.transfer_bucket.bucket}/sftp_user"
+  }
+}
+```
+
+These detailed step-by-step implementations for various real-world scenarios demonstrate how to leverage AWS services to achieve high availability, security, performance efficiency, and cost optimization in an e-commerce application.
