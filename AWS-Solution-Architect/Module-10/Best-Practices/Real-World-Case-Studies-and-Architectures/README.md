@@ -546,3 +546,821 @@ Sure! Here are visual text diagrams along with detailed step-by-step explanation
 8. **WAF (Web Application Firewall)**: Provides additional security for the web application.
 
 These diagrams and explanations provide a detailed overview of each architecture and how different AWS services are used to meet specific requirements for each industry and use case.
+
+
+Sure! Below are detailed step-by-step Terraform scripts with comments for each of the real-world examples:
+
+### 1. E-Commerce Company Hosting an Online Store
+
+#### Terraform Script:
+```hcl
+# Provider configuration
+provider "aws" {
+  region = "us-east-1"
+}
+
+# Create a VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+# Create Public Subnets
+resource "aws_subnet" "public" {
+  count             = 2
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.${count.index}.0/24"
+  availability_zone = element(["us-east-1a", "us-east-1b"], count.index)
+  map_public_ip_on_launch = true
+}
+
+# Create Private Subnets
+resource "aws_subnet" "private" {
+  count             = 2
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.${count.index + 2}.0/24"
+  availability_zone = element(["us-east-1a", "us-east-1b"], count.index)
+}
+
+# Create an Internet Gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+}
+
+# Create NAT Gateways
+resource "aws_nat_gateway" "nat" {
+  count         = 2
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = element(aws_subnet.public.*.id, count.index)
+}
+
+# Create Elastic IPs for NAT Gateways
+resource "aws_eip" "nat" {
+  count = 2
+  vpc = true
+}
+
+# Create a Route Table for Public Subnets
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+}
+
+# Associate Public Subnets with Route Table
+resource "aws_route_table_association" "public" {
+  count          = 2
+  subnet_id      = element(aws_subnet.public.*.id, count.index)
+  route_table_id = aws_route_table.public.id
+}
+
+# Create Route Tables for Private Subnets
+resource "aws_route_table" "private" {
+  count = 2
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = element(aws_nat_gateway.nat.*.id, count.index)
+  }
+}
+
+# Associate Private Subnets with Route Tables
+resource "aws_route_table_association" "private" {
+  count          = 2
+  subnet_id      = element(aws_subnet.private.*.id, count.index)
+  route_table_id = element(aws_route_table.private.*.id, count.index)
+}
+
+# Create Security Group for Web Servers
+resource "aws_security_group" "web" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create Security Group for RDS
+resource "aws_security_group" "db" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port      = 3306
+    to_port        = 3306
+    protocol       = "tcp"
+    security_groups = [aws_security_group.web.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create an Auto Scaling Group for Web Servers
+resource "aws_autoscaling_group" "web" {
+  desired_capacity     = 2
+  max_size             = 4
+  min_size             = 2
+  vpc_zone_identifier  = aws_subnet.private.*.id
+  launch_configuration = aws_launch_configuration.web.id
+}
+
+# Create a Launch Configuration for Web Servers
+resource "aws_launch_configuration" "web" {
+  image_id        = "ami-0c55b159cbfafe1f0" # Use an appropriate AMI
+  instance_type   = "t2.micro"
+  security_groups = [aws_security_group.web.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Create RDS Instance
+resource "aws_db_instance" "db" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = "admin"
+  password             = "password"
+  vpc_security_group_ids = [aws_security_group.db.id]
+  multi_az             = true
+  publicly_accessible  = false
+}
+
+# Create an S3 Bucket for Static Content
+resource "aws_s3_bucket" "static" {
+  bucket = "ecommerce-static-content"
+  acl    = "public-read"
+
+  website {
+    index_document = "index.html"
+    error_document = "error.html"
+  }
+}
+
+# Create CloudFront Distribution for S3 Bucket
+resource "aws_cloudfront_distribution" "cdn" {
+  origin {
+    domain_name = aws_s3_bucket.static.bucket_regional_domain_name
+    origin_id   = "S3-${aws_s3_bucket.static.id}"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
+  enabled             = true
+  is_ipv6_enabled     = true
+  default_root_object = "index.html"
+
+  default_cache_behavior {
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "S3-${aws_s3_bucket.static.id}"
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
+# Create Route 53 Record to point to CloudFront Distribution
+resource "aws_route53_record" "www" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "www"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.cdn.domain_name
+    zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+```
+
+### 2. Media Streaming Service
+
+#### Terraform Script:
+```hcl
+# Provider configuration
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create a VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+# Create Public Subnets
+resource "aws_subnet" "public" {
+  count             = 3
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.${count.index}.0/24"
+  availability_zone = element(["us-west-2a", "us-west-2b", "us-west-2c"], count.index)
+  map_public_ip_on_launch = true
+}
+
+# Create Private Subnets
+resource "aws_subnet" "private" {
+  count             = 3
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.${count.index + 3}.0/24"
+  availability_zone = element(["us-west-2a", "us-west-2b", "us-west-2c"], count.index)
+}
+
+# Create an Internet Gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+}
+
+# Create NAT Gateways
+resource "aws_nat_gateway" "nat" {
+  count         = 3
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = element(aws_subnet.public.*.id, count.index)
+}
+
+# Create Elastic IPs for NAT Gateways
+resource "aws_eip" "nat" {
+  count = 3
+  vpc = true
+}
+
+# Create a Route Table for Public Subnets
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+}
+
+# Associate Public Subnets with Route Table
+resource "aws_route_table_association" "public" {
+  count          = 3
+  subnet_id      = element(aws
+
+_subnet.public.*.id, count.index)
+  route_table_id = aws_route_table.public.id
+}
+
+# Create Route Tables for Private Subnets
+resource "aws_route_table" "private" {
+  count = 3
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = element(aws_nat_gateway.nat.*.id, count.index)
+  }
+}
+
+# Associate Private Subnets with Route Tables
+resource "aws_route_table_association" "private" {
+  count          = 3
+  subnet_id      = element(aws_subnet.private.*.id, count.index)
+  route_table_id = element(aws_route_table.private.*.id, count.index)
+}
+
+# Create Security Group for Media Servers
+resource "aws_security_group" "media" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create an Auto Scaling Group for Media Servers
+resource "aws_autoscaling_group" "media" {
+  desired_capacity     = 3
+  max_size             = 6
+  min_size             = 3
+  vpc_zone_identifier  = aws_subnet.private.*.id
+  launch_configuration = aws_launch_configuration.media.id
+}
+
+# Create a Launch Configuration for Media Servers
+resource "aws_launch_configuration" "media" {
+  image_id        = "ami-0c55b159cbfafe1f0" # Use an appropriate AMI
+  instance_type   = "t2.micro"
+  security_groups = [aws_security_group.media.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Create an S3 Bucket for Media Files
+resource "aws_s3_bucket" "media" {
+  bucket = "media-streaming-service"
+  acl    = "private"
+}
+
+# Create DynamoDB Table for Media Metadata
+resource "aws_dynamodb_table" "media_metadata" {
+  name         = "media_metadata"
+  hash_key     = "media_id"
+
+  attribute {
+    name = "media_id"
+    type = "S"
+  }
+
+  billing_mode = "PAY_PER_REQUEST"
+}
+
+# Create Elastic Transcoder Pipeline
+resource "aws_elastictranscoder_pipeline" "media_pipeline" {
+  name = "media-transcoding-pipeline"
+  input_bucket = aws_s3_bucket.media.bucket
+  output_bucket = aws_s3_bucket.media.bucket
+
+  role = aws_iam_role.transcoder_role.arn
+
+  notifications {
+    progressing = "arn:aws:sns:us-west-2:123456789012:transcoder-notifications"
+    completed   = "arn:aws:sns:us-west-2:123456789012:transcoder-notifications"
+    warning     = "arn:aws:sns:us-west-2:123456789012:transcoder-notifications"
+    error       = "arn:aws:sns:us-west-2:123456789012:transcoder-notifications"
+  }
+}
+
+# Create CloudFront Distribution for S3 Bucket
+resource "aws_cloudfront_distribution" "cdn" {
+  origin {
+    domain_name = aws_s3_bucket.media.bucket_regional_domain_name
+    origin_id   = "S3-${aws_s3_bucket.media.id}"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
+  enabled             = true
+  is_ipv6_enabled     = true
+  default_root_object = "index.html"
+
+  default_cache_behavior {
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "S3-${aws_s3_bucket.media.id}"
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
+# Create Route 53 Record to point to CloudFront Distribution
+resource "aws_route53_record" "www" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "www"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.cdn.domain_name
+    zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+# Create IAM Role for Elastic Transcoder
+resource "aws_iam_role" "transcoder_role" {
+  name = "elastic-transcoder-role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "elastictranscoder.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+# Attach Policy to IAM Role
+resource "aws_iam_role_policy" "transcoder_policy" {
+  name = "elastic-transcoder-policy"
+  role = aws_iam_role.transcoder_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.media.bucket}"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.media.bucket}/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sns:Publish"
+      ],
+      "Resource": "arn:aws:sns:us-west-2:123456789012:transcoder-notifications"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "elastictranscoder:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+```
+
+### 3. Financial Services Company
+
+#### Terraform Script:
+```hcl
+# Provider configuration
+provider "aws" {
+  region = "us-east-1"
+}
+
+# Create a VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+# Create Public Subnets
+resource "aws_subnet" "public" {
+  count             = 2
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.${count.index}.0/24"
+  availability_zone = element(["us-east-1a", "us-east-1b"], count.index)
+  map_public_ip_on_launch = true
+}
+
+# Create Private Subnets
+resource "aws_subnet" "private" {
+  count             = 2
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.${count.index + 2}.0/24"
+  availability_zone = element(["us-east-1a", "us-east-1b"], count.index)
+}
+
+# Create an Internet Gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+}
+
+# Create NAT Gateways
+resource "aws_nat_gateway" "nat" {
+  count         = 2
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = element(aws_subnet.public.*.id, count.index)
+}
+
+# Create Elastic IPs for NAT Gateways
+resource "aws_eip" "nat" {
+  count = 2
+  vpc = true
+}
+
+# Create a Route Table for Public Subnets
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+}
+
+# Associate Public Subnets with Route Table
+resource "aws_route_table_association" "public" {
+  count          = 2
+  subnet_id      = element(aws_subnet.public.*.id, count.index)
+  route_table_id = aws_route_table.public.id
+}
+
+# Create Route Tables for Private Subnets
+resource "aws_route_table" "private" {
+  count = 2
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = element(aws_nat_gateway.nat.*.id, count.index)
+  }
+}
+
+# Associate Private Subnets with Route Tables
+resource "aws_route_table_association" "private" {
+  count          = 2
+  subnet_id      = element(aws_subnet
+
+.private.*.id, count.index)
+  route_table_id = element(aws_route_table.private.*.id, count.index)
+}
+
+# Create Security Group for Web Servers
+resource "aws_security_group" "web" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create Security Group for RDS
+resource "aws_security_group" "db" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port      = 3306
+    to_port        = 3306
+    protocol       = "tcp"
+    security_groups = [aws_security_group.web.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create an Auto Scaling Group for Web Servers
+resource "aws_autoscaling_group" "web" {
+  desired_capacity     = 2
+  max_size             = 4
+  min_size             = 2
+  vpc_zone_identifier  = aws_subnet.private.*.id
+  launch_configuration = aws_launch_configuration.web.id
+}
+
+# Create a Launch Configuration for Web Servers
+resource "aws_launch_configuration" "web" {
+  image_id        = "ami-0c55b159cbfafe1f0" # Use an appropriate AMI
+  instance_type   = "t2.micro"
+  security_groups = [aws_security_group.web.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Create RDS Instance
+resource "aws_db_instance" "db" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t2.micro"
+  name                 = "mydb"
+  username             = "admin"
+  password             = "password"
+  vpc_security_group_ids = [aws_security_group.db.id]
+  multi_az             = true
+  publicly_accessible  = false
+  storage_encrypted    = true
+  kms_key_id           = aws_kms_key.mykey.arn
+}
+
+# Create an S3 Bucket for Backups and Logs
+resource "aws_s3_bucket" "logs" {
+  bucket = "financial-services-logs"
+  acl    = "private"
+}
+
+# Create KMS Key for Encryption
+resource "aws_kms_key" "mykey" {
+  description = "KMS key for RDS encryption"
+}
+
+# Create CloudTrail for Logging API Calls
+resource "aws_cloudtrail" "main" {
+  name                          = "financial-services-cloudtrail"
+  s3_bucket_name                = aws_s3_bucket.logs.bucket
+  include_global_service_events = true
+  is_multi_region_trail         = true
+}
+
+# Create Config for Monitoring Configuration Changes
+resource "aws_config_configuration_recorder" "main" {
+  name     = "config-recorder"
+  role_arn = aws_iam_role.config_role.arn
+}
+
+resource "aws_config_delivery_channel" "main" {
+  name           = "config-delivery-channel"
+  s3_bucket_name = aws_s3_bucket.logs.bucket
+}
+
+# Create IAM Role for Config
+resource "aws_iam_role" "config_role" {
+  name = "config-role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "config.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+# Attach Policy to IAM Role
+resource "aws_iam_role_policy" "config_policy" {
+  name = "config-policy"
+  role = aws_iam_role.config_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${aws_s3_bucket.logs.bucket}",
+        "arn:aws:s3:::${aws_s3_bucket.logs.bucket}/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "config:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+# Create WAF for Web Application Firewall
+resource "aws_waf_web_acl" "main" {
+  name        = "financial-services-waf"
+  metric_name = "financialServicesWAF"
+
+  default_action {
+    type = "ALLOW"
+  }
+
+  rule {
+    action {
+      type = "BLOCK"
+    }
+
+    priority = 1
+    rule_id  = aws_waf_rule.sql_injection_rule.id
+  }
+}
+
+# Create WAF Rule for SQL Injection
+resource "aws_waf_rule" "sql_injection_rule" {
+  name        = "SQLInjectionRule"
+  metric_name = "SQLInjectionRule"
+
+  predicates {
+    data_id = aws_waf_sql_injection_match_set.sql_injection_match_set.id
+    negated = false
+    type    = "SqlInjectionMatch"
+  }
+}
+
+# Create SQL Injection Match Set for WAF
+resource "aws_waf_sql_injection_match_set" "sql_injection_match_set" {
+  name = "sqlInjectionMatchSet"
+
+  sql_injection_match_tuples {
+    field_to_match {
+      type = "QUERY_STRING"
+    }
+
+    text_transformation = "URL_DECODE"
+  }
+}
+```
+
+These Terraform scripts provide a comprehensive step-by-step setup for each real-world example, including all necessary resources and configurations. Each section is commented to explain the purpose and function of the resources being created.
