@@ -272,3 +272,309 @@ Below is a comprehensive guide on how to implement various AWS security services
 ---
 
 These steps provide a foundational approach to implementing AWS security services. For detailed configurations and advanced features, refer to the official AWS documentation and best practices guides.
+
+
+Here are detailed step-by-step Terraform scripts to implement each of the mentioned AWS security services. Each script will include the necessary configuration to get started with these services.
+
+### 1. AWS Identity and Access Management (IAM)
+**IAM Users, Groups, and Policies**
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_iam_group" "admin_group" {
+  name = "admin"
+}
+
+resource "aws_iam_user" "admin_user" {
+  name = "admin_user"
+}
+
+resource "aws_iam_group_membership" "admin_group_membership" {
+  name  = "admin_group_membership"
+  users = [aws_iam_user.admin_user.name]
+  group = aws_iam_group.admin_group.name
+}
+
+resource "aws_iam_policy" "admin_policy" {
+  name        = "admin_policy"
+  description = "Policy for admin group"
+  policy      = file("admin_policy.json")
+}
+
+resource "aws_iam_group_policy_attachment" "admin_policy_attachment" {
+  group      = aws_iam_group.admin_group.name
+  policy_arn = aws_iam_policy.admin_policy.arn
+}
+
+resource "aws_iam_user_login_profile" "admin_login_profile" {
+  user     = aws_iam_user.admin_user.name
+  password = "admin_user_password"
+}
+
+resource "aws_iam_user_mfa_device" "admin_mfa" {
+  user     = aws_iam_user.admin_user.name
+  serial_number = "arn:aws:iam::123456789012:mfa/admin_mfa"
+  authentication_code_1 = "123456"
+  authentication_code_2 = "123456"
+}
+```
+
+### 2. Amazon VPC (Virtual Private Cloud)
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "public" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "private" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.2.0/24"
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+}
+
+resource "aws_route_table_association" "public_association" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_security_group" "web_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+### 3. AWS WAF (Web Application Firewall)
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_waf_web_acl" "web_acl" {
+  name        = "web-acl"
+  metric_name = "webACL"
+  default_action {
+    type = "ALLOW"
+  }
+}
+
+resource "aws_waf_rule" "sql_injection_rule" {
+  name        = "sql-injection-rule"
+  metric_name = "SQLInjectionRule"
+
+  predicates {
+    data_id = aws_waf_sql_injection_match_set.sql_injection_set.id
+    negated = false
+    type    = "SqlInjectionMatch"
+  }
+}
+
+resource "aws_waf_sql_injection_match_set" "sql_injection_set" {
+  name = "sqlInjectionSet"
+
+  sql_injection_match_tuples {
+    text_transformation = "URL_DECODE"
+    field_to_match {
+      type = "QUERY_STRING"
+    }
+  }
+}
+
+resource "aws_waf_web_acl_rule" "sql_injection_web_acl_rule" {
+  web_acl_id = aws_waf_web_acl.web_acl.id
+  rule_id    = aws_waf_rule.sql_injection_rule.id
+  priority   = 1
+  action {
+    type = "BLOCK"
+  }
+}
+```
+
+### 4. AWS Shield
+
+For AWS Shield Standard, there's no setup required as it's automatically enabled for all AWS customers.
+
+### 5. AWS Key Management Service (KMS)
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_kms_key" "my_key" {
+  description             = "My KMS key"
+  deletion_window_in_days = 10
+}
+
+resource "aws_kms_alias" "my_key_alias" {
+  name          = "alias/my-key-alias"
+  target_key_id = aws_kms_key.my_key.id
+}
+```
+
+### 6. Amazon GuardDuty
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_guardduty_detector" "main" {
+  enable = true
+}
+```
+
+### 7. AWS Config
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_config_configuration_recorder" "main" {
+  name     = "main"
+  role_arn = aws_iam_role.r.arn
+
+  recording_group {
+    all_supported = true
+  }
+}
+
+resource "aws_config_delivery_channel" "main" {
+  name           = "main"
+  s3_bucket_name = aws_s3_bucket.bucket.bucket
+
+  depends_on = [aws_config_configuration_recorder.main]
+}
+
+resource "aws_config_config_rule" "s3_bucket_public_read_prohibited" {
+  name = "s3-bucket-public-read-prohibited"
+  source {
+    owner             = "AWS"
+    source_identifier = "S3_BUCKET_PUBLIC_READ_PROHIBITED"
+  }
+}
+```
+
+### 8. AWS CloudTrail
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_s3_bucket" "cloudtrail" {
+  bucket = "my-cloudtrail-bucket"
+  acl    = "private"
+}
+
+resource "aws_cloudtrail" "main" {
+  name                          = "main"
+  s3_bucket_name                = aws_s3_bucket.cloudtrail.bucket
+  include_global_service_events = true
+  is_multi_region_trail         = true
+  enable_logging                = true
+}
+```
+
+### 9. Amazon Inspector
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_inspector_assessment_target" "main" {
+  name               = "main"
+  resource_group_arn = aws_inspector_resource_group.main.arn
+}
+
+resource "aws_inspector_resource_group" "main" {
+  tags = {
+    Name = "my-resource-group"
+  }
+}
+
+resource "aws_inspector_assessment_template" "main" {
+  name       = "main"
+  duration   = 1800
+  rules_package_arns = [
+    "arn:aws:inspector:us-east-1:123456789012:rulespackage/0-1He..."]
+
+  target_arn = aws_inspector_assessment_target.main.arn
+}
+```
+
+### 10. AWS Security Hub
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_securityhub_account" "main" {
+  depends_on = [aws_securityhub_standards_subscription.main]
+}
+
+resource "aws_securityhub_standards_subscription" "main" {
+  standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0"
+}
+```
+
+### 11. AWS Secrets Manager
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_secretsmanager_secret" "example" {
+  name        = "example"
+  description = "Example secret"
+}
+
+resource "aws_secretsmanager_secret_version" "example" {
+  secret_id     = aws_secretsmanager_secret.example.id
+  secret_string = "{\"username\":\"user\",\"password\":\"password\"}"
+}
+```
+
+These Terraform scripts provide a foundation for implementing key AWS security services. Customize the scripts as necessary to fit your specific use case and requirements.
