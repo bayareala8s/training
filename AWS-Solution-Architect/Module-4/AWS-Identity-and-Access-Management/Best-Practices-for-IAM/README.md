@@ -504,3 +504,120 @@ This Terraform script provides a comprehensive example of implementing IAM best 
 - Enforcing strong password policies.
 
 By following this example, you can ensure that your AWS environment is secure, compliant, and well-managed.
+
+
+### Real-World Implementation of IAM Roles for EC2 Instances
+
+IAM roles for EC2 instances allow applications running on EC2 to securely access AWS resources without needing to store long-term credentials. Here is a detailed example of how to set up IAM roles for EC2 instances using Terraform.
+
+#### Scenario: Setting Up IAM Roles for an EC2 Instance to Access S3 and DynamoDB
+
+##### Requirements:
+1. **Create an IAM Role**: The role will be assumed by the EC2 instance.
+2. **Define Policies**: Grant permissions to access specific S3 buckets and DynamoDB tables.
+3. **Attach Policies to the Role**: Ensure the EC2 instance can perform the required actions.
+4. **Create an Instance Profile**: Link the role to the EC2 instance.
+5. **Launch an EC2 Instance**: Attach the instance profile to the EC2 instance.
+
+##### Terraform Script
+
+```hcl
+# Define a policy document for accessing S3 and DynamoDB
+data "aws_iam_policy_document" "app_policy" {
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject",
+      "dynamodb:Query",
+      "dynamodb:Scan"
+    ]
+    resources = [
+      "arn:aws:s3:::example-bucket",
+      "arn:aws:s3:::example-bucket/*",
+      "arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTable"
+    ]
+  }
+}
+
+# Create IAM Role
+resource "aws_iam_role" "app_role" {
+  name = "AppRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+# Create IAM Policy
+resource "aws_iam_policy" "app_policy" {
+  name   = "AppPolicy"
+  policy = data.aws_iam_policy_document.app_policy.json
+}
+
+# Attach the policy to the role
+resource "aws_iam_role_policy_attachment" "app_role_policy_attachment" {
+  role       = aws_iam_role.app_role.name
+  policy_arn = aws_iam_policy.app_policy.arn
+}
+
+# Create an IAM Instance Profile
+resource "aws_iam_instance_profile" "app_instance_profile" {
+  name = "AppInstanceProfile"
+  role = aws_iam_role.app_role.name
+}
+
+# Launch EC2 Instance with IAM Role
+resource "aws_instance" "app_instance" {
+  ami           = "ami-0c55b159cbfafe1f0" # Use a valid AMI ID for your region
+  instance_type = "t2.micro"
+
+  iam_instance_profile = aws_iam_instance_profile.app_instance_profile.name
+
+  tags = {
+    Name = "AppInstance"
+  }
+}
+```
+
+##### Explanation
+
+1. **Define a Policy Document**:
+   - The policy allows listing and getting objects from an S3 bucket (`example-bucket`) and querying and scanning a DynamoDB table (`ExampleTable`).
+
+2. **Create IAM Role**:
+   - The role (`AppRole`) is created with a trust relationship policy that allows EC2 instances to assume the role.
+
+3. **Create IAM Policy**:
+   - The policy (`AppPolicy`) is created based on the defined policy document.
+
+4. **Attach Policy to Role**:
+   - The policy is attached to the IAM role, granting it the necessary permissions.
+
+5. **Create IAM Instance Profile**:
+   - An instance profile (`AppInstanceProfile`) is created and linked to the IAM role.
+
+6. **Launch EC2 Instance with IAM Role**:
+   - An EC2 instance (`app_instance`) is launched and associated with the instance profile, enabling the instance to assume the IAM role and use its permissions.
+
+### Testing the Implementation
+
+To test the implementation, SSH into the EC2 instance and use the AWS CLI to verify access to the S3 bucket and DynamoDB table:
+
+```bash
+# List objects in the S3 bucket
+aws s3 ls s3://example-bucket
+
+# Query the DynamoDB table
+aws dynamodb scan --table-name ExampleTable
+```
+
+### Summary
+
+This Terraform script demonstrates how to set up IAM roles for EC2 instances to securely access AWS resources such as S3 buckets and DynamoDB tables. By following this example, you can ensure that your EC2 instances have the necessary permissions to perform their tasks without the need to store long-term credentials. This approach enhances security and simplifies credential management in your AWS environment.
