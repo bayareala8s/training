@@ -621,3 +621,190 @@ aws dynamodb scan --table-name ExampleTable
 ### Summary
 
 This Terraform script demonstrates how to set up IAM roles for EC2 instances to securely access AWS resources such as S3 buckets and DynamoDB tables. By following this example, you can ensure that your EC2 instances have the necessary permissions to perform their tasks without the need to store long-term credentials. This approach enhances security and simplifies credential management in your AWS environment.
+
+
+### Auditing and Monitoring IAM with AWS CloudTrail and AWS Config
+
+Auditing and monitoring IAM activities are crucial for maintaining the security and compliance of your AWS environment. AWS CloudTrail and AWS Config are powerful tools that help you achieve this.
+
+#### AWS CloudTrail
+
+AWS CloudTrail provides detailed logs of all API calls made in your AWS account, including those related to IAM. It helps you track changes and detect potentially unauthorized activities.
+
+##### Setting Up AWS CloudTrail
+
+```hcl
+# Create an S3 bucket to store CloudTrail logs
+resource "aws_s3_bucket" "cloudtrail_bucket" {
+  bucket = "my-cloudtrail-logs-bucket"
+}
+
+# Enable CloudTrail
+resource "aws_cloudtrail" "main" {
+  name                          = "my-cloudtrail"
+  s3_bucket_name                = aws_s3_bucket.cloudtrail_bucket.bucket
+  include_global_service_events = true
+  is_multi_region_trail         = true
+}
+
+# Create an IAM role for CloudTrail to access the S3 bucket
+resource "aws_iam_role" "cloudtrail_role" {
+  name = "cloudtrail-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "cloudtrail.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+# Attach a policy to the CloudTrail role to allow it to write to the S3 bucket
+resource "aws_iam_policy" "cloudtrail_policy" {
+  name = "cloudtrail-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:PutObject",
+          "s3:GetBucketAcl"
+        ],
+        Resource = [
+          "${aws_s3_bucket.cloudtrail_bucket.arn}",
+          "${aws_s3_bucket.cloudtrail_bucket.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow",
+        Action = "logs:CreateLogGroup",
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "arn:aws:logs:*:*:log-group:CloudTrail/*"
+      }
+    ]
+  })
+}
+
+# Attach the policy to the role
+resource "aws_iam_role_policy_attachment" "attach_cloudtrail_policy" {
+  role       = aws_iam_role.cloudtrail_role.name
+  policy_arn = aws_iam_policy.cloudtrail_policy.arn
+}
+```
+
+#### AWS Config
+
+AWS Config continuously monitors and records your AWS resource configurations, including IAM. It helps you assess, audit, and evaluate the configurations of your resources.
+
+##### Setting Up AWS Config
+
+```hcl
+# Create an S3 bucket to store AWS Config logs
+resource "aws_s3_bucket" "config_bucket" {
+  bucket = "my-config-logs-bucket"
+}
+
+# Create an IAM role for AWS Config
+resource "aws_iam_role" "config_role" {
+  name = "config-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = {
+        Service = "config.amazonaws.com"
+      },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+# Attach a policy to the AWS Config role to allow it to write to the S3 bucket
+resource "aws_iam_policy" "config_policy" {
+  name = "config-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:PutObject",
+          "s3:GetBucketAcl"
+        ],
+        Resource = [
+          "${aws_s3_bucket.config_bucket.arn}",
+          "${aws_s3_bucket.config_bucket.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "sns:Publish"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "config:Put*",
+          "config:Get*",
+          "config:List*"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Attach the policy to the role
+resource "aws_iam_role_policy_attachment" "attach_config_policy" {
+  role       = aws_iam_role.config_role.name
+  policy_arn = aws_iam_policy.config_policy.arn
+}
+
+# Create AWS Config Recorder
+resource "aws_config_configuration_recorder" "config_recorder" {
+  name     = "config-recorder"
+  role_arn = aws_iam_role.config_role.arn
+
+  recording_group {
+    all_supported = true
+  }
+}
+
+# Create AWS Config Delivery Channel
+resource "aws_config_delivery_channel" "config_delivery_channel" {
+  name           = "config-delivery-channel"
+  s3_bucket_name = aws_s3_bucket.config_bucket.bucket
+}
+
+# Start the AWS Config Recorder
+resource "aws_config_configuration_recorder_status" "recorder_status" {
+  name           = aws_config_configuration_recorder.config_recorder.name
+  is_recording   = true
+}
+```
+
+### Summary
+
+By setting up AWS CloudTrail and AWS Config, you can effectively audit and monitor IAM activities and configurations. This ensures you have a detailed record of all API calls and resource configurations, which is essential for security and compliance.
+
+- **AWS CloudTrail**: Logs all API calls made in your AWS account, providing a detailed audit trail of actions taken.
+- **AWS Config**: Continuously monitors and records resource configurations, allowing you to assess and audit the compliance of your AWS resources.
+
+Using these tools together helps you maintain a secure and compliant AWS environment.
