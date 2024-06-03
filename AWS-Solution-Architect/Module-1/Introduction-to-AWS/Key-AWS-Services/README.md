@@ -511,3 +511,338 @@ Use Cases**: Text analysis, sentiment analysis, entity recognition.
 - **Use Cases**: Blockchain applications, supply chain management, decentralized finance.
 
 These details provide a comprehensive overview of each key AWS service, helping you understand their features, use cases, and benefits.
+
+
+### Terraform Scripts for Key AWS Services
+
+Here are Terraform scripts with comments for provisioning key AWS services. Each script includes basic configurations to get you started with each service.
+
+#### 1. Amazon EC2 (Elastic Compute Cloud)
+```hcl
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create a new security group for port 22
+resource "aws_security_group" "ec2_sg" {
+  name        = "ec2_sg"
+  description = "Allow SSH inbound traffic"
+  
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Create an EC2 instance
+resource "aws_instance" "my_instance" {
+  ami           = "ami-0c55b159cbfafe1f0" # Amazon Linux 2 AMI
+  instance_type = "t2.micro"
+  security_groups = [aws_security_group.ec2_sg.name]
+  
+  tags = {
+    Name = "MyFirstEC2Instance"
+  }
+}
+```
+
+#### 2. AWS Lambda
+```hcl
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create IAM role for Lambda
+resource "aws_iam_role" "lambda_role" {
+  name = "lambda_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      },
+      Effect = "Allow",
+      Sid = ""
+    }]
+  })
+}
+
+# Attach policy to IAM role
+resource "aws_iam_role_policy_attachment" "lambda_policy" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# Create Lambda function
+resource "aws_lambda_function" "my_lambda" {
+  function_name = "MyLambdaFunction"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "index.handler"
+  runtime       = "nodejs14.x"
+  
+  # Inline code for demonstration purposes
+  filename      = "lambda.zip"
+  source_code_hash = filebase64sha256("lambda.zip")
+
+  # Zip up the handler code (index.js)
+  deployment_package = {
+    filename = "lambda.zip"
+  }
+
+  tags = {
+    Name = "MyLambdaFunction"
+  }
+}
+```
+
+#### 3. Amazon S3 (Simple Storage Service)
+```hcl
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create an S3 bucket
+resource "aws_s3_bucket" "my_bucket" {
+  bucket = "my-unique-bucket-name"
+  acl    = "private"
+
+  tags = {
+    Name = "MyBucket"
+  }
+}
+
+# Set bucket policy (optional)
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.my_bucket.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "s3:GetObject",
+      Effect = "Allow",
+      Resource = "${aws_s3_bucket.my_bucket.arn}/*",
+      Principal = "*"
+    }]
+  })
+}
+```
+
+#### 4. Amazon RDS (Relational Database Service)
+```hcl
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create a new VPC for RDS
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "main_vpc"
+  }
+}
+
+# Create subnet
+resource "aws_subnet" "subnet" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-west-2a"
+
+  tags = {
+    Name = "main_subnet"
+  }
+}
+
+# Create a security group
+resource "aws_security_group" "rds_sg" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rds_sg"
+  }
+}
+
+# Create an RDS instance
+resource "aws_db_instance" "default" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  instance_class       = "db.t2.micro"
+  name                 = "mydatabase"
+  username             = "admin"
+  password             = "password"
+  parameter_group_name = "default.mysql5.7"
+  skip_final_snapshot  = true
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  db_subnet_group_name = aws_db_subnet_group.main.id
+
+  tags = {
+    Name = "MyRDSInstance"
+  }
+}
+
+# Create a subnet group
+resource "aws_db_subnet_group" "main" {
+  name       = "main"
+  subnet_ids = [aws_subnet.subnet.id]
+
+  tags = {
+    Name = "main_subnet_group"
+  }
+}
+```
+
+#### 5. Amazon DynamoDB
+```hcl
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create a DynamoDB table
+resource "aws_dynamodb_table" "basic_dynamodb_table" {
+  name           = "basic-dynamodb-table"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "id"
+
+  attribute {
+    name = "id"
+    type = "S"
+  }
+
+  tags = {
+    Name = "MyDynamoDBTable"
+  }
+}
+```
+
+#### 6. Amazon VPC (Virtual Private Cloud)
+```hcl
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create a VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "main_vpc"
+  }
+}
+
+# Create a subnet
+resource "aws_subnet" "subnet" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-west-2a"
+
+  tags = {
+    Name = "main_subnet"
+  }
+}
+
+# Create an internet gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "main_igw"
+  }
+}
+
+# Create a route table
+resource "aws_route_table" "r" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+
+  tags = {
+    Name = "main_route_table"
+  }
+}
+
+# Associate the subnet with the route table
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.subnet.id
+  route_table_id = aws_route_table.r.id
+}
+```
+
+#### 7. AWS IAM (Identity and Access Management)
+```hcl
+# Define the provider
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Create an IAM user
+resource "aws_iam_user" "user" {
+  name = "terraform-user"
+
+  tags = {
+    Name = "terraform-user"
+  }
+}
+
+# Create an IAM policy
+resource "aws_iam_policy" "policy" {
+  name        = "terraform-policy"
+  description = "A test policy"
+  
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "ec2:Describe*",
+          "ec2:List*",
+          "ec2:Get*"
+        ],
+        Effect   = "Allow",
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Attach policy to user
+resource "aws_iam_policy_attachment" "user-attach" {
+  name       = "terraform-policy-attach"
+  users      = [aws_iam_user.user.name]
+  policy_arn = aws_iam_policy.policy.arn
+}
+```
+
+These Terraform scripts provide a starting point for each key AWS service. They include essential configurations and comments to guide you through the process. Adjust the scripts as needed to fit your specific use cases and requirements.
