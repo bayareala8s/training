@@ -189,3 +189,131 @@ To ensure that all instances within an AWS environment are regularly updated wit
 - **Operational Efficiency**: Scheduling patches during maintenance windows minimizes disruption to services and ensures uptime.
 
 By following these steps, you can set up a robust automated patch management process using AWS Systems Manager Patch Manager, ensuring your instances remain secure and compliant with minimal manual effort.
+
+
+## Practical Use Case: Application Deployment with AWS Systems Manager Automation and Run Command
+
+### Objective
+
+To deploy applications across multiple AWS instances consistently and efficiently, leveraging AWS Systems Manager Automation and Run Command, reducing manual effort and minimizing errors.
+
+### Steps to Implement Application Deployment
+
+#### 1. Prepare Your Application Deployment Script
+
+**Purpose**: Create a script that automates the deployment of your application.
+
+- **Example Script (deploy_app.sh)**:
+  ```bash
+  #!/bin/bash
+
+  # Update the instance and install necessary packages
+  sudo apt-get update -y
+  sudo apt-get install -y nginx
+
+  # Download and extract application files
+  wget https://example.com/myapp.zip -O /tmp/myapp.zip
+  unzip /tmp/myapp.zip -d /var/www/html/
+
+  # Restart the web server
+  sudo systemctl restart nginx
+  ```
+
+#### 2. Store the Script in an S3 Bucket
+
+**Purpose**: Store your deployment script in an S3 bucket to make it accessible to the instances.
+
+- **Steps**:
+  1. Upload `deploy_app.sh` to an S3 bucket, e.g., `s3://my-deployment-scripts/deploy_app.sh`.
+
+#### 3. Create an IAM Role for Systems Manager
+
+**Purpose**: Ensure instances have the necessary permissions to execute Systems Manager commands and access S3.
+
+- **Steps**:
+  1. Create an IAM role with the following policies: `AmazonSSMManagedInstanceCore`, `AmazonS3ReadOnlyAccess`.
+  2. Attach the IAM role to the instances that will participate in the deployment.
+
+#### 4. Create an Automation Document
+
+**Purpose**: Define an Automation document that will run the deployment script across multiple instances.
+
+- **Steps**:
+  1. Open the Systems Manager console.
+  2. In the navigation pane, choose **Documents**.
+  3. Choose **Create document**.
+  4. Enter a name for the document, e.g., `DeployApplication`.
+  5. Choose **Automation** as the document type.
+  6. Define the document content in JSON or YAML:
+     ```yaml
+     schemaVersion: '0.3'
+     description: 'Deploy application across multiple instances'
+     mainSteps:
+       - name: downloadScript
+         action: aws:downloadContent
+         inputs:
+           sourceType: S3
+           sourceInfo: '{"path":"s3://my-deployment-scripts/deploy_app.sh"}'
+           destinationPath: /tmp/deploy_app.sh
+       - name: runScript
+         action: aws:runCommand
+         inputs:
+           DocumentName: AWS-RunShellScript
+           Parameters:
+             commands:
+               - chmod +x /tmp/deploy_app.sh
+               - /tmp/deploy_app.sh
+           InstanceIds:
+             - {{ InstanceIds }}
+     ```
+  7. Choose **Create document**.
+
+#### 5. Execute the Automation Document
+
+**Purpose**: Run the automation document to deploy the application across the target instances.
+
+- **Steps**:
+  1. In the Systems Manager console, choose **Automation** from the navigation pane.
+  2. Choose **Execute automation**.
+  3. Select the document you created (`DeployApplication`).
+  4. Specify the target instances using instance IDs, tags, or resource groups.
+  5. Optionally, specify parameters if your script requires them.
+  6. Choose **Execute automation**.
+
+#### 6. Monitor and Verify Deployment
+
+**Purpose**: Ensure the deployment completes successfully and verify the application is running correctly.
+
+- **Steps**:
+  1. Monitor the status of the automation execution in the Systems Manager console.
+  2. Review logs for any errors or issues.
+  3. Verify the application is running on the target instances by accessing the deployed web application or service.
+
+### Example: Deploying a Web Application to a Fleet of Web Servers
+
+1. **Deployment Script**:
+   - Create `deploy_app.sh` to install Nginx, download application files, and restart the web server.
+
+2. **Store Script**:
+   - Upload `deploy_app.sh` to `s3://my-deployment-scripts/`.
+
+3. **IAM Role**:
+   - Create an IAM role with `AmazonSSMManagedInstanceCore` and `AmazonS3ReadOnlyAccess` policies and attach it to the web server instances.
+
+4. **Automation Document**:
+   - Create an Automation document `DeployApplication` to download and execute the deployment script.
+
+5. **Execute Automation**:
+   - Run the automation document targeting all web server instances with the tag `Role=WebServer`.
+
+6. **Monitor Deployment**:
+   - Track the execution status and verify the application is successfully deployed and running on all instances.
+
+### Benefits
+
+- **Consistency**: Ensures all instances receive the same application deployment, reducing discrepancies.
+- **Efficiency**: Automates repetitive deployment tasks, saving time and reducing manual effort.
+- **Scalability**: Easily deploy applications to a large number of instances simultaneously.
+- **Reliability**: Minimizes the risk of human error, ensuring a reliable deployment process.
+
+By combining AWS Systems Manager Automation and Run Command, you can streamline the deployment of applications across your AWS infrastructure, ensuring consistency, efficiency, and reliability.
