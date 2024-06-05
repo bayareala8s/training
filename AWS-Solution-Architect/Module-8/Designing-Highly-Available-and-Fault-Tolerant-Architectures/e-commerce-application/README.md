@@ -138,3 +138,109 @@ The provided Terraform script sets up a robust and scalable infrastructure on AW
     ```
 
 This setup ensures high availability, security, and scalability for the e-commerce application. If you need further customization or have any specific requirements, feel free to ask!
+
+
+Here is a detailed visual text diagram that outlines the key components of the Terraform setup for your e-commerce application infrastructure on AWS:
+
+```
+                          AWS Cloud
+                             |
+                             |
+                         [VPC: 10.0.0.0/16]
+                             |
+      -------------------------------------------------
+      |                                              |
+  Public Subnets                                 Private Subnets
+  10.0.0.0/24 (us-west-2a)                       10.0.2.0/24 (us-west-2a)
+  10.0.1.0/24 (us-west-2b)                       10.0.3.0/24 (us-west-2b)
+      |                                              |
+      |                                              |
+      |                                              |
+[Internet Gateway]                               [NAT Gateway]
+      |                                              |
+      |                                              |
+      |                                              |
+[Public Route Table]                           [Private Route Table]
+      |                                              |
+      |                                              |
+      |                                              |
+[ALB Security Group]                            [RDS Security Group]
+[ALB: ecommerce-lb]                             [RDS: PostgreSQL]
+      |                                              |
+      |                                              |
+[ALB Listener]                                   [Private Subnets]
+      |                                              |
+      |                                              |
+[Target Group]                                   [DB Subnet Group]
+      |                                              |
+      |                                              |
+[Public Subnets]                               [ECS Task Security Group]
+      |                                              |
+      |                                              |
+      |                                             [IAM Role]
+      |                                              |
+      |                                              |
+[CloudWatch Log Group]                         [ECR Repository]
+      |                                              |
+      |                                              |
+[Task Definition]                              [ECS Cluster]
+      |                                              |
+      |                                              |
+[ECS Service]                                  [ECS Tasks]
+      |                                              |
+      |                                              |
+[Network Configuration]                        [Fargate Launch Type]
+      |                                              |
+      |                                              |
+[Container: ecommerce-api]                    [PostgreSQL DB Instance]
+      |                                              |
+      |                                              |
+[Environment Variables: POSTGRES_HOST, POSTGRES_PORT, etc.]
+```
+
+### Key Components:
+
+1. **VPC (Virtual Private Cloud)**:
+   - Main VPC with CIDR block `10.0.0.0/16`.
+
+2. **Subnets**:
+   - **Public Subnets**: `10.0.0.0/24` and `10.0.1.0/24` in different availability zones.
+   - **Private Subnets**: `10.0.2.0/24` and `10.0.3.0/24` in different availability zones.
+
+3. **Internet Gateway**:
+   - Allows communication between the VPC and the internet.
+
+4. **NAT Gateway**:
+   - Allows instances in private subnets to access the internet.
+
+5. **Route Tables**:
+   - **Public Route Table**: Routes for internet traffic.
+   - **Private Route Table**: Routes for internal traffic via NAT Gateway.
+
+6. **Security Groups**:
+   - **ALB Security Group**: Manages inbound/outbound traffic for the Application Load Balancer.
+   - **RDS Security Group**: Manages inbound/outbound traffic for the PostgreSQL RDS instance.
+   - **ECS Task Security Group**: Manages inbound/outbound traffic for ECS tasks.
+
+7. **RDS Database**:
+   - PostgreSQL instance with custom parameter group and security configurations.
+
+8. **IAM Role for ECS**:
+   - IAM role with policies required for ECS task execution.
+
+9. **ECS (Elastic Container Service)**:
+   - **ECS Cluster**: Main cluster for running ECS tasks.
+   - **ECS Task Definition**: Defines the containers, environment variables, and other settings for the ECS tasks.
+   - **ECS Service**: Manages the running of the ECS tasks and their deployment.
+
+10. **Application Load Balancer (ALB)**:
+    - Distributes incoming traffic across ECS tasks.
+    - Includes a listener and target group for routing traffic.
+
+11. **CloudWatch Log Group**:
+    - Manages logs for the ECS tasks.
+
+12. **ECR (Elastic Container Registry)**:
+    - Stores Docker images for the application.
+
+This diagram provides a comprehensive view of the AWS infrastructure setup using Terraform for your e-commerce application, highlighting the relationships and flow of traffic between various components.
