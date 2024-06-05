@@ -244,3 +244,100 @@ Here is a detailed visual text diagram that outlines the key components of the T
     - Stores Docker images for the application.
 
 This diagram provides a comprehensive view of the AWS infrastructure setup using Terraform for your e-commerce application, highlighting the relationships and flow of traffic between various components.
+
+
+Sure, here is a textual representation of the infrastructure setup described in your Terraform script:
+
+```
+                                      +-----------------------+
+                                      |     AWS CloudFront    |
+                                      +-----------------------+
+                                                  |
+                                                  V
+                                      +-----------------------+
+                                      |   Application Load    |
+                                      |       Balancer (ALB)  |
+                                      +-----------------------+
+                                                  |
+                 +---------------------+          |          +---------------------+
+                 |  Public Subnet 1    |          |          |  Public Subnet 2    |
+                 +---------------------+          |          +---------------------+
+                          |                      / \                     |
+                          |                       |                      |
+                          V                       |                      V
+                +--------------------+            |              +--------------------+
+                |  ECS Service       |<-----------+------------->|  ECS Service       |
+                |  (Fargate)         |                         |  (Fargate)         |
+                +--------------------+                         +--------------------+
+                          |                                           |
+                          |                                           |
+                          V                                           V
+                +--------------------+                         +--------------------+
+                |  Task Definition   |                         |  Task Definition   |
+                |  (Docker Container)|                         |  (Docker Container)|
+                +--------------------+                         +--------------------+
+                          |                                           |
+                          |                                           |
+                          V                                           V
+                +--------------------+                         +--------------------+
+                |    ECR Repository  |                         |    ECR Repository  |
+                +--------------------+                         +--------------------+
+
+              +----------------------+                         +----------------------+
+              |   VPC (10.0.0.0/16)  |                         |  VPC (10.0.0.0/16)   |
+              +----------------------+                         +----------------------+
+                          |                                           |
+                          V                                           V
+          +-------------------------+                   +-------------------------+
+          |  Internet Gateway       |                   |  Internet Gateway       |
+          +-------------------------+                   +-------------------------+
+
+                          |                                           |
+                          |                                           |
+                          V                                           V
+      +----------------------------+                   +----------------------------+
+      |  NAT Gateway (Elastic IP)  |                   |  NAT Gateway (Elastic IP)  |
+      +----------------------------+                   +----------------------------+
+
+                          |                                           |
+                          V                                           V
+           +-------------------------------+           +-------------------------------+
+           |  Private Subnet 1 (10.0.2.0/24)|           |  Private Subnet 2 (10.0.3.0/24)|
+           +-------------------------------+           +-------------------------------+
+                          |                                           |
+                          V                                           V
+             +----------------------------+              +----------------------------+
+             |  RDS Instance (PostgreSQL) |              |  RDS Instance (PostgreSQL) |
+             +----------------------------+              +----------------------------+
+                          |                                           |
+                          V                                           V
+            +-----------------------------+             +-----------------------------+
+            |  Security Group (RDS)       |             |  Security Group (RDS)       |
+            +-----------------------------+             +-----------------------------+
+
+                          |                                           |
+                          V                                           V
+             +-----------------------------+             +-----------------------------+
+             |  DB Subnet Group            |             |  DB Subnet Group            |
+             +-----------------------------+             +-----------------------------+
+
+                          |                                           |
+                          V                                           V
+             +-----------------------------+             +-----------------------------+
+             |  Custom Parameter Group     |             |  Custom Parameter Group     |
+             +-----------------------------+             +-----------------------------+
+```
+
+### Key Components:
+1. **CloudFront Distribution**: Distributes and caches the API requests globally.
+2. **Application Load Balancer (ALB)**: Distributes incoming application traffic across multiple targets (ECS Services) in different availability zones.
+3. **ECS Service (Fargate)**: Manages and runs the containerized application.
+4. **ECR Repository**: Stores Docker images for the ECS tasks.
+5. **VPC**: The virtual network where all components reside.
+6. **Internet Gateway and NAT Gateway**: Manage internet access and traffic within the VPC.
+7. **Public and Private Subnets**: Segregate resources for better security and organization.
+8. **RDS Instance (PostgreSQL)**: The database for the application, deployed in private subnets for security.
+9. **Security Groups**: Act as virtual firewalls to control inbound and outbound traffic.
+10. **DB Subnet Group and Custom Parameter Group**: Manage the subnets and parameters for the RDS instances.
+
+This visual diagram represents the architecture and flow of your infrastructure setup.
