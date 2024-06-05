@@ -312,3 +312,108 @@ resource "aws_lb_listener" "main" {
 
 # Data source for availability zones
 data "aws_availability_zones" "available" {}
+
+# Fetching the AWS account ID to ensure the bucket name is unique
+data "aws_caller_identity" "current" {}
+
+# Create an S3 bucket for CloudFront logs with a unique name
+resource "aws_s3_bucket" "cloudfront_logs" {
+  bucket = "cloudfront-logs-bucket-${data.aws_caller_identity.current.account_id}"
+  acl    = "log-delivery-write"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+# Attach a bucket policy to allow CloudFront to write logs
+resource "aws_s3_bucket_policy" "cloudfront_logs_policy" {
+  bucket = aws_s3_bucket.cloudfront_logs.bucket
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "cloudfront.amazonaws.com"
+        },
+        Action = "s3:PutObject",
+        Resource = "${aws_s3_bucket.cloudfront_logs.arn}/*",
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/*"
+          }
+        }
+      }
+    ]
+  })
+}
+
+# Create a CloudFront origin access identity (OAI)
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "OAI for ALB"
+}
+
+# Create CloudFront distribution
+resource "aws_cloudfront_distribution" "api_distribution" {
+  origin {
+    domain_name = aws_lb.main.dns_name
+    origin_id   = "alb_origin"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+    }
+  }
+
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "CloudFront distribution for APIs"
+  default_root_object = ""
+
+  #aliases = ["your-api-domain.com"] # Optional, add your custom domain here
+
+  default_cache_behavior {
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "alb_origin"
+
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "all"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
+
+  price_class = "PriceClass_All"
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+    # To use your own certificate, specify the ARN
+    # acm_certificate_arn            = "arn:aws:acm:region:account-id:certificate/certificate-id"
+    # ssl_support_method             = "sni-only"
+    # minimum_protocol_version       = "TLSv1.2_2019"
+  }
+
+  logging_config {
+    bucket = aws_s3_bucket.cloudfront_logs.bucket_domain_name
+    include_cookies = false
+    prefix = "api-logs/"
+  }
+}
