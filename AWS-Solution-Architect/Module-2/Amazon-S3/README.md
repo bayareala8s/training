@@ -164,3 +164,185 @@ Amazon S3 (Simple Storage Service) is a highly scalable, reliable, and low-laten
 ### Conclusion
 
 Amazon S3 provides a versatile and reliable solution for data storage, supporting a wide range of use cases from simple file storage to complex data management. By understanding and utilizing its features, you can optimize storage costs, ensure data security, and maintain high availability for your applications.
+
+
+### Terraform Script for Hosting a Static Website on Amazon S3
+
+This Terraform script will create an S3 bucket configured for static website hosting, upload the website files, and set up the necessary bucket policies to allow public access.
+
+#### Step 1: Define Variables and Provider
+
+Create a file named `variables.tf` for defining any variables you might need.
+
+```hcl
+variable "region" {
+  description = "The AWS region to create resources in."
+  default     = "us-east-1"
+}
+
+variable "bucket_name" {
+  description = "The name of the S3 bucket."
+  default     = "my-static-website-bucket"
+}
+```
+
+Create a file named `provider.tf` to specify the AWS provider.
+
+```hcl
+provider "aws" {
+  region = var.region
+}
+```
+
+#### Step 2: Create the S3 Bucket
+
+Create a file named `main.tf` to define the S3 bucket and configure it for static website hosting.
+
+```hcl
+resource "aws_s3_bucket" "static_website" {
+  bucket = var.bucket_name
+
+  website {
+    index_document = "index.html"
+    error_document = "error.html"
+  }
+}
+
+resource "aws_s3_bucket_policy" "static_website_policy" {
+  bucket = aws_s3_bucket.static_website.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.static_website.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_s3_bucket_object" "website_files" {
+  for_each = fileset("${path.module}/website", "*")
+
+  bucket = aws_s3_bucket.static_website.bucket
+  key    = each.value
+  source = "${path.module}/website/${each.value}"
+  acl    = "public-read"
+}
+```
+
+#### Step 3: Organize Website Files
+
+Create a directory named `website` in the same directory as your Terraform files. Place your `index.html` and `error.html` (and any other static files) in this directory.
+
+```
+.
+├── main.tf
+├── provider.tf
+├── variables.tf
+└── website
+    ├── index.html
+    └── error.html
+```
+
+#### Step 4: Initialize and Apply the Terraform Configuration
+
+1. Initialize the Terraform configuration:
+
+   ```bash
+   terraform init
+   ```
+
+2. Apply the Terraform configuration:
+
+   ```bash
+   terraform apply
+   ```
+
+3. Confirm the apply operation by typing `yes` when prompted.
+
+After the apply operation completes, Terraform will create the S3 bucket, configure it for static website hosting, upload the website files, and set the bucket policy to allow public read access.
+
+#### Step 5: Access Your Static Website
+
+You can now access your static website using the S3 website endpoint, which will be output by Terraform. It will look something like this:
+
+```
+http://my-static-website-bucket.s3-website-us-east-1.amazonaws.com
+```
+
+### Full Terraform Script
+
+Here is the complete Terraform script combining all the parts mentioned above:
+
+```hcl
+# variables.tf
+variable "region" {
+  description = "The AWS region to create resources in."
+  default     = "us-east-1"
+}
+
+variable "bucket_name" {
+  description = "The name of the S3 bucket."
+  default     = "my-static-website-bucket"
+}
+
+# provider.tf
+provider "aws" {
+  region = var.region
+}
+
+# main.tf
+resource "aws_s3_bucket" "static_website" {
+  bucket = var.bucket_name
+
+  website {
+    index_document = "index.html"
+    error_document = "error.html"
+  }
+}
+
+resource "aws_s3_bucket_policy" "static_website_policy" {
+  bucket = aws_s3_bucket.static_website.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = "s3:GetObject",
+        Resource  = "${aws_s3_bucket.static_website.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_s3_bucket_object" "website_files" {
+  for_each = fileset("${path.module}/website", "*")
+
+  bucket = aws_s3_bucket.static_website.bucket
+  key    = each.value
+  source = "${path.module}/website/${each.value}"
+  acl    = "public-read"
+}
+```
+
+### Directory Structure
+
+Ensure your directory structure looks like this:
+
+```
+.
+├── main.tf
+├── provider.tf
+├── variables.tf
+└── website
+    ├── index.html
+    └── error.html
+```
+
+By following these steps, you will have a fully functional static website hosted on Amazon S3 using Terraform.
