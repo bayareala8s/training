@@ -174,3 +174,162 @@ print(is_balanced("{[(])}"))  # Output: False
 #### Conclusion
 
 Stacks are a fundamental data structure with numerous applications in computer science. Implementing a stack in Python can be done using lists, `collections.deque`, or a custom class, each offering different advantages. Understanding stacks and their operations is crucial for solving various algorithmic problems efficiently.
+
+
+
+### Time and Space Complexity Analysis for Stack Operations
+
+#### 1. Stack Using Python List
+
+```python
+class Stack:
+    def __init__(self):
+        self.stack = []
+
+    def push(self, item):
+        self.stack.append(item)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.stack.pop()
+        raise IndexError("pop from empty stack")
+
+    def peek(self):
+        if not self.is_empty():
+            return self.stack[-1]
+        raise IndexError("peek from empty stack")
+
+    def is_empty(self):
+        return len(self.stack) == 0
+
+    def size(self):
+        return len(self.stack)
+```
+
+**Time Complexity:**
+- `push(item)`: O(1) - Appending an element to the end of a list is an O(1) operation in Python.
+- `pop()`: O(1) - Removing the last element of a list is also an O(1) operation.
+- `peek()`: O(1) - Accessing the last element of a list is an O(1) operation.
+- `is_empty()`: O(1) - Checking the length of the list is an O(1) operation.
+- `size()`: O(1) - Returning the length of the list is an O(1) operation.
+
+**Space Complexity:**
+- The space complexity is O(n), where n is the number of elements in the stack. This is because the list grows dynamically with the number of elements.
+
+#### 2. Stack Using `collections.deque`
+
+```python
+from collections import deque
+
+class Stack:
+    def __init__(self):
+        self.stack = deque()
+
+    def push(self, item):
+        self.stack.append(item)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.stack.pop()
+        raise IndexError("pop from empty stack")
+
+    def peek(self):
+        if not self.is_empty():
+            return self.stack[-1]
+        raise IndexError("peek from empty stack")
+
+    def is_empty(self):
+        return len(self.stack) == 0
+
+    def size(self):
+        return len(self.stack)
+```
+
+**Time Complexity:**
+- `push(item)`: O(1) - Appending an element to the end of a deque is an O(1) operation.
+- `pop()`: O(1) - Removing the last element of a deque is also an O(1) operation.
+- `peek()`: O(1) - Accessing the last element of a deque is an O(1) operation.
+- `is_empty()`: O(1) - Checking the length of the deque is an O(1) operation.
+- `size()`: O(1) - Returning the length of the deque is an O(1) operation.
+
+**Space Complexity:**
+- The space complexity is O(n), where n is the number of elements in the stack. The deque grows dynamically with the number of elements.
+
+#### 3. Custom Stack Class
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class Stack:
+    def __init__(self):
+        self.top = None
+        self.count = 0
+
+    def push(self, item):
+        new_node = Node(item)
+        new_node.next = self.top
+        self.top = new_node
+        self.count += 1
+
+    def pop(self):
+        if not self.is_empty():
+            popped_value = self.top.value
+            self.top = self.top.next
+            self.count -= 1
+            return popped_value
+        raise IndexError("pop from empty stack")
+
+    def peek(self):
+        if not self.is_empty():
+            return self.top.value
+        raise IndexError("peek from empty stack")
+
+    def is_empty(self):
+        return self.top is None
+
+    def size(self):
+        return self.count
+```
+
+**Time Complexity:**
+- `push(item)`: O(1) - Inserting a new node at the beginning of a linked list is an O(1) operation.
+- `pop()`: O(1) - Removing the node from the beginning of a linked list is an O(1) operation.
+- `peek()`: O(1) - Accessing the top node is an O(1) operation.
+- `is_empty()`: O(1) - Checking if the top node is None is an O(1) operation.
+- `size()`: O(1) - Returning the count of nodes is an O(1) operation.
+
+**Space Complexity:**
+- The space complexity is O(n), where n is the number of elements in the stack. Each node in the linked list requires space for the value and a reference to the next node.
+
+### Example Algorithm: Balanced Parentheses
+
+```python
+def is_balanced(expression):
+    stack = Stack()
+    matching_parentheses = {')': '(', '}': '{', ']': '['}
+    
+    for char in expression:
+        if char in matching_parentheses.values():
+            stack.push(char)
+        elif char in matching_parentheses.keys():
+            if stack.is_empty() or stack.pop() != matching_parentheses[char]:
+                return False
+    return stack.is_empty()
+```
+
+**Time Complexity:**
+- O(n), where n is the length of the expression. Each character is processed once, and stack operations (push and pop) are O(1).
+
+**Space Complexity:**
+- O(n) in the worst case, where all characters in the expression are opening parentheses and get pushed onto the stack.
+
+### Summary
+
+- **List-based Stack**: Efficient for typical stack operations with O(1) time complexity but may have memory overhead due to Python's dynamic list resizing.
+- **Deque-based Stack**: Similar performance to list-based stack but is generally more memory efficient.
+- **Custom Class-based Stack**: Slightly more complex implementation but provides more control and is ideal for educational purposes and understanding the underlying mechanics of stack operations.
+
+Each implementation has its own use cases and trade-offs. For most practical purposes in Python, using a list or `collections.deque` will suffice due to their simplicity and efficiency.
