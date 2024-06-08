@@ -774,3 +774,98 @@ if __name__ == "__main__":
 
 4. **Example Usage**:
    - Demonstrates how to use the `BrowserHistory` class to visit pages, go back to previous pages, and go forward to next pages.
+  
+Sure! Here is a visual text diagram to illustrate how the stack is used to manage browser history for the `BrowserHistory` class:
+
+### Initial State
+
+```
+History Stack: [ ]
+Back Stack:    [ ]
+```
+
+### Visit "https://example.com"
+
+```
+History Stack: [ "https://example.com" ]
+Back Stack:    [ ]
+```
+
+### Visit "https://google.com"
+
+```
+History Stack: [ "https://example.com", "https://google.com" ]
+Back Stack:    [ ]
+```
+
+### Visit "https://github.com"
+
+```
+History Stack: [ "https://example.com", "https://google.com", "https://github.com" ]
+Back Stack:    [ ]
+```
+
+### Back
+
+1. Pop "https://github.com" from `History Stack` and push it to `Back Stack`.
+2. Peek "https://google.com" from `History Stack`.
+
+```
+History Stack: [ "https://example.com", "https://google.com" ]
+Back Stack:    [ "https://github.com" ]
+```
+
+### Back
+
+1. Pop "https://google.com" from `History Stack` and push it to `Back Stack`.
+2. Peek "https://example.com" from `History Stack`.
+
+```
+History Stack: [ "https://example.com" ]
+Back Stack:    [ "https://github.com", "https://google.com" ]
+```
+
+### Forward
+
+1. Pop "https://google.com" from `Back Stack` and push it to `History Stack`.
+
+```
+History Stack: [ "https://example.com", "https://google.com" ]
+Back Stack:    [ "https://github.com" ]
+```
+
+### Visit "https://stackoverflow.com"
+
+1. Clear `Back Stack` since we're visiting a new page.
+2. Push "https://stackoverflow.com" to `History Stack`.
+
+```
+History Stack: [ "https://example.com", "https://google.com", "https://stackoverflow.com" ]
+Back Stack:    [ ]
+```
+
+### Back
+
+1. Pop "https://stackoverflow.com" from `History Stack` and push it to `Back Stack`.
+2. Peek "https://google.com" from `History Stack`.
+
+```
+History Stack: [ "https://example.com", "https://google.com" ]
+Back Stack:    [ "https://stackoverflow.com" ]
+```
+
+### Forward
+
+1. Pop "https://stackoverflow.com" from `Back Stack` and push it to `History Stack`.
+
+```
+History Stack: [ "https://example.com", "https://google.com", "https://stackoverflow.com" ]
+Back Stack:    [ ]
+```
+
+### Summary
+
+- **History Stack** keeps track of the current and previously visited pages.
+- **Back Stack** stores pages that we navigate back from, allowing us to go forward to them again.
+
+This diagram visually represents how the two stacks interact to provide back and forward navigation functionality in a browser-like application.
