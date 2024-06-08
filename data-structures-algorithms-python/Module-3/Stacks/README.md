@@ -447,3 +447,146 @@ if __name__ == "__main__":
 
 3. **Example Usage**:
    - Demonstrates how to use the `Stack` class by pushing, popping, peeking, and checking the size and emptiness of the stack.
+  
+
+
+Sure! Let's consider a real-world example where we can use the stack data structure to solve a problem: **Checking for balanced parentheses in an expression**. This is a common problem in compilers and interpreters to ensure that expressions have properly matched parentheses.
+
+### Problem Statement
+Given an expression containing various types of parentheses (i.e., `()`, `{}`, `[]`), check if the parentheses are balanced. An expression is considered balanced if:
+- Every opening parenthesis has a corresponding closing parenthesis of the same type.
+- Parentheses are closed in the correct order.
+
+### Solution using Stack
+
+Here's the complete implementation, including the `Stack` class and a function to check for balanced parentheses:
+
+```python
+class Node:
+    """
+    Class to represent a node in the stack.
+    Each node contains a value and a reference to the next node.
+    """
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+
+class Stack:
+    """
+    Class to represent the stack data structure.
+    The stack follows the LIFO (Last In, First Out) principle.
+    """
+    def __init__(self):
+        """
+        Initialize an empty stack.
+        The top attribute points to the top node in the stack.
+        The count attribute keeps track of the number of elements in the stack.
+        """
+        self.top = None
+        self.count = 0
+
+    def push(self, item):
+        """
+        Add an item to the top of the stack.
+        
+        :param item: The item to be added to the stack.
+        """
+        new_node = Node(item)  # Create a new node with the given item
+        new_node.next = self.top  # Make the new node point to the current top node
+        self.top = new_node  # Update the top to be the new node
+        self.count += 1  # Increment the count of elements
+
+    def pop(self):
+        """
+        Remove and return the top item from the stack.
+        
+        :return: The value of the top item in the stack.
+        :raises IndexError: If the stack is empty.
+        """
+        if not self.is_empty():
+            popped_value = self.top.value  # Get the value of the top item
+            self.top = self.top.next  # Update the top to the next node
+            self.count -= 1  # Decrement the count of elements
+            return popped_value
+        raise IndexError("pop from empty stack")  # Raise an error if the stack is empty
+
+    def peek(self):
+        """
+        Return the top item from the stack without removing it.
+        
+        :return: The value of the top item in the stack.
+        :raises IndexError: If the stack is empty.
+        """
+        if not self.is_empty():
+            return self.top.value  # Return the value of the top item
+        raise IndexError("peek from empty stack")  # Raise an error if the stack is empty
+
+    def is_empty(self):
+        """
+        Check if the stack is empty.
+        
+        :return: True if the stack is empty, False otherwise.
+        """
+        return self.top is None  # Return True if top is None, indicating the stack is empty
+
+    def size(self):
+        """
+        Return the number of items in the stack.
+        
+        :return: The number of items in the stack.
+        """
+        return self.count  # Return the count of elements
+
+
+def is_balanced(expression):
+    """
+    Function to check if the parentheses in the expression are balanced.
+    
+    :param expression: The input string containing parentheses.
+    :return: True if the parentheses are balanced, False otherwise.
+    """
+    stack = Stack()  # Create an instance of the Stack class
+    matching_parentheses = {')': '(', '}': '{', ']': '['}  # Define matching pairs of parentheses
+
+    for char in expression:
+        if char in matching_parentheses.values():
+            stack.push(char)  # Push opening parentheses onto the stack
+        elif char in matching_parentheses.keys():
+            if stack.is_empty() or stack.pop() != matching_parentheses[char]:
+                return False  # Return False if a closing parenthesis does not match the top of the stack
+    return stack.is_empty()  # Return True if the stack is empty (all parentheses matched)
+
+# Example usage
+if __name__ == "__main__":
+    expressions = ["{[()()]}", "{[(])}", "{{[[(())]]}}", "((()))", "({[]})"]
+
+    for expression in expressions:
+        result = is_balanced(expression)
+        print(f"Expression: {expression}, is balanced: {result}")
+```
+
+### Explanation:
+
+1. **Node Class**:
+   - Represents a node in the stack with a value and a reference to the next node.
+   - `__init__(self, value)`: Initializes the node with a given value and sets the next reference to `None`.
+
+2. **Stack Class**:
+   - Represents the stack itself.
+   - `__init__(self)`: Initializes an empty stack with `top` set to `None` and `count` set to 0.
+   - `push(self, item)`: Adds a new item to the top of the stack. Creates a new node, updates the `top`, and increments the count.
+   - `pop(self)`: Removes and returns the top item from the stack. Updates the `top` and decrements the count. Raises an `IndexError` if the stack is empty.
+   - `peek(self)`: Returns the top item without removing it. Raises an `IndexError` if the stack is empty.
+   - `is_empty(self)`: Checks if the stack is empty by checking if `top` is `None`.
+   - `size(self)`: Returns the number of items in the stack by returning the count.
+
+3. **is_balanced Function**:
+   - Checks if the parentheses in the given expression are balanced using a stack.
+   - Iterates through each character in the expression.
+   - Pushes opening parentheses onto the stack.
+   - For closing parentheses, checks if the stack is empty or if the top of the stack matches the corresponding opening parenthesis.
+   - Returns `True` if all parentheses are matched and the stack is empty, otherwise returns `False`.
+
+4. **Example Usage**:
+   - Demonstrates how to use the `is_balanced` function to check various expressions for balanced parentheses.
