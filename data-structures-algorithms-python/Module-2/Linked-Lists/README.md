@@ -350,3 +350,383 @@ print(playlist.play_next())  # Output: Song 1 (loop back to the beginning)
 ```
 
 These examples demonstrate how linked lists can be applied in real-world scenarios to manage dynamic data efficiently.
+
+
+
+Sure! Here are more real-world examples where linked lists are effectively used:
+
+### 5. Task Scheduling
+
+A task scheduler can use a circular linked list to cycle through tasks, allowing each task to be executed in a round-robin fashion.
+
+```python
+class Task:
+    def __init__(self, name, duration):
+        self.name = name
+        self.duration = duration
+        self.next = None
+
+class TaskScheduler:
+    def __init__(self):
+        self.current = None
+
+    def add_task(self, name, duration):
+        new_task = Task(name, duration)
+        if not self.current:
+            self.current = new_task
+            self.current.next = self.current
+        else:
+            temp = self.current
+            while temp.next != self.current:
+                temp = temp.next
+            temp.next = new_task
+            new_task.next = self.current
+
+    def execute_next(self):
+        if self.current:
+            task = self.current
+            self.current = self.current.next
+            return f"Executing task: {task.name} for {task.duration} minutes"
+        return None
+
+# Example Usage
+scheduler = TaskScheduler()
+scheduler.add_task("Task 1", 30)
+scheduler.add_task("Task 2", 45)
+scheduler.add_task("Task 3", 20)
+
+print(scheduler.execute_next())  # Output: Executing task: Task 1 for 30 minutes
+print(scheduler.execute_next())  # Output: Executing task: Task 2 for 45 minutes
+print(scheduler.execute_next())  # Output: Executing task: Task 3 for 20 minutes
+print(scheduler.execute_next())  # Output: Executing task: Task 1 for 30 minutes (cycle repeats)
+```
+
+### 6. Railway Reservation System
+
+A railway reservation system can use a linked list to manage the reservation of seats. Each node can represent a seat with its reservation status.
+
+```python
+class Seat:
+    def __init__(self, seat_number):
+        self.seat_number = seat_number
+        self.is_reserved = False
+        self.next = None
+
+class RailwayReservation:
+    def __init__(self):
+        self.head = None
+
+    def add_seat(self, seat_number):
+        new_seat = Seat(seat_number)
+        if not self.head:
+            self.head = new_seat
+        else:
+            temp = self.head
+            while temp.next:
+                temp = temp.next
+            temp.next = new_seat
+
+    def reserve_seat(self, seat_number):
+        temp = self.head
+        while temp:
+            if temp.seat_number == seat_number and not temp.is_reserved:
+                temp.is_reserved = True
+                return f"Seat {seat_number} reserved successfully."
+            temp = temp.next
+        return f"Seat {seat_number} is already reserved or does not exist."
+
+    def get_seat_status(self, seat_number):
+        temp = self.head
+        while temp:
+            if temp.seat_number == seat_number:
+                return f"Seat {seat_number} is {'reserved' if temp.is_reserved else 'available'}."
+            temp = temp.next
+        return f"Seat {seat_number} does not exist."
+
+# Example Usage
+reservation_system = RailwayReservation()
+reservation_system.add_seat(1)
+reservation_system.add_seat(2)
+reservation_system.add_seat(3)
+
+print(reservation_system.reserve_seat(2))  # Output: Seat 2 reserved successfully.
+print(reservation_system.get_seat_status(2))  # Output: Seat 2 is reserved.
+print(reservation_system.get_seat_status(3))  # Output: Seat 3 is available.
+```
+
+### 7. Polynomial Arithmetic
+
+Polynomials can be represented using linked lists to perform arithmetic operations such as addition and multiplication.
+
+```python
+class PolynomialNode:
+    def __init__(self, coefficient, exponent):
+        self.coefficient = coefficient
+        self.exponent = exponent
+        self.next = None
+
+class Polynomial:
+    def __init__(self):
+        self.head = None
+
+    def add_term(self, coefficient, exponent):
+        new_node = PolynomialNode(coefficient, exponent)
+        if not self.head:
+            self.head = new_node
+        else:
+            temp = self.head
+            while temp.next:
+                temp = temp.next
+            temp.next = new_node
+
+    def display(self):
+        terms = []
+        temp = self.head
+        while temp:
+            terms.append(f"{temp.coefficient}x^{temp.exponent}")
+            temp = temp.next
+        return " + ".join(terms)
+
+    def add_polynomial(self, other):
+        p1 = self.head
+        p2 = other.head
+        result = Polynomial()
+        while p1 and p2:
+            if p1.exponent == p2.exponent:
+                result.add_term(p1.coefficient + p2.coefficient, p1.exponent)
+                p1 = p1.next
+                p2 = p2.next
+            elif p1.exponent > p2.exponent:
+                result.add_term(p1.coefficient, p1.exponent)
+                p1 = p1.next
+            else:
+                result.add_term(p2.coefficient, p2.exponent)
+                p2 = p2.next
+        while p1:
+            result.add_term(p1.coefficient, p1.exponent)
+            p1 = p1.next
+        while p2:
+            result.add_term(p2.coefficient, p2.exponent)
+            p2 = p2.next
+        return result
+
+# Example Usage
+poly1 = Polynomial()
+poly1.add_term(3, 2)
+poly1.add_term(5, 1)
+poly1.add_term(6, 0)
+
+poly2 = Polynomial()
+poly2.add_term(2, 1)
+poly2.add_term(4, 0)
+
+sum_poly = poly1.add_polynomial(poly2)
+print(sum_poly.display())  # Output: 3x^2 + 7x^1 + 10x^0
+```
+
+### 8. Sparse Matrix Representation
+
+A sparse matrix, which contains mostly zeros, can be efficiently represented using a linked list to store only the non-zero elements.
+
+```python
+class SparseMatrixNode:
+    def __init__(self, row, col, value):
+        self.row = row
+        self.col = col
+        self.value = value
+        self.next = None
+
+class SparseMatrix:
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.head = None
+
+    def add_element(self, row, col, value):
+        if value == 0:
+            return
+        new_node = SparseMatrixNode(row, col, value)
+        if not self.head:
+            self.head = new_node
+        else:
+            temp = self.head
+            while temp.next:
+                temp = temp.next
+            temp.next = new_node
+
+    def display(self):
+        elements = []
+        temp = self.head
+        while temp:
+            elements.append(f"({temp.row}, {temp.col}) = {temp.value}")
+            temp = temp.next
+        return "\n".join(elements)
+
+# Example Usage
+sparse_matrix = SparseMatrix(4, 4)
+sparse_matrix.add_element(0, 1, 3)
+sparse_matrix.add_element(1, 3, 4)
+sparse_matrix.add_element(3, 2, 5)
+
+print(sparse_matrix.display())
+# Output:
+# (0, 1) = 3
+# (1, 3) = 4
+# (3, 2) = 5
+```
+
+### 9. File System Navigation
+
+A file system's hierarchical structure can be represented using a linked list to navigate through directories and files.
+
+```python
+class File:
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+
+class Directory:
+    def __init__(self, name):
+        self.name = name
+        self.files = None
+        self.subdirectories = None
+        self.next = None
+
+class FileSystem:
+    def __init__(self):
+        self.root = Directory("/")
+
+    def add_file(self, dir_path, file_name):
+        dir_node = self._find_directory(dir_path)
+        if dir_node:
+            new_file = File(file_name)
+            if not dir_node.files:
+                dir_node.files = new_file
+            else:
+                temp = dir_node.files
+                while temp.next:
+                    temp = temp.next
+                temp.next = new_file
+
+    def add_directory(self, dir_path, dir_name):
+        dir_node = self._find_directory(dir_path)
+        if dir_node:
+            new_dir = Directory(dir_name)
+            if not dir_node.subdirectories:
+                dir_node.subdirectories = new_dir
+            else:
+                temp = dir_node.subdirectories
+                while temp.next:
+                    temp = temp.next
+                temp.next = new_dir
+
+    def _find_directory(self, path):
+        if path == "/":
+            return self.root
+        parts = path.strip("/").split("/")
+        current = self.root
+        for part in parts:
+            temp = current.subdirectories
+            while temp and temp.name != part:
+                temp = temp.next
+            if temp:
+                current = temp
+            else:
+                return None
+        return current
+
+    def list_directory(self, dir_path):
+        dir_node = self._find_directory(dir_path)
+        if dir_node:
+            files = []
+            temp = dir_node.files
+            while temp:
+                files.append(temp.name)
+                temp = temp.next
+            subdirectories = []
+            temp = dir_node.subdirectories
+            while temp:
+                subdirectories.append(temp.name)
+                temp = temp.next
+            return {"files": files, "directories": subdirectories}
+        return None
+
+# Example
+
+ Usage
+fs = FileSystem()
+fs.add_directory("/", "home")
+fs.add_directory("/home", "user")
+fs.add_file("/home/user", "file1.txt")
+fs.add_file("/home/user", "file2.txt")
+
+print(fs.list_directory("/home/user"))
+# Output: {'files': ['file1.txt', 'file2.txt'], 'directories': []}
+```
+
+### 10. Implementing a Phonebook
+
+A phonebook can be implemented using a linked list to store and manage contacts, allowing for efficient insertion and deletion.
+
+```python
+class Contact:
+    def __init__(self, name, phone):
+        self.name = name
+        self.phone = phone
+        self.next = None
+
+class Phonebook:
+    def __init__(self):
+        self.head = None
+
+    def add_contact(self, name, phone):
+        new_contact = Contact(name, phone)
+        if not self.head:
+            self.head = new_contact
+        else:
+            temp = self.head
+            while temp.next:
+                temp = temp.next
+            temp.next = new_contact
+
+    def delete_contact(self, name):
+        temp = self.head
+        prev = None
+        while temp:
+            if temp.name == name:
+                if prev:
+                    prev.next = temp.next
+                else:
+                    self.head = temp.next
+                return f"Contact {name} deleted."
+            prev = temp
+            temp = temp.next
+        return f"Contact {name} not found."
+
+    def find_contact(self, name):
+        temp = self.head
+        while temp:
+            if temp.name == name:
+                return f"Name: {temp.name}, Phone: {temp.phone}"
+            temp = temp.next
+        return f"Contact {name} not found."
+
+    def list_contacts(self):
+        contacts = []
+        temp = self.head
+        while temp:
+            contacts.append(f"Name: {temp.name}, Phone: {temp.phone}")
+            temp = temp.next
+        return "\n".join(contacts)
+
+# Example Usage
+phonebook = Phonebook()
+phonebook.add_contact("Alice", "123456789")
+phonebook.add_contact("Bob", "987654321")
+
+print(phonebook.find_contact("Alice"))  # Output: Name: Alice, Phone: 123456789
+print(phonebook.delete_contact("Bob"))  # Output: Contact Bob deleted.
+print(phonebook.list_contacts())  # Output: Name: Alice, Phone: 123456789
+```
+
+These additional examples demonstrate the versatility of linked lists in various practical applications.
