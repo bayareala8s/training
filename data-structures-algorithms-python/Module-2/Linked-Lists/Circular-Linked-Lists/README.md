@@ -1312,3 +1312,221 @@ Final list traversal: [2, 4, 5]
 ```
 
 This detailed analysis helps to understand the performance characteristics of singly circular linked lists and their operations. If you have any more questions or need further details, feel free to ask!
+
+
+
+### Detailed Guidance on Doubly Circular Linked Lists
+
+### Introduction
+A doubly circular linked list is a type of linked list where each node has two pointers: one pointing to the next node and one pointing to the previous node. Additionally, the last node points back to the first node, forming a circular structure. This allows for traversal in both directions and provides efficient insertion and deletion operations at both ends of the list.
+
+### Structure
+
+Each node in a doubly circular linked list contains:
+1. **Data**: The value stored in the node.
+2. **Next Pointer**: A reference to the next node in the list.
+3. **Previous Pointer**: A reference to the previous node in the list.
+
+### Operations
+
+1. **Insertion**: Adding a new node to the list.
+2. **Deletion**: Removing an existing node from the list.
+3. **Traversal**: Accessing each node in the list sequentially.
+4. **Searching**: Finding a node with a specific value.
+
+### Implementation in Python
+
+#### Node Class
+The `Node` class represents an individual element in the linked list. Each node contains the data, a reference to the next node, and a reference to the previous node.
+
+```python
+class Node:
+    def __init__(self, data):
+        self.data = data  # The value stored in the node
+        self.next = None  # Reference to the next node in the list
+        self.prev = None  # Reference to the previous node in the list
+```
+
+#### Doubly Circular Linked List Class
+The `DoublyCircularLinkedList` class manages the linked list, including operations like insertion, deletion, traversal, and search.
+
+```python
+class DoublyCircularLinkedList:
+    def __init__(self):
+        self.head = None  # Initialize the head of the list to None
+
+    def insert_at_beginning(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            new_node.next = self.head
+            new_node.prev = self.head
+        else:
+            last = self.head.prev
+            new_node.next = self.head
+            new_node.prev = last
+            last.next = new_node
+            self.head.prev = new_node
+            self.head = new_node
+
+    def insert_at_end(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            new_node.next = self.head
+            new_node.prev = self.head
+        else:
+            last = self.head.prev
+            new_node.next = self.head
+            new_node.prev = last
+            last.next = new_node
+            self.head.prev = new_node
+
+    def delete_node(self, key):
+        if self.head is None:
+            return
+
+        current = self.head
+        while True:
+            if current.data == key:
+                if current.prev:
+                    current.prev.next = current.next
+                if current.next:
+                    current.next.prev = current.prev
+                if current == self.head:
+                    if self.head.next == self.head:
+                        self.head = None
+                    else:
+                        self.head = current.next
+                return
+            current = current.next
+            if current == self.head:
+                break
+
+    def search(self, key):
+        if self.head is None:
+            return False
+        current = self.head
+        while True:
+            if current.data == key:
+                return True
+            current = current.next
+            if current == self.head:
+                break
+        return False
+
+    def traverse_forward(self):
+        elements = []
+        if self.head is None:
+            return elements
+        current = self.head
+        while True:
+            elements.append(current.data)
+            current = current.next
+            if current == self.head:
+                break
+        return elements
+
+    def traverse_backward(self):
+        elements = []
+        if self.head is None:
+            return elements
+        current = self.head.prev
+        while True:
+            elements.append(current.data)
+            current = current.prev
+            if current == self.head.prev:
+                break
+        return elements
+
+    def __str__(self):
+        elements = self.traverse_forward()
+        return " <-> ".join(map(str, elements)) + " <-> " + str(self.head.data)  # To show the circular nature
+
+# Example Usage
+if __name__ == "__main__":
+    dcll = DoublyCircularLinkedList()
+    dcll.insert_at_beginning(3)
+    dcll.insert_at_beginning(2)
+    dcll.insert_at_beginning(1)
+    print("After inserting at the beginning:", dcll)
+
+    dcll.insert_at_end(4)
+    dcll.insert_at_end(5)
+    print("After inserting at the end:", dcll)
+
+    print("Search for element 3:", dcll.search(3))
+    print("Search for element 6:", dcll.search(6))
+
+    dcll.delete_node(3)
+    print("After deleting element 3:", dcll)
+
+    dcll.delete_node(1)
+    print("After deleting element 1:", dcll)
+
+    print("Final list traversal forward:", dcll.traverse_forward())
+    print("Final list traversal backward:", dcll.traverse_backward())
+```
+
+### Explanation
+- **Node Class**: Represents an individual element in the linked list. Each node contains the data and references to the next and previous nodes.
+- **DoublyCircularLinkedList Class**: Manages the linked list, including methods for insertion, deletion, searching, and traversal.
+  - `insert_at_beginning(data)`: Inserts a new node at the beginning of the list.
+  - `insert_at_end(data)`: Inserts a new node at the end of the list.
+  - `delete_node(key)`: Deletes the first node found with the specified key.
+  - `search(key)`: Searches for a node with the specified key.
+  - `traverse_forward()`: Traverses the list from head to tail and returns a list of node data.
+  - `traverse_backward()`: Traverses the list from tail to head and returns a list of node data.
+  - `__str__()`: Returns a string representation of the linked list.
+
+### Output
+```
+After inserting at the beginning: 1 <-> 2 <-> 3 <-> 1
+After inserting at the end: 1 <-> 2 <-> 3 <-> 4 <-> 5 <-> 1
+Search for element 3: True
+Search for element 6: False
+After deleting element 3: 1 <-> 2 <-> 4 <-> 5 <-> 1
+After deleting element 1: 2 <-> 4 <-> 5 <-> 2
+Final list traversal forward: [2, 4, 5]
+Final list traversal backward: [5, 4, 2]
+```
+
+### Time and Space Complexities
+
+1. **Insertion at Beginning**: `insert_at_beginning(data)`
+   - **Time Complexity**: O(1)
+     - Explanation: Inserting a node at the beginning involves updating pointers to the head and tail, which is done in constant time.
+
+2. **Insertion at End**: `insert_at_end(data)`
+   - **Time Complexity**: O(1)
+     - Explanation: Inserting a node at the end involves updating pointers to the tail and head, which is done in constant time.
+
+3. **Deletion of a Node**: `delete_node(key)`
+   - **Time Complexity**: O(n)
+     - Explanation: Deleting a node involves traversing the list to find the node with the given key. In the worst case, the node to be deleted might be the last node or not present at all, requiring traversal of the entire list.
+
+4. **Search for a Node**: `search(key)`
+   - **Time Complexity**: O(n)
+     - Explanation: Searching for a node involves traversing the list and comparing each node's data with the key. In the worst case, the node might be the last node or not present at all, requiring traversal of the entire list.
+
+5. **Traversal of the List (Forward and Backward)**: `traverse_forward()`, `traverse_backward()`
+   - **Time Complexity**: O(n)
+     - Explanation: Traversing the list to collect all elements requires visiting each node once, which takes linear time relative to the number of nodes in the list.
+
+6. **Space Complexity**: O(n)
+   - Explanation: The space required for the linked list is directly proportional to the number of nodes (n). Each node requires space for storing the data and pointers to the next and previous nodes.
+
+### Summary
+
+#### Time Complexity
+- **Insert at Beginning**: O(1)
+- **Insert at End**: O(1)
+- **Delete Node**: O(n)
+- **Search Node**: O(n)
+- **Traversal**: O(n)
+
+#### Space Complexity
+- **Operations**: O(1)
+- **Linked List Storage**: O(n)
+
+This detailed guide provides a comprehensive understanding of doubly circular linked lists, their implementation, and the performance characteristics of their operations. If you have any more questions or need further details, feel free to ask!
