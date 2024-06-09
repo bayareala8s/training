@@ -362,3 +362,182 @@ server_queue.handle_request()
 ```
 
 These examples demonstrate how queues can be utilized in various real-world scenarios, from managing print jobs to scheduling tasks, handling calls in a call center, and managing web server requests.
+
+
+
+
+Sure, let's go through a detailed implementation of a queue in Python using both an array (list) and a linked list approach.
+
+### **1. Array (List) Implementation of Queue**
+
+An array-based implementation of a queue is straightforward but has a limitation of fixed size unless we dynamically resize the array.
+
+```python
+class ArrayQueue:
+    def __init__(self, size):
+        self.queue = [None] * size
+        self.max_size = size
+        self.front = -1
+        self.rear = -1
+
+    def is_empty(self):
+        return self.front == -1
+
+    def is_full(self):
+        return (self.rear + 1) % self.max_size == self.front
+
+    def enqueue(self, item):
+        if self.is_full():
+            raise OverflowError("Queue is full")
+        if self.is_empty():
+            self.front = self.rear = 0
+        else:
+            self.rear = (self.rear + 1) % self.max_size
+        self.queue[self.rear] = item
+        print(f"Enqueued {item}")
+
+    def dequeue(self):
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        item = self.queue[self.front]
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.front = (self.front + 1) % self.max_size
+        print(f"Dequeued {item}")
+        return item
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self.queue[self.front]
+
+    def display(self):
+        if self.is_empty():
+            print("Queue is empty")
+        else:
+            index = self.front
+            while index != self.rear:
+                print(self.queue[index], end=" ")
+                index = (index + 1) % self.max_size
+            print(self.queue[index])
+
+# Example Usage
+queue = ArrayQueue(5)
+queue.enqueue(10)
+queue.enqueue(20)
+queue.enqueue(30)
+queue.enqueue(40)
+queue.enqueue(50)
+queue.display()
+queue.dequeue()
+queue.dequeue()
+queue.enqueue(60)
+queue.display()
+```
+
+### **2. Linked List Implementation of Queue**
+
+A linked list-based implementation of a queue can grow dynamically, making it more flexible than the array-based approach.
+
+```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class LinkedListQueue:
+    def __init__(self):
+        self.front = self.rear = None
+
+    def is_empty(self):
+        return self.front is None
+
+    def enqueue(self, item):
+        new_node = Node(item)
+        if self.rear is None:
+            self.front = self.rear = new_node
+            print(f"Enqueued {item}")
+            return
+        self.rear.next = new_node
+        self.rear = new_node
+        print(f"Enqueued {item}")
+
+    def dequeue(self):
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        temp = self.front
+        self.front = temp.next
+        if self.front is None:
+            self.rear = None
+        print(f"Dequeued {temp.value}")
+        return temp.value
+
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self.front.value
+
+    def display(self):
+        if self.is_empty():
+            print("Queue is empty")
+            return
+        temp = self.front
+        while temp:
+            print(temp.value, end=" -> ")
+            temp = temp.next
+        print("None")
+
+# Example Usage
+queue = LinkedListQueue()
+queue.enqueue(10)
+queue.enqueue(20)
+queue.enqueue(30)
+queue.enqueue(40)
+queue.enqueue(50)
+queue.display()
+queue.dequeue()
+queue.dequeue()
+queue.enqueue(60)
+queue.display()
+```
+
+### **Explanation of the Code**
+
+#### **Array (List) Implementation**
+
+1. **Initialization:**
+   - `self.queue`: List initialized with `None` values.
+   - `self.max_size`: Maximum size of the queue.
+   - `self.front` and `self.rear`: Pointers to the front and rear of the queue, initialized to -1.
+
+2. **is_empty:** Checks if the queue is empty by checking if `self.front` is -1.
+
+3. **is_full:** Checks if the queue is full by seeing if the next position of `self.rear` is equal to `self.front`.
+
+4. **enqueue:** Adds an element to the end of the queue. If the queue is empty, both `self.front` and `self.rear` are set to 0. Otherwise, `self.rear` is incremented circularly.
+
+5. **dequeue:** Removes an element from the front of the queue. If the queue becomes empty after dequeue, both `self.front` and `self.rear` are reset to -1. Otherwise, `self.front` is incremented circularly.
+
+6. **peek:** Returns the front element without removing it.
+
+7. **display:** Displays the elements in the queue.
+
+#### **Linked List Implementation**
+
+1. **Node Class:** Represents a node in the linked list with `value` and `next` attributes.
+
+2. **Initialization:**
+   - `self.front` and `self.rear`: Pointers to the front and rear nodes of the queue, initialized to `None`.
+
+3. **is_empty:** Checks if the queue is empty by checking if `self.front` is `None`.
+
+4. **enqueue:** Adds a new node to the end of the queue. If the queue is empty, both `self.front` and `self.rear` are set to the new node. Otherwise, the `next` pointer of the current rear node is set to the new node, and `self.rear` is updated.
+
+5. **dequeue:** Removes the front node from the queue. If the queue becomes empty after dequeue, both `self.front` and `self.rear` are reset to `None`.
+
+6. **peek:** Returns the value of the front node without removing it.
+
+7. **display:** Displays the elements in the queue from front to rear.
+
+Both implementations demonstrate the core functionality of a queue, but the linked list approach is more flexible in terms of size management, while the array approach can be more efficient in terms of memory access patterns.
