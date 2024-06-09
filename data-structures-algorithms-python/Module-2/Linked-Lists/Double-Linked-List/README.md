@@ -247,3 +247,63 @@ Final list traversal backward: [5, 4, 2]
     ```
 
 This detailed guide covers the basics of doubly linked lists, including their implementation, common operations, and complexities. If you have any questions or need further details, feel free to ask!
+
+
+### Time and Space Analysis for Doubly Linked List
+
+#### Time Complexities
+
+1. **Insertion at Beginning**: `insert_at_beginning(data)`
+   - **Time Complexity**: O(1)
+     - Explanation: Inserting a node at the beginning involves creating a new node and adjusting a few pointers. This is a constant-time operation as it doesn't depend on the size of the list.
+
+2. **Insertion at End**: `insert_at_end(data)`
+   - **Time Complexity**: O(n)
+     - Explanation: Inserting a node at the end requires traversing the entire list to find the last node, which takes linear time relative to the number of nodes in the list (n). Once the last node is found, the insertion operation itself is O(1).
+
+3. **Deletion of a Node**: `delete_node(key)`
+   - **Time Complexity**: O(n)
+     - Explanation: Deleting a node involves traversing the list to find the node with the given key. In the worst case, the node to be deleted might be the last node or not present at all, requiring traversal of the entire list. Once the node is found, the deletion operation itself is O(1).
+
+4. **Search for a Node**: `search(key)`
+   - **Time Complexity**: O(n)
+     - Explanation: Searching for a node involves traversing the list and comparing each node's data with the key. In the worst case, the node might be the last node or not present at all, requiring traversal of the entire list.
+
+5. **Traversal of the List (Forward)**: `traverse_forward()`
+   - **Time Complexity**: O(n)
+     - Explanation: Traversing the list to collect all elements requires visiting each node once, which takes linear time relative to the number of nodes in the list.
+
+6. **Traversal of the List (Backward)**: `traverse_backward()`
+   - **Time Complexity**: O(n)
+     - Explanation: Traversing the list backward also requires visiting each node once, which takes linear time relative to the number of nodes in the list.
+
+7. **String Representation**: `__str__()`
+   - **Time Complexity**: O(n)
+     - Explanation: This method internally calls `traverse_forward()`, which takes O(n) time to gather all the elements of the list, and then performs additional operations to convert the list to a string, which is linear in time complexity.
+
+#### Space Complexities
+
+1. **Space Complexity for Insertion, Deletion, Search, and Traversal**
+   - **Space Complexity**: O(1) (excluding the space for the linked list itself)
+     - Explanation: These operations do not require extra space that grows with the input size. The space used by temporary variables or pointers is constant.
+
+2. **Space Complexity for the Linked List Itself**
+   - **Space Complexity**: O(n)
+     - Explanation: The space required for the linked list is directly proportional to the number of nodes (n). Each node requires space for storing the data, a pointer to the next node, and a pointer to the previous node.
+
+### Summary
+
+#### Time Complexity
+- **Insert at Beginning**: O(1)
+- **Insert at End**: O(n)
+- **Delete Node**: O(n)
+- **Search Node**: O(n)
+- **Traversal Forward**: O(n)
+- **Traversal Backward**: O(n)
+- **String Representation**: O(n)
+
+#### Space Complexity
+- **Operations**: O(1)
+- **Linked List Storage**: O(n)
+
+This analysis helps to understand the efficiency of doubly linked list operations and provides a clear picture of their performance characteristics. If you have any more questions or need further details, feel free to ask!
