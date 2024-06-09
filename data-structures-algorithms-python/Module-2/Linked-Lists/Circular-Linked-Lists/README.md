@@ -980,3 +980,156 @@ Here is the analysis of the time and space complexities for the operations perfo
 - **Linked List Storage**: O(n)
 
 This analysis provides a comprehensive understanding of the performance characteristics of circular linked lists and their operations in various real-world scenarios. If you have any more questions or need further details, feel free to ask!
+
+
+
+
+Certainly! Below is the complete implementation of a singly circular linked list in Python, including common operations such as insertion, deletion, traversal, and searching.
+
+### Node Class
+
+The `Node` class represents an individual element in the linked list. Each node contains the data and a reference to the next node.
+
+```python
+class Node:
+    def __init__(self, data):
+        self.data = data  # The value stored in the node
+        self.next = None  # Reference to the next node in the list
+```
+
+### Singly Circular Linked List Class
+
+The `SinglyCircularLinkedList` class manages the linked list, including operations like insertion, deletion, traversal, and search.
+
+```python
+class SinglyCircularLinkedList:
+    def __init__(self):
+        self.head = None  # Initialize the head of the list to None
+
+    def insert_at_beginning(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            new_node.next = self.head
+        else:
+            current = self.head
+            while current.next != self.head:
+                current = current.next
+            new_node.next = self.head
+            current.next = new_node
+            self.head = new_node
+
+    def insert_at_end(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            new_node.next = self.head
+        else:
+            current = self.head
+            while current.next != self.head:
+                current = current.next
+            current.next = new_node
+            new_node.next = self.head
+
+    def delete_node(self, key):
+        if self.head is None:
+            return
+
+        current = self.head
+        prev = None
+
+        while True:
+            if current.data == key:
+                if prev:
+                    prev.next = current.next
+                else:
+                    if self.head == self.head.next:
+                        self.head = None
+                    else:
+                        last = self.head
+                        while last.next != self.head:
+                            last = last.next
+                        last.next = self.head.next
+                        self.head = self.head.next
+                return
+
+            prev = current
+            current = current.next
+
+            if current == self.head:
+                break
+
+    def search(self, key):
+        if self.head is None:
+            return False
+        current = self.head
+        while True:
+            if current.data == key:
+                return True
+            current = current.next
+            if current == self.head:
+                break
+        return False
+
+    def traverse(self):
+        elements = []
+        if self.head is None:
+            return elements
+        current = self.head
+        while True:
+            elements.append(current.data)
+            current = current.next
+            if current == self.head:
+                break
+        return elements
+
+    def __str__(self):
+        elements = self.traverse()
+        return " -> ".join(map(str, elements)) + " -> " + str(self.head.data)  # To show the circular nature
+
+# Example Usage
+if __name__ == "__main__":
+    scll = SinglyCircularLinkedList()
+    scll.insert_at_beginning(3)
+    scll.insert_at_beginning(2)
+    scll.insert_at_beginning(1)
+    print("After inserting at the beginning:", scll)
+
+    scll.insert_at_end(4)
+    scll.insert_at_end(5)
+    print("After inserting at the end:", scll)
+
+    print("Search for element 3:", scll.search(3))
+    print("Search for element 6:", scll.search(6))
+
+    scll.delete_node(3)
+    print("After deleting element 3:", scll)
+
+    scll.delete_node(1)
+    print("After deleting element 1:", scll)
+
+    print("Final list traversal:", scll.traverse())
+```
+
+### Explanation
+- **Node Class**: Represents an individual element in the linked list. Each node contains the data and a reference to the next node.
+- **SinglyCircularLinkedList Class**: Manages the linked list, including methods for insertion, deletion, searching, and traversal.
+  - `insert_at_beginning(data)`: Inserts a new node at the beginning of the list.
+  - `insert_at_end(data)`: Inserts a new node at the end of the list.
+  - `delete_node(key)`: Deletes the first node found with the specified key.
+  - `search(key)`: Searches for a node with the specified key.
+  - `traverse()`: Traverses the list and returns a list of node data.
+  - `__str__()`: Returns a string representation of the linked list.
+
+### Output
+```
+After inserting at the beginning: 1 -> 2 -> 3 -> 1
+After inserting at the end: 1 -> 2 -> 3 -> 4 -> 5 -> 1
+Search for element 3: True
+Search for element 6: False
+After deleting element 3: 1 -> 2 -> 4 -> 5 -> 1
+After deleting element 1: 2 -> 4 -> 5 -> 2
+Final list traversal: [2, 4, 5]
+```
+
+This implementation covers the basic operations for a singly circular linked list in Python. Each method includes comments to explain the logic and steps involved. If you have any questions or need further details, feel free to ask!
