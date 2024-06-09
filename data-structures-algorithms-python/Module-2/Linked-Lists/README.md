@@ -730,3 +730,109 @@ print(phonebook.list_contacts())  # Output: Name: Alice, Phone: 123456789
 ```
 
 These additional examples demonstrate the versatility of linked lists in various practical applications.
+
+
+
+Sure! Here's an analysis of the time and space complexities for the operations performed on linked lists in the real-world examples provided.
+
+### 1. Undo Feature
+#### Time Complexity
+- **Save state**: O(1)
+- **Undo**: O(1)
+- **Redo**: O(1)
+
+#### Space Complexity
+- O(n) for storing the document states, where n is the number of states saved.
+
+### 2. Browser History Management
+#### Time Complexity
+- **Visit page**: O(1)
+- **Back**: O(1)
+- **Forward**: O(1)
+
+#### Space Complexity
+- O(n) for storing the pages, where n is the number of pages visited.
+
+### 3. LRU Cache Implementation
+#### Time Complexity
+- **Get**: O(1)
+- **Put**: O(1)
+
+#### Space Complexity
+- O(capacity) for storing the cache items, where capacity is the maximum number of items in the cache.
+
+### 4. Music Playlist Management
+#### Time Complexity
+- **Add song**: O(n) (since it involves finding the last node in a circular list)
+- **Play next**: O(1)
+
+#### Space Complexity
+- O(n) for storing the songs, where n is the number of songs in the playlist.
+
+### 5. Task Scheduling
+#### Time Complexity
+- **Add task**: O(n) (since it involves finding the last node in a circular list)
+- **Execute next**: O(1)
+
+#### Space Complexity
+- O(n) for storing the tasks, where n is the number of tasks.
+
+### 6. Railway Reservation System
+#### Time Complexity
+- **Add seat**: O(n) (for finding the last node)
+- **Reserve seat**: O(n) (for finding the seat by seat number)
+- **Get seat status**: O(n) (for finding the seat by seat number)
+
+#### Space Complexity
+- O(n) for storing the seats, where n is the number of seats.
+
+### 7. Polynomial Arithmetic
+#### Time Complexity
+- **Add term**: O(n) (for finding the last node)
+- **Display**: O(n) (for traversing the list)
+- **Add polynomial**: O(m + n) (where m and n are the number of terms in the two polynomials)
+
+#### Space Complexity
+- O(m + n) for storing the terms of the polynomials.
+
+### 8. Sparse Matrix Representation
+#### Time Complexity
+- **Add element**: O(n) (for finding the last node)
+- **Display**: O(n) (for traversing the list)
+
+#### Space Complexity
+- O(k) for storing the non-zero elements, where k is the number of non-zero elements.
+
+### 9. File System Navigation
+#### Time Complexity
+- **Add file**: O(n) (for finding the last node in the files list)
+- **Add directory**: O(m) (for finding the last node in the subdirectories list)
+- **List directory**: O(n + m) (for traversing the files and subdirectories)
+
+#### Space Complexity
+- O(n + m) for storing the files and subdirectories, where n is the number of files and m is the number of subdirectories.
+
+### 10. Implementing a Phonebook
+#### Time Complexity
+- **Add contact**: O(n) (for finding the last node)
+- **Delete contact**: O(n) (for finding the node to delete)
+- **Find contact**: O(n) (for finding the node)
+- **List contacts**: O(n) (for traversing the list)
+
+#### Space Complexity
+- O(n) for storing the contacts, where n is the number of contacts.
+
+### Summary
+
+#### Time Complexity
+- **Insertion at end**: Generally O(n) (due to the need to traverse to the end of the list)
+- **Insertion at beginning**: O(1)
+- **Deletion**: O(n) (to find the node to delete)
+- **Traversal**: O(n)
+- **Search**: O(n)
+- **Access**: O(n) (for a specific element)
+
+#### Space Complexity
+- O(n) for storing the elements in the linked list, where n is the number of elements.
+
+These complexities highlight the performance characteristics of linked lists and help understand their efficiency in different scenarios.
