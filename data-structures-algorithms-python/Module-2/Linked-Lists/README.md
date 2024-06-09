@@ -958,3 +958,250 @@ Final list traversal: [2, 4, 5]
 ```
 
 This implementation covers the basic operations for a singly linked list in Python. Each method includes comments to explain the logic and steps involved. If you have any questions or need further details, feel free to ask!
+
+
+Certainly! Below is a complete implementation of a singly linked list in Python, encapsulated in a single file. This includes the `Node` class and the `SinglyLinkedList` class with all the necessary methods.
+
+```python
+class Node:
+    def __init__(self, data):
+        self.data = data  # The value stored in the node
+        self.next = None  # Reference to the next node in the list
+
+class SinglyLinkedList:
+    def __init__(self):
+        self.head = None  # Initialize the head of the list to None
+
+    def insert_at_beginning(self, data):
+        new_node = Node(data)  # Create a new node with the given data
+        new_node.next = self.head  # Point the new node to the current head
+        self.head = new_node  # Update the head to be the new node
+
+    def insert_at_end(self, data):
+        new_node = Node(data)  # Create a new node with the given data
+        if not self.head:  # If the list is empty
+            self.head = new_node  # Set the head to the new node
+            return
+        last = self.head
+        while last.next:  # Traverse to the last node
+            last = last.next
+        last.next = new_node  # Point the last node to the new node
+
+    def delete_node(self, key):
+        temp = self.head
+        if temp and temp.data == key:  # If the head is the node to be deleted
+            self.head = temp.next  # Update the head to the next node
+            temp = None  # Free the old head
+            return
+        prev = None
+        while temp and temp.data != key:  # Traverse to find the node to delete
+            prev = temp
+            temp = temp.next
+        if temp is None:  # If the node was not found
+            return
+        prev.next = temp.next  # Remove the node from the list
+        temp = None  # Free the node
+
+    def search(self, key):
+        current = self.head
+        while current:  # Traverse the list
+            if current.data == key:  # If the node is found
+                return True
+            current = current.next
+        return False  # If the node was not found
+
+    def traverse(self):
+        elements = []
+        current = self.head
+        while current:  # Traverse the list
+            elements.append(current.data)  # Add the node data to the list
+            current = current.next
+        return elements  # Return the list of elements
+
+    def __str__(self):
+        elements = self.traverse()
+        return " -> ".join(map(str, elements))  # Format the list elements as a string
+
+# Example Usage
+if __name__ == "__main__":
+    # Create a new linked list
+    linked_list = SinglyLinkedList()
+
+    # Insert elements at the beginning
+    linked_list.insert_at_beginning(3)
+    linked_list.insert_at_beginning(2)
+    linked_list.insert_at_beginning(1)
+    print("After inserting at the beginning:", linked_list)
+
+    # Insert elements at the end
+    linked_list.insert_at_end(4)
+    linked_list.insert_at_end(5)
+    print("After inserting at the end:", linked_list)
+
+    # Search for elements
+    print("Search for element 3:", linked_list.search(3))  # Output: True
+    print("Search for element 6:", linked_list.search(6))  # Output: False
+
+    # Delete elements
+    linked_list.delete_node(3)
+    print("After deleting element 3:", linked_list)
+
+    linked_list.delete_node(1)
+    print("After deleting element 1:", linked_list)
+
+    # Traverse and print the list
+    print("Final list traversal:", linked_list.traverse())
+```
+
+### Explanation
+- **Node Class**: Represents an individual element in the linked list. Each node contains the data and a reference to the next node.
+- **SinglyLinkedList Class**: Manages the linked list, including methods for insertion, deletion, searching, and traversal.
+  - `insert_at_beginning(data)`: Inserts a new node at the beginning of the list.
+  - `insert_at_end(data)`: Inserts a new node at the end of the list.
+  - `delete_node(key)`: Deletes the first node found with the specified key.
+  - `search(key)`: Searches for a node with the specified key.
+  - `traverse()`: Traverses the list and returns a list of node data.
+  - `__str__()`: Returns a string representation of the linked list.
+- **Example Usage**: Demonstrates how to use the `SinglyLinkedList` class to perform various operations.
+
+This code can be saved in a single `.py` file and executed to see the linked list operations in action. If you have any questions or need further details, feel free to ask!
+
+
+
+Sure! Below is a visual text diagram to illustrate how the singly linked list looks after each operation in the provided example.
+
+### Initial State
+```
+head -> None
+```
+
+### After Inserting 3 at the Beginning
+```
+head -> 3 -> None
+```
+
+### After Inserting 2 at the Beginning
+```
+head -> 2 -> 3 -> None
+```
+
+### After Inserting 1 at the Beginning
+```
+head -> 1 -> 2 -> 3 -> None
+```
+
+### After Inserting 4 at the End
+```
+head -> 1 -> 2 -> 3 -> 4 -> None
+```
+
+### After Inserting 5 at the End
+```
+head -> 1 -> 2 -> 3 -> 4 -> 5 -> None
+```
+
+### After Searching for Element 3 (Found)
+```
+head -> 1 -> 2 -> 3 -> 4 -> 5 -> None
+```
+
+### After Searching for Element 6 (Not Found)
+```
+head -> 1 -> 2 -> 3 -> 4 -> 5 -> None
+```
+
+### After Deleting Element 3
+```
+head -> 1 -> 2 -> 4 -> 5 -> None
+```
+
+### After Deleting Element 1
+```
+head -> 2 -> 4 -> 5 -> None
+```
+
+### Final List Traversal
+```
+head -> 2 -> 4 -> 5 -> None
+```
+
+### Detailed Steps with Visual Text Diagram
+
+1. **Initial State**
+   ```
+   head -> None
+   ```
+
+2. **Insert 3 at the Beginning**
+   - Create a new node with data 3.
+   - Point the new node's next to the current head (which is None).
+   - Update the head to the new node.
+   ```
+   head -> 3 -> None
+   ```
+
+3. **Insert 2 at the Beginning**
+   - Create a new node with data 2.
+   - Point the new node's next to the current head (which is 3).
+   - Update the head to the new node.
+   ```
+   head -> 2 -> 3 -> None
+   ```
+
+4. **Insert 1 at the Beginning**
+   - Create a new node with data 1.
+   - Point the new node's next to the current head (which is 2).
+   - Update the head to the new node.
+   ```
+   head -> 1 -> 2 -> 3 -> None
+   ```
+
+5. **Insert 4 at the End**
+   - Create a new node with data 4.
+   - Traverse to the last node (which is 3).
+   - Point the last node's next to the new node.
+   ```
+   head -> 1 -> 2 -> 3 -> 4 -> None
+   ```
+
+6. **Insert 5 at the End**
+   - Create a new node with data 5.
+   - Traverse to the last node (which is 4).
+   - Point the last node's next to the new node.
+   ```
+   head -> 1 -> 2 -> 3 -> 4 -> 5 -> None
+   ```
+
+7. **Search for Element 3**
+   - Traverse the list and find the node with data 3.
+   ```
+   head -> 1 -> 2 -> 3 -> 4 -> 5 -> None
+   ```
+
+8. **Search for Element 6**
+   - Traverse the list and do not find a node with data 6.
+   ```
+   head -> 1 -> 2 -> 3 -> 4 -> 5 -> None
+   ```
+
+9. **Delete Element 3**
+   - Traverse the list to find the node with data 3.
+   - Update the previous node's (2) next to point to the node after 3 (which is 4).
+   ```
+   head -> 1 -> 2 -> 4 -> 5 -> None
+   ```
+
+10. **Delete Element 1**
+    - Head is the node to be deleted (1).
+    - Update the head to the next node (which is 2).
+    ```
+    head -> 2 -> 4 -> 5 -> None
+    ```
+
+11. **Final List Traversal**
+    - Traverse the list and collect the node data.
+    ```
+    head -> 2 -> 4 -> 5 -> None
+    ```
+
+This visual text diagram helps to understand the state of the linked list after each operation. If you have any questions or need further details, feel free to ask!
