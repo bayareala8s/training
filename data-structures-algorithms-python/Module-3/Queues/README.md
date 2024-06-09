@@ -541,3 +541,125 @@ queue.display()
 7. **display:** Displays the elements in the queue from front to rear.
 
 Both implementations demonstrate the core functionality of a queue, but the linked list approach is more flexible in terms of size management, while the array approach can be more efficient in terms of memory access patterns.
+
+
+
+Sure! Here is a visual text diagram to illustrate both the array (list) and linked list implementations of a queue.
+
+### **Array (List) Implementation of Queue**
+
+Let's assume we have a queue of size 5, and we perform the following operations:
+1. Enqueue 10
+2. Enqueue 20
+3. Enqueue 30
+4. Dequeue
+5. Enqueue 40
+
+#### **Initial State:**
+```
+[ None, None, None, None, None ]
+  front: -1
+  rear: -1
+```
+
+#### **After Enqueue 10:**
+```
+[ 10, None, None, None, None ]
+  front: 0
+  rear: 0
+```
+
+#### **After Enqueue 20:**
+```
+[ 10, 20, None, None, None ]
+  front: 0
+  rear: 1
+```
+
+#### **After Enqueue 30:**
+```
+[ 10, 20, 30, None, None ]
+  front: 0
+  rear: 2
+```
+
+#### **After Dequeue:**
+```
+[ None, 20, 30, None, None ]
+  front: 1
+  rear: 2
+```
+
+#### **After Enqueue 40:**
+```
+[ None, 20, 30, 40, None ]
+  front: 1
+  rear: 3
+```
+
+### **Linked List Implementation of Queue**
+
+Let's perform the same operations on a linked list implementation of a queue:
+1. Enqueue 10
+2. Enqueue 20
+3. Enqueue 30
+4. Dequeue
+5. Enqueue 40
+
+#### **Initial State:**
+```
+front -> None
+rear -> None
+```
+
+#### **After Enqueue 10:**
+```
+front -> 10 -> None
+rear -> 10
+```
+
+#### **After Enqueue 20:**
+```
+front -> 10 -> 20 -> None
+rear -> 20
+```
+
+#### **After Enqueue 30:**
+```
+front -> 10 -> 20 -> 30 -> None
+rear -> 30
+```
+
+#### **After Dequeue:**
+```
+front -> 20 -> 30 -> None
+rear -> 30
+```
+
+#### **After Enqueue 40:**
+```
+front -> 20 -> 30 -> 40 -> None
+rear -> 40
+```
+
+### **Explanation:**
+
+#### **Array (List) Implementation:**
+
+- **Initial State:** The queue is empty, so all slots are `None`, and both `front` and `rear` are -1.
+- **After Enqueue 10:** 10 is added to the queue, and both `front` and `rear` are updated to 0.
+- **After Enqueue 20:** 20 is added to the next position, and `rear` is incremented to 1.
+- **After Enqueue 30:** 30 is added to the next position, and `rear` is incremented to 2.
+- **After Dequeue:** 10 is removed, and the slot is set to `None`. `front` is incremented to 1.
+- **After Enqueue 40:** 40 is added to the next position, and `rear` is incremented to 3.
+
+#### **Linked List Implementation:**
+
+- **Initial State:** The queue is empty, so `front` and `rear` point to `None`.
+- **After Enqueue 10:** A new node with value 10 is created. Both `front` and `rear` point to this node.
+- **After Enqueue 20:** A new node with value 20 is created and added to the end. `rear` is updated to point to this new node.
+- **After Enqueue 30:** A new node with value 30 is created and added to the end. `rear` is updated to point to this new node.
+- **After Dequeue:** The front node (10) is removed, and `front` is updated to point to the next node (20).
+- **After Enqueue 40:** A new node with value 40 is created and added to the end. `rear` is updated to point to this new node.
+
+These visual text diagrams should help in understanding the state of the queue at each step for both array and linked list implementations.
