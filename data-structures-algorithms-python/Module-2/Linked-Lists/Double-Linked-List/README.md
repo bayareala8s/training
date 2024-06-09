@@ -636,3 +636,383 @@ print("Task Scheduler:", scheduler)
 - **Task Scheduling**: Cycles through tasks for execution in a round-robin fashion.
 
 These examples illustrate the versatility and practical applications of doubly linked lists in real-world scenarios. If you have any specific questions or need further details, feel free to ask!
+
+
+Sure! Here are additional real-world examples where doubly linked lists are effectively utilized:
+
+### 6. Memory Management in Operating Systems
+
+Operating systems often use doubly linked lists to manage memory blocks for efficient allocation and deallocation.
+
+```python
+class MemoryBlock:
+    def __init__(self, start, size):
+        self.start = start  # Start address of the memory block
+        self.size = size  # Size of the memory block
+        self.next = None
+        self.prev = None
+
+class MemoryManager:
+    def __init__(self):
+        self.head = None  # Head of the free memory blocks list
+
+    def allocate(self, size):
+        current = self.head
+        while current:
+            if current.size >= size:
+                allocated_block = MemoryBlock(current.start, size)
+                current.start += size
+                current.size -= size
+                if current.size == 0:
+                    self._remove_block(current)
+                return allocated_block
+            current = current.next
+        return None  # Not enough memory
+
+    def deallocate(self, block):
+        if not self.head:
+            self.head = block
+        else:
+            current = self.head
+            while current and current.start < block.start:
+                current = current.next
+            block.next = current
+            block.prev = current.prev if current else None
+            if current:
+                current.prev = block
+            if block.prev:
+                block.prev.next = block
+            else:
+                self.head = block
+
+    def _remove_block(self, block):
+        if block.prev:
+            block.prev.next = block.next
+        if block.next:
+            block.next.prev = block.prev
+        if block == self.head:
+            self.head = block.next
+
+    def __str__(self):
+        blocks = []
+        current = self.head
+        while current:
+            blocks.append(f"[{current.start}, {current.start + current.size - 1}]")
+            current = current.next
+        return " -> ".join(blocks)
+
+# Example Usage
+manager = MemoryManager()
+manager.deallocate(MemoryBlock(0, 100))
+manager.deallocate(MemoryBlock(200, 100))
+
+print("Initial free blocks:", manager)
+
+block = manager.allocate(50)
+print("After allocating 50:", manager)
+
+manager.deallocate(block)
+print("After deallocating 50:", manager)
+```
+
+### 7. Train Composition Management
+
+A train can be represented using a doubly linked list where each node represents a train car, allowing for easy addition, removal, and traversal of cars.
+
+```python
+class TrainCar:
+    def __init__(self, car_id):
+        self.car_id = car_id
+        self.next = None
+        self.prev = None
+
+class Train:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def add_car_to_front(self, car_id):
+        new_car = TrainCar(car_id)
+        if not self.head:
+            self.head = new_car
+            self.tail = new_car
+        else:
+            new_car.next = self.head
+            self.head.prev = new_car
+            self.head = new_car
+
+    def add_car_to_end(self, car_id):
+        new_car = TrainCar(car_id)
+        if not self.tail:
+            self.head = new_car
+            self.tail = new_car
+        else:
+            new_car.prev = self.tail
+            self.tail.next = new_car
+            self.tail = new_car
+
+    def remove_car(self, car_id):
+        current = self.head
+        while current and current.car_id != car_id:
+            current = current.next
+        if current:
+            if current.prev:
+                current.prev.next = current.next
+            if current.next:
+                current.next.prev = current.prev
+            if current == self.head:
+                self.head = current.next
+            if current == self.tail:
+                self.tail = current.prev
+
+    def __str__(self):
+        cars = []
+        current = self.head
+        while current:
+            cars.append(f"Car {current.car_id}")
+            current = current.next
+        return " <-> ".join(cars)
+
+# Example Usage
+train = Train()
+train.add_car_to_front(1)
+train.add_car_to_front(2)
+train.add_car_to_end(3)
+
+print("Train composition:", train)
+
+train.remove_car(2)
+print("After removing car 2:", train)
+```
+
+### 8. Inventory Management in Warehouses
+
+Warehouses can use doubly linked lists to manage items in storage, enabling efficient addition, removal, and traversal of inventory items.
+
+```python
+class InventoryItem:
+    def __init__(self, item_id, name):
+        self.item_id = item_id
+        self.name = name
+        self.next = None
+        self.prev = None
+
+class Inventory:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def add_item(self, item_id, name):
+        new_item = InventoryItem(item_id, name)
+        if not self.head:
+            self.head = new_item
+            self.tail = new_item
+        else:
+            self.tail.next = new_item
+            new_item.prev = self.tail
+            self.tail = new_item
+
+    def remove_item(self, item_id):
+        current = self.head
+        while current and current.item_id != item_id:
+            current = current.next
+        if current:
+            if current.prev:
+                current.prev.next = current.next
+            if current.next:
+                current.next.prev = current.prev
+            if current == self.head:
+                self.head = current.next
+            if current == self.tail:
+                self.tail = current.prev
+
+    def find_item(self, item_id):
+        current = self.head
+        while current:
+            if current.item_id == item_id:
+                return f"Item found: {current.name}"
+            current = current.next
+        return "Item not found"
+
+    def __str__(self):
+        items = []
+        current = self.head
+        while current:
+            items.append(f"{current.item_id}: {current.name}")
+            current = current.next
+        return " -> ".join(items)
+
+# Example Usage
+inventory = Inventory()
+inventory.add_item(101, "Item A")
+inventory.add_item(102, "Item B")
+inventory.add_item(103, "Item C")
+
+print("Current Inventory:", inventory)
+
+print(inventory.find_item(102))  # Output: Item found: Item B
+inventory.remove_item(102)
+print("After removing item 102:", inventory)
+print(inventory.find_item(102))  # Output: Item not found
+```
+
+### 9. Implementing a Deque (Double-Ended Queue)
+
+A deque allows insertions and deletions from both ends. A doubly linked list can efficiently support these operations.
+
+```python
+class DequeNode:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+        self.prev = None
+
+class Deque:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def add_to_front(self, value):
+        new_node = DequeNode(value)
+        if not self.head:
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+
+    def add_to_rear(self, value):
+        new_node = DequeNode(value)
+        if not self.tail:
+            self.head = new_node
+            self.tail = new_node
+        else:
+            new_node.prev = self.tail
+            self.tail.next = new_node
+            self.tail = new_node
+
+    def remove_from_front(self):
+        if not self.head:
+            return None
+        value = self.head.value
+        self.head = self.head.next
+        if self.head:
+            self.head.prev = None
+        else:
+            self.tail = None
+        return value
+
+    def remove_from_rear(self):
+        if not self.tail:
+            return None
+        value = self.tail.value
+        self.tail = self.tail.prev
+        if self.tail:
+            self.tail.next = None
+        else:
+            self.head = None
+        return value
+
+    def __str__(self):
+        elements = []
+        current = self.head
+        while current:
+            elements.append(str(current.value))
+            current = current.next
+        return " <-> ".join(elements)
+
+# Example Usage
+deque = Deque()
+deque.add_to_front(1)
+deque.add_to_rear(2)
+deque.add_to_front(0)
+deque.add_to_rear(3)
+
+print("Deque:", deque)
+
+print("Remove from front:", deque.remove_from_front())  # Output: 0
+print("Remove from rear:", deque.remove_from_rear())  # Output: 3
+print("Deque after removals:", deque)
+```
+
+### 10. Task Priority Management
+
+A doubly linked list can manage tasks with different priorities, allowing efficient addition, removal, and traversal based on priority.
+
+```python
+class Task:
+    def __init__(self, priority, description):
+        self.priority = priority
+        self.description = description
+        self.next = None
+        self.prev = None
+
+class TaskManager:
+    def __init__(self):
+        self.head = None
+
+    def add_task(self, priority, description):
+        new_task = Task(priority, description)
+        if not self.head:
+            self.head = new_task
+            return
+        current = self.head
+        while current and current.priority <= priority:
+            current = current.next
+        if not current:
+            self.head.prev = new_task
+            new_task.next = self.head
+            self.head = new_task
+        else:
+            new_task.next = current
+            new_task.prev = current.prev
+            if current.prev:
+                current.prev.next = new_task
+
+
+            current.prev = new_task
+            if current == self.head:
+                self.head = new_task
+
+    def remove_task(self, description):
+        current = self.head
+        while current and current.description != description:
+            current = current.next
+        if current:
+            if current.prev:
+                current.prev.next = current.next
+            if current.next:
+                current.next.prev = current.prev
+            if current == self.head:
+                self.head = current.next
+
+    def __str__(self):
+        tasks = []
+        current = self.head
+        while current:
+            tasks.append(f"Priority {current.priority}: {current.description}")
+            current = current.next
+        return " -> ".join(tasks)
+
+# Example Usage
+task_manager = TaskManager()
+task_manager.add_task(1, "Low priority task")
+task_manager.add_task(3, "High priority task")
+task_manager.add_task(2, "Medium priority task")
+
+print("Task Manager:", task_manager)
+
+task_manager.remove_task("Medium priority task")
+print("After removing medium priority task:", task_manager)
+```
+
+### Summary of Additional Real-World Use-Cases
+
+- **Memory Management**: Operating systems use doubly linked lists to manage memory blocks for allocation and deallocation.
+- **Train Composition Management**: Efficiently add, remove, and traverse train cars.
+- **Inventory Management**: Manage items in a warehouse, allowing for easy addition, removal, and traversal.
+- **Deque Implementation**: Support for double-ended queue operations.
+- **Task Priority Management**: Manage tasks with different priorities.
+
+These examples demonstrate the versatility and practical applications of doubly linked lists in various real-world scenarios. If you have any specific questions or need further details, feel free to ask!
