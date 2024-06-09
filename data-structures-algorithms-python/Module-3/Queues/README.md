@@ -1,5 +1,3 @@
-Sure! Here is a detailed guide on queues in data structures and algorithms.
-
 ### **Queue in Data Structures and Algorithms**
 
 #### **1. Introduction to Queues**
