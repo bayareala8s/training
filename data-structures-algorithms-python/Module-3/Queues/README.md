@@ -164,3 +164,201 @@ This simple example models a bank queue where customers join the queue and are s
 #### **Conclusion**
 
 Queues are fundamental data structures that provide efficient management of ordered elements and have numerous applications in computer science and real-world scenarios. Understanding how to implement and use queues effectively is crucial for solving many algorithmic problems.
+
+
+
+Certainly! Let's explore a few real-world implementations of queues.
+
+### **1. Print Queue System**
+
+**Scenario:** A print queue system in an office where multiple print jobs are queued up for a single printer.
+
+**Implementation:**
+
+```python
+import time
+from collections import deque
+
+class PrintJob:
+    def __init__(self, job_name, pages):
+        self.job_name = job_name
+        self.pages = pages
+
+class PrinterQueue:
+    def __init__(self):
+        self.queue = deque()
+
+    def add_job(self, job):
+        self.queue.append(job)
+        print(f"Added print job: {job.job_name} with {job.pages} pages")
+
+    def print_job(self):
+        if not self.queue:
+            print("No jobs in the queue.")
+            return
+        job = self.queue.popleft()
+        print(f"Printing job: {job.job_name}")
+        for page in range(1, job.pages + 1):
+            print(f"Printing page {page}")
+            time.sleep(1)  # Simulate time taken to print a page
+        print(f"Completed print job: {job.job_name}")
+
+    def next_job(self):
+        if not self.queue:
+            print("No jobs in the queue.")
+            return
+        job = self.queue[0]
+        print(f"Next job: {job.job_name} with {job.pages} pages")
+
+    def is_empty(self):
+        return len(self.queue) == 0
+
+# Example Usage
+printer_queue = PrinterQueue()
+printer_queue.add_job(PrintJob("Document1", 3))
+printer_queue.add_job(PrintJob("Document2", 5))
+
+printer_queue.next_job()
+printer_queue.print_job()
+printer_queue.print_job()
+printer_queue.print_job()
+```
+
+### **2. Task Scheduling in Operating Systems**
+
+**Scenario:** Task scheduling where tasks are managed in a round-robin fashion, ensuring each task gets a fair share of CPU time.
+
+**Implementation:**
+
+```python
+class Task:
+    def __init__(self, task_id, duration):
+        self.task_id = task_id
+        self.duration = duration
+
+class TaskScheduler:
+    def __init__(self, time_slice):
+        self.queue = deque()
+        self.time_slice = time_slice
+
+    def add_task(self, task):
+        self.queue.append(task)
+        print(f"Added task {task.task_id} with duration {task.duration}")
+
+    def run(self):
+        while self.queue:
+            task = self.queue.popleft()
+            print(f"Running task {task.task_id} for {self.time_slice} units")
+            task.duration -= self.time_slice
+            if task.duration > 0:
+                print(f"Re-queueing task {task.task_id} with remaining duration {task.duration}")
+                self.queue.append(task)
+            else:
+                print(f"Task {task.task_id} completed")
+
+# Example Usage
+scheduler = TaskScheduler(time_slice=5)
+scheduler.add_task(Task("Task1", 10))
+scheduler.add_task(Task("Task2", 15))
+scheduler.add_task(Task("Task3", 5))
+
+scheduler.run()
+```
+
+### **3. Call Center Queue Management**
+
+**Scenario:** Managing incoming calls at a call center where calls are handled in the order they are received.
+
+**Implementation:**
+
+```python
+class Call:
+    def __init__(self, caller_id, call_reason):
+        self.caller_id = caller_id
+        self.call_reason = call_reason
+
+class CallCenterQueue:
+    def __init__(self):
+        self.queue = deque()
+
+    def add_call(self, call):
+        self.queue.append(call)
+        print(f"Added call from {call.caller_id} regarding {call.call_reason}")
+
+    def handle_call(self):
+        if not self.queue:
+            print("No calls in the queue.")
+            return
+        call = self.queue.popleft()
+        print(f"Handling call from {call.caller_id} regarding {call.call_reason}")
+
+    def next_call(self):
+        if not self.queue:
+            print("No calls in the queue.")
+            return
+        call = self.queue[0]
+        print(f"Next call from {call.caller_id} regarding {call.call_reason}")
+
+    def is_empty(self):
+        return len(self.queue) == 0
+
+# Example Usage
+call_center = CallCenterQueue()
+call_center.add_call(Call("Caller1", "Billing issue"))
+call_center.add_call(Call("Caller2", "Technical support"))
+
+call_center.next_call()
+call_center.handle_call()
+call_center.handle_call()
+call_center.handle_call()
+```
+
+### **4. Web Server Request Handling**
+
+**Scenario:** Managing incoming HTTP requests to a web server.
+
+**Implementation:**
+
+```python
+class HTTPRequest:
+    def __init__(self, request_id, endpoint):
+        self.request_id = request_id
+        self.endpoint = endpoint
+
+class WebServerQueue:
+    def __init__(self):
+        self.queue = deque()
+
+    def add_request(self, request):
+        self.queue.append(request)
+        print(f"Added request {request.request_id} to {request.endpoint}")
+
+    def handle_request(self):
+        if not self.queue:
+            print("No requests in the queue.")
+            return
+        request = self.queue.popleft()
+        print(f"Handling request {request.request_id} to {request.endpoint}")
+
+    def next_request(self):
+        if not self.queue:
+            print("No requests in the queue.")
+            return
+        request = self.queue[0]
+        print(f"Next request {request.request_id} to {request.endpoint}")
+
+    def is_empty(self):
+        return len(self.queue) == 0
+
+# Example Usage
+server_queue = WebServerQueue()
+server_queue.add_request(HTTPRequest("Req1", "/home"))
+server_queue.add_request(HTTPRequest("Req2", "/contact"))
+
+server_queue.next_request()
+server_queue.handle_request()
+server_queue.handle_request()
+server_queue.handle_request()
+```
+
+These examples demonstrate how queues can be utilized in various real-world scenarios, from managing print jobs to scheduling tasks, handling calls in a call center, and managing web server requests.
