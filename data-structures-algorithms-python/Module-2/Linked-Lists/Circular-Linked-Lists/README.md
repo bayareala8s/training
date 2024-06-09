@@ -1133,3 +1133,182 @@ Final list traversal: [2, 4, 5]
 ```
 
 This implementation covers the basic operations for a singly circular linked list in Python. Each method includes comments to explain the logic and steps involved. If you have any questions or need further details, feel free to ask!
+
+
+
+### Time and Space Analysis for Singly Circular Linked Lists
+
+Here is the detailed time and space complexity analysis for the operations performed on the singly circular linked list implementation provided.
+
+### Time Complexities
+
+1. **Insertion at Beginning**: `insert_at_beginning(data)`
+   - **Time Complexity**: O(n)
+     - Explanation: Although inserting a node at the beginning involves creating a new node and updating pointers, it requires traversing the entire list to update the last node's next pointer to point to the new head. This traversal takes O(n) time.
+
+2. **Insertion at End**: `insert_at_end(data)`
+   - **Time Complexity**: O(n)
+     - Explanation: Inserting a node at the end requires traversing the entire list to find the last node. Once the last node is found, the insertion operation itself is O(1), but the traversal takes O(n) time.
+
+3. **Deletion of a Node**: `delete_node(key)`
+   - **Time Complexity**: O(n)
+     - Explanation: Deleting a node involves traversing the list to find the node with the given key. In the worst case, the node to be deleted might be the last node or not present at all, requiring traversal of the entire list.
+
+4. **Search for a Node**: `search(key)`
+   - **Time Complexity**: O(n)
+     - Explanation: Searching for a node involves traversing the list and comparing each node's data with the key. In the worst case, the node might be the last node or not present at all, requiring traversal of the entire list.
+
+5. **Traversal of the List**: `traverse()`
+   - **Time Complexity**: O(n)
+     - Explanation: Traversing the list to collect all elements requires visiting each node once, which takes linear time relative to the number of nodes in the list.
+
+### Space Complexities
+
+1. **Space Complexity for Operations**: O(1) (excluding the space for the linked list itself)
+   - Explanation: These operations do not require extra space that grows with the input size. The space used by temporary variables or pointers is constant.
+
+2. **Space Complexity for the Linked List Itself**: O(n)
+   - Explanation: The space required for the linked list is directly proportional to the number of nodes (n). Each node requires space for storing the data and a pointer to the next node.
+
+### Summary
+
+#### Time Complexity
+- **Insert at Beginning**: O(n)
+- **Insert at End**: O(n)
+- **Delete Node**: O(n)
+- **Search Node**: O(n)
+- **Traversal**: O(n)
+
+#### Space Complexity
+- **Operations**: O(1)
+- **Linked List Storage**: O(n)
+
+### Example Revisited with Complexity Analysis
+
+```python
+class Node:
+    def __init__(self, data):
+        self.data = data  # The value stored in the node
+        self.next = None  # Reference to the next node in the list
+
+class SinglyCircularLinkedList:
+    def __init__(self):
+        self.head = None  # Initialize the head of the list to None
+
+    def insert_at_beginning(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            new_node.next = self.head
+        else:
+            current = self.head
+            while current.next != self.head:  # O(n) traversal to find last node
+                current = current.next
+            new_node.next = self.head
+            current.next = new_node
+            self.head = new_node  # O(1) for actual insertion
+
+    def insert_at_end(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            new_node.next = self.head
+        else:
+            current = self.head
+            while current.next != self.head:  # O(n) traversal to find last node
+                current = current.next
+            current.next = new_node
+            new_node.next = self.head  # O(1) for actual insertion
+
+    def delete_node(self, key):
+        if self.head is None:
+            return
+
+        current = self.head
+        prev = None
+
+        while True:  # O(n) traversal to find node to delete
+            if current.data == key:
+                if prev:
+                    prev.next = current.next
+                else:
+                    if self.head == self.head.next:
+                        self.head = None
+                    else:
+                        last = self.head
+                        while last.next != self.head:
+                            last = last.next
+                        last.next = self.head.next
+                        self.head = self.head.next
+                return
+
+            prev = current
+            current = current.next
+
+            if current == self.head:
+                break
+
+    def search(self, key):
+        if self.head is None:
+            return False
+        current = self.head
+        while True:  # O(n) traversal to search for the node
+            if current.data == key:
+                return True
+            current = current.next
+            if current == self.head:
+                break
+        return False
+
+    def traverse(self):
+        elements = []
+        if self.head is None:
+            return elements
+        current = self.head
+        while True:  # O(n) traversal to collect all node data
+            elements.append(current.data)
+            current = current.next
+            if current == self.head:
+                break
+        return elements
+
+    def __str__(self):
+        elements = self.traverse()
+        return " -> ".join(map(str, elements)) + " -> " + str(self.head.data)  # To show the circular nature
+
+# Example Usage
+if __name__ == "__main__":
+    scll = SinglyCircularLinkedList()
+    scll.insert_at_beginning(3)
+    scll.insert_at_beginning(2)
+    scll.insert_at_beginning(1)
+    print("After inserting at the beginning:", scll)
+
+    scll.insert_at_end(4)
+    scll.insert_at_end(5)
+    print("After inserting at the end:", scll)
+
+    print("Search for element 3:", scll.search(3))
+    print("Search for element 6:", scll.search(6))
+
+    scll.delete_node(3)
+    print("After deleting element 3:", scll)
+
+    scll.delete_node(1)
+    print("After deleting element 1:", scll)
+
+    print("Final list traversal:", scll.traverse())
+```
+
+### Output
+```
+After inserting at the beginning: 1 -> 2 -> 3 -> 1
+After inserting at the end: 1 -> 2 -> 3 -> 4 -> 5 -> 1
+Search for element 3: True
+Search for element 6: False
+After deleting element 3: 1 -> 2 -> 4 -> 5 -> 1
+After deleting element 1: 2 -> 4 -> 5 -> 2
+Final list traversal: [2, 4, 5]
+```
+
+This detailed analysis helps to understand the performance characteristics of singly circular linked lists and their operations. If you have any more questions or need further details, feel free to ask!
