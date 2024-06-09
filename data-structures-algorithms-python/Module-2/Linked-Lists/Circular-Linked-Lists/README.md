@@ -316,3 +316,531 @@ if __name__ == "__main__":
    - In games, circular linked lists can be used to manage the sequence of players' turns, ensuring each player gets a turn in a cyclic order.
 
 These examples and explanations illustrate the versatility and practicality of circular linked lists in various real-world applications. If you have any specific questions or need further details, feel free to ask!
+
+
+
+Sure! Here are detailed code examples for real-world use cases of circular linked lists:
+
+### 1. Round-Robin Scheduling
+
+Circular linked lists are used in round-robin scheduling algorithms, where each process is assigned a fixed time slot in a cyclic order.
+
+```python
+class Process:
+    def __init__(self, pid):
+        self.pid = pid
+        self.next = None
+
+class RoundRobinScheduler:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def add_process(self, pid):
+        new_process = Process(pid)
+        if not self.head:
+            self.head = new_process
+            self.tail = new_process
+            self.tail.next = self.head
+        else:
+            self.tail.next = new_process
+            self.tail = new_process
+            self.tail.next = self.head
+
+    def remove_process(self, pid):
+        if not self.head:
+            return
+        
+        current = self.head
+        prev = None
+
+        while True:
+            if current.pid == pid:
+                if prev:
+                    prev.next = current.next
+                else:
+                    if self.head == self.tail:
+                        self.head = None
+                        self.tail = None
+                    else:
+                        self.tail.next = current.next
+                        self.head = current.next
+                break
+
+            prev = current
+            current = current.next
+
+            if current == self.head:
+                break
+
+    def schedule(self):
+        if not self.head:
+            return None
+        
+        current = self.head
+        while True:
+            print(f"Running process {current.pid}")
+            current = current.next
+
+            if current == self.head:
+                break
+
+    def __str__(self):
+        if not self.head:
+            return "No processes"
+        
+        elements = []
+        current = self.head
+        while True:
+            elements.append(str(current.pid))
+            current = current.next
+            if current == self.head:
+                break
+        return " -> ".join(elements)
+
+# Example Usage
+scheduler = RoundRobinScheduler()
+scheduler.add_process(1)
+scheduler.add_process(2)
+scheduler.add_process(3)
+
+print("Processes in scheduler:", scheduler)
+scheduler.schedule()
+
+scheduler.remove_process(2)
+print("Processes in scheduler after removing process 2:", scheduler)
+scheduler.schedule()
+```
+
+### 2. FIFA Rankings
+
+Circular linked lists can be used to manage FIFA rankings, where each team points to the next team in the ranking, and the last team points back to the first team.
+
+```python
+class Team:
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+
+class FIFARankings:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def add_team(self, name):
+        new_team = Team(name)
+        if not self.head:
+            self.head = new_team
+            self.tail = new_team
+            self.tail.next = self.head
+        else:
+            self.tail.next = new_team
+            self.tail = new_team
+            self.tail.next = self.head
+
+    def remove_team(self, name):
+        if not self.head:
+            return
+        
+        current = self.head
+        prev = None
+
+        while True:
+            if current.name == name:
+                if prev:
+                    prev.next = current.next
+                else:
+                    if self.head == self.tail:
+                        self.head = None
+                        self.tail = None
+                    else:
+                        self.tail.next = current.next
+                        self.head = current.next
+                break
+
+            prev = current
+            current = current.next
+
+            if current == self.head:
+                break
+
+    def traverse(self):
+        if not self.head:
+            return "No teams"
+        
+        elements = []
+        current = self.head
+        while True:
+            elements.append(current.name)
+            current = current.next
+            if current == self.head:
+                break
+        return " -> ".join(elements)
+
+# Example Usage
+rankings = FIFARankings()
+rankings.add_team("Team A")
+rankings.add_team("Team B")
+rankings.add_team("Team C")
+
+print("FIFA Rankings:", rankings.traverse())
+
+rankings.remove_team("Team B")
+print("FIFA Rankings after removing Team B:", rankings.traverse())
+```
+
+### 3. Circular Buffers
+
+Circular linked lists are used in implementing circular buffers, which are used in data streaming applications where data is continuously produced and consumed.
+
+```python
+class BufferNode:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class CircularBuffer:
+    def __init__(self, size):
+        self.size = size
+        self.head = None
+        self.tail = None
+        self.current_size = 0
+
+    def enqueue(self, value):
+        new_node = BufferNode(value)
+        if self.current_size < self.size:
+            if not self.head:
+                self.head = new_node
+                self.tail = new_node
+                self.tail.next = self.head
+            else:
+                self.tail.next = new_node
+                self.tail = new_node
+                self.tail.next = self.head
+            self.current_size += 1
+        else:
+            self.head = self.head.next
+            self.tail.next = new_node
+            self.tail = new_node
+            self.tail.next = self.head
+
+    def dequeue(self):
+        if not self.head:
+            return None
+        if self.head == self.tail:
+            value = self.head.value
+            self.head = None
+            self.tail = None
+            self.current_size = 0
+            return value
+        else:
+            value = self.head.value
+            self.head = self.head.next
+            self.tail.next = self.head
+            self.current_size -= 1
+            return value
+
+    def __str__(self):
+        if not self.head:
+            return "Buffer is empty"
+        
+        elements = []
+        current = self.head
+        while True:
+            elements.append(str(current.value))
+            current = current.next
+            if current == self.head:
+                break
+        return " -> ".join(elements)
+
+# Example Usage
+buffer = CircularBuffer(3)
+buffer.enqueue(1)
+buffer.enqueue(2)
+buffer.enqueue(3)
+print("Buffer after enqueueing 3 elements:", buffer)
+
+buffer.enqueue(4)
+print("Buffer after enqueueing 4th element:", buffer)
+
+print("Dequeued element:", buffer.dequeue())
+print("Buffer after dequeueing an element:", buffer)
+```
+
+### 4. Music Playlist Management
+
+Circular linked lists can be used to manage music playlists, allowing continuous play of songs in a loop.
+
+```python
+class Song:
+    def __init__(self, title):
+        self.title = title
+        self.next = None
+
+class MusicPlaylist:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.current = None
+
+    def add_song(self, title):
+        new_song = Song(title)
+        if not self.head:
+            self.head = new_song
+            self.tail = new_song
+            self.tail.next = self.head
+        else:
+            self.tail.next = new_song
+            self.tail = new_song
+            self.tail.next = self.head
+
+    def play_next(self):
+        if not self.current:
+            self.current = self.head
+        else:
+            self.current = self.current.next
+        return self.current.title if self.current else None
+
+    def __str__(self):
+        if not self.head:
+            return "No songs in the playlist"
+        
+        elements = []
+        current = self.head
+        while True:
+            elements.append(current.title)
+            current = current.next
+            if current == self.head:
+                break
+        return " -> ".join(elements)
+
+# Example Usage
+playlist = MusicPlaylist()
+playlist.add_song("Song 1")
+playlist.add_song("Song 2")
+playlist.add_song("Song 3")
+
+print("Music Playlist:", playlist)
+
+print("Play Next:", playlist.play_next())
+print("Play Next:", playlist.play_next())
+print("Play Next:", playlist.play_next())
+print("Play Next:", playlist.play_next())  # Loops back to the beginning
+```
+
+### 5. Implementation of Deques (Double-Ended Queues)
+
+Circular linked lists can be used to implement deques, where elements can be inserted and removed from both ends.
+
+```python
+class DequeNode:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class CircularDeque:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def add_to_front(self, value):
+        new_node = DequeNode(value)
+        if not self.head:
+            self.head = new_node
+            self.tail = new_node
+            self.tail.next = self.head
+        else:
+            new_node.next = self.head
+            self.tail.next = new_node
+            self.head = new_node
+
+    def add_to_rear(self, value):
+        new_node = DequeNode(value)
+        if not self.tail:
+            self.head = new_node
+            self.tail = new_node
+            self.tail.next = self.head
+        else:
+            self.tail.next = new_node
+            self.tail = new_node
+            self.tail.next = self.head
+
+    def remove_from_front(self):
+        if not self.head:
+            return None
+        value = self.head.value
+        if self.head == self.tail:
+            self.head = None
+            self.tail = None
+        else:
+            self.head = self.head.next
+            self.tail.next = self.head
+        return value
+
+    def remove_from_rear(self):
+        if not self.tail:
+            return None
+        value = self.tail.value
+        if self.head == self.tail:
+            self.head = None
+            self.tail = None
+        else:
+            current = self.head
+            while current.next != self.tail:
+                current = current.next
+
+
+            current.next = self.head
+            self.tail = current
+        return value
+
+    def __str__(self):
+        if not self.head:
+            return "Deque is empty"
+        
+        elements = []
+        current = self.head
+        while True:
+            elements.append(str(current.value))
+            current = current.next
+            if current == self.head:
+                break
+        return " <-> ".join(elements)
+
+# Example Usage
+deque = CircularDeque()
+deque.add_to_front(1)
+deque.add_to_rear(2)
+deque.add_to_front(0)
+deque.add_to_rear(3)
+
+print("Deque:", deque)
+
+print("Remove from front:", deque.remove_from_front())
+print("Remove from rear:", deque.remove_from_rear())
+print("Deque after removals:", deque)
+```
+
+### 6. Traffic Light Management
+
+Circular linked lists can manage traffic lights at an intersection, where each light points to the next one in the sequence, and the last light points back to the first.
+
+```python
+class TrafficLight:
+    def __init__(self, color):
+        self.color = color
+        self.next = None
+
+class TrafficLightManager:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.current = None
+
+    def add_light(self, color):
+        new_light = TrafficLight(color)
+        if not self.head:
+            self.head = new_light
+            self.tail = new_light
+            self.tail.next = self.head
+        else:
+            self.tail.next = new_light
+            self.tail = new_light
+            self.tail.next = self.head
+
+    def next_light(self):
+        if not self.current:
+            self.current = self.head
+        else:
+            self.current = self.current.next
+        return self.current.color if self.current else None
+
+    def __str__(self):
+        if not self.head:
+            return "No traffic lights"
+        
+        elements = []
+        current = self.head
+        while True:
+            elements.append(current.color)
+            current = current.next
+            if current == self.head:
+                break
+        return " -> ".join(elements)
+
+# Example Usage
+manager = TrafficLightManager()
+manager.add_light("Red")
+manager.add_light("Green")
+manager.add_light("Yellow")
+
+print("Traffic Light Sequence:", manager)
+
+print("Next Light:", manager.next_light())
+print("Next Light:", manager.next_light())
+print("Next Light:", manager.next_light())
+print("Next Light:", manager.next_light())  # Loops back to the beginning
+```
+
+### 7. Game Development
+
+In games, circular linked lists can be used to manage the sequence of players' turns, ensuring each player gets a turn in a cyclic order.
+
+```python
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.next = None
+
+class Game:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.current = None
+
+    def add_player(self, name):
+        new_player = Player(name)
+        if not self.head:
+            self.head = new_player
+            self.tail = new_player
+            self.tail.next = self.head
+        else:
+            self.tail.next = new_player
+            self.tail = new_player
+            self.tail.next = self.head
+
+    def next_turn(self):
+        if not self.current:
+            self.current = self.head
+        else:
+            self.current = self.current.next
+        return self.current.name if self.current else None
+
+    def __str__(self):
+        if not self.head:
+            return "No players"
+        
+        elements = []
+        current = self.head
+        while True:
+            elements.append(current.name)
+            current = current.next
+            if current == self.head:
+                break
+        return " -> ".join(elements)
+
+# Example Usage
+game = Game()
+game.add_player("Player 1")
+game.add_player("Player 2")
+game.add_player("Player 3")
+
+print("Player Sequence:", game)
+
+print("Next Turn:", game.next_turn())
+print("Next Turn:", game.next_turn())
+print("Next Turn:", game.next_turn())
+print("Next Turn:", game.next_turn())  # Loops back to the beginning
+```
+
+These detailed code examples illustrate how circular linked lists can be utilized in various real-world scenarios. If you have any specific questions or need further details, feel free to ask!
