@@ -844,3 +844,139 @@ print("Next Turn:", game.next_turn())  # Loops back to the beginning
 ```
 
 These detailed code examples illustrate how circular linked lists can be utilized in various real-world scenarios. If you have any specific questions or need further details, feel free to ask!
+
+
+
+
+### Time and Space Complexities for Circular Linked Lists
+
+Here is the analysis of the time and space complexities for the operations performed on the circular linked list implementations provided in the examples.
+
+#### General Operations
+
+1. **Insertion at Beginning**
+   - **Time Complexity**: O(n) for singly circular linked list (due to finding the last node), O(1) for doubly circular linked list
+     - Explanation: Inserting at the beginning requires updating the head and ensuring the last node points to the new head. For a doubly circular linked list, the last node is directly accessible.
+   
+2. **Insertion at End**
+   - **Time Complexity**: O(n) for singly circular linked list, O(1) for doubly circular linked list
+     - Explanation: Inserting at the end of a singly circular linked list requires traversing the entire list to find the last node. For a doubly circular linked list, the last node is directly accessible.
+
+3. **Deletion of a Node**
+   - **Time Complexity**: O(n)
+     - Explanation: Deleting a node involves traversing the list to find the node with the given key. In the worst case, the node to be deleted might be the last node or not present at all, requiring traversal of the entire list.
+
+4. **Search for a Node**
+   - **Time Complexity**: O(n)
+     - Explanation: Searching for a node involves traversing the list and comparing each node's data with the key. In the worst case, the node might be the last node or not present at all, requiring traversal of the entire list.
+
+5. **Traversal of the List**
+   - **Time Complexity**: O(n)
+     - Explanation: Traversing the list to collect all elements requires visiting each node once, which takes linear time relative to the number of nodes in the list.
+
+#### Space Complexities
+
+1. **Space Complexity for Operations**: O(1) (excluding the space for the linked list itself)
+   - Explanation: These operations do not require extra space that grows with the input size. The space used by temporary variables or pointers is constant.
+
+2. **Space Complexity for the Linked List Itself**: O(n)
+   - Explanation: The space required for the linked list is directly proportional to the number of nodes (n). Each node requires space for storing the data and pointers to the next and previous nodes (for doubly circular linked lists).
+
+### Specific Examples
+
+1. **Round-Robin Scheduling**
+
+   **Operations:**
+   - `add_process(pid)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `remove_process(pid)`
+     - **Time Complexity**: O(n)
+     - **Space Complexity**: O(1)
+   - `schedule()`
+     - **Time Complexity**: O(n)
+     - **Space Complexity**: O(1)
+
+2. **FIFA Rankings**
+
+   **Operations:**
+   - `add_team(name)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `remove_team(name)`
+     - **Time Complexity**: O(n)
+     - **Space Complexity**: O(1)
+   - `traverse()`
+     - **Time Complexity**: O(n)
+     - **Space Complexity**: O(1)
+
+3. **Circular Buffers**
+
+   **Operations:**
+   - `enqueue(value)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `dequeue()`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+
+4. **Music Playlist Management**
+
+   **Operations:**
+   - `add_song(title)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `play_next()`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+
+5. **Implementation of Deques**
+
+   **Operations:**
+   - `add_to_front(value)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `add_to_rear(value)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `remove_from_front()`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `remove_from_rear()`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+
+6. **Traffic Light Management**
+
+   **Operations:**
+   - `add_light(color)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `next_light()`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+
+7. **Game Development**
+
+   **Operations:**
+   - `add_player(name)`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+   - `next_turn()`
+     - **Time Complexity**: O(1)
+     - **Space Complexity**: O(1)
+
+### Summary
+
+#### Time Complexity
+- **Insertion at Beginning**: O(1) for doubly circular linked list, O(n) for singly circular linked list
+- **Insertion at End**: O(1) for doubly circular linked list, O(n) for singly circular linked list
+- **Delete Node**: O(n)
+- **Search Node**: O(n)
+- **Traversal**: O(n)
+
+#### Space Complexity
+- **Operations**: O(1)
+- **Linked List Storage**: O(n)
+
+This analysis provides a comprehensive understanding of the performance characteristics of circular linked lists and their operations in various real-world scenarios. If you have any more questions or need further details, feel free to ask!
