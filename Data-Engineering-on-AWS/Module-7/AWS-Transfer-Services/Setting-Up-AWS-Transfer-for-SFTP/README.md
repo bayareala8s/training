@@ -209,3 +209,85 @@ resource "aws_transfer_user" "sftp_user" {
 ### Summary
 
 By following this step-by-step guide, you will set up an AWS Transfer Family for SFTP, configure necessary IAM roles and policies, create user accounts, and test the setup to ensure everything is functioning correctly. This setup provides a secure and managed solution for transferring files to and from AWS S3 using SFTP.
+
+
+
+To transfer large files (like 100GB) using AWS Transfer Family (AWS Transfer for SFTP, FTPS, and FTP), follow these steps:
+
+1. **Set Up an AWS Transfer Family Server**:
+   - Go to the AWS Transfer Family console.
+   - Click on "Create server."
+   - Choose the protocol you want to use (SFTP, FTPS, or FTP).
+   - Configure endpoint settings: choose either "Publicly accessible" or "VPC."
+   - Set up identity provider: choose how you want to manage user access (Service-managed, Custom, or AWS Directory Service).
+   - Add tags if needed.
+   - Click "Create server."
+
+2. **Create a User**:
+   - After creating the server, go to "Users" and click "Add user."
+   - Specify the username.
+   - Select the Identity provider type (Service-managed, Custom, or AWS Directory Service).
+   - For Service-managed, create an IAM role with permissions to the S3 bucket where the files will be transferred.
+   - Specify the home directory for the user in the S3 bucket.
+   - Configure the SSH public key for SFTP or set up password authentication for FTP/FTPS.
+   - Click "Add."
+
+3. **Configure the Client**:
+   - Use an SFTP, FTPS, or FTP client to connect to the AWS Transfer Family server.
+   - For SFTP: Use the user credentials (username and SSH key) to connect.
+   - For FTPS/FTP: Use the user credentials (username and password).
+
+4. **Transfer the Files**:
+   - Open your SFTP/FTPS/FTP client (such as FileZilla, WinSCP, or Cyberduck).
+   - Connect to the AWS Transfer Family server using the configured user credentials.
+   - Navigate to the source directory on your local machine.
+   - Select the files or directories you want to transfer.
+   - Drag and drop the files or directories to the destination S3 bucket in the client interface.
+   - Monitor the transfer to ensure it completes successfully.
+
+### Example using AWS CLI and SFTP
+
+1. **Create the Server (AWS Transfer Family)**:
+```bash
+aws transfer create-server --protocols SFTP --endpoint-type PUBLIC
+```
+
+2. **Create an IAM Role for the Transfer User**:
+   - Create a policy with S3 permissions.
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
+      ]
+    }
+  ]
+}
+```
+   - Create the role and attach the policy.
+
+3. **Create the User**:
+```bash
+aws transfer create-user --server-id server-id --user-name username --role arn:aws:iam::account-id:role/role-name --home-directory "/your-bucket-name" --ssh-public-key file://path/to/ssh-public-key
+```
+
+4. **Transfer Files Using SFTP Client**:
+   - Connect to the server using the SFTP client with the username and SSH key.
+   - Upload files to the S3 bucket directory.
+
+### Tips for Large File Transfers
+
+- **Parallel Transfers**: Use multiple parallel connections to speed up the transfer.
+- **Network Speed**: Ensure you have a good network connection to avoid interruptions.
+- **Check File Integrity**: Verify file integrity after transfer using checksums.
+
+By following these steps, you can efficiently transfer large files to AWS using Transfer Family services.
