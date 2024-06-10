@@ -75,7 +75,7 @@ Amazon Web Services (AWS) operates a robust and extensive global infrastructure 
 AWS’s global infrastructure is a foundational component that provides the reliability, scalability, and performance required to run applications and services at a global scale. By leveraging the various components of AWS’s infrastructure, organizations can build and deploy resilient and high-performing applications that meet the demands of users worldwide.
 
 
-Sure! Here's a visual text diagram of AWS Global Infrastructure:
+Here's a visual text diagram of AWS Global Infrastructure:
 
 ```
                           AWS Global Infrastructure
