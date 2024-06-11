@@ -696,6 +696,51 @@ By setting clear, aligned, and SMART goals, and by regularly measuring progress 
 This response outlines a comprehensive approach to setting and measuring team goals, emphasizing alignment with organizational objectives, collaborative planning, clear metrics, regular reviews, and a focus on learning and celebration.
 
 2. **Describe a time when you had to give constructive feedback to a team member. How did you approach it, and what was the outcome?**
+
+Certainly! Here’s a structured example response to the question about giving constructive feedback to a team member:
+
+---
+
+**Describe a time when you had to give constructive feedback to a team member. How did you approach it, and what was the outcome?**
+
+### Situation:
+In my previous role as a Senior IT Engineer, I noticed that one of our junior developers, John, was consistently submitting code that did not meet our quality standards. This issue was causing delays in our project timelines due to the need for extensive code reviews and rework.
+
+### Task:
+My task was to provide constructive feedback to John in a way that would help him improve his coding practices and align with our quality standards, without demotivating him.
+
+### Action:
+1. **Preparing for the Conversation:**
+   - I gathered specific examples of the issues in John’s code, such as instances of inefficient algorithms, lack of proper error handling, and insufficient documentation. This preparation ensured that my feedback would be clear and actionable.
+   - I chose a private and comfortable setting for our conversation to ensure that John felt respected and that the discussion could be candid.
+
+2. **Starting with Positive Feedback:**
+   - I began the conversation by acknowledging John’s strengths and contributions to the team. I highlighted his dedication, enthusiasm, and the creative solutions he had brought to certain problems. This helped to create a positive and supportive atmosphere.
+
+3. **Providing Constructive Feedback:**
+   - I presented the specific examples of the issues in his code, explaining why they were problematic and how they impacted the project. I made sure to focus on the behavior, not the person, to avoid making John feel attacked.
+   - For example, I pointed out that an inefficient sorting algorithm he used was causing performance bottlenecks and explained the importance of optimizing such code for better performance.
+
+4. **Offering Support and Solutions:**
+   - I provided suggestions and resources to help John improve. I recommended specific coding standards, best practices, and online resources that he could use to enhance his skills.
+   - I also offered to pair him with a more experienced developer for code reviews and mentoring sessions. This collaborative approach was aimed at providing ongoing support and guidance.
+
+5. **Setting Clear Expectations:**
+   - I set clear expectations for improvement, specifying the areas where John needed to focus and the standards we expected. We agreed on a follow-up plan to review his progress after a few weeks.
+   - I emphasized that the goal was to help him grow and succeed in his role, and that I was confident in his ability to improve.
+
+6. **Follow-Up and Continuous Feedback:**
+   - Over the next few weeks, I monitored John’s progress and provided regular feedback. During our follow-up meetings, I acknowledged the improvements he made and continued to offer constructive advice where needed.
+   - I also encouraged John to seek feedback proactively and to ask questions whenever he faced challenges.
+
+### Result:
+John responded positively to the feedback and showed significant improvement in his coding practices. His code quality improved, leading to fewer revisions and faster project timelines. John appreciated the support and guidance, which boosted his confidence and motivation. This experience reinforced the importance of clear, supportive, and constructive feedback in helping team members grow and contribute more effectively to the team’s success.
+
+---
+
+This response highlights a thoughtful and supportive approach to giving constructive feedback, emphasizing preparation, positive reinforcement, specific examples, actionable advice, and ongoing support, leading to a positive outcome for both the team member and the project.
+
+
 3. **Can you provide an example of a successful mentorship or coaching experience you had with a junior engineer?**
 
 ### Problem Solving and Decision Making:
