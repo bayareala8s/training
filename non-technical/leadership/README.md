@@ -3,7 +3,7 @@ Here are some behavioral interview questions tailored for an IT Lead Engineer po
 1. **Leadership and Team Management:**
    - **Describe a time when you had to lead a team through a difficult project. How did you ensure the team stayed motivated and on track?**
   
-   - Certainly! Here's a structured example response to the question:
+Here's a structured example response to the question:
 
 ---
 
