@@ -204,6 +204,52 @@ This response effectively demonstrates the ability to diagnose, plan, and implem
 
    - **Describe a situation where you had to make a critical decision with incomplete information. What was your process, and what was the result?**
 
+
+Here’s a structured example response to the question about making a critical decision with incomplete information:
+
+---
+
+**Describe a situation where you had to make a critical decision with incomplete information. What was your process, and what was the result?**
+
+### Situation:
+In my previous role as a Lead IT Engineer, our company experienced a sudden and significant drop in website performance. This happened during a critical product launch, and we were receiving numerous complaints from customers about slow load times and timeouts. The performance degradation risked tarnishing the product launch and our brand reputation.
+
+### Task:
+As the lead, I needed to quickly identify the cause of the performance issues and implement a solution to stabilize the website. The challenge was that we had limited information about the exact root cause, and time was of the essence.
+
+### Action:
+1. **Initial Assessment:**
+   - I gathered the team for an emergency meeting to review the available data. We had monitoring tools in place, but the metrics were inconclusive, showing multiple potential sources of the problem, including server load, database performance, and network latency.
+
+2. **Prioritizing Potential Causes:**
+   - Given the incomplete information, I prioritized potential causes based on the likelihood and impact. We focused first on areas that were most critical to performance: server load and database performance.
+   - I divided the team into sub-groups to investigate these areas in parallel to maximize our diagnostic efforts.
+
+3. **Implementing Temporary Measures:**
+   - While the team investigated, I decided to implement temporary measures that could alleviate some of the load. We activated our load balancer’s maximum capacity and shifted non-essential services to secondary servers to free up resources.
+   - We also increased the capacity of our database instances as a precautionary measure.
+
+4. **Data-Driven Hypotheses:**
+   - Each sub-group reported their findings, and based on this partial data, we formulated hypotheses. The most likely cause appeared to be an overload on our primary database due to a surge in concurrent user sessions.
+   - We identified that a recent code deployment included a query that was not optimized for high traffic, which exacerbated the issue under load.
+
+5. **Quick Decision Making:**
+   - With this hypothesis, I made the decision to roll back the recent deployment and revert to the previous stable version of our codebase. This was a risk, as it might not have addressed the issue if our hypothesis was incorrect, but the rollback was a quick and reversible action.
+
+6. **Monitoring and Feedback Loop:**
+   - After rolling back, we closely monitored the performance metrics. There was an immediate improvement in response times and a decrease in timeouts, indicating that our hypothesis was correct.
+   - We kept communication channels open with our customer support team to quickly address any remaining issues reported by users.
+
+### Result:
+The decision to roll back the deployment resolved the performance issues, stabilizing the website and restoring normal operations during the critical product launch period. Our quick action prevented further customer dissatisfaction and potential revenue loss. Post-incident analysis confirmed the root cause, and we implemented additional safeguards, such as more rigorous performance testing for future deployments and real-time alerting for query performance issues. This experience reinforced the importance of swift decision-making and effective crisis management, even with incomplete information.
+
+---
+
+This response demonstrates the ability to make critical decisions under pressure, using available data effectively, and balancing risks to achieve a successful outcome.
+
+
+
+
 3. **Innovation and Improvement:**
    - **Give an example of a process improvement you implemented in your previous role. How did it benefit the team or the organization?**
    - **Describe a time when you identified a gap in your team's skills or knowledge. How did you address it?**
