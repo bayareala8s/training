@@ -1680,7 +1680,7 @@ This response highlights a structured approach to managing a project with high u
 ### Change Management:
 1. **Describe a time when you led your team through a significant organizational change. How did you manage the transition?**
 
-Certainly! Here’s a structured example response to the question about leading a team through a significant organizational change:
+Here’s a structured example response to the question about leading a team through a significant organizational change:
 
 ---
 
@@ -1734,7 +1734,7 @@ This response highlights a structured approach to leading a team through a signi
 
 2. **How do you handle resistance to change within your team? Can you give an example?**
 
-Certainly! Here’s a structured example response to the question about handling resistance to change within your team:
+Here’s a structured example response to the question about handling resistance to change within your team:
 
 ---
 
@@ -1792,7 +1792,7 @@ This response highlights a structured approach to handling resistance to change,
 
 3. **Tell me about a time when you successfully implemented a change in process or technology that was initially met with resistance.**
 
-Certainly! Here’s a structured example response to the question about successfully implementing a change in process or technology that was initially met with resistance:
+Here’s a structured example response to the question about successfully implementing a change in process or technology that was initially met with resistance:
 
 ---
 
