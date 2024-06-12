@@ -435,3 +435,69 @@ This step involves creating Lambda functions to monitor Transfer Family health a
    ```
 
 By following these steps and using the provided Terraform scripts, you can set up a highly available and disaster-resilient AWS Transfer Family environment.
+
+
+
+Here’s a visual text diagram to illustrate the steps to connect to an SFTP server using SSH keys on a Mac.
+
+### Visual Text Diagram
+
+```
+Step 1: Generate SSH Key Pair (If Not Already Created)
+--------------------------------------------------------
+1. Open Terminal:
+   --------------------
+   $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+   [Follow prompts to save key to default location: ~/.ssh/id_rsa]
+
+Step 2: Copy the Public Key to the SFTP Server
+--------------------------------------------------------
+1. Display Public Key:
+   --------------------
+   $ cat ~/.ssh/id_rsa.pub
+
+   [Copy the output]
+
+2. Log in to AWS Transfer Family Console (or server):
+   ----------------------------------------------------
+   AWS Console -> Transfer Family -> Select Server -> User -> Add Public Key
+
+Step 3: Connect to SFTP Server Using Terminal
+--------------------------------------------------------
+1. Connect using `sftp` command:
+   ------------------------------
+   $ sftp -i ~/.ssh/id_rsa username@sftp-server-domain
+
+   [Replace placeholders with actual paths, usernames, and server details]
+
+2. Use SFTP Commands:
+   -------------------
+   sftp> ls          [List files on SFTP server]
+   sftp> cd dir      [Change directory on SFTP server]
+   sftp> lcd dir     [Change local directory]
+   sftp> put file    [Upload file to SFTP server]
+   sftp> get file    [Download file from SFTP server]
+   sftp> exit        [Close SFTP session]
+
+Step 4: Automate SFTP Connections Using SSH Config (Optional)
+--------------------------------------------------------
+1. Edit SSH Config File:
+   -----------------------
+   $ nano ~/.ssh/config
+
+2. Add Configuration:
+   --------------------
+   Host my-sftp-server
+     HostName sftp-server-domain
+     User username
+     IdentityFile ~/.ssh/id_rsa
+
+   [Save and close file: Ctrl + O, Enter, Ctrl + X]
+
+3. Connect Using Simplified Command:
+   -----------------------------------
+   $ sftp my-sftp-server
+```
+
+This diagram provides a clear step-by-step process to generate SSH keys, configure the SFTP server, and connect using the terminal or simplified commands via SSH config.
