@@ -793,3 +793,176 @@ resource "aws_route53_health_check" "transfer_health_check" {
 ```
 
 By following this guide, you can implement a robust high availability and disaster recovery architecture for AWS Transfer Family using Terraform. The architecture ensures that your file transfer service remains available and resilient to failures, with automatic failover and data replication across regions.
+
+
+Managing large file uploads and handling failovers during file uploads in AWS Transfer Family requires careful planning and implementation. Below are strategies and step-by-step instructions to ensure efficient management of large files and robust failover mechanisms.
+
+### Managing Large File Uploads
+
+1. **Use S3 Multipart Uploads:**
+   - AWS S3 supports multipart uploads, which allow you to upload large files in parts. This is useful for improving upload speed and reliability.
+
+2. **Configure S3 Transfer Acceleration:**
+   - Enable S3 Transfer Acceleration to speed up uploads using Amazon CloudFront’s globally distributed edge locations.
+
+3. **Client-Side Upload Management:**
+   - Use clients or libraries that support resumable uploads and multipart uploads.
+
+### Handling Failovers During File Uploads
+
+1. **Use Robust Clients:**
+   - Choose clients that support resumable uploads and can handle interruptions gracefully.
+
+2. **Implement Retry Logic:**
+   - Implement retry logic with exponential backoff to handle transient failures.
+
+3. **Monitor Uploads:**
+   - Use AWS CloudWatch and AWS Transfer Family logs to monitor the status of uploads.
+
+### Step-by-Step Guide
+
+#### 1. Enable Multipart Uploads
+
+**Client-Side Configuration:**
+- Ensure your SFTP/FTPS/FTP clients support and are configured for multipart uploads.
+
+**Using AWS CLI for Multipart Uploads:**
+```sh
+aws s3 cp largefile.zip s3://your-bucket/largefile.zip --storage-class STANDARD_IA
+```
+
+#### 2. Enable S3 Transfer Acceleration
+
+```hcl
+resource "aws_s3_bucket" "example" {
+  bucket = "example-bucket"
+
+  acceleration_status = "Enabled"
+}
+```
+
+#### 3. Implement Retry Logic in Application
+
+**Example with AWS SDK for Python (Boto3):**
+```python
+import boto3
+from botocore.exceptions import ClientError
+import time
+
+def upload_file(file_name, bucket, object_name=None):
+    if object_name is None:
+        object_name = file_name
+
+    s3_client = boto3.client('s3')
+    retries = 5
+    for attempt in range(retries):
+        try:
+            response = s3_client.upload_file(file_name, bucket, object_name)
+            break
+        except ClientError as e:
+            if attempt < retries - 1:
+                time.sleep(2 ** attempt)
+            else:
+                raise e
+
+    return response
+
+upload_file('largefile.zip', 'example-bucket')
+```
+
+#### 4. Monitor Uploads with CloudWatch
+
+**Enable Detailed Logging:**
+- In AWS Transfer Family, enable detailed logging for all your servers.
+- Use these logs to monitor and troubleshoot upload failures.
+
+#### 5. Handle Failovers
+
+**Route 53 DNS Failover Configuration:**
+- Set up Route 53 health checks to monitor the health of your endpoints.
+- Configure failover routing policies to automatically redirect traffic to healthy endpoints.
+
+**Example Terraform Configuration:**
+```hcl
+resource "aws_route53_health_check" "s3_health_check" {
+  fqdn                          = "example-bucket.s3.amazonaws.com"
+  port                          = 443
+  type                          = "HTTPS"
+  request_interval              = 30
+  failure_threshold             = 3
+}
+
+resource "aws_route53_record" "failover" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "upload.example.com"
+  type    = "A"
+
+  failover_routing_policy {
+    type = "PRIMARY"
+    health_check_id = aws_route53_health_check.s3_health_check.id
+  }
+
+  alias {
+    name                   = aws_s3_bucket.example.bucket_regional_domain_name
+    zone_id                = aws_s3_bucket.example.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "failover_secondary" {
+  zone_id = aws_route53_zone.example.zone_id
+  name    = "upload.example.com"
+  type    = "A"
+
+  failover_routing_policy {
+    type = "SECONDARY"
+  }
+
+  alias {
+    name                   = aws_s3_bucket_secondary.example.bucket_regional_domain_name
+    zone_id                = aws_s3_bucket_secondary.example.hosted_zone_id
+    evaluate_target_health = true
+  }
+}
+```
+
+#### 6. Using AWS Lambda for Automation
+
+**Example Lambda Function for Monitoring and Failover:**
+```python
+import boto3
+
+def lambda_handler(event, context):
+    s3 = boto3.client('s3')
+    health = boto3.client('route53')
+
+    primary_health = health.get_health_check_status(HealthCheckId='primary-health-check-id')['HealthCheckObservations'][0]['StatusReport']['Status']
+    
+    if primary_health != 'Healthy':
+        # Logic to switch DNS records to secondary
+        response = health.change_resource_record_sets(
+            HostedZoneId='your-hosted-zone-id',
+            ChangeBatch={
+                'Changes': [
+                    {
+                        'Action': 'UPSERT',
+                        'ResourceRecordSet': {
+                            'Name': 'upload.example.com',
+                            'Type': 'A',
+                            'AliasTarget': {
+                                'HostedZoneId': 'secondary-bucket-hosted-zone-id',
+                                'DNSName': 'secondary-bucket-url',
+                                'EvaluateTargetHealth': True
+                            },
+                            'Failover': 'SECONDARY'
+                        }
+                    }
+                ]
+            }
+        )
+    return response
+```
+
+### Summary
+
+By leveraging these strategies and implementations, you can ensure that large file uploads are managed efficiently and that robust failover mechanisms are in place to handle any interruptions or failures during the upload process.
