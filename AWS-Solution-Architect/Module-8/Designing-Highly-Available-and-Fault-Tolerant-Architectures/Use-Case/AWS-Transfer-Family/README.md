@@ -501,3 +501,295 @@ Step 4: Automate SFTP Connections Using SSH Config (Optional)
 ```
 
 This diagram provides a clear step-by-step process to generate SSH keys, configure the SFTP server, and connect using the terminal or simplified commands via SSH config.
+
+
+
+Below is a detailed guide to implementing high availability and disaster recovery for AWS Transfer Family using Terraform scripts, along with a visual text diagram of the architecture.
+
+### Visual Text Diagram of Architecture
+
+```
+                          ┌────────────────────────────────────┐
+                          │          Route 53                  │
+                          │      (DNS Failover)                │
+                          └────────────┬───────────────────────┘
+                                        │
+                                        ▼
+                         ┌──────────────────────────────────────┐
+                         │         Network Load Balancer        │
+                         │ (Distributes traffic across AZs)     │
+                         └────────────┬─────────────────────────┘
+                                        │
+              ┌─────────────────────────┼─────────────────────────┐
+              │                         │                         │
+              ▼                         ▼                         ▼
+┌───────────────────────┐   ┌───────────────────────┐   ┌───────────────────────┐
+│  Transfer Family      │   │  Transfer Family      │   │  Transfer Family      │
+│   Server (AZ1)        │   │   Server (AZ2)        │   │   Server (AZ3)        │
+└───────────┬───────────┘   └───────────┬───────────┘   └───────────┬───────────┘
+            │                           │                           │
+            ▼                           ▼                           ▼
+┌───────────────────────┐   ┌───────────────────────┐   ┌───────────────────────┐
+│  S3 Bucket (Region 1) │◄──►  S3 Bucket (Region 2) │◄──►  S3 Bucket (Region 3) │
+│  (Cross-Region        │   │  (Cross-Region        │   │  (Cross-Region        │
+│   Replication)        │   │   Replication)        │   │   Replication)        │
+└───────────────────────┘   └───────────────────────┘   └───────────────────────┘
+```
+
+### Terraform Scripts
+
+#### 1. Provider Configuration
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+provider "aws" {
+  alias  = "us-west-1"
+  region = "us-west-1"
+}
+
+provider "aws" {
+  alias  = "us-west-2"
+  region = "us-west-2"
+}
+```
+
+#### 2. S3 Buckets and Cross-Region Replication
+```hcl
+resource "aws_s3_bucket" "source" {
+  bucket = "transfer-source-bucket"
+  acl    = "private"
+
+  versioning {
+    enabled = true
+  }
+}
+
+resource "aws_s3_bucket" "replica_1" {
+  provider = aws.us-west-1
+  bucket   = "transfer-replica-bucket-1"
+  acl      = "private"
+
+  versioning {
+    enabled = true
+  }
+}
+
+resource "aws_s3_bucket" "replica_2" {
+  provider = aws.us-west-2
+  bucket   = "transfer-replica-bucket-2"
+  acl      = "private"
+
+  versioning {
+    enabled = true
+  }
+}
+
+resource "aws_s3_bucket_replication_configuration" "replication" {
+  provider = aws
+
+  role = aws_iam_role.replication_role.arn
+
+  rules {
+    id     = "replication-rule"
+    status = "Enabled"
+
+    filter {
+      prefix = ""
+    }
+
+    destination {
+      bucket        = aws_s3_bucket.replica_1.arn
+      storage_class = "STANDARD"
+    }
+  }
+
+  rules {
+    id     = "replication-rule-2"
+    status = "Enabled"
+
+    filter {
+      prefix = ""
+    }
+
+    destination {
+      bucket        = aws_s3_bucket.replica_2.arn
+      storage_class = "STANDARD"
+    }
+  }
+}
+
+resource "aws_iam_role" "replication_role" {
+  name = "replication-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = {
+        Service = "s3.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "replication_policy" {
+  role = aws_iam_role.replication_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = [
+        "s3:GetReplicationConfiguration",
+        "s3:ListBucket",
+        "s3:GetObjectVersion",
+        "s3:GetObjectVersionAcl",
+        "s3:GetObjectVersionForReplication",
+        "s3:GetObjectVersionTagging"
+      ]
+      Resource = [
+        aws_s3_bucket.source.arn,
+        "${aws_s3_bucket.source.arn}/*"
+      ]
+    }, {
+      Effect   = "Allow"
+      Action   = [
+        "s3:ReplicateObject",
+        "s3:ReplicateDelete",
+        "s3:ReplicateTags"
+      ]
+      Resource = [
+        aws_s3_bucket.replica_1.arn,
+        "${aws_s3_bucket.replica_1.arn}/*",
+        aws_s3_bucket.replica_2.arn,
+        "${aws_s3_bucket.replica_2.arn}/*"
+      ]
+    }]
+  })
+}
+```
+
+#### 3. Transfer Family Servers
+```hcl
+resource "aws_transfer_server" "transfer_family" {
+  identity_provider_type = "SERVICE_MANAGED"
+
+  endpoint_type = "PUBLIC"
+
+  endpoint_details {
+    vpc_endpoint_id = aws_vpc_endpoint.transfer_endpoint.id
+  }
+}
+
+resource "aws_transfer_user" "transfer_user" {
+  server_id    = aws_transfer_server.transfer_family.id
+  user_name    = "test_user"
+  role         = aws_iam_role.transfer_user_role.arn
+  home_directory = "/${aws_s3_bucket.source.bucket}"
+}
+
+resource "aws_iam_role" "transfer_user_role" {
+  name = "transfer-user-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = {
+        Service = "transfer.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "transfer_user_policy" {
+  role = aws_iam_role.transfer_user_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = [
+        "s3:ListBucket",
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ]
+      Resource = [
+        aws_s3_bucket.source.arn,
+        "${aws_s3_bucket.source.arn}/*"
+      ]
+    }]
+  })
+}
+```
+
+#### 4. Network Load Balancer (NLB)
+```hcl
+resource "aws_lb" "transfer_nlb" {
+  name               = "transfer-nlb"
+  internal           = false
+  load_balancer_type = "network"
+  subnets            = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
+
+  enable_deletion_protection = false
+}
+
+resource "aws_lb_target_group" "transfer_tg" {
+  name     = "transfer-tg"
+  port     = 22
+  protocol = "TCP"
+  vpc_id   = aws_vpc.main.id
+}
+
+resource "aws_lb_listener" "transfer_listener" {
+  load_balancer_arn = aws_lb.transfer_nlb.arn
+  port              = 22
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.transfer_tg.arn
+  }
+}
+
+resource "aws_lb_target_group_attachment" "transfer_attachment" {
+  target_group_arn = aws_lb_target_group.transfer_tg.arn
+  target_id        = aws_transfer_server.transfer_family.id
+  port             = 22
+}
+```
+
+#### 5. Route 53 Configuration
+```hcl
+resource "aws_route53_zone" "main" {
+  name = "example.com"
+}
+
+resource "aws_route53_record" "transfer_record" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "transfer"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.transfer_nlb.dns_name
+    zone_id                = aws_lb.transfer_nlb.zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_health_check" "transfer_health_check" {
+  fqdn                          = "transfer.example.com"
+  port                          = 22
+  type                          = "TCP"
+  resource_path                 = "/"
+  request_interval              = 30
+  failure_threshold             = 3
+}
+```
+
+By following this guide, you can implement a robust high availability and disaster recovery architecture for AWS Transfer Family using Terraform. The architecture ensures that your file transfer service remains available and resilient to failures, with automatic failover and data replication across regions.
