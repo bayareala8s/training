@@ -1,8 +1,19 @@
-# Define variables for customization
+# Declare variables for customization
 variable "dynamodb_table_name" {
   description = "Name of the DynamoDB table for customer registration"
   type        = string
   default     = "CustomerRegistration"
+}
+
+variable "account_id" {
+  description = "The AWS account ID where the resources are being created"
+  type        = string
+}
+
+variable "region" {
+  description = "The AWS region where resources are created"
+  type        = string
+  default     = "us-east-1" # Replace with your preferred region
 }
 
 # DynamoDB table definition
@@ -122,4 +133,10 @@ output "dynamodb_table_name" {
 output "dynamodb_table_arn" {
   value       = aws_dynamodb_table.customer_registration.arn
   description = "The ARN of the DynamoDB table for customer registration"
+}
+
+# Output the IAM Role ARN
+output "dynamodb_lambda_role_arn" {
+  value       = aws_iam_role.dynamodb_lambda_role.arn
+  description = "The ARN of the IAM role for Lambda to access DynamoDB"
 }
