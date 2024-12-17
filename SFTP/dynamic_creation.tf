@@ -1,61 +1,45 @@
 # AWS Provider Configuration
 provider "aws" {
-  region = "us-east-1" # Replace with your desired region
+  region = "us-east-1"
 }
 
-# Variables for DynamoDB Table Name
-variable "dynamodb_table_name" {
-  description = "The name of the DynamoDB table storing resource definitions"
-  type        = string
-  default     = "ResourceDefinitions"
+# Fetch DynamoDB Table Data via Local Exec
+resource "null_resource" "fetch_dynamodb_data" {
+  provisioner "local-exec" {
+    command = "aws dynamodb scan --table-name ResourceDefinitions --output json > data.json"
+  }
 }
 
-# Fetch Items from DynamoDB Table
-data "aws_dynamodb_table_items" "resource_definitions" {
-  table_name = var.dynamodb_table_name
-}
-
-# Parse DynamoDB Items for S3 Resources
+# Read DynamoDB Data from File
 locals {
+  dynamodb_data = jsondecode(file("${path.module}/data.json"))
   s3_resources = [
-    for item in data.aws_dynamodb_table_items.resource_definitions.items :
+    for item in local.dynamodb_data.Items :
     {
-      resource_id = item["ResourceID"]
-      configuration = jsondecode(item["Configuration"])
+      resource_id  = item.ResourceID.S
+      bucket_name  = jsondecode(item.Configuration.S).BucketName
     }
-    if item["ResourceType"] == "S3" && item["Status"] == "Pending"
+    if item.ResourceType.S == "S3" && item.Status.S == "Pending"
   ]
 }
 
-# Dynamically Create S3 Buckets
+# Create S3 Buckets Dynamically
 resource "aws_s3_bucket" "dynamic_s3_buckets" {
   for_each = { for s3 in local.s3_resources : s3.resource_id => s3 }
 
-  bucket = each.value.configuration.BucketName
-
-  # Example: Enable versioning
-  versioning {
-    enabled = true
-  }
+  bucket = each.value.bucket_name
 
   tags = {
-    Name        = each.value.configuration.BucketName
+    Name        = each.value.bucket_name
     Environment = "Production"
     ManagedBy   = "Terraform"
   }
 }
 
 # Outputs for Verification
-output "s3_bucket_names" {
-  value       = [for bucket in aws_s3_bucket.dynamic_s3_buckets : bucket.bucket]
-  description = "List of S3 buckets created dynamically from DynamoDB"
+output "created_s3_buckets" {
+  value = [for bucket in aws_s3_bucket.dynamic_s3_buckets : bucket.bucket]
 }
 
 
-aws dynamodb put-item --table-name ResourceDefinitions --item '{
-    "ResourceID": {"S": "resource-1"},
-    "ResourceType": {"S": "S3"},
-    "Configuration": {"S": "{\"BucketName\": \"team1-bucket-2024\", \"Region\": \"us-east-1\"}"},
-    "Status": {"S": "Pending"}
-}'
-
+aws dynamodb scan --table-name ResourceDefinitions --output json > data.json
