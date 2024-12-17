@@ -3,21 +3,26 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# Fetch DynamoDB Table Data via Local Exec
+# Fetch DynamoDB Data using Local Exec
 resource "null_resource" "fetch_dynamodb_data" {
   provisioner "local-exec" {
     command = "aws dynamodb scan --table-name ResourceDefinitions --output json > data.json"
   }
+
+  triggers = {
+    always_run = timestamp()
+  }
 }
 
-# Read DynamoDB Data from File
+# Use a default fallback if the file does not yet exist
 locals {
-  dynamodb_data = jsondecode(file("${path.module}/data.json"))
+  dynamodb_data = fileexists("${path.module}/data.json") ? jsondecode(file("${path.module}/data.json")) : { Items = [] }
+
   s3_resources = [
     for item in local.dynamodb_data.Items :
     {
-      resource_id  = item.ResourceID.S
-      bucket_name  = jsondecode(item.Configuration.S).BucketName
+      resource_id = item.ResourceID.S
+      bucket_name = jsondecode(item.Configuration.S).BucketName
     }
     if item.ResourceType.S == "S3" && item.Status.S == "Pending"
   ]
@@ -34,12 +39,12 @@ resource "aws_s3_bucket" "dynamic_s3_buckets" {
     Environment = "Production"
     ManagedBy   = "Terraform"
   }
+
+  depends_on = [null_resource.fetch_dynamodb_data]
 }
 
-# Outputs for Verification
+# Outputs
 output "created_s3_buckets" {
-  value = [for bucket in aws_s3_bucket.dynamic_s3_buckets : bucket.bucket]
+  description = "List of S3 buckets created dynamically"
+  value       = [for bucket in aws_s3_bucket.dynamic_s3_buckets : bucket.bucket]
 }
-
-
-aws dynamodb scan --table-name ResourceDefinitions --output json > data.json
