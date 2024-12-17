@@ -50,3 +50,12 @@ output "s3_bucket_names" {
   value       = [for bucket in aws_s3_bucket.dynamic_s3_buckets : bucket.bucket]
   description = "List of S3 buckets created dynamically from DynamoDB"
 }
+
+
+aws dynamodb put-item --table-name ResourceDefinitions --item '{
+    "ResourceID": {"S": "resource-1"},
+    "ResourceType": {"S": "S3"},
+    "Configuration": {"S": "{\"BucketName\": \"team1-bucket-2024\", \"Region\": \"us-east-1\"}"},
+    "Status": {"S": "Pending"}
+}'
+
