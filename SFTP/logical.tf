@@ -110,3 +110,6 @@ resource "aws_transfer_user" "sftp_user" {
   role         = aws_iam_role.sftp_role.arn
   home_directory = "/user1"
 }
+
+
+ssh-keygen -t rsa -b 2048 -f user1-sftp-key
