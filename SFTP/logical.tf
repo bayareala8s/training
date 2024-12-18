@@ -103,21 +103,10 @@ resource "aws_transfer_server" "sftp_server" {
   }
 }
 
-# Create the SFTP user and configure home directory mappings
+# Create the SFTP user
 resource "aws_transfer_user" "sftp_user" {
-  server_id = aws_transfer_server.sftp_server.id
-  user_name = var.username
-  role      = aws_iam_role.sftp_role.arn
-
-  home_directory_type = "LOGICAL"
-  home_directory_mappings = jsonencode([
-    {
-      Entry  = "/folder1",
-      Target = "arn:aws:s3:::${var.bucket_name}/user1/folder1"
-    },
-    {
-      Entry  = "/folder2",
-      Target = "arn:aws:s3:::${var.bucket_name}/user1/folder2"
-    }
-  ])
+  server_id    = aws_transfer_server.sftp_server.id
+  user_name    = var.username
+  role         = aws_iam_role.sftp_role.arn
+  home_directory = "/user1"
 }
