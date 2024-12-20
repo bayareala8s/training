@@ -1,60 +1,48 @@
-# AWS Provider Configuration
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-1" # Replace with your preferred region
 }
 
-# Fetch DynamoDB Data via Local Exec
-resource "null_resource" "fetch_dynamodb_data" {
-  provisioner "local-exec" {
-    command = <<EOT
-      aws dynamodb scan \
-      --table-name ResourceDefinitions \
-      --projection-expression "ResourceID, ResourceType, Configuration, Status" \
-      --output json > data.json
-    EOT
-  }
-
-  triggers = {
-    always_run = timestamp()
-  }
+# DynamoDB table metadata
+data "aws_dynamodb_table" "example_table" {
+  name = "YourDynamoDBTableName" # Replace with your DynamoDB table name
 }
 
-# Parse DynamoDB Data
+# Define the key(s) to retrieve specific items
 locals {
-  dynamodb_data = fileexists("${path.module}/data.json") ? jsondecode(file("${path.module}/data.json")) : { Items = [] }
-
-  # Filter S3 resources
-  s3_resources = [
-    for item in local.dynamodb_data.Items :
+  keys = [
     {
-      resource_id = item["ResourceID"]["S"]
-      bucket_name = jsondecode(item["Configuration"]["S"]).BucketName
+      primary_key = "PrimaryKey1" # Replace with your table's primary key value
+      sort_key    = "SortKey1"    # Replace with your table's sort key value (if applicable)
+    },
+    {
+      primary_key = "PrimaryKey2" # Another example key
+      sort_key    = "SortKey2"
     }
-    if item["ResourceType"]["S"] == "S3" && item["Status"]["S"] == "Pending"
   ]
 }
 
-# Create S3 Buckets Dynamically
-resource "aws_s3_bucket" "dynamic_s3_buckets" {
-  for_each = { for s3 in local.s3_resources : s3.resource_id => s3 }
+# Fetch specific attributes using AWS CLI and process output with PowerShell
+resource "null_resource" "fetch_dynamodb_attributes" {
+  for_each = tomap({
+    for i, key in local.keys : "${i}" => key
+  })
 
-  bucket = each.value.bucket_name
-
-  tags = {
-    Name        = each.value.bucket_name
-    Environment = "Production"
-    ManagedBy   = "Terraform"
+  provisioner "local-exec" {
+    command = <<EOT
+      aws dynamodb get-item `
+        --table-name ${data.aws_dynamodb_table.example_table.name} `
+        --key "{\\"PrimaryKey\\": {\\"S\\": \\"${each.value.primary_key}\\"}, \\"SortKey\\": {\\"S\\": \\"${each.value.sort_key}\\"}}" `
+        --projection-expression "Attribute1, Attribute2" `
+        --region us-east-1 `
+        --output json | PowerShell -Command "Get-Content - | ConvertFrom-Json | Select-Object -ExpandProperty Item"
+    EOT
   }
-
-  depends_on = [null_resource.fetch_dynamodb_data]
 }
 
-# Debug Outputs
-output "debug_s3_resources" {
-  value = local.s3_resources
-}
-
-# Output Created Buckets
-output "created_s3_buckets" {
-  value = [for bucket in aws_s3_bucket.dynamic_s3_buckets : bucket.bucket]
+# Output the table's basic metadata for debugging
+output "table_info" {
+  value = {
+    table_name = data.aws_dynamodb_table.example_table.name
+    arn        = data.aws_dynamodb_table.example_table.arn
+  }
 }
