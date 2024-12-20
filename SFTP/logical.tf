@@ -1,49 +1,60 @@
-resource "aws_iam_policy" "sftp_policy" {
-  name        = "sftp-access-policy"
-  description = "Policy to restrict user access to specific folders and prevent folder creation"
+# AWS Provider Configuration
+provider "aws" {
+  region = "us-east-1"
+}
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = "s3:ListBucket",
-        Resource = "arn:aws:s3:::${var.bucket_name}",
-        Condition = {
-          StringLike: {
-            "s3:prefix": [
-              "user1/",
-              "user1/folder1/*",
-              "user1/folder2/*"
-            ]
-          }
-        }
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject"
-        ],
-        Resource = [
-          "arn:aws:s3:::${var.bucket_name}/user1/folder1/*",
-          "arn:aws:s3:::${var.bucket_name}/user1/folder2/*"
-        ]
-      },
-      {
-        Effect: "Deny",
-        Action: "s3:PutObject",
-        Resource: [
-          "arn:aws:s3:::${var.bucket_name}/user1/",
-          "arn:aws:s3:::${var.bucket_name}/user1/folder1/",
-          "arn:aws:s3:::${var.bucket_name}/user1/folder2/"
-        ],
-        Condition: {
-          StringEquals: {
-            "s3:x-amz-object-lock-mode": "COMPLIANCE"
-          }
-        }
-      }
-    ]
-  })
+# Fetch DynamoDB Data via Local Exec
+resource "null_resource" "fetch_dynamodb_data" {
+  provisioner "local-exec" {
+    command = <<EOT
+      aws dynamodb scan \
+      --table-name ResourceDefinitions \
+      --projection-expression "ResourceID, ResourceType, Configuration, Status" \
+      --output json > data.json
+    EOT
+  }
+
+  triggers = {
+    always_run = timestamp()
+  }
+}
+
+# Parse DynamoDB Data
+locals {
+  dynamodb_data = fileexists("${path.module}/data.json") ? jsondecode(file("${path.module}/data.json")) : { Items = [] }
+
+  # Filter S3 resources
+  s3_resources = [
+    for item in local.dynamodb_data.Items :
+    {
+      resource_id = item["ResourceID"]["S"]
+      bucket_name = jsondecode(item["Configuration"]["S"]).BucketName
+    }
+    if item["ResourceType"]["S"] == "S3" && item["Status"]["S"] == "Pending"
+  ]
+}
+
+# Create S3 Buckets Dynamically
+resource "aws_s3_bucket" "dynamic_s3_buckets" {
+  for_each = { for s3 in local.s3_resources : s3.resource_id => s3 }
+
+  bucket = each.value.bucket_name
+
+  tags = {
+    Name        = each.value.bucket_name
+    Environment = "Production"
+    ManagedBy   = "Terraform"
+  }
+
+  depends_on = [null_resource.fetch_dynamodb_data]
+}
+
+# Debug Outputs
+output "debug_s3_resources" {
+  value = local.s3_resources
+}
+
+# Output Created Buckets
+output "created_s3_buckets" {
+  value = [for bucket in aws_s3_bucket.dynamic_s3_buckets : bucket.bucket]
 }
