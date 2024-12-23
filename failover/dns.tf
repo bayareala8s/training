@@ -314,3 +314,99 @@ The architecture would look like this:
 ---
 
 Let me know if you'd like detailed Terraform or CloudFormation scripts for setting up this architecture!
+
+
+
+Using a **Network Load Balancer (NLB)** to distribute traffic to **AWS Transfer Family (SFTP servers)** across multiple **Availability Zones (AZs)** provides a highly available and fault-tolerant architecture. Here’s how you can incorporate an NLB with target groups into your architecture.
+
+---
+
+### **Architecture Overview with NLB**
+- **Network Load Balancer:** 
+  - Serves as the public endpoint for SFTP clients.
+  - Routes incoming SFTP traffic to AWS Transfer Family servers deployed in multiple Availability Zones.
+- **Target Groups:**
+  - Each SFTP server instance (managed by AWS Transfer Family) is registered as a target in the NLB.
+- **Availability Zones:**
+  - The architecture spans at least three AZs for high availability.
+
+---
+
+### **Step-by-Step Implementation**
+
+---
+
+#### **1. Configure AWS Transfer Family**
+1. **Create AWS Transfer Family Server:**
+   - Deploy an SFTP server with a VPC endpoint in **three AZs**.
+   - Associate the Transfer Family server with an S3 bucket for backend storage.
+
+2. **Attach Elastic Network Interfaces (ENIs):**
+   - AWS Transfer Family automatically creates ENIs for each AZ. These are used as targets for the NLB.
+
+---
+
+#### **2. Set Up Network Load Balancer**
+1. **Create the NLB:**
+   - Navigate to the **EC2 Dashboard** and create a new NLB.
+   - Select the VPC where your AWS Transfer Family server is deployed.
+   - Enable the NLB in **three AZs**.
+
+2. **Configure NLB Listeners:**
+   - Add a listener for **port 22 (SFTP)**.
+   - Forward traffic from the listener to a target group.
+
+---
+
+#### **3. Create Target Groups**
+1. **Target Group Configuration:**
+   - Create a target group of type **IP**.
+   - Use the private IP addresses of the ENIs created by AWS Transfer Family as targets.
+   - Assign health checks using the **TCP protocol** on port 22.
+
+2. **Add Targets:**
+   - Register the ENIs associated with the AWS Transfer Family server in the target group.
+   - Ensure all ENIs across the three AZs are added.
+
+---
+
+#### **4. Update Route 53 DNS**
+1. **Create a Route 53 Record:**
+   - Add a DNS record (e.g., `sftp.example.com`) pointing to the NLB’s public DNS name.
+   - This ensures SFTP clients connect to the NLB rather than directly to an individual SFTP server.
+
+---
+
+### **High Availability and Fault Tolerance**
+1. **Multi-AZ Deployment:**
+   - The NLB automatically distributes traffic across all registered targets in multiple AZs.
+   - If one AZ becomes unavailable, the NLB routes traffic to the remaining healthy targets.
+
+2. **Health Checks:**
+   - Configure health checks in the target group to monitor the availability of ENIs.
+   - If an ENI fails a health check, the NLB automatically stops routing traffic to it.
+
+---
+
+### **Failover with Secondary Region**
+1. **Primary NLB in Region A:**
+   - Serve traffic via the NLB in the primary region (e.g., **us-west**).
+2. **Secondary NLB in Region B:**
+   - Deploy a similar NLB setup in the secondary region (e.g., **us-east**) for failover.
+3. **Route 53 DNS Failover:**
+   - Use Route 53 health checks to monitor the health of the NLB in the primary region.
+   - Failover traffic to the secondary NLB in the secondary region if the primary region becomes unavailable.
+
+---
+
+### **Benefits of Using NLB with SFTP**
+1. **Scalability:**
+   - NLB handles large volumes of SFTP traffic across multiple AZs.
+2. **High Availability:**
+   - Redundant setup across three AZs ensures uptime.
+3. **Elastic IP Support:**
+   - You can associate Elastic IPs with the NLB for fixed public IPs.
+
+---
+
+Let me know if you’d like assistance with Terraform scripts or CloudFormation templates for setting up this architecture!
