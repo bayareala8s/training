@@ -536,3 +536,182 @@ To ensure security at every step of implementing the **Network Load Balancer (NL
 ---
 
 This approach ensures the architecture is not only highly available and fault-tolerant but also secure at every step of the process. Let me know if you need Terraform scripts or CloudFormation templates to implement this securely!
+
+
+
+
+### **Architecture for Lambda Triggered by EventBridge Rules to Pull Files from External SFTP Server**
+
+This architecture enables scheduled or event-driven file pulls from an **external SFTP server** using **AWS Lambda** and **Amazon EventBridge**. Below is a detailed architecture with security, failover, and operational considerations.
+
+---
+
+### **Architecture Diagram**
+**Components:**
+1. **Amazon EventBridge:** Triggers the Lambda function based on a scheduled event or a custom event pattern.
+2. **AWS Lambda:** Executes the logic to connect to the external SFTP server, fetch files, and store them in Amazon S3 or process them further.
+3. **External SFTP Server:** The source of the files.
+4. **Amazon S3:** Storage for fetched files.
+5. **Amazon CloudWatch Logs:** For monitoring Lambda execution and troubleshooting.
+6. **AWS Secrets Manager:** Securely stores SFTP credentials.
+7. **Amazon SNS (Optional):** Sends notifications on success, failure, or anomalies.
+
+---
+
+### **Workflow**
+#### **1. Scheduled or Event-Driven Trigger**
+   - Use **EventBridge** to schedule the Lambda function at predefined intervals (e.g., every 15 minutes).
+   - Alternatively, set up a custom EventBridge rule based on specific triggers (e.g., a file upload event).
+
+#### **2. Lambda Execution**
+   - Lambda connects to the **external SFTP server** using the credentials stored securely in **AWS Secrets Manager**.
+   - Retrieves files based on defined criteria (e.g., specific directory or file patterns).
+
+#### **3. File Processing**
+   - Lambda can perform the following tasks:
+     - Validate and filter files (e.g., based on size or type).
+     - Transform files (e.g., decompress, decrypt).
+     - Store files in **Amazon S3**.
+
+#### **4. Monitoring and Notifications**
+   - Use **CloudWatch Logs** to monitor Lambda execution.
+   - Set up **CloudWatch Alarms** to trigger notifications for errors or anomalies via **SNS**.
+
+---
+
+### **Step-by-Step Implementation**
+
+---
+
+#### **1. Set Up EventBridge Rule**
+1. **For Scheduled Events:**
+   - Navigate to the EventBridge console and create a rule.
+   - Define a **cron expression** or **rate expression** for the schedule.
+
+   Example rate expression:
+   ```cron
+   rate(15 minutes)
+   ```
+
+2. **For Custom Events:**
+   - Define the event pattern based on your business logic.
+
+---
+
+#### **2. Configure AWS Secrets Manager**
+1. Store SFTP credentials (e.g., host, port, username, and password) securely in Secrets Manager.
+2. Grant the Lambda execution role permission to retrieve the secret.
+
+---
+
+#### **3. Develop Lambda Function**
+1. **Environment Setup:**
+   - Use the `paramiko` library for SFTP connections.
+
+2. **Lambda Code Example:**
+
+```python
+import boto3
+import paramiko
+import os
+
+def lambda_handler(event, context):
+    # Fetch SFTP credentials from Secrets Manager
+    secrets_client = boto3.client('secretsmanager')
+    secret_name = "sftp-credentials"
+    response = secrets_client.get_secret_value(SecretId=secret_name)
+    secrets = eval(response['SecretString'])  # Convert to dict
+    
+    sftp_host = secrets['host']
+    sftp_port = int(secrets['port'])
+    sftp_user = secrets['username']
+    sftp_pass = secrets['password']
+    remote_directory = "/remote/path/"
+    local_directory = "/tmp/"
+    
+    # Establish SFTP connection
+    transport = paramiko.Transport((sftp_host, sftp_port))
+    transport.connect(username=sftp_user, password=sftp_pass)
+    sftp = paramiko.SFTPClient.from_transport(transport)
+    
+    # Fetch files from remote SFTP
+    files = sftp.listdir(remote_directory)
+    for file_name in files:
+        remote_file_path = f"{remote_directory}/{file_name}"
+        local_file_path = os.path.join(local_directory, file_name)
+        
+        # Download file to Lambda's /tmp directory
+        sftp.get(remote_file_path, local_file_path)
+        
+        # Upload file to S3
+        s3 = boto3.client('s3')
+        bucket_name = "your-s3-bucket-name"
+        s3.upload_file(local_file_path, bucket_name, file_name)
+        
+        # Optionally delete the file from the remote SFTP server
+        # sftp.remove(remote_file_path)
+    
+    sftp.close()
+    transport.close()
+    return {"status": "Files transferred successfully"}
+```
+
+---
+
+#### **4. Create an S3 Bucket**
+1. Set up a bucket to store the files fetched from the SFTP server.
+2. Apply **bucket policies** to enforce security:
+   - Enable **S3 encryption** (KMS or AES-256).
+   - Apply **S3 Block Public Access** to prevent accidental exposure.
+
+---
+
+#### **5. Secure Lambda Function**
+1. **IAM Role Permissions:**
+   - Grant Lambda access to:
+     - **Secrets Manager** for retrieving SFTP credentials.
+     - **S3** for uploading files.
+     - **CloudWatch Logs** for monitoring.
+
+2. **Environment Variables:**
+   - Store sensitive values (e.g., S3 bucket name, remote directory path) as Lambda environment variables.
+   - Use **KMS encryption** for environment variables.
+
+---
+
+#### **6. Monitoring and Notifications**
+1. **Enable CloudWatch Logs:**
+   - Monitor Lambda executions and troubleshoot issues.
+2. **Set Alarms:**
+   - Create alarms for:
+     - Lambda function failures.
+     - High execution duration (indicative of network or processing issues).
+3. **Notifications:**
+   - Configure SNS to send email or SMS notifications for critical alarms.
+
+---
+
+### **Security Best Practices**
+1. **Encrypt Data at Rest and in Transit:**
+   - Use TLS for SFTP connections.
+   - Enable **server-side encryption (SSE)** for S3.
+2. **Rotate Credentials:**
+   - Use AWS Secrets Manager to rotate SFTP credentials periodically.
+3. **Least Privilege IAM Policies:**
+   - Restrict Lambda's permissions to only necessary resources (S3, Secrets Manager).
+4. **SFTP Server Firewall:**
+   - Whitelist the Lambda's VPC CIDR in the SFTP server's firewall rules.
+
+---
+
+### **Additional Features**
+1. **Retry Mechanism:**
+   - Implement retries in Lambda for transient network failures.
+2. **Error Handling:**
+   - Log errors to CloudWatch and notify teams via SNS.
+3. **File Validation:**
+   - Validate file integrity (e.g., using checksums) after downloading from the SFTP server.
+
+---
+
+This setup ensures a secure, highly available, and scalable architecture for pulling files from external SFTP servers using AWS Lambda. Let me know if you need Terraform scripts or further customization!
