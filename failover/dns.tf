@@ -213,3 +213,104 @@ Let me know if you need any additional customization!
 ---
 
 This workflow ensures secure, scalable, and automated file processing with AWS services. Let me know if you'd like more details on specific steps!
+
+
+
+
+
+To include **failover** between the **primary region (us-west)** and the **secondary region (us-east)**, you can modify the architecture to ensure high availability and disaster recovery. Below is a step-by-step workflow for implementing failover capabilities.
+
+---
+
+### **Enhanced Workflow with Failover**
+
+---
+
+#### **1. Setup Primary and Secondary Regions**
+1. **Primary Region (us-west):**
+   - Configure AWS Transfer Family in **us-west**.
+   - Store SFTP files in the **primary S3 bucket** in us-west (e.g., `s3://primary-bucket/inbound`).
+   - Set up the primary AWS Lambda function in us-west for file processing.
+
+2. **Secondary Region (us-east):**
+   - Configure AWS Transfer Family in **us-east** for failover.
+   - Store SFTP files in the **secondary S3 bucket** in us-east (e.g., `s3://secondary-bucket/inbound`).
+   - Set up a secondary AWS Lambda function in us-east for processing.
+
+---
+
+#### **2. Synchronize Data Between Regions**
+1. **Enable S3 Cross-Region Replication (CRR):**
+   - Replicate the primary S3 bucket (us-west) to the secondary S3 bucket (us-east).
+   - CRR ensures that all files uploaded to the primary bucket are automatically copied to the secondary bucket.
+
+2. **Use S3 Versioning:**
+   - Enable versioning on both the primary and secondary S3 buckets to avoid data loss and ensure file consistency.
+
+---
+
+#### **3. Event Notifications for Both Regions**
+1. **Primary Region (us-west):**
+   - Configure S3 event notifications in the primary bucket to trigger the primary Lambda function for file processing.
+2. **Secondary Region (us-east):**
+   - Configure S3 event notifications in the secondary bucket to trigger the secondary Lambda function during a failover.
+
+---
+
+#### **4. Add Failover Mechanism**
+1. **Monitor Primary Services:**
+   - Use Amazon Route 53 health checks or Amazon CloudWatch Alarms to monitor the health of:
+     - AWS Transfer Family in us-west.
+     - Lambda function and other processing components in us-west.
+
+2. **Route 53 DNS Failover:**
+   - Configure Route 53 to route traffic between us-west and us-east.
+   - Use health checks to detect issues with the SFTP endpoint in us-west and automatically failover to us-east.
+
+3. **Secondary Processing:**
+   - In case of a failure in the primary region:
+     - Files replicated to the secondary bucket in us-east will trigger the secondary Lambda function for processing.
+     - The secondary region handles file processing and target system transfer.
+
+---
+
+#### **5. Workflow With Failover**
+
+1. **Normal Operations (us-west):**
+   - Files are uploaded to AWS Transfer Family in us-west.
+   - Files are stored in the primary S3 bucket.
+   - Lambda function in us-west processes files and transfers them to target systems.
+   - Files are replicated to the secondary S3 bucket in us-east for redundancy.
+
+2. **Failover Operations (us-east):**
+   - If a failure is detected in us-west, Route 53 routes traffic to the us-east SFTP endpoint.
+   - Files are uploaded to AWS Transfer Family in us-east.
+   - Files stored in the secondary S3 bucket trigger the secondary Lambda function for processing.
+   - Secondary region processes files and transfers them to target systems.
+
+---
+
+### **6. Diagram Representation**
+
+The architecture would look like this:
+- **Primary Region (us-west):**
+  - AWS Transfer Family → S3 Bucket → Lambda → Target System.
+  - CRR replicates files to the secondary bucket.
+- **Secondary Region (us-east):**
+  - AWS Transfer Family → S3 Bucket → Lambda (active during failover) → Target System.
+
+---
+
+### **7. High Availability and Disaster Recovery Considerations**
+1. **Automated Failover:**
+   - Use Route 53 health checks to ensure seamless DNS-based failover between regions.
+2. **Data Consistency:**
+   - Cross-Region Replication ensures files are available in both regions.
+3. **Redundant Lambda Processing:**
+   - Deploy identical Lambda functions in both regions.
+4. **Testing Failover:**
+   - Regularly test failover scenarios to validate the configuration.
+
+---
+
+Let me know if you'd like detailed Terraform or CloudFormation scripts for setting up this architecture!
