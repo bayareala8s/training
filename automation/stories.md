@@ -19,6 +19,12 @@ Summary: Notify customers about the status of their resource provisioning workfl
 Story 3: Add Multi-Tenancy Support for Onboarding
 Summary: Enable multi-tenancy to allow multiple customers to onboard and manage their resources independently.
 
+Story 4: Implement Step Functions for Workflow Management
+Summary: Use AWS Step Functions to manage complex file transfer workflows.
+Description:
+Create a state machine for validating, transferring, and archiving files.
+
+
 These stories ensure that customers can seamlessly onboard themselves, define their resource requirements, and have AWS resources provisioned dynamically through Terraform. 
 
 
