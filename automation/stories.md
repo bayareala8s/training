@@ -19,6 +19,10 @@ Summary: Notify customers about the status of their resource provisioning workfl
 Story 3: Add Multi-Tenancy Support for Onboarding
 Summary: Enable multi-tenancy to allow multiple customers to onboard and manage their resources independently.
 
+These stories ensure that customers can seamlessly onboard themselves, define their resource requirements, and have AWS resources provisioned dynamically through Terraform. 
+
+
+
 
 
 
