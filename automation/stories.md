@@ -27,6 +27,17 @@ Create a state machine for validating, transferring, and archiving files.
 
 These stories ensure that customers can seamlessly onboard themselves, define their resource requirements, and have AWS resources provisioned dynamically through Terraform. 
 
+Epic 3: Dynamically Create AWS Resources from Database or JSON Configurations
+
+Story 1: Design Schema for Resource Configuration Database
+Summary: Create a database schema to store resource configurations.
+Description:
+
+Design a schema to capture details for AWS resources such as:
+Resource type (e.g., S3, Lambda).
+Required parameters (e.g., bucket names).
+Customer-specific metadata.
+
 
 
 
