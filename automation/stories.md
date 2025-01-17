@@ -38,6 +38,27 @@ Resource type (e.g., S3, Lambda).
 Required parameters (e.g., bucket names).
 Customer-specific metadata.
 
+Story 2: Create API/Lambda to Fetch Resource Configuration from Database
+Summary: Develop an API to retrieve resource configurations from the database.
+
+Story 3: Integrate Terraform with the Database
+Summary: Use Terraform's external data source to fetch resource configurations from the database.
+
+Description:
+
+Configure Terraform to query the API or database directly using the external data source or a custom script.
+Pass the fetched data to Terraform modules as input variables.
+
+Story 9: Build a Reporting Mechanism for Resources
+Summary: Generate reports of resources created by Terraform.
+
+Description:
+
+Query the Terraform state file or database to list:
+Active resources.
+Resource owners and configurations.
+Cost-related metrics using AWS Cost Explorer.
+
 
 
 
