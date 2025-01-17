@@ -16,6 +16,9 @@ Summary: Integrate Terraform to provision AWS resources based on customer inputs
 Story 2: Implement Real-Time Notifications for Onboarding
 Summary: Notify customers about the status of their resource provisioning workflows.
 
+Story 3: Add Multi-Tenancy Support for Onboarding
+Summary: Enable multi-tenancy to allow multiple customers to onboard and manage their resources independently.
+
 
 
 
