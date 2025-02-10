@@ -1,18 +1,17 @@
 import urllib.request
-import urllib.parse
 import urllib.error
-import boto3
 import re
+import boto3
 
-# S3 Configuration
-S3_BUCKET = "your-bucket-name"  # Replace with your actual S3 bucket name
-BASE_URL = "https://download.bls.gov/pub/time.series/"  # Root URL
+# AWS S3 Configuration
+S3_BUCKET = "your-bucket-name"  # Replace with your S3 bucket name
+BASE_URL = "https://download.bls.gov/pub/time.series/ce/"  # BLS Source Directory
 
 # Initialize S3 client
 s3_client = boto3.client("s3")
 
 def list_files_and_folders(url):
-    """ Fetch and parse directory listing from a web directory, handling subdirectories """
+    """ Fetch directory listing from BLS website """
     try:
         with urllib.request.urlopen(url) as response:
             html_content = response.read().decode("utf-8")
@@ -21,7 +20,7 @@ def list_files_and_folders(url):
         pattern = r'href="([^"]+)"'
         entries = re.findall(pattern, html_content)
 
-        # Filter out parent directory references
+        # Remove unnecessary references (parent directory, special chars)
         valid_entries = [entry for entry in entries if entry not in ("../", "/", "?")]
 
         return valid_entries
@@ -56,7 +55,7 @@ def upload_to_s3(s3_path, content):
         print(f"Failed to upload {s3_path}: {e}")
 
 def process_directory(base_url, relative_path=""):
-    """ Recursively process directories and upload files while preserving structure """
+    """ Recursively process directories and upload files """
     current_url = base_url + relative_path
     entries = list_files_and_folders(current_url)
 
@@ -65,14 +64,14 @@ def process_directory(base_url, relative_path=""):
         entry_relative_path = relative_path + entry
 
         if entry.endswith("/"):  # It's a subdirectory
-            process_directory(base_url, entry_relative_path)  # Recursively process subdirectory
+            process_directory(base_url, entry_relative_path)  # Recurse into subdirectory
         else:  # It's a file
             file_content = download_file(entry_url)
             if file_content:
                 upload_to_s3(entry_relative_path, file_content)
 
 def lambda_handler(event, context):
-    """ AWS Lambda main function """
+    """ AWS Lambda entry point """
     print(f"Starting download from {BASE_URL}")
     process_directory(BASE_URL)
     print("Download and upload completed.")
