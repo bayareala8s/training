@@ -1,28 +1,28 @@
 import urllib.request
 import urllib.error
+import os
 import re
-import boto3
+import time
 
-# AWS S3 Configuration
-S3_BUCKET = "your-bucket-name"  # Replace with your S3 bucket name
-BASE_URL = "https://download.bls.gov/pub/time.series/ce/"  # BLS Source Directory
-
-# Initialize S3 client
-s3_client = boto3.client("s3")
+# Base URL to scrape files from
+BASE_URL = "https://download.bls.gov/pub/time.series/ce/"
+LOCAL_SAVE_PATH = "./bls_ce_files/"  # Change this to your desired folder
 
 def list_files_and_folders(url):
-    """ Fetch directory listing from BLS website """
+    """ Fetch directory listing and extract file names """
     try:
+        print(f"Accessing: {url}")
         with urllib.request.urlopen(url) as response:
             html_content = response.read().decode("utf-8")
 
-        # Extract file and folder names using regex
+        # Extract href links that contain filenames
         pattern = r'href="([^"]+)"'
         entries = re.findall(pattern, html_content)
 
-        # Remove unnecessary references (parent directory, special chars)
-        valid_entries = [entry for entry in entries if entry not in ("../", "/", "?")]
+        # Filter out navigation links (../) and invalid entries
+        valid_entries = [entry for entry in entries if not entry.startswith("../")]
 
+        print(f"Found: {valid_entries}")  # Debugging
         return valid_entries
 
     except urllib.error.HTTPError as e:
@@ -35,43 +35,47 @@ def list_files_and_folders(url):
         print(f"Unexpected error while accessing {url}: {e}")
         return []
 
-def download_file(url):
-    """ Download file content """
+def download_file(url, save_path):
+    """ Download file and save it locally """
     try:
+        print(f"Downloading: {url}")
         with urllib.request.urlopen(url) as response:
-            return response.read()
+            file_content = response.read()
+        
+        # Ensure local directory exists
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        
+        # Save file locally
+        with open(save_path, "wb") as file:
+            file.write(file_content)
+        
+        print(f"Saved: {save_path}")
     except urllib.error.HTTPError as e:
         print(f"Failed to download {url} - HTTP Error {e.code}")
     except urllib.error.URLError as e:
         print(f"Failed to download {url} - URL Error: {e}")
-    return None
-
-def upload_to_s3(s3_path, content):
-    """ Upload file content to S3 """
-    try:
-        s3_client.put_object(Bucket=S3_BUCKET, Key=s3_path, Body=content)
-        print(f"Uploaded: {s3_path}")
-    except Exception as e:
-        print(f"Failed to upload {s3_path}: {e}")
 
 def process_directory(base_url, relative_path=""):
-    """ Recursively process directories and upload files """
+    """ Recursively process directories and download files locally """
     current_url = base_url + relative_path
     entries = list_files_and_folders(current_url)
 
     for entry in entries:
         entry_url = current_url + entry
-        entry_relative_path = relative_path + entry
+        entry_relative_path = os.path.join(relative_path, entry)  # Maintain directory structure
+        local_file_path = os.path.join(LOCAL_SAVE_PATH, entry_relative_path)
 
         if entry.endswith("/"):  # It's a subdirectory
+            time.sleep(1)  # Add delay to prevent rate limiting
             process_directory(base_url, entry_relative_path)  # Recurse into subdirectory
         else:  # It's a file
-            file_content = download_file(entry_url)
-            if file_content:
-                upload_to_s3(entry_relative_path, file_content)
+            download_file(entry_url, local_file_path)
 
-def lambda_handler(event, context):
-    """ AWS Lambda entry point """
+def main():
+    """ Main function to start downloading """
     print(f"Starting download from {BASE_URL}")
     process_directory(BASE_URL)
-    print("Download and upload completed.")
+    print("Download completed.")
+
+if __name__ == "__main__":
+    main()
