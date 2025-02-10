@@ -5,36 +5,31 @@ import boto3
 
 # S3 Configuration
 S3_BUCKET = "your-bucket-name"  # Replace with your actual S3 bucket name
-BASE_URL = "https://download.bls.gov/pub/time.series/"
+BASE_URL = "https://download.bls.gov/pub/time.series/"  # Root URL
 
-def list_files_and_dirs(url):
-    """ Fetch and parse directory listing for both files and subdirectories """
+def list_files_and_folders(url):
+    """ Fetch and parse directory listing from a web directory, handling subdirectories """
     try:
         with urllib.request.urlopen(url) as response:
             html_content = response.read().decode("utf-8")
 
-        file_list = []
-        dir_list = []
-
+        # Extract file and folder names
+        entries = []
         for line in html_content.split("\n"):
             if 'href="' in line:
                 start = line.find('href="') + len('href="')
                 end = line.find('"', start)
-                item = line[start:end]
+                name = line[start:end]
 
-                if item == "../":  # Ignore parent directory reference
-                    continue
-                
-                if item.endswith("/"):  # It's a subdirectory
-                    dir_list.append(item)
-                else:  # It's a file
-                    file_list.append(item)
+                # Ignore parent directory reference
+                if not name.startswith("../"):
+                    entries.append(name)
 
-        return file_list, dir_list
+        return entries
 
     except urllib.error.URLError as e:
-        print(f"Failed to fetch directory list from {url}: {e}")
-        return [], []
+        print(f"Failed to fetch directory listing from {url}: {e}")
+        return []
 
 def download_file(url):
     """ Download file content """
@@ -45,33 +40,33 @@ def download_file(url):
         print(f"Failed to download {url}: {e}")
         return None
 
-def upload_to_s3(file_key, content):
-    """ Upload file content to S3 preserving folder structure """
+def upload_to_s3(s3_path, content):
+    """ Upload file content to S3 """
     try:
         s3_client = boto3.client("s3")
-        s3_client.put_object(Bucket=S3_BUCKET, Key=file_key, Body=content)
-        print(f"Uploaded: {file_key}")
+        s3_client.put_object(Bucket=S3_BUCKET, Key=s3_path, Body=content)
+        print(f"Uploaded: {s3_path}")
     except Exception as e:
-        print(f"Failed to upload {file_key}: {e}")
+        print(f"Failed to upload {s3_path}: {e}")
 
-def traverse_and_download(base_url, prefix=""):
-    """ Recursively traverse directories and download files """
-    files, directories = list_files_and_dirs(base_url)
+def process_directory(base_url, relative_path=""):
+    """ Recursively process directories and upload files while preserving structure """
+    current_url = base_url + relative_path
+    entries = list_files_and_folders(current_url)
 
-    # Process files in the current directory
-    for file_name in files:
-        file_url = base_url + file_name
-        file_key = prefix + file_name  # Maintain directory structure in S3
+    for entry in entries:
+        entry_url = current_url + entry
+        entry_relative_path = relative_path + entry
 
-        file_content = download_file(file_url)
-        if file_content is not None:
-            upload_to_s3(file_key, file_content)
-
-    # Recursively process subdirectories
-    for directory in directories:
-        traverse_and_download(base_url + directory, prefix + directory)
+        if entry.endswith("/"):  # It's a subdirectory
+            process_directory(base_url, entry_relative_path)  # Recursively process subdirectory
+        else:  # It's a file
+            file_content = download_file(entry_url)
+            if file_content:
+                upload_to_s3(entry_relative_path, file_content)
 
 def lambda_handler(event, context):
-    """ AWS Lambda entry function """
-    traverse_and_download(BASE_URL)
-    print("All files downloaded and uploaded successfully.")
+    """ AWS Lambda main function """
+    print(f"Starting download from {BASE_URL}")
+    process_directory(BASE_URL)
+    print("Download and upload completed.")
