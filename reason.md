@@ -1,104 +1,167 @@
-Alteryx can connect to an **AWS SFTP (AWS Transfer Family)** server in multiple ways, depending on the use case and security requirements. Here are the key methods:
-
-### **1. Using the Download/Upload Tool in Alteryx**
-The **Download Tool** and **Upload Tool** in Alteryx can be used to transfer files to/from an AWS SFTP server.
-
-#### **Steps:**
-1. **Configure AWS SFTP Server:**
-   - Ensure the AWS Transfer Family service is set up and configured to support **SFTP**.
-   - Set up a user with appropriate IAM roles and permissions to access the SFTP server.
-   - Use either a password or an SSH key-based authentication.
-
-2. **Configure the Download/Upload Tool in Alteryx:**
-   - Drag the **Download Tool** (for fetching files) or **Upload Tool** (for sending files) onto the workflow.
-   - Set the **URL** to:  
-     ```
-     sftp://your-sftp-endpoint.amazonaws.com/path/to/file
-     ```
-   - Provide authentication:
-     - If using a **password**, enter credentials in the **Basic Authentication** section.
-     - If using **SSH key authentication**, select the appropriate private key file.
-
-3. **Run and Validate:**
-   - Execute the workflow to download/upload files.
-   - Check logs for connection success/failure messages.
+# Confluence Page Templates for Enterprise Architecture and Integration Services Group
 
 ---
 
-### **2. Using Alteryx Python Tool (Paramiko)**
-For more flexibility, the **Python Tool** in Alteryx can be used with the **Paramiko** library to automate SFTP file transfers.
+## **1. Enterprise Architecture Confluence Templates**
 
-#### **Steps:**
-1. **Install Dependencies:**
-   - In Alteryx, ensure that `paramiko` is installed. If not, install it using:
-     ```python
-     import pip
-     pip.main(['install', 'paramiko'])
-     ```
-
-2. **Use a Python Script to Connect & Transfer Files:**
-   ```python
-   import paramiko
-
-   # AWS SFTP Configuration
-   host = "your-sftp-endpoint.amazonaws.com"
-   port = 22
-   username = "your-username"
-   password = "your-password"  # Alternatively, use an SSH key
-   remote_file_path = "/path/to/remote/file.txt"
-   local_file_path = "C:/Alteryx/Data/file.txt"
-
-   # Establish SFTP Connection
-   transport = paramiko.Transport((host, port))
-   transport.connect(username=username, password=password)  # Or use pkey=paramiko.RSAKey.from_private_key_file('path_to_key')
-
-   sftp = paramiko.SFTPClient.from_transport(transport)
-
-   # Download File
-   sftp.get(remote_file_path, local_file_path)
-
-   # Close Connection
-   sftp.close()
-   transport.close()
-   print("File downloaded successfully!")
-   ```
-
-3. **Run the script using the Python Tool** in Alteryx.
+### **1.1 Enterprise Architecture Overview (Home Page)**
+**Title:** Enterprise Architecture Overview  
+**Content:**
+- **Introduction**: Brief description of the Enterprise Architecture (EA) space.
+- **Mission & Vision**: Summary of how EA aligns with business goals.
+- **Navigation Guide**: Quick links to key sections (standards, roadmaps, decisions, projects).
+- **Latest Updates**: Recent changes, announcements, and version history.
 
 ---
 
-### **3. Using Alteryx Connectors (SFTP or AWS Connectors)**
-- If your **Alteryx environment** includes **third-party connectors** (e.g., **Alteryx SFTP Connector** or AWS-specific connectors), you can use them for a GUI-based connection setup.
-- Some companies also develop **custom connectors** to work with AWS SFTP.
+### **1.2 Enterprise Architecture Vision & Strategy**
+**Title:** Enterprise Architecture Vision & Strategy  
+**Content:**
+- **Enterprise Vision & Business Objectives**
+- **Strategic Roadmap (Table/Timeline View)**
+- **Architecture Governance & Review Process**
+- **Key Initiatives and Programs** (Ongoing & Future)
 
 ---
 
-### **4. Using Alteryx and AWS CLI**
-If your system has **AWS CLI configured**, you can use **Alteryx Run Command Tool** to execute an AWS CLI command for file transfers.
-
-#### **Steps:**
-1. **Install & Configure AWS CLI**
-   - Install the AWS CLI and configure it with:
-     ```sh
-     aws configure
-     ```
-     Enter the **Access Key, Secret Key**, and **region**.
-
-2. **Use AWS CLI Commands in Alteryx Run Command Tool**
-   - Use the following AWS CLI command to transfer files:
-     ```sh
-     aws s3 cp s3://your-s3-bucket/file.txt C:/Alteryx/Data/
-     ```
-   - Integrate this command in the **Run Command Tool** in Alteryx.
+### **1.3 Architecture Standards & Best Practices**
+**Title:** Architecture Standards & Best Practices  
+**Content:**
+- **Technology Stack & Standards**
+- **Design & Development Best Practices**
+- **Security & Compliance Guidelines**
+- **Reference Architecture Patterns**
 
 ---
 
-### **Choosing the Right Approach**
-| Method | When to Use |
-|--------|------------|
-| **Download/Upload Tool** | Simple use cases with direct SFTP connection |
-| **Python Tool (Paramiko)** | More flexibility, automation, error handling |
-| **SFTP or AWS Connectors** | If your organization has access to licensed Alteryx connectors |
-| **AWS CLI & Run Command Tool** | If working with AWS S3 integration |
+### **1.4 Enterprise Architecture Domains**
+**Title:** [Architecture Domain Name] (Business/Data/Application/Technology)  
+**Content:**
+- **Overview of the Domain**
+- **Key Models & Frameworks Used**
+- **Processes, Policies & Guidelines**
+- **Diagrams & Visual Representation**
 
-Let me know if you need help with any specific implementation! 🚀
+---
+
+### **1.5 Enterprise Architecture Diagrams & Models**
+**Title:** Enterprise Architecture Diagrams & Models  
+**Content:**
+- **Enterprise-wide System Architecture** (Diagrams)
+- **Solution Architecture Models**
+- **Business Process Workflows**
+- **Data Flow & API Interaction Models**
+
+---
+
+### **1.6 Architecture Review & Decision Records**
+**Title:** Architecture Decision Log (ADR)  
+**Content:**
+- **Decision Title:**
+- **Date:**
+- **Decision Summary:**
+- **Problem Statement:**
+- **Considered Options & Rationale:**
+- **Final Decision & Justification:**
+- **Stakeholders & Reviewers:**
+
+---
+
+### **1.7 Active & Completed EA Projects**
+**Title:** [Project Name] – Architecture Overview  
+**Content:**
+- **Project Summary**
+- **Business Justification**
+- **Technical Architecture & Design**
+- **Implementation Phases**
+- **Lessons Learned**
+
+---
+
+### **1.8 Collaboration & Community**
+**Title:** Collaboration & Community Engagement  
+**Content:**
+- **Discussion Forums & Knowledge Sharing**
+- **Enterprise Architecture Office (EAO) Meeting Minutes**
+- **Feedback & Suggestions**
+
+---
+
+## **2. Integration Services Group Confluence Templates**
+
+### **2.1 Integration Services Overview (Home Page)**
+**Title:** Integration Services Overview  
+**Content:**
+- **Introduction to Integration Services**
+- **Purpose & Scope**
+- **Quick Links (APIs, Architecture, Best Practices, Support)**
+- **Latest Announcements**
+
+---
+
+### **2.2 Integration Strategy & Roadmap**
+**Title:** Integration Strategy & Roadmap  
+**Content:**
+- **Vision & Objectives**
+- **Technology Roadmap (Upcoming Features, Enhancements)**
+- **Key Integration Initiatives & Timeline**
+
+---
+
+### **2.3 Integration Architecture & Design Guidelines**
+**Title:** Integration Architecture & Design Guidelines  
+**Content:**
+- **Architecture Overview (ESB, API Gateway, Event-Driven, etc.)**
+- **Enterprise Integration Patterns**
+- **Security & Compliance**
+- **Best Practices for Integration Development**
+
+---
+
+### **2.4 API & Service Catalog**
+**Title:** [API/Service Name] – Documentation  
+**Content:**
+- **API Overview**
+- **Endpoints & Methods**
+- **Authentication & Security**
+- **Sample Requests & Responses**
+- **Versioning & Deprecation Policies**
+
+---
+
+### **2.5 Implementation, Testing & Deployment**
+**Title:** Integration Service Deployment Guide  
+**Content:**
+- **Integration Workflow & Orchestration Details**
+- **CI/CD Pipeline for Deployment**
+- **Testing Frameworks & Automation Strategy**
+- **Monitoring & Troubleshooting Guidelines**
+
+---
+
+### **2.6 Project Documentation & Change Management**
+**Title:** [Integration Project Name] Documentation  
+**Content:**
+- **Project Scope & Objectives**
+- **Integration Design & Architecture**
+- **Change Requests & Impact Analysis**
+- **Retrospective & Lessons Learned**
+
+---
+
+### **2.7 Support, Troubleshooting & Collaboration**
+**Title:** Integration Services Support & Troubleshooting Guide  
+**Content:**
+- **Common Issues & Resolutions**
+- **Discussion Forum for Developers**
+- **Escalation Paths & Support Contacts**
+
+---
+
+### **Customization & Best Practices**
+- **Use Page Templates for Consistency**
+- **Tag Pages with Labels (e.g., #API, #Architecture, #Governance)**
+- **Link to External Tools (Jira, ServiceNow, Monitoring Dashboards)**
+
+These structured Confluence templates provide a standardized approach to documenting Enterprise Architecture and Integration Services while enabling seamless collaboration across teams. Let me know if you need additional modifications or enhancements!
+
