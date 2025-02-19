@@ -1,44 +1,73 @@
-Here’s how you can format the **Business Value** section in Jira:  
+### **Jira Story: Revert Changes in Production Using GitLab**  
+
+**Project:** _[Your Project Name]_  
+**Issue Type:** Story  
+**Priority:** High  
+**Assignee:** _[Your Name or Team]_  
+**Reporter:** _[Your Name]_  
+**Labels:** rollback, production, GitLab, CI/CD  
 
 ---
 
-### **Jira Ticket: Business Value Section**  
-
-**Business Value:**  
-Implementing Terraform validation for AWS resource names provides the following benefits:  
-
-#### **1. Ensures Compliance & Governance**  
-✅ Enforces standardized **naming conventions** for AWS resources (S3, EC2, Lambda).  
-✅ Prevents non-compliant resource names that may **violate internal policies** or **industry regulations**.  
-
-#### **2. Reduces Operational Overhead**  
-✅ Eliminates **manual name validation**, reducing human errors and misconfigurations.  
-✅ Automates **naming policy enforcement**, ensuring consistency across environments.  
-
-#### **3. Improves Security & Access Control**  
-✅ Restricts AWS resource creation to **pre-approved names**, enhancing **security & access control**.  
-✅ Ensures **auditability** by enforcing structured and predictable resource naming.  
-
-#### **4. Streamlines CI/CD & Infrastructure Automation**  
-✅ Can be **integrated into CI/CD pipelines** to prevent misconfigured deployments.  
-✅ Ensures that all deployed infrastructure follows **naming best practices**, reducing pipeline failures.  
-
-#### **5. Enhances Resource Organization & Scalability**  
-✅ Simplifies **resource tracking & management** across AWS environments.  
-✅ Supports **multi-team cloud operations** by enforcing consistent naming conventions.  
-
-#### **6. Improves Troubleshooting & Cost Management**  
-✅ Reduces confusion during **troubleshooting** by ensuring predictable resource names.  
-✅ Prevents unnecessary duplication of resources, helping with **cost optimization**.  
+### **Summary:**  
+Revert the recent changes in the production environment using GitLab to restore the last stable version.
 
 ---
 
-### **Impact on Business**  
-By implementing Terraform validation for AWS resource names, the company can achieve:  
-- **Higher operational efficiency** with reduced manual intervention.  
-- **Better security and governance** by enforcing naming rules.  
-- **Lower cloud costs** by avoiding unnecessary or duplicate resource provisioning.  
+### **Description:**  
+A recent deployment introduced changes that need to be rolled back in the production environment. This story outlines the steps to revert the changes using GitLab.  
+
+**Acceptance Criteria:**  
+- The production branch (`prod` or `main`) is restored to the last stable version.  
+- All impacted services are reverted and functional.  
+- The rollback is tested to confirm stability.  
+- CI/CD pipeline successfully deploys the reverted changes.  
 
 ---
 
-This can be added as the **Business Value** section under the **Jira ticket description**. Let me know if you need a different format!
+### **Steps to Revert Changes:**  
+1. **Identify the Problematic Commit or Version**  
+   - Review the recent commit history in GitLab (`Repository > Commits`).  
+   - Identify the commit hash or tag of the last stable deployment.  
+
+2. **Revert Using GitLab UI (If Applicable)**  
+   - Navigate to the commit.  
+   - Click **Revert** and merge the changes back into `prod`.  
+   - Verify the deployment.  
+
+3. **Revert Using Git Commands (If Needed)**  
+   - Checkout the `prod` branch:  
+     ```bash
+     git checkout prod
+     ```  
+   - Reset to the stable commit:  
+     ```bash
+     git reset --hard <commit-hash>
+     git push --force
+     ```  
+   - Manually trigger the CI/CD pipeline if it doesn’t auto-deploy.  
+
+4. **Rollback Using GitLab CI/CD (If Configured)**  
+   - Navigate to **CI/CD > Pipelines** in GitLab.  
+   - Identify the last successful deployment.  
+   - Trigger a rollback job, if available.  
+
+5. **Validate Production Environment**  
+   - Test the application to confirm that the rollback was successful.  
+   - Verify logs and monitoring dashboards for any issues.  
+   - Confirm with stakeholders before closing the ticket.  
+
+---
+
+### **Dependencies:**  
+- Access to GitLab repository and production environment.  
+- Knowledge of the last stable commit or tag.  
+- CI/CD pipeline configuration for deployment.  
+
+---
+
+### **Additional Notes:**  
+- If the rollback causes any issues, consider restoring a backup or applying a hotfix.  
+- Document lessons learned to prevent similar incidents in the future.  
+
+---
