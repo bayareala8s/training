@@ -1,198 +1,116 @@
-{
-  "request_id": "REQ-20240301-001",
-  "request_status": "IN_PROGRESS",
-  "timestamp": "2024-03-01T12:00:00Z",
-  "environments": {
-    "development": {
-      "sftp_sources": [
-        {
-          "name": "Dev_SFTP_Server",
-          "host": "dev-sftp.example.com",
-          "ip_address": "192.168.1.10",
-          "dns": "dev-sftp.example.com",
-          "port": 22,
-          "username": "dev_user",
-          "home_directory": "/home/dev_user",
-          "supported_protocols": ["SFTP", "SCP"],
-          "authentication": {
-            "type": "private_key",
-            "private_key_path": "/path/to/dev/private_key.pem",
-            "passphrase": ""
-          },
-          "business_contact": {
-            "name": "John Doe",
-            "email": "john.doe@company.com",
-            "phone": "+1-555-123-4567"
-          },
-          "technical_contact": {
-            "name": "Jane Smith",
-            "email": "jane.smith@company.com",
-            "phone": "+1-555-987-6543"
-          },
-          "external_vendor": {
-            "vendor_name": "VendorX Inc.",
-            "contact_person": "Alice Johnson",
-            "email": "alice.johnson@vendorx.com",
-            "phone": "+1-555-333-2222",
-            "service_type": "Managed SFTP Services",
-            "contract_expiry": "2025-06-30"
-          },
-          "sns_notifications": {
-            "topic_arn": "arn:aws:sns:us-east-1:123456789012:Dev_File_Transfer_Alerts",
-            "events": ["TRANSFER_SUCCESS", "TRANSFER_FAILURE", "GENERAL_ALERT"],
-            "subscribers": [
-              {
-                "name": "John Doe",
-                "email": "john.doe@company.com",
-                "phone": "+1-555-123-4567",
-                "role": "Business"
-              },
-              {
-                "name": "Jane Smith",
-                "email": "jane.smith@company.com",
-                "phone": "+1-555-987-6543",
-                "role": "Technical"
-              }
-            ]
-          },
-          "file_count": 3,
-          "remote_directories": [
-            {
-              "path": "/home/dev_user/source/path1/",
-              "files": [
-                {
-                  "name": "dev_file1.csv",
-                  "size_limit_mb": 5,
-                  "transfer_status": "COMPLETED"
-                },
-                {
-                  "name": "dev_file2.log",
-                  "size_limit_mb": 10,
-                  "transfer_status": "IN_PROGRESS"
-                }
-              ]
-            }
-          ],
-          "local_download_directory": "/local/dev/sftp/",
-          "transfer_settings": {
-            "retry_attempts": 2,
-            "timeout_seconds": 20,
-            "delete_after_transfer": false
-          }
-        }
-      ],
-      "s3_targets": [
-        {
-          "name": "Dev_S3_Target",
-          "bucket_name": "dev-target-bucket",
-          "region": "us-west-1",
-          "authentication": {
-            "type": "iam_role",
-            "role_arn": "arn:aws:iam::123456789012:role/DevS3WriteRole"
-          },
-          "business_contact": {
-            "name": "James Wilson",
-            "email": "james.wilson@company.com",
-            "phone": "+1-555-666-7777"
-          },
-          "technical_contact": {
-            "name": "Emily Johnson",
-            "email": "emily.johnson@company.com",
-            "phone": "+1-555-888-9999"
-          },
-          "external_vendor": {
-            "vendor_name": "CloudStorage Co.",
-            "contact_person": "David Brown",
-            "email": "david.brown@cloudstorage.com",
-            "phone": "+1-555-777-8888",
-            "service_type": "Cloud Storage & Backup",
-            "contract_expiry": "2026-12-15"
-          },
-          "sns_notifications": {
-            "topic_arn": "arn:aws:sns:us-west-1:123456789012:Dev_S3_Transfer_Alerts",
-            "events": ["TRANSFER_SUCCESS", "TRANSFER_FAILURE"],
-            "subscribers": [
-              {
-                "name": "James Wilson",
-                "email": "james.wilson@company.com",
-                "phone": "+1-555-666-7777",
-                "role": "Business"
-              },
-              {
-                "name": "Emily Johnson",
-                "email": "emily.johnson@company.com",
-                "phone": "+1-555-888-9999",
-                "role": "Technical"
-              }
-            ]
-          },
-          "destination_prefixes": [
-            {
-              "prefix": "processed/dev/"
-            }
-          ],
-          "transfer_settings": {
-            "retry_attempts": 2,
-            "timeout_seconds": 20,
-            "overwrite_existing": true
-          }
-        }
-      ],
-      "iam_policies": {
-        "sns_publish_policy": {
-          "policy_name": "SNSPublishPolicy",
-          "policy_arn": "arn:aws:iam::123456789012:policy/SNSPublishPolicy",
-          "permissions": [
-            "sns:Publish",
-            "sns:Subscribe",
-            "sns:ListSubscriptionsByTopic"
-          ],
-          "resources": [
-            "arn:aws:sns:us-east-1:123456789012:Dev_File_Transfer_Alerts",
-            "arn:aws:sns:us-west-1:123456789012:Dev_S3_Transfer_Alerts"
-          ]
-        },
-        "s3_access_policy": {
-          "policy_name": "S3ReadWritePolicy",
-          "policy_arn": "arn:aws:iam::123456789012:policy/S3ReadWritePolicy",
-          "permissions": [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject",
-            "s3:ListBucket"
-          ],
-          "resources": [
-            "arn:aws:s3:::dev-source-bucket/*",
-            "arn:aws:s3:::dev-target-bucket/*"
-          ]
-        },
-        "lambda_execution_role": {
-          "policy_name": "LambdaExecutionPolicy",
-          "policy_arn": "arn:aws:iam::123456789012:policy/LambdaExecutionPolicy",
-          "permissions": [
-            "lambda:InvokeFunction",
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
-          ],
-          "resources": [
-            "arn:aws:lambda:us-east-1:123456789012:function:Dev_File_Copy",
-            "arn:aws:lambda:us-east-1:123456789012:function:Dev_S3_File_Copy"
-          ]
-        },
-        "eventbridge_permissions": {
-          "policy_name": "EventBridgeInvokeLambda",
-          "policy_arn": "arn:aws:iam::123456789012:policy/EventBridgeInvokeLambda",
-          "permissions": [
-            "events:PutRule",
-            "events:PutTargets",
-            "lambda:InvokeFunction"
-          ],
-          "resources": [
-            "arn:aws:events:us-east-1:123456789012:rule/Dev_FileTransferRule"
-          ]
-        }
-      }
-    }
-  }
-}
+Here is a **detailed description** for each JSON field, explaining its purpose and significance in the **file transfer and monitoring system**.
+
+---
+
+## **Top-Level Fields**
+| Field Name      | Type     | Description |
+|---------------|---------|-------------|
+| `request_id` | `string` | Unique identifier for the file transfer request (e.g., `REQ-20240301-001`). |
+| `request_status` | `string` | Status of the file transfer request (`PENDING`, `IN_PROGRESS`, `COMPLETED`, `FAILED`). |
+| `timestamp` | `string` | The date and time when the request was initiated (in **ISO 8601 format**: `YYYY-MM-DDTHH:MM:SSZ`). |
+| `environments` | `object` | Contains details of different deployment environments (`development`, `staging`, `production`). |
+
+---
+
+## **Environment-Level Fields**
+Each environment (`development`, `staging`, `production`) contains configurations for SFTP/S3 **sources** and **targets**.
+
+### **SFTP Source Fields**
+| Field Name      | Type     | Description |
+|---------------|---------|-------------|
+| `name` | `string` | Friendly name for the SFTP server (e.g., `Dev_SFTP_Server`). |
+| `host` | `string` | Hostname or IP address of the SFTP server (e.g., `dev-sftp.example.com`). |
+| `ip_address` | `string` | The direct IP address of the SFTP server. |
+| `dns` | `string` | Fully Qualified Domain Name (FQDN) of the SFTP server. |
+| `port` | `integer` | The port number for SFTP access (**default: 22**). |
+| `username` | `string` | The username for SFTP authentication. |
+| `home_directory` | `string` | The **base directory** on the SFTP server where files are located. |
+| `supported_protocols` | `array` | List of **supported file transfer protocols** (e.g., `["SFTP", "SCP"]`). |
+| `authentication` | `object` | Authentication settings for SFTP. |
+| `authentication.type` | `string` | Type of authentication (`private_key`, `password`). |
+| `authentication.private_key_path` | `string` | Path to the private key file (if `type` is `private_key`). |
+| `authentication.passphrase` | `string` | Passphrase for the private key (if required). |
+| `business_contact` | `object` | Contact details of the **business owner** responsible for this SFTP transfer. |
+| `technical_contact` | `object` | Contact details of the **technical support person** responsible for troubleshooting. |
+| `external_vendor` | `object` | Information about an **external vendor** managing the SFTP service. |
+| `sns_notifications` | `object` | SNS configuration for **real-time alerts** on file transfers. |
+| `file_count` | `integer` | Number of files expected to be transferred. |
+| `remote_directories` | `array` | List of directories on the SFTP server where files are located. |
+| `remote_directories.path` | `string` | Directory path on the SFTP server. |
+| `remote_directories.files` | `array` | List of files within the directory. |
+| `remote_directories.files.name` | `string` | Name of the file or pattern (`*.csv`). |
+| `remote_directories.files.size_limit_mb` | `integer` | Maximum file size in MB. |
+| `remote_directories.files.transfer_status` | `string` | Status of file transfer (`PENDING`, `IN_PROGRESS`, `COMPLETED`, `FAILED`). |
+| `local_download_directory` | `string` | **Local directory** where files will be temporarily stored before transfer. |
+| `transfer_settings` | `object` | Settings for retrying and handling transfers. |
+| `transfer_settings.retry_attempts` | `integer` | Number of retry attempts for failed transfers. |
+| `transfer_settings.timeout_seconds` | `integer` | Timeout period (in seconds) for file transfers. |
+| `transfer_settings.delete_after_transfer` | `boolean` | Whether files should be deleted after successful transfer. |
+
+---
+
+### **S3 Target Fields**
+| Field Name      | Type     | Description |
+|---------------|---------|-------------|
+| `name` | `string` | Friendly name for the S3 bucket target (e.g., `Dev_S3_Target`). |
+| `bucket_name` | `string` | AWS **S3 bucket** where files will be stored. |
+| `region` | `string` | AWS region where the S3 bucket is located. |
+| `authentication` | `object` | IAM authentication settings for accessing S3. |
+| `authentication.type` | `string` | Authentication type (`iam_role`, `access_key`). |
+| `authentication.role_arn` | `string` | IAM Role ARN with permissions to write to the S3 bucket. |
+| `business_contact` | `object` | Business contact for S3 file transfers. |
+| `technical_contact` | `object` | Technical support contact for S3 issues. |
+| `external_vendor` | `object` | Information about an **external vendor** providing S3 storage services. |
+| `sns_notifications` | `object` | SNS notification configuration for **S3 file transfers**. |
+| `destination_prefixes` | `array` | List of **folders (prefixes)** inside the S3 bucket where files will be uploaded. |
+| `destination_prefixes.prefix` | `string` | S3 prefix for organizing files (e.g., `processed/dev/`). |
+| `transfer_settings` | `object` | Settings for retrying and handling S3 transfers. |
+| `transfer_settings.retry_attempts` | `integer` | Number of retry attempts. |
+| `transfer_settings.timeout_seconds` | `integer` | Timeout period (in seconds). |
+| `transfer_settings.overwrite_existing` | `boolean` | Whether existing files in S3 should be overwritten. |
+
+---
+
+### **SNS Notifications Fields**
+| Field Name      | Type     | Description |
+|---------------|---------|-------------|
+| `sns_notifications.topic_arn` | `string` | AWS SNS **Topic ARN** used for notifications. |
+| `sns_notifications.events` | `array` | List of events triggering SNS (`TRANSFER_SUCCESS`, `TRANSFER_FAILURE`, `GENERAL_ALERT`). |
+| `sns_notifications.subscribers` | `array` | List of **subscribers** receiving notifications. |
+| `sns_notifications.subscribers.name` | `string` | Name of the subscriber. |
+| `sns_notifications.subscribers.email` | `string` | Email address of the subscriber. |
+| `sns_notifications.subscribers.phone` | `string` | Phone number for receiving alerts. |
+| `sns_notifications.subscribers.role` | `string` | Subscriber’s role (`Business`, `Technical`). |
+
+---
+
+### **IAM Policies**
+| Field Name      | Type     | Description |
+|---------------|---------|-------------|
+| `iam_policies` | `object` | IAM policies assigned for security and access control. |
+| `sns_publish_policy` | `object` | IAM policy for **publishing SNS notifications**. |
+| `s3_access_policy` | `object` | IAM policy for **reading/writing S3 files**. |
+| `lambda_execution_role` | `object` | IAM policy for **executing AWS Lambda functions**. |
+| `eventbridge_permissions` | `object` | IAM policy for **invoking AWS Lambda via EventBridge**. |
+
+---
+
+### **IAM Policy Fields**
+| Field Name      | Type     | Description |
+|---------------|---------|-------------|
+| `policy_name` | `string` | Name of the IAM policy. |
+| `policy_arn` | `string` | AWS IAM Policy ARN. |
+| `permissions` | `array` | List of IAM actions allowed (`sns:Publish`, `s3:PutObject`, `lambda:InvokeFunction`). |
+| `resources` | `array` | AWS resources the IAM policy applies to. |
+
+---
+
+### **Final Thoughts**
+This JSON structure:
+✅ **Supports file transfers across SFTP and S3**.  
+✅ **Provides IAM security with granular permissions**.  
+✅ **Enables real-time notifications via SNS**.  
+✅ **Defines clear business, technical, and vendor contacts**.  
+✅ **Tracks transfer progress at both file and request levels**.  
+
+Would you like to **extend this with AWS Step Functions for workflow automation**? 🚀
