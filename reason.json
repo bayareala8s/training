@@ -1,0 +1,198 @@
+{
+  "request_id": "REQ-20240301-001",
+  "request_status": "IN_PROGRESS",
+  "timestamp": "2024-03-01T12:00:00Z",
+  "environments": {
+    "development": {
+      "sftp_sources": [
+        {
+          "name": "Dev_SFTP_Server",
+          "host": "dev-sftp.example.com",
+          "ip_address": "192.168.1.10",
+          "dns": "dev-sftp.example.com",
+          "port": 22,
+          "username": "dev_user",
+          "home_directory": "/home/dev_user",
+          "supported_protocols": ["SFTP", "SCP"],
+          "authentication": {
+            "type": "private_key",
+            "private_key_path": "/path/to/dev/private_key.pem",
+            "passphrase": ""
+          },
+          "business_contact": {
+            "name": "John Doe",
+            "email": "john.doe@company.com",
+            "phone": "+1-555-123-4567"
+          },
+          "technical_contact": {
+            "name": "Jane Smith",
+            "email": "jane.smith@company.com",
+            "phone": "+1-555-987-6543"
+          },
+          "external_vendor": {
+            "vendor_name": "VendorX Inc.",
+            "contact_person": "Alice Johnson",
+            "email": "alice.johnson@vendorx.com",
+            "phone": "+1-555-333-2222",
+            "service_type": "Managed SFTP Services",
+            "contract_expiry": "2025-06-30"
+          },
+          "sns_notifications": {
+            "topic_arn": "arn:aws:sns:us-east-1:123456789012:Dev_File_Transfer_Alerts",
+            "events": ["TRANSFER_SUCCESS", "TRANSFER_FAILURE", "GENERAL_ALERT"],
+            "subscribers": [
+              {
+                "name": "John Doe",
+                "email": "john.doe@company.com",
+                "phone": "+1-555-123-4567",
+                "role": "Business"
+              },
+              {
+                "name": "Jane Smith",
+                "email": "jane.smith@company.com",
+                "phone": "+1-555-987-6543",
+                "role": "Technical"
+              }
+            ]
+          },
+          "file_count": 3,
+          "remote_directories": [
+            {
+              "path": "/home/dev_user/source/path1/",
+              "files": [
+                {
+                  "name": "dev_file1.csv",
+                  "size_limit_mb": 5,
+                  "transfer_status": "COMPLETED"
+                },
+                {
+                  "name": "dev_file2.log",
+                  "size_limit_mb": 10,
+                  "transfer_status": "IN_PROGRESS"
+                }
+              ]
+            }
+          ],
+          "local_download_directory": "/local/dev/sftp/",
+          "transfer_settings": {
+            "retry_attempts": 2,
+            "timeout_seconds": 20,
+            "delete_after_transfer": false
+          }
+        }
+      ],
+      "s3_targets": [
+        {
+          "name": "Dev_S3_Target",
+          "bucket_name": "dev-target-bucket",
+          "region": "us-west-1",
+          "authentication": {
+            "type": "iam_role",
+            "role_arn": "arn:aws:iam::123456789012:role/DevS3WriteRole"
+          },
+          "business_contact": {
+            "name": "James Wilson",
+            "email": "james.wilson@company.com",
+            "phone": "+1-555-666-7777"
+          },
+          "technical_contact": {
+            "name": "Emily Johnson",
+            "email": "emily.johnson@company.com",
+            "phone": "+1-555-888-9999"
+          },
+          "external_vendor": {
+            "vendor_name": "CloudStorage Co.",
+            "contact_person": "David Brown",
+            "email": "david.brown@cloudstorage.com",
+            "phone": "+1-555-777-8888",
+            "service_type": "Cloud Storage & Backup",
+            "contract_expiry": "2026-12-15"
+          },
+          "sns_notifications": {
+            "topic_arn": "arn:aws:sns:us-west-1:123456789012:Dev_S3_Transfer_Alerts",
+            "events": ["TRANSFER_SUCCESS", "TRANSFER_FAILURE"],
+            "subscribers": [
+              {
+                "name": "James Wilson",
+                "email": "james.wilson@company.com",
+                "phone": "+1-555-666-7777",
+                "role": "Business"
+              },
+              {
+                "name": "Emily Johnson",
+                "email": "emily.johnson@company.com",
+                "phone": "+1-555-888-9999",
+                "role": "Technical"
+              }
+            ]
+          },
+          "destination_prefixes": [
+            {
+              "prefix": "processed/dev/"
+            }
+          ],
+          "transfer_settings": {
+            "retry_attempts": 2,
+            "timeout_seconds": 20,
+            "overwrite_existing": true
+          }
+        }
+      ],
+      "iam_policies": {
+        "sns_publish_policy": {
+          "policy_name": "SNSPublishPolicy",
+          "policy_arn": "arn:aws:iam::123456789012:policy/SNSPublishPolicy",
+          "permissions": [
+            "sns:Publish",
+            "sns:Subscribe",
+            "sns:ListSubscriptionsByTopic"
+          ],
+          "resources": [
+            "arn:aws:sns:us-east-1:123456789012:Dev_File_Transfer_Alerts",
+            "arn:aws:sns:us-west-1:123456789012:Dev_S3_Transfer_Alerts"
+          ]
+        },
+        "s3_access_policy": {
+          "policy_name": "S3ReadWritePolicy",
+          "policy_arn": "arn:aws:iam::123456789012:policy/S3ReadWritePolicy",
+          "permissions": [
+            "s3:GetObject",
+            "s3:PutObject",
+            "s3:DeleteObject",
+            "s3:ListBucket"
+          ],
+          "resources": [
+            "arn:aws:s3:::dev-source-bucket/*",
+            "arn:aws:s3:::dev-target-bucket/*"
+          ]
+        },
+        "lambda_execution_role": {
+          "policy_name": "LambdaExecutionPolicy",
+          "policy_arn": "arn:aws:iam::123456789012:policy/LambdaExecutionPolicy",
+          "permissions": [
+            "lambda:InvokeFunction",
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ],
+          "resources": [
+            "arn:aws:lambda:us-east-1:123456789012:function:Dev_File_Copy",
+            "arn:aws:lambda:us-east-1:123456789012:function:Dev_S3_File_Copy"
+          ]
+        },
+        "eventbridge_permissions": {
+          "policy_name": "EventBridgeInvokeLambda",
+          "policy_arn": "arn:aws:iam::123456789012:policy/EventBridgeInvokeLambda",
+          "permissions": [
+            "events:PutRule",
+            "events:PutTargets",
+            "lambda:InvokeFunction"
+          ],
+          "resources": [
+            "arn:aws:events:us-east-1:123456789012:rule/Dev_FileTransferRule"
+          ]
+        }
+      }
+    }
+  }
+}
