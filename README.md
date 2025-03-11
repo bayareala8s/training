@@ -22,3 +22,12 @@ Future Enhancements
 ✅ Implement S3 Event Triggers to auto-trigger workflows on JSON uploads
 ✅ Introduce retry logic in Lambda for transient issues
 ✅ Develop a GUI Interface for non-technical users to submit JSON configurations easily
+
+
+Architecture Overview
+Step 1: Customer submits a JSON configuration for their file transfer request.
+Step 2: AWS Lambda writes the request details to DynamoDB with a unique request ID.
+Step 3: The system updates the request status during different stages (e.g., Pending, In Progress, Completed, or Failed).
+Step 4: Customers query the status via an API Gateway endpoint.
+Step 5: SNS sends status notifications for completed/failed requests.
+
