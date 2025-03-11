@@ -17,3 +17,8 @@ Key Benefits of This Approach
 ✅ Centralized JSON files simplify customer onboarding
 ✅ Reduces manual Terraform changes — just update the JSON file
 
+Future Enhancements
+✅ Add support for AWS Step Functions to orchestrate complex multi-step workflows
+✅ Implement S3 Event Triggers to auto-trigger workflows on JSON uploads
+✅ Introduce retry logic in Lambda for transient issues
+✅ Develop a GUI Interface for non-technical users to submit JSON configurations easily
