@@ -10,3 +10,10 @@ Terraform Reads JSON Data dynamically.
 Terraform creates resources dynamically based on the JSON data.
 CloudWatch Alarms, SNS Notifications, and other components are provisioned as needed.
 
+
+Key Benefits of This Approach
+✅ Highly scalable with for_each to manage multiple configurations
+✅ JSON schema ensures consistency across environments
+✅ Centralized JSON files simplify customer onboarding
+✅ Reduces manual Terraform changes — just update the JSON file
+
