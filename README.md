@@ -15,6 +15,15 @@ Best regards,
 [Your Position]  
 [Your Contact Information]  
 
+Proposed Architecture
+Key Components
+AWS Fargate: Serverless container orchestration for the Syslog Receiver.
+Amazon Kinesis Data Streams: Real-time ingestion pipeline for streaming logs.
+Kinesis Data Analytics: Provides real-time data filtering, anomaly detection, and transformation.
+Amazon S3: Acts as a data lake for raw log storage and archival.
+Amazon CloudWatch: Captures logs, metrics, and alerts for comprehensive monitoring.
+Amazon SNS: Ensures immediate notification in case of processing failures.
+
 
 Solution Options
 AWS Fargate with Amazon Kinesis Data Streams (Recommended Solution)
