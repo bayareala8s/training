@@ -173,6 +173,17 @@ Best regards,
 [Your Contact Information]<img width="779" alt="Screenshot 2025-03-12 at 9 00 28 AM" src="https://github.com/user-attachments/assets/901e4106-460f-43b1-8c75-f56d87592dac" />
 
 
+Full Component List
+✅ Networking: VPC, Subnets, Security Groups
+✅ AWS Fargate: ECS Cluster, Task Definition, Service
+✅ Container Services: ECR for image storage, Dockerized Syslog Receiver
+✅ Real-Time Streaming: Kinesis Data Streams, Kinesis Data Analytics
+✅ Storage: Amazon S3 (Raw Logs), Amazon Redshift (Analytics)
+✅ Monitoring & Alerts: CloudWatch, SNS
+✅ Security: KMS Encryption, IAM Roles
+✅ Automation: Terraform for Infrastructure as Code
+
+
 
 
 
