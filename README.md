@@ -23,6 +23,21 @@ AWS Lambda with API Gateway
 AWS Transfer Family (SFTP) + Amazon S3
 Direct Integration with Amazon Kinesis Producer Library (KPL)
 
+The Challenge
+Imagine a scenario where Appian Cloud starts sending a sudden surge of log data due to unexpected system behavior or increased user activity. With traditional architectures, scaling the infrastructure manually to accommodate this increase can lead to delays, data loss, and operational overhead.
+
+Additionally, managing EC2 instances requires constant patching, monitoring, and scaling, which can increase risks during peak loads. Meanwhile, other solutions like Lambda with API Gateway introduce payload size limits, and AWS Transfer Family is better suited for batch uploads rather than continuous data streams.
+
+The Solution
+By leveraging AWS Fargate with Amazon Kinesis Data Streams, we achieve a robust solution that:
+
+✅ Scales Automatically: AWS Fargate handles container scaling, ensuring no data loss during traffic spikes.
+✅ Ingests Data in Real-Time: Amazon Kinesis processes logs instantly, allowing near-instantaneous insights.
+✅ Minimizes Maintenance Overhead: With no servers to manage, the architecture reduces operational burden.
+✅ Ensures Secure Data Flow: Fargate integrates seamlessly with IAM roles, ensuring fine-grained access control.
+
+This approach eliminates manual intervention during unexpected traffic spikes, significantly reducing the risk of data loss or delays.
+
 
 
 
