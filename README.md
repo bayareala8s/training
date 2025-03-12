@@ -16,3 +16,13 @@ Best regards,
 [Your Contact Information]  
 
 
+Solution Options
+AWS Fargate with Amazon Kinesis Data Streams (Recommended Solution)
+Amazon EC2-based Syslog Receiver
+AWS Lambda with API Gateway
+AWS Transfer Family (SFTP) + Amazon S3
+Direct Integration with Amazon Kinesis Producer Library (KPL)
+
+
+
+
