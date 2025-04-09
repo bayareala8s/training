@@ -1,27 +1,29 @@
-Kinesis Data Streams serves as the real-time transport layer, moving log events from the Syslog receiver (Fargate container) to Amazon S3 via Firehose — without loss, delay, or manual scaling.
+Firehose delivers syslog data from Amazon Kinesis Data Streams into an S3 staging bucket for storage, processing, or further analytics.
 
-he Fargate-based syslog receiver uses the AWS SDK (boto3) to call:
+Kinesis Data Firehose acts as a delivery pipeline between Kinesis Data Streams and Amazon S3.
 
-python
-Copy
-Edit
-put_record(StreamName="AppianLogsStream", Data=log_json, PartitionKey="syslog")
+Firehose is Configured with a Kinesis Source
+The Firehose delivery stream is linked to your existing Kinesis Data Stream (e.g., AppianLogsStream).
 
-KDS splits incoming data across “shards.”
+It polls Kinesis for new records using an IAM role.
 
-Each shard can handle:
+Buffering and Batching
+Firehose buffers incoming data using two parameters:
 
-1 MB/sec ingress
+Buffer size (e.g., 5 MB)
 
-2 MB/sec egress
+Buffer interval (e.g., 300 seconds)
 
-1000 records/sec
+It writes to S3 when either condition is met, whichever happens first.
 
-Delivery via Firehose
-You create a Kinesis Firehose that:
-
-Sources data from KDS
-
-Buffers data (e.g., every 5 MB or 300 seconds)
+Example: If 5 MB of logs arrive in 60 seconds, the batch is flushed immediately.
 
 Writes to Amazon S3
+The data is stored in compressed or raw format (depending on config).
+
+Files are organized by date:
+
+bash
+Copy
+Edit
+s3://appian-log-staging-bucket/YYYY/MM/DD/HH/appian-logs.gz
