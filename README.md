@@ -1,10 +1,13 @@
-Hi [Team / All],
+![image](https://github.com/user-attachments/assets/58a267e1-14b5-4d47-803d-957661d61424)
 
-I've completed the architecture design, networking components, security controls, and a comprehensive summary for the production-grade log streaming solution from Appian Cloud to AWS (leveraging Fargate, Kinesis, Firehose, and S3).
 
-This design is aligned with AWS best practices and addresses key pillars required for ARC review — including scalability, reliability, security, and observability.
 
-We are ready to present this to the ARC team for approval.
-Kindly review the attached materials and share any feedback or suggestions.
+Here is your Cost Forecast Chart showing projected monthly costs over 12 months as log volume grows from 100 GB to 650 GB per month.
 
-Additionally, I’m happy to build a POC using Terraform to validate the approach — this would likely require half a sprint to complete and test end-to-end.
+📈 What It Shows:
+Individual service costs: S3, Firehose, Kinesis, CloudWatch
+
+Total estimated cost increases month-over-month
+
+Designed for ARC or budget planning discussions
+
