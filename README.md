@@ -1,17 +1,17 @@
-![image](https://github.com/user-attachments/assets/58a267e1-14b5-4d47-803d-957661d61424)
+Step 4: Define Required Slots (Fields)
+Add the following slots to the intent with appropriate prompts:
 
-
-![image](https://github.com/user-attachments/assets/605054e2-8d94-4e81-8421-c67869f30b00)
-
-
-
-
-Here is your Cost Forecast Chart showing projected monthly costs over 12 months as log volume grows from 100 GB to 650 GB per month.
-
-📈 What It Shows:
-Individual service costs: S3, Firehose, Kinesis, CloudWatch
-
-Total estimated cost increases month-over-month
-
-Designed for ARC or budget planning discussions
-
+Slot Name	Type	Prompt
+customerId	Amazon.AlphaNumeric	What is the customer ID?
+environment	Custom (dev/test/prod)	What environment is this for?
+workflowId	Custom (sftp-to-s3, s3-to-sftp)	What is the workflow type?
+sourceType	Literal (SFTP)	What is the source type?
+sourceHost	Amazon.AlphaNumeric	Enter the source SFTP hostname
+sourcePort	Amazon.Number	What is the SFTP port?
+sourceUsername	Amazon.AlphaNumeric	What is the SFTP username?
+authMethod	Custom (ssh_key, password)	What is the authentication method?
+authKey	Amazon.AlphaNumeric	Provide SSH key name or password
+sourcePath	Amazon.AlphaNumeric	What is the file path on the SFTP server?
+destBucket	Amazon.AlphaNumeric	What is the S3 bucket name?
+destPrefix	Amazon.AlphaNumeric	What is the folder/prefix in the S3 bucket?
+cronSchedule	Amazon.AlphaNumeric	What is the cron expression for scheduling?
