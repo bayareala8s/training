@@ -4,7 +4,7 @@ import os
 def list_sftp_recursive(sftp, remote_path, file_list):
     for item in sftp.listdir_attr(remote_path):
         item_path = os.path.join(remote_path, item.filename).replace("\\", "/")
-        if paramiko.SFTPAttributes.S_ISDIR(item.st_mode):
+        if stat.S_ISDIR(item.st_mode):  # ✅ Use stat.S_ISDIR here
             file_list.append(f"[DIR]  {item_path}")
             list_sftp_recursive(sftp, item_path, file_list)
         else:
