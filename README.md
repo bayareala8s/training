@@ -1,17 +1,26 @@
-Step 4: Define Required Slots (Fields)
-Add the following slots to the intent with appropriate prompts:
+Here’s the updated Teams message incorporating the AI bot’s potential to support NIS FAQs and onboarding:
 
-Slot Name	Type	Prompt
-customerId	Amazon.AlphaNumeric	What is the customer ID?
-environment	Custom (dev/test/prod)	What environment is this for?
-workflowId	Custom (sftp-to-s3, s3-to-sftp)	What is the workflow type?
-sourceType	Literal (SFTP)	What is the source type?
-sourceHost	Amazon.AlphaNumeric	Enter the source SFTP hostname
-sourcePort	Amazon.Number	What is the SFTP port?
-sourceUsername	Amazon.AlphaNumeric	What is the SFTP username?
-authMethod	Custom (ssh_key, password)	What is the authentication method?
-authKey	Amazon.AlphaNumeric	Provide SSH key name or password
-sourcePath	Amazon.AlphaNumeric	What is the file path on the SFTP server?
-destBucket	Amazon.AlphaNumeric	What is the S3 bucket name?
-destPrefix	Amazon.AlphaNumeric	What is the folder/prefix in the S3 bucket?
-cronSchedule	Amazon.AlphaNumeric	What is the cron expression for scheduling?
+---
+
+Hi \[VP's Name] and \[AVP's Name],
+Thank you so much for your time and the valuable inputs during our recent discussion — truly appreciated.
+
+I’m excited to share that we’ve put together a small POC for the **FileTeam AI bot** to streamline and automate customer onboarding. I believe we can extend this further across NIS for broader impact.
+
+Some potential use cases include:
+
+* **Customer Self-Serve File Transfer Setup** (SFTP/S3, including multi-env provisioning)
+* **Automated Incident Ticket Creation** (e.g., CloudWatch alert → bot → ServiceNow ticket with logs attached)
+* **Onboarding Workflow Validation & Approval Flows** (auto-validate JSON configs, notify stakeholders, trigger Terraform pipelines)
+* **Real-time Status Inquiries & Audit Summaries** (e.g., “what’s the current status of XYZ transfer?”)
+* **AI-Powered NIS FAQ Assistant** to instantly answer common questions from customers or internal users
+* **AI-Assisted Customer Onboarding for NIS Services**, guiding users step-by-step through the process
+
+Looking forward to your feedback and next steps!
+
+Best regards,
+Himanshu
+
+---
+
+Would you like a short slide deck or demo video to go with this message?
