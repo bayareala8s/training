@@ -1,93 +1,78 @@
 import json
-import boto3
-import datetime
-
-# S3 bucket to store JSON output
-S3_BUCKET_NAME = "your-json-storage-bucket"
 
 def lambda_handler(event, context):
     try:
-        # Extract slots from Lex V2 event
-        slots = event['sessionState']['intent']['slots']
+        # Parse input JSON
+        onboarding_json = event.get("body")
+        if isinstance(onboarding_json, str):
+            onboarding_json = json.loads(onboarding_json)
 
-        # Extract slot values safely
-        def get_slot(slot_name):
-            return slots.get(slot_name, {}).get('value', {}).get('interpretedValue', '')
+        # Top-level required keys
+        required_top_keys = ["customerId", "environment", "workflowId", "source", "destination", "schedule"]
+        for key in required_top_keys:
+            if key not in onboarding_json:
+                return error(f"Missing required top-level key: {key}")
 
-        # Construct the JSON object
-        json_payload = {
-            "customerId": get_slot("customerId"),
-            "environment": get_slot("environment"),
-            "workflowId": get_slot("workflowId"),
-            "source": {
-                "type": get_slot("sourceType"),
-                "host": get_slot("sourceHost"),
-                "port": int(get_slot("sourcePort")),
-                "username": get_slot("sourceUsername"),
-                "authentication": {
-                    "method": get_slot("authMethod"),
-                    "keyName": get_slot("authKey")
-                },
-                "path": get_slot("sourcePath")
-            },
-            "destination": {
-                "type": "S3",
-                "bucket": get_slot("destBucket"),
-                "prefix": get_slot("destPrefix")
-            },
-            "schedule": {
-                "type": "cron",
-                "expression": get_slot("cronSchedule")
-            }
-        }
+        # Validate environment
+        if onboarding_json["environment"] not in ["dev", "test", "prod"]:
+            return error("Invalid value for 'environment'. Must be one of: dev, test, prod")
 
-        # Generate a unique filename for the customer JSON
-        filename = f"{json_payload['customerId']}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        # Validate source
+        source = onboarding_json["source"]
+        for key in ["type", "host", "port", "username", "authentication", "path"]:
+            if key not in source:
+                return error(f"Missing key in 'source': {key}")
+        if source["type"] != "SFTP":
+            return error("source.type must be 'SFTP'")
+        if not isinstance(source["port"], int):
+            return error("source.port must be an integer")
 
-        # Upload the JSON to S3
-        s3 = boto3.client('s3')
-        s3.put_object(
-            Bucket=S3_BUCKET_NAME,
-            Key=filename,
-            Body=json.dumps(json_payload, indent=2),
-            ContentType='application/json'
-        )
+        # Validate authentication
+        auth = source["authentication"]
+        if auth["method"] not in ["ssh_key", "password"]:
+            return error("authentication.method must be 'ssh_key' or 'password'")
+        if "keyName" not in auth:
+            return error("Missing 'keyName' in authentication")
 
-        # Prepare Lex response
+        # Validate destination
+        dest = onboarding_json["destination"]
+        for key in ["type", "bucket", "prefix"]:
+            if key not in dest:
+                return error(f"Missing key in 'destination': {key}")
+        if dest["type"] != "S3":
+            return error("destination.type must be 'S3'")
+
+        # Validate schedule
+        schedule = onboarding_json["schedule"]
+        if schedule.get("type") != "cron":
+            return error("schedule.type must be 'cron'")
+        if "expression" not in schedule:
+            return error("Missing 'expression' in schedule")
+
+        # If all checks pass
         return {
-            "sessionState": {
-                "dialogAction": {
-                    "type": "Close"
-                },
-                "intent": {
-                    "name": event['sessionState']['intent']['name'],
-                    "state": "Fulfilled"
-                }
-            },
-            "messages": [
-                {
-                    "contentType": "PlainText",
-                    "content": f"✅ Customer onboarding JSON created and stored in S3 as `{filename}`"
-                }
-            ]
+            "statusCode": 200,
+            "body": json.dumps({
+                "message": "✅ JSON is valid.",
+                "valid": True
+            })
         }
 
-    except Exception as e:
-        print("Error:", e)
+    except Exception as ex:
         return {
-            "sessionState": {
-                "dialogAction": {
-                    "type": "Close"
-                },
-                "intent": {
-                    "name": event['sessionState']['intent']['name'],
-                    "state": "Failed"
-                }
-            },
-            "messages": [
-                {
-                    "contentType": "PlainText",
-                    "content": f"❌ Error occurred while generating onboarding JSON: {str(e)}"
-                }
-            ]
+            "statusCode": 500,
+            "body": json.dumps({
+                "message": f"❌ Unexpected error: {str(ex)}",
+                "valid": False
+            })
         }
+
+
+def error(msg):
+    return {
+        "statusCode": 400,
+        "body": json.dumps({
+            "message": f"❌ Validation failed: {msg}",
+            "valid": False
+        })
+    }
