@@ -90,3 +90,6 @@ Step	Description
 3.	Secure SFTP Connection: Encrypted connections established with external servers
 4.	Logging & Governance: Transfer activity is logged and monitored for audit compliance
 
+5.	![image](https://github.com/user-attachments/assets/6efcf0db-0012-4ab1-99da-9c9124dd5cff)
+
+
