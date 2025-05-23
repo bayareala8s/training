@@ -61,3 +61,32 @@ Resilience: DNS-based routing via Route 53 allows for disaster recovery and regi
 ![image](https://github.com/user-attachments/assets/609f817d-62e3-408e-802b-7410fdad8346)
 
 egress communication to external SFTP servers via the NIS External Landing Zone:
+
+gress (From NIS to External SFTP Servers)
+NIS can also initiate outbound SFTP connections to external servers using the NIS External Landing Zone, allowing for seamless integration with your partners, vendors, or legacy file systems:
+
+Outbound SFTP traffic is securely routed through the NIS External Landing Zone.
+
+Firewalls and route controls enforce compliance and logging.
+
+This architecture allows automated scheduled transfers or manual push workflows to external destinations.
+
+SFTP Connectivity Architecture
+Inbound (Ingress) Traffic – External Clients to NIS SFTP Server
+External SFTP clients securely connect to the NIS-hosted SFTP service through a layered ingress path:
+
+Step	Description
+1.	DNS Routing via Amazon Route 53: Public DNS (e.g., sftp.yourdomain.com) resolves to Akamai
+2.	Akamai Edge Network: Delivers global traffic optimization, edge protection, and caching
+3.	DMZ Firewall Layer: Validates sessions and restricts unauthorized access
+4.	NIS SFTP Server (Private Network): Final destination within secure AWS environment
+
+Outbound (Egress) Traffic – From NIS to External SFTP Servers
+Outbound file transfers are initiated by NIS to third-party or customer-hosted SFTP endpoints via the NIS External Landing Zone:
+
+Step	Description
+1.	File Transfer Trigger: Scheduled or event-driven file movements originate from NIS
+2.	Route via External Landing Zone: Egress traffic is securely routed through NAT gateways and firewalls
+3.	Secure SFTP Connection: Encrypted connections established with external servers
+4.	Logging & Governance: Transfer activity is logged and monitored for audit compliance
+
