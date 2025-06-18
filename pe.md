@@ -1,69 +1,115 @@
-
-
----
-
-**Subject:** Follow-Up: Terraform Code, Lambda Strategy, Data Storage & Scalability Considerations
-
-Hi \[Architect's Name],
-
-Hope you're doing well.
-
-Thank you again for presenting the proposed AWS architecture. It was insightful and aligns well with our strategic vision for building a robust and scalable file transfer platform.
-
-I wanted to follow up with a few technical considerations and proposals for your input:
+The architecture for **AWS Transfer Family (SFTP)** inside a **VPC** with **CloudWatch logging** and **Amazon S3** storage consists of several interconnected functional components. Here's a detailed breakdown of each:
 
 ---
 
-**1. Terraform Code Availability**
-Would it be possible for AWS and your team to share the proposed architecture as a Terraform codebase (e.g., on GitHub)? This would allow us to test and experiment with each component, simulate deployment scenarios, and gain deeper familiarity with the implementation.
+## 🧩 Functional Components Overview
+
+### 1. **SFTP Users**
+
+* **What they are**: End-users (internal or external) who use SFTP clients like FileZilla, WinSCP, or CLI to upload/download files.
+* **Authentication**: Managed via SSH public keys (service-managed) or optionally via custom identity providers (like Active Directory or Cognito).
+* **Role**:
+
+  * Authenticate using SSH key
+  * Transfer files over SFTP
+  * Interact only with their own S3 folder
 
 ---
 
-**2. Handling Lambda Limitations**
-We’re reviewing strategies to address Lambda’s current constraints (15-minute execution timeout, 10,240 MB memory, and 10,240 MB ephemeral storage).
-Some approaches we’re considering:
+### 2. **AWS Transfer Family (SFTP Server)**
 
-* Step Functions to break long-running flows into smaller stateful tasks
-* Using Fargate for heavier workloads or parallel processing
-* Leveraging EFS where higher temporary storage is required
-* Splitting workloads into microtasks across multiple Lambdas
+* **Service**: Fully managed SFTP endpoint provided by AWS.
+* **Hosting**: Deployed inside a **VPC** with private IPs (via VPC Endpoint).
+* **Protocol**: SFTP (optionally also FTPS, FTP)
+* **Key functions**:
 
-Would love to hear if these align with AWS best practices, or if the current design already accommodates such needs.
-
----
-
-**3. Parent-Child Lambda Architecture Proposal**
-We’re proposing a **Parent-Child Lambda model** to achieve a plug-and-play architecture:
-
-* **Parent Lambda** serves as a router/manager, determining the processing pattern based on metadata or JSON config
-* **Child Lambdas** are modular workers for specific file processing types (e.g., decryption, compression, format conversion)
-
-This offers extensibility and makes it easier to onboard new patterns in the future.
+  * Acts as the **bridge** between users and backend storage (S3)
+  * Handles **authentication and routing** to user-specific folders
+  * Integrates with **CloudWatch** for logging
+  * Associates each user with an **IAM role** for access control
+  * Maps each user to a **home directory** in S3
 
 ---
 
-**4. Data Storage Strategy (DynamoDB vs RDBMS)**
-We’re also evaluating the best storage approach for metadata, configuration, and logging.
-Would a **hybrid model** using both:
+### 3. **Amazon S3 (Storage Backend)**
 
-* **DynamoDB** (for high-speed lookups and flexible JSON configs)
-* and **RDBMS** like PostgreSQL/MySQL (for reporting, relational integrity, audit trail)
+* **Purpose**: Destination for all uploaded/downloaded files.
+* **Structure**:
 
-…be suitable for our use case, or would you recommend sticking to one flavor based on access patterns and performance?
+  * Common bucket, e.g. `my-company-sftp-bucket`
+  * Folder per user: `/home/user1/`, `/home/user2/`, etc.
+* **Access Control**:
 
----
+  * Controlled by IAM role policies assigned to the user
+  * Enforced directory access restrictions (chroot-like behavior)
+* **Benefits**:
 
-**5. Performance Engineering & Scalability**
-Currently, our file transfer volume is around **125K files/day**. We want to design the system to **scale toward 1 million+ files/day**, with sustained throughput and observability.
-We’d appreciate input on:
-
-* Bottleneck identification and autoscaling recommendations
-* Use of SQS/Kinesis for decoupling and parallelization
-* Performance tuning considerations for Lambda/Fargate
-* Real-world benchmarks or guidance AWS can provide to validate throughput at scale
+  * Highly durable and available
+  * Scalable for growing data
+  * Event-driven integrations possible (e.g., Lambda triggers)
 
 ---
 
-We greatly value your partnership and look forward to collaborating further as we shape this into a production-grade system.
+### 4. **CloudWatch Logs**
+
+* **Purpose**: Captures SFTP session activities like:
+
+  * Login attempts
+  * File uploads/downloads
+  * Errors
+* **Implementation**:
+
+  * AWS Transfer Family sends logs via a specific **IAM logging role**
+  * Logs are streamed into a specific **Log Group**: `/aws/transfer/<server-name or bucket>`
+* **Use Cases**:
+
+  * Auditing
+  * Troubleshooting file access
+  * Monitoring usage patterns
+
+---
+
+### 5. **IAM Roles**
+
+* Two key IAM roles are required:
+
+#### a. **Access Role (per user)**
+
+* Used by each SFTP user to access only their designated directory
+* Attached to the user via `aws_transfer_user.role`
+
+#### b. **Logging Role**
+
+* Grants AWS Transfer Family permission to write logs to CloudWatch
+* Includes `logs:CreateLogStream` and `logs:PutLogEvents`
+
+---
+
+### 6. **VPC & Subnets**
+
+* **Purpose**: Hosts the private SFTP endpoint (if endpoint\_type = VPC)
+* **Requirements**:
+
+  * VPC ID
+  * At least one subnet ID in which the server will be deployed
+* **Network Access**:
+
+  * Typically combined with **VPC Endpoints** or **VPN/Direct Connect** for access
+  * No public IPs unless explicitly required
+
+---
+
+## 🔁 End-to-End Functional Flow
+
+1. **User** initiates SFTP session → connects to Transfer Family endpoint.
+2. AWS Transfer Family:
+
+   * Validates SSH key
+   * Maps to IAM role & S3 path
+3. **User** uploads/downloads files → directly to/from **S3**.
+4. **All session logs** (e.g., login, file transfer) sent to **CloudWatch Logs**.
+5. Optional: You can extend with **Lambda**, **SNS**, or **Step Functions** for event-driven automation.
+
+
 
 
