@@ -459,5 +459,122 @@ s3.copy_object(
 =================================================================================
 
 
+Here is the updated and complete list of **all components** in the **automated SFTP-to-S3 file transfer architecture**, now including the **AWS Transfer Family (SFTP Server)** component.
+
+---
+
+## 🧩 UPDATED COMPONENT-BY-COMPONENT EXPLANATION
+
+---
+
+## 🔷 1. **AWS Transfer Family (SFTP Server)**
+
+### 🔹 Purpose:
+
+* Acts as a **secure managed SFTP endpoint** to allow external users (e.g., customers, partners) to upload files into S3.
+* Eliminates the need to manage EC2 or custom FTP/SFTP services.
+
+### 🔹 Configuration:
+
+* Hosted **inside a VPC** for network isolation.
+* Uses **IAM role mapping** to restrict each user to their specific folder in S3.
+
+### 🔹 User Mapping:
+
+Each user is configured with:
+
+* An SFTP username
+* SSH public key
+* IAM role (for S3 access)
+* Home directory like `/my-source-sftp-bucket/customer1/`
+
+### 🔹 Key Functions:
+
+* Accepts file uploads via SFTP client (e.g., WinSCP, FileZilla)
+* Places the uploaded file directly in the **source S3 bucket**
+
+### 🔹 Example:
+
+A customer uploads `report.csv` using SFTP client → file lands in:
+
+```
+s3://my-source-sftp-bucket/customer1/report.csv
+```
+
+---
+
+## 🔷 2. **Amazon S3 (Source Bucket)**
+
+### 🔹 Role:
+
+* Receives files uploaded via AWS SFTP
+* Triggers the automation pipeline
+
+### 🔹 Bucket Name:
+
+* `my-source-sftp-bucket`
+
+---
+
+## 🔷 3. **Amazon EventBridge**
+
+### 🔹 Role:
+
+* Detects file upload in the source bucket (`s3:ObjectCreated:*`)
+* Triggers Step Functions when a file is added
+
+---
+
+## 🔷 4. **AWS Step Functions**
+
+### 🔹 Role:
+
+* Coordinates the execution of the file transfer process
+* Invokes the Lambda function with the correct input
+
+---
+
+## 🔷 5. **AWS Lambda**
+
+### 🔹 Role:
+
+* Copies the uploaded file from the source bucket to the destination bucket
+* Stateless and scalable
+
+---
+
+## 🔷 6. **Amazon S3 (Destination Bucket)**
+
+### 🔹 Role:
+
+* Final destination for transferred files
+* Stores post-processed or production-ready data
+
+---
+
+## 🔷 7. **CloudWatch Logs**
+
+### 🔹 Role:
+
+* Captures logs from:
+
+  * Lambda function
+  * Step Function executions
+  * (Optional) SFTP session logs
+
+---
+
+## ✅ Final Diagram-Level View
+
+| Component              | AWS Service         | Role / Function                                     |
+| ---------------------- | ------------------- | --------------------------------------------------- |
+| **SFTP Server**        | AWS Transfer Family | Accept file uploads from external users over SFTP   |
+| **Source Bucket**      | Amazon S3           | Store uploaded files from SFTP                      |
+| **EventBridge**        | Amazon EventBridge  | Detect S3 object creation and trigger Step Function |
+| **State Machine**      | AWS Step Functions  | Orchestrate Lambda to handle the file               |
+| **Lambda**             | AWS Lambda          | Copy file from source to destination                |
+| **Destination Bucket** | Amazon S3           | Final destination for processed/transferred files   |
+| **Monitoring**         | Amazon CloudWatch   | Log and monitor workflow performance and status     |
+
 
 
