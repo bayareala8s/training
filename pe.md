@@ -577,4 +577,58 @@ s3://my-source-sftp-bucket/customer1/report.csv
 | **Monitoring**         | Amazon CloudWatch   | Log and monitor workflow performance and status     |
 
 
+Here is the **complete component list** for the **automated file transfer architecture**, now explicitly including the **AWS Transfer Family SFTP server** and its role in the overall system.
+
+---
+
+## 🔧 COMPONENT-WISE BREAKDOWN
+
+| **#** | **Component**                  | **AWS Service**        | **Purpose / Function**                                                           |
+| ----- | ------------------------------ | ---------------------- | -------------------------------------------------------------------------------- |
+| 1     | **SFTP Server**                | AWS Transfer Family    | Provides secure SFTP access for external/internal users to upload files into S3. |
+| 2     | **Source Storage Bucket**      | Amazon S3              | Stores uploaded files from SFTP. Triggers EventBridge when new files are added.  |
+| 3     | **Event Trigger System**       | Amazon EventBridge     | Listens for `s3:ObjectCreated` events and triggers the Step Function workflow.   |
+| 4     | **Workflow Orchestrator**      | AWS Step Functions     | Executes a defined state machine to process the transfer using Lambda.           |
+| 5     | **File Transfer Executor**     | AWS Lambda             | Copies the file from the source bucket to the destination bucket.                |
+| 6     | **Destination Storage Bucket** | Amazon S3              | Receives the transferred files (can be for processing, delivery, or archival).   |
+| 7     | **Monitoring & Logs**          | Amazon CloudWatch Logs | Logs from Lambda and Step Function for auditing, monitoring, and debugging.      |
+
+---
+
+## 🔍 DETAILS FOR THE NEW COMPONENT: **AWS Transfer Family (SFTP Server)**
+
+### ✅ Role:
+
+* Acts as the **entry point** for files via SFTP (secure FTP).
+* Users can connect using SSH keys from tools like WinSCP, FileZilla, or CLI.
+
+### ✅ Key Features:
+
+* Fully managed, scalable, and VPC-hosted
+* Integrates with S3 directly
+* Identity management via service-managed or external identity providers
+* User isolation via IAM roles and folder-based permissions
+
+### ✅ Typical Configuration:
+
+* Each user has a unique:
+
+  * Username
+  * SSH Public Key
+  * IAM Role
+  * Home Directory (e.g., `/my-source-sftp-bucket/customer1/`)
+
+### ✅ File Upload Flow:
+
+```
+Customer SFTP Upload
+        ↓
+AWS Transfer Family (SFTP)
+        ↓
+S3 Source Bucket (e.g., /customer1/inbound/report.csv)
+        ↓
+→ EventBridge → Step Function → Lambda → Destination S3 Bucket
+```
+
+
 
