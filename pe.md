@@ -967,5 +967,133 @@ The **Child Step Function** itself can have its own **execution role**, separate
   * Step 2: Process data (`Lambda D`)
   * Step 3: Upload result (`Lambda E`)
 
+Yes, **if you're aiming to process 1 million files per day**, you **should absolutely consider introducing Amazon SQS (Simple Queue Service)** — it’s one of the best architectural decisions for handling **high-throughput, decoupled, resilient, and scalable file processing**.
+
+Let’s walk through a **high-scale architecture plan** for your file transfer system.
+
+---
+
+## 🚀 Target: 1 Million Files/Day ≈ \~11.5 files/sec
+
+That’s **a lot of parallel processing** — especially if:
+
+* Files come in bursts (not evenly spaced),
+* Processing time per file varies,
+* You need retry, fault tolerance, observability, and backpressure control.
+
+---
+
+## ✅ Scalable Architecture Using SQS
+
+### 🔧 Components:
+
+```
+          [AWS Transfer Family - SFTP]
+                        ↓
+               [Amazon S3 Source Bucket]
+                        ↓
+         [Amazon EventBridge - New File Event]
+                        ↓
+                [Lambda or EventBridge Pipe]
+                        ↓
+               [Amazon SQS FIFO or Standard]
+                        ↓
+       ┌───────────────────────────────┐
+       │   Auto-Scaling Lambda or ECS  │  ← Worker Consumers
+       └───────────────────────────────┘
+                        ↓
+          [S3 Destination] + [DynamoDB Metadata] + [CloudWatch Logs]
+```
+
+---
+
+## 🔁 Why Introduce SQS?
+
+| Benefit                 | Why It Helps for 1M Files/Day                                     |
+| ----------------------- | ----------------------------------------------------------------- |
+| **Buffering**           | Absorbs spikes when files arrive faster than you can process      |
+| **Scalability**         | Enables Lambda or ECS consumers to scale horizontally             |
+| **Retries & DLQ**       | Automatically retry failures, or send to a Dead Letter Queue      |
+| **Concurrency Control** | Set max concurrent executions (e.g. Lambda reserved concurrency)  |
+| **Decoupling**          | File ingestion is separated from processing — systems don’t block |
+| **Batch Processing**    | Consumers can process multiple messages in a single invocation    |
+
+---
+
+## 🧰 Architectural Enhancements for SQS-Based Design
+
+### 1. **Use EventBridge Pipe to push S3 events into SQS**
+
+```plaintext
+[S3 Event] → [EventBridge Pipe] → [SQS Queue]
+```
+
+Supports enrichment and filtering without extra Lambda overhead.
+
+---
+
+### 2. **Choose Between FIFO and Standard SQS**
+
+| Use Case                                    | Queue Type |
+| ------------------------------------------- | ---------- |
+| Order matters, one file at a time per group | FIFO       |
+| Parallelism & scale > order                 | Standard   |
+
+Use **Standard SQS** unless file ordering is critical.
+
+---
+
+### 3. **Consumer Setup**
+
+* Use **Lambda with SQS trigger**:
+
+  * Processes batches (up to 10 messages)
+  * Scales automatically
+* Or use **ECS/Fargate with long polling**:
+
+  * Better for large files or longer runtimes
+
+---
+
+## 📊 Estimating Throughput
+
+To process 1M files/day:
+
+* \~11.5 files/second sustained rate
+* If each Lambda takes 1 second:
+
+  * Need 12 concurrent Lambdas
+  * With buffer: set concurrency limit = 50 or more
+* SQS can easily handle **1000s of messages/sec**
+
+---
+
+## 🛡️ Resilience
+
+* **DLQ**: If processing fails 3 times → send to Dead Letter Queue
+* **Visibility Timeout**: Make sure it’s longer than processing time
+
+---
+
+## 🧩 DynamoDB Use
+
+Continue storing:
+
+* File metadata
+* Status: queued, processing, completed, failed
+* Retry attempts
+
+---
+
+## 📈 Monitoring Stack
+
+* CloudWatch Alarms on:
+
+  * SQS backlog
+  * Lambda failures
+* Grafana dashboard (optional)
+* DLQ alarms for stuck or poison files
+
+
 
 
