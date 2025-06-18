@@ -748,5 +748,115 @@ def lambda_handler(event, context):
         )
 ```
 
+To **add Alma support** like **Grafana dashboards**, you're likely referring to adding **observability or operational visibility** over your AWS file transfer system — similar to how Alma or Grafana helps visualize and alert on metrics and logs.
+
+Since "Alma" is ambiguous (it could mean a platform or a label you've used), I’ll assume you want to **integrate Grafana-style monitoring** into your **AWS file transfer workflow** using native AWS tooling **(or optionally Grafana itself)**.
+
+---
+
+## ✅ Step-by-Step: Add Grafana-Like Dashboards for File Transfers
+
+---
+
+### 🔹 Option 1: Use **Amazon CloudWatch Dashboards** (AWS-native Grafana-like)
+
+#### 📌 What to Monitor
+
+| Metric                              | Source                        |
+| ----------------------------------- | ----------------------------- |
+| File transfer success/failure count | Lambda logs or custom metrics |
+| Step Function executions            | CloudWatch metrics            |
+| SFTP session activity               | Transfer Family logs          |
+| Object created in S3                | S3 EventBridge logs           |
+| DynamoDB insert/update errors       | Lambda logs                   |
+
+#### 🧰 Setup Instructions
+
+1. **Enable CloudWatch Logs** for:
+
+   * Lambda
+   * Step Functions
+   * SFTP Transfer Server
+
+2. **Create CloudWatch Dashboard**
+   Go to **CloudWatch > Dashboards > Create** and add widgets:
+
+   * 📊 **Line/Bar graph**: count of successful vs failed Lambda invocations
+   * 📈 **Time series**: Step Function executions by status
+   * 📄 **Log search widget**: query recent `PutItem` failures in DynamoDB logs
+
+3. **(Optional)** Use **CloudWatch Metric Filters** to extract structured data from logs:
+
+   ```bash
+   fields @timestamp, @message
+   | filter @message like "transferred"
+   | stats count(*) by bin(5m)
+   ```
+
+---
+
+### 🔹 Option 2: Use **Amazon Managed Grafana**
+
+1. **Go to AWS Console → Amazon Managed Grafana**
+2. Create a **workspace** and attach:
+
+   * **CloudWatch data source**
+   * (Optionally) DynamoDB metrics via CloudWatch
+3. Import prebuilt dashboards or create:
+
+   * Bar chart: files transferred per hour/day
+   * Pie chart: file status distribution (transferred, failed)
+   * Table: recent 10 files and their metadata (from DynamoDB if exported to Timestream or Athena)
+
+---
+
+### 🔹 Option 3: Send Logs to **CloudWatch Logs Insights** and Create Queries
+
+```sql
+fields @timestamp, @message
+| filter @message like /transferred/
+| parse @message /file_id\":\"(?<file_id>[^\"]+)/
+| stats count(*) as Transfers by bin(1h)
+```
+
+You can:
+
+* Save this query
+* Add to a CloudWatch Dashboard widget
+
+---
+
+## 🔔 Optional: Add Alerts
+
+Use **CloudWatch Alarms**:
+
+* Create custom metric filter from logs (e.g., failed transfers)
+* Alert via SNS/email if failures exceed threshold
+* Show alert history in the dashboard
+
+---
+
+## 🚀 Optional Extension with AWS OpenSearch + Grafana
+
+If you want a **true open-source Grafana stack**:
+
+1. Send logs to **Amazon OpenSearch (ELK)** using Kinesis Firehose or Lambda
+2. Index logs per service (e.g., `lambda_logs`, `transfer_logs`)
+3. Connect OpenSearch to self-hosted or Amazon Grafana
+4. Build custom dashboards like Kibana/Grafana style
+
+---
+
+## 📊 Dashboard Widgets to Include
+
+| Widget Type       | Metric/Query                              |
+| ----------------- | ----------------------------------------- |
+| Time Series Line  | Files transferred over time               |
+| Pie Chart         | Transfer status (success/failure/pending) |
+| Log Table         | Recent transfer events                    |
+| Step Function     | State transition and error breakdown      |
+| SFTP Session Logs | Active/inactive connections over time     |
+
+
 
 
