@@ -631,4 +631,122 @@ S3 Source Bucket (e.g., /customer1/inbound/report.csv)
 ```
 
 
+Great! Adding **Amazon DynamoDB** to the architecture allows you to store **metadata** for each file transfer event, such as:
+
+* Upload time
+* File name and path
+* Transfer status
+* Customer ID or business tag
+* Processed timestamp
+* Error messages (if any)
+
+---
+
+## 🧩 Updated Architecture Component: **DynamoDB Metadata Table**
+
+| **Component**      | **Service**     | **Function**                                                                |
+| ------------------ | --------------- | --------------------------------------------------------------------------- |
+| **Metadata Store** | Amazon DynamoDB | Stores per-file metadata (file name, source, destination, timestamps, etc.) |
+
+---
+
+## ✅ Use Case for DynamoDB in File Transfer Flow
+
+When a file is:
+
+1. **Uploaded** via SFTP → Save metadata (name, customer, timestamp, `status = uploaded`)
+2. **Transferred** → Update DynamoDB record (`status = transferred`)
+3. **Failed** → Update record with error and `status = failed`
+
+---
+
+## 🔁 Updated Workflow with DynamoDB
+
+```
+[SFTP Upload]
+    ↓
+[Source S3 Bucket]
+    ↓ → [Put Item in DynamoDB: status = "uploaded"]
+[EventBridge]
+    ↓
+[Step Function]
+    ↓
+[Lambda]
+    ↓ → [Update DynamoDB: status = "transferred"]
+[Destination S3 Bucket]
+```
+
+---
+
+## 🧪 Sample DynamoDB Table Schema: `FileTransferMetadata`
+
+| **Attribute (Key)**  | **Type** | **Description**                              |
+| -------------------- | -------- | -------------------------------------------- |
+| `file_id` (PK)       | `String` | Unique file identifier (UUID or file path)   |
+| `source_bucket`      | `String` | S3 source bucket name                        |
+| `destination_bucket` | `String` | Destination bucket                           |
+| `key`                | `String` | File path (e.g., customer1/inbound/file.csv) |
+| `customer_id`        | `String` | Optional tag for customer                    |
+| `upload_timestamp`   | `String` | When file was uploaded                       |
+| `transfer_timestamp` | `String` | When Lambda completed transfer               |
+| `status`             | `String` | uploaded / transferred / failed              |
+| `error_message`      | `String` | If failure occurred                          |
+
+---
+
+## 📦 Add to Lambda Function (Python – partial example)
+
+```python
+import boto3
+import uuid
+from datetime import datetime
+
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table("FileTransferMetadata")
+
+def lambda_handler(event, context):
+    file_id = str(uuid.uuid4())
+    file_key = event["key"]
+    source_bucket = event["source_bucket"]
+    destination_bucket = event["destination_bucket"]
+    
+    # Insert record when Lambda starts
+    table.put_item(Item={
+        "file_id": file_id,
+        "key": file_key,
+        "source_bucket": source_bucket,
+        "destination_bucket": destination_bucket,
+        "upload_timestamp": datetime.utcnow().isoformat(),
+        "status": "transferring"
+    })
+    
+    try:
+        s3.copy_object(
+            Bucket=destination_bucket,
+            Key=file_key,
+            CopySource={"Bucket": source_bucket, "Key": file_key}
+        )
+        
+        table.update_item(
+            Key={"file_id": file_id},
+            UpdateExpression="SET transfer_timestamp = :t, #s = :s",
+            ExpressionAttributeValues={
+                ":t": datetime.utcnow().isoformat(),
+                ":s": "transferred"
+            },
+            ExpressionAttributeNames={"#s": "status"}
+        )
+    except Exception as e:
+        table.update_item(
+            Key={"file_id": file_id},
+            UpdateExpression="SET error_message = :e, #s = :s",
+            ExpressionAttributeValues={
+                ":e": str(e),
+                ":s": "failed"
+            },
+            ExpressionAttributeNames={"#s": "status"}
+        )
+```
+
+
 
