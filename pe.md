@@ -859,4 +859,113 @@ If you want a **true open-source Grafana stack**:
 
 
 
+Here’s a detailed breakdown of the **Parent–Child relationship between Step Functions and Lambdas**, especially in the context of **nested workflows** using AWS Step Functions.
+
+---
+
+## 🔷 Step Function Parent–Child Relationship Models
+
+There are two common patterns:
+
+### ✅ 1. **Parent Step Function → Child Step Function** (Nested Workflows)
+
+```
+[Parent Step Function]
+        ↓
+"StartExecution.sync"
+        ↓
+[Child Step Function]
+        ↓
+[Child Lambda(s)]
+```
+
+> 🧠 Use this when you want to **modularize workflows** or reuse logic across pipelines.
+
+---
+
+### ✅ 2. **Parent Step Function → Orchestrates multiple Lambdas directly**
+
+```
+[Parent Step Function]
+   ↓        ↓        ↓
+[Lambda A] [Lambda B] [Lambda C]
+```
+
+> This is typical in **monolithic workflows** that orchestrate individual tasks.
+
+---
+
+## 🔁 Combining Both Patterns
+
+You can mix both, where:
+
+* The **Parent Step Function** orchestrates some Lambdas directly
+* It also calls a **Child Step Function**, which has its own Lambdas
+
+```
+                 +------------------------+
+                 | Parent Step Function   |
+                 +------------------------+
+                          ↓
+                   [Validate Lambda]
+                          ↓
+          +-------------------------------+
+          | Call Child Step Function      |
+          | Resource: startExecution.sync |
+          +-------------------------------+
+                          ↓
+          +----------------------------------+
+          | Child Step Function              |
+          +----------------------------------+
+             ↓       ↓       ↓
+         [Lambda X] [Lambda Y] [Lambda Z]
+```
+
+---
+
+## ✅ Benefits of Parent → Child Step Function Pattern
+
+| Benefit                    | Why it Matters                                    |
+| -------------------------- | ------------------------------------------------- |
+| **Modularity**             | Reuse child workflows across teams/projects       |
+| **Separation of Concerns** | Keep logic cleaner by separating sub-workflows    |
+| **Scalability**            | Child workflows can be updated independently      |
+| **Failure Isolation**      | Failures in child can be handled with retry logic |
+| **Auditing & Tracing**     | Each Step Function has its own execution logs     |
+
+---
+
+## 🔐 IAM Considerations
+
+The **IAM Role** of the **Parent Step Function** must have:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": "states:StartExecution",
+  "Resource": "arn:aws:states:REGION:ACCOUNT_ID:stateMachine:ChildStateMachineName"
+}
+```
+
+The **Child Step Function** itself can have its own **execution role**, separate from the parent.
+
+---
+
+## 🧪 Lambda Execution in Parent/Child
+
+### Example:
+
+* Parent Step Function:
+
+  * Step 1: Validate input (`Lambda A`)
+  * Step 2: Call child workflow (`startExecution.sync`)
+  * Step 3: Notify result (`Lambda B`)
+
+* Child Step Function:
+
+  * Step 1: Download file (`Lambda C`)
+  * Step 2: Process data (`Lambda D`)
+  * Step 3: Upload result (`Lambda E`)
+
+
 
