@@ -1804,6 +1804,1019 @@ print("Latest status:", item['status'])
 
 
 
+Great! Let’s now deep-dive into the **`CustomerFileIndex`** DynamoDB table — which complements your `FileTransferStatus` table by enabling **efficient querying of files by customer and date**, especially for UI dashboards and reporting use cases.
+
+---
+
+## ✅ **Table: `CustomerFileIndex`**
+
+### 📌 Purpose:
+
+To enable fast, filterable access to **all files uploaded or processed by a customer**, organized by **date and file name** — ideal for:
+
+* UI portals (file status per client/day)
+* Reporting dashboards (QuickSight, Athena)
+* Admin audit tools
+
+---
+
+## 🧩 **Key Schema**
+
+| Key Type      | Key Name | Example Value                                             |
+| ------------- | -------- | --------------------------------------------------------- |
+| Partition Key | `PK`     | `CUSTOMER#bankpacific`                                    |
+| Sort Key      | `SK`     | `DATE#2025-06-28#bankpacific_transactions_2025-06-28.csv` |
+
+This lets you query:
+
+```sql
+PK = "CUSTOMER#bankpacific"
+AND SK begins_with "DATE#2025-06-28"
+```
+
+To get all files for that customer **on a given date**.
+
+---
+
+## 📋 **Attributes**
+
+| Attribute       | Type       | Description                                                       |
+| --------------- | ---------- | ----------------------------------------------------------------- |
+| `fileId`        | String     | Matches `PK` of `FileTransferStatus` table                        |
+| `fileName`      | String     | The filename                                                      |
+| `customerId`    | String     | Customer identifier                                               |
+| `status`        | String     | Final transfer status: `SUCCESS`, `FAILED`, etc.                  |
+| `workflowId`    | String     | Transfer route ID (`copy-sftp-to-s3`, etc.)                       |
+| `targetSummary` | Map/String | Summary of where the file was delivered (S3 path, SFTP URL, etc.) |
+| `retryCount`    | Number     | Final retry count before success/failure                          |
+| `timestamp`     | String     | Time of latest update (ISO format)                                |
+| `errorMessage`  | String     | If failed, reason for failure                                     |
+
+---
+
+## 🧾 **Sample Item**
+
+```json
+{
+  "PK": "CUSTOMER#bankpacific",
+  "SK": "DATE#2025-06-28#bankpacific_transactions_2025-06-28.csv",
+  "fileId": "FILE#bankpacific#bankpacific_transactions_2025-06-28.csv",
+  "fileName": "bankpacific_transactions_2025-06-28.csv",
+  "customerId": "bankpacific",
+  "status": "SUCCESS",
+  "workflowId": "copy-sftp-to-s3-and-sftp",
+  "targetSummary": {
+    "s3": "s3://archive-bucket-secure/bankpacific/2025-06/",
+    "sftp": "sftp://aws-transfer/bankpacific/partner-dropzone/"
+  },
+  "retryCount": 1,
+  "timestamp": "2025-06-28T22:01:34Z",
+  "errorMessage": null
+}
+```
+
+---
+
+## 🔍 **Common Access Patterns Enabled**
+
+| Query Scenario                                    | Example                                                          |
+| ------------------------------------------------- | ---------------------------------------------------------------- |
+| Get all files for a customer on a date            | `PK = CUSTOMER#bankpacific` and `SK begins_with DATE#2025-06-28` |
+| List all files processed by a customer this month | Filter by `SK starts_with DATE#2025-06`                          |
+| Show all failed files for a customer              | Query + filter by `status = FAILED`                              |
+| Link to full transfer history                     | Use `fileId` to fetch from `FileTransferStatus` table            |
+
+---
+
+## 🧠 Design Notes
+
+* This table acts like a **secondary index view**, purpose-built for **lookup & display**.
+* Denormalized intentionally to **avoid expensive joins** in DynamoDB.
+* Can be exported to S3 for reporting or analytics in Athena / QuickSight.
+
+---
+
+## 🔄 When is the item inserted?
+
+You should write to this table **at the end of your Step Function**, when the file transfer is:
+
+* Marked **SUCCESS**
+* Or marked **FAILED after max retries**
+
+You can also **upsert** it each time a retry happens, if you want real-time display of retry attempts.
+
+---
+
+## 🛠️ Python (Boto3) Upsert Example
+
+```python
+import boto3
+from datetime import datetime
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('CustomerFileIndex')
+
+def write_customer_file_index(event):
+    customer = event['customerId']
+    file = event['fileName']
+    date_part = event['timestamp'].split('T')[0]
+
+    table.put_item(
+        Item={
+            'PK': f'CUSTOMER#{customer}',
+            'SK': f'DATE#{date_part}#{file}',
+            'fileId': event['fileId'],
+            'fileName': file,
+            'customerId': customer,
+            'status': event['status'],
+            'workflowId': event['workflowId'],
+            'targetSummary': event['target'],
+            'retryCount': event['retryCount'],
+            'timestamp': event['timestamp'],
+            'errorMessage': event.get('errorMessage', None)
+        }
+    )
+```
+
+---
+
+## 🧭 Summary
+
+| Feature                         | Purpose                                              |
+| ------------------------------- | ---------------------------------------------------- |
+| `PK = CUSTOMER#<client>`        | Groups all files per customer                        |
+| `SK = DATE#<yyyy-mm-dd>#<file>` | Enables sort/filter by date and file                 |
+| Denormalized summary            | Supports fast rendering of status in UI              |
+| `fileId` back reference         | Enables join to full history in `FileTransferStatus` |
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Let’s now explore the **`WorkflowDefinition`** DynamoDB table in detail — this is key for enabling a **self-serve, dynamic, and extensible file transfer system**.
+
+---
+
+## ✅ **Table: `WorkflowDefinition`**
+
+### 📌 **Purpose**
+
+Store **declarative definitions** of all file transfer workflows, so Step Functions and Lambda functions can dynamically read configurations without hardcoding logic.
+
+This allows:
+
+* Self-service onboarding of new clients
+* Dynamic routing logic
+* Support for multiple file transfer patterns (SFTP → S3, S3 → SFTP, etc.)
+* Easy updates to file validation, retries, and target destinations
+
+---
+
+## 🧩 **Key Schema**
+
+| Key Type      | Key Name | Example Value              |
+| ------------- | -------- | -------------------------- |
+| Partition Key | `PK`     | `WORKFLOW#copy-sftp-to-s3` |
+
+This design uniquely identifies each workflow by `workflowId`.
+
+---
+
+## 📋 **Attributes**
+
+| Attribute         | Type    | Description                                                               |
+| ----------------- | ------- | ------------------------------------------------------------------------- |
+| `PK`              | String  | Primary key: `WORKFLOW#<workflowId>`                                      |
+| `workflowId`      | String  | ID of the workflow (e.g., `copy-sftp-to-s3`)                              |
+| `sourceType`      | String  | Type of source: `SFTP`, `S3`                                              |
+| `targetType`      | String  | Type of target: `S3`, `SFTP`, `S3_SFTP`, etc.                             |
+| `sourcePrefix`    | String  | Optional S3 or path prefix to validate source files                       |
+| `target`          | Map     | Default target config (S3 bucket path, SFTP backend folder)               |
+| `validationRegex` | String  | Regex to validate file naming convention (e.g., `.csv$`)                  |
+| `maxRetries`      | Number  | Default max retry count for file transfer                                 |
+| `stepFunctionArn` | String  | ARN of the associated Step Function                                       |
+| `enabled`         | Boolean | If `false`, this workflow is disabled for execution                       |
+| `tags`            | Map     | Custom tags or labels (e.g., `{"business": "finance", "region": "west"}`) |
+| `createdAt`       | String  | ISO timestamp when the workflow was created                               |
+| `updatedAt`       | String  | ISO timestamp when the workflow was last updated                          |
+
+---
+
+## 🧾 **Sample Item: SFTP → S3 Workflow**
+
+```json
+{
+  "PK": "WORKFLOW#copy-sftp-to-s3",
+  "workflowId": "copy-sftp-to-s3",
+  "sourceType": "SFTP",
+  "targetType": "S3",
+  "sourcePrefix": "from-sftp/",
+  "target": {
+    "bucket": "s3://archive-bucket/",
+    "pathPattern": "customerId/YYYY/MM/"
+  },
+  "validationRegex": "^client[a-zA-Z]+_transactions_\\d{4}-\\d{2}-\\d{2}\\.csv$",
+  "maxRetries": 3,
+  "stepFunctionArn": "arn:aws:states:us-west-2:123456789012:stateMachine:copy-sftp-to-s3-sm",
+  "enabled": true,
+  "tags": {
+    "business": "finance",
+    "region": "west"
+  },
+  "createdAt": "2025-06-01T10:00:00Z",
+  "updatedAt": "2025-06-28T10:00:00Z"
+}
+```
+
+---
+
+## 🔍 **Use Cases Enabled**
+
+| Use Case                                       | How `WorkflowDefinition` Helps                             |
+| ---------------------------------------------- | ---------------------------------------------------------- |
+| Add a new customer onboarding pattern          | Insert new item with `workflowId` and routing logic        |
+| Support multiple source-target types           | Define combinations like S3 → SFTP, SFTP → SFTP, etc.      |
+| Step Function or Lambda decides routing        | Dynamically loads target from table, no code change needed |
+| Validate filenames                             | Reads `validationRegex` and checks in Lambda               |
+| Route to different targets by file type/client | Use `pathPattern` or tag rules in the record               |
+
+---
+
+## 🧠 Best Practices
+
+* Keep **one record per `workflowId`**
+* Use **Lambda cache** to avoid re-fetching unchanged workflows
+* Use **CloudWatch Metrics** to track which workflows are active or failing
+* Optionally **encrypt** sensitive fields using AWS KMS
+
+---
+
+## 🔄 Example Workflow Routing Flow
+
+```text
+EventBridge → SQS → Step Function
+            |
+            ▼
+   Read `workflowId` from SQS Message
+            |
+            ▼
+   Fetch `WorkflowDefinition` from DynamoDB
+            |
+            ▼
+   Use validationRegex, maxRetries, and target in transfer logic
+```
+
+---
+
+## 🔐 IAM Policy to Read from Table
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["dynamodb:GetItem"],
+  "Resource": "arn:aws:dynamodb:<region>:<account-id>:table/WorkflowDefinition"
+}
+```
+
+---
+
+## ✅ Summary
+
+| Feature                         | Benefit                                                          |
+| ------------------------------- | ---------------------------------------------------------------- |
+| Dynamic Routing                 | No hardcoding of logic in Lambda or Step Function                |
+| Supports Multi-Client Workflows | Easy to onboard new customers and transfer logic                 |
+| Validation-Driven               | Prevents bad files or wrong patterns from entering pipeline      |
+| Extensible                      | Add new targets, retry policies, or workflow states with no code |
+
+---
+
+![image](https://github.com/user-attachments/assets/8dddf66a-4b67-4056-96fb-0638ce963124)
+
+
+
+Let’s now walk through the **`FileTransferAuditLog`** table — an optional but highly valuable DynamoDB table in your architecture used to maintain **append-only historical logs** of all file transfer activities.
+
+---
+
+## ✅ **Table: `FileTransferAuditLog`**
+
+### 📌 Purpose:
+
+Store **every event or state change** in a file’s lifecycle — from upload, validation, routing, retries, to final success/failure.
+
+It is:
+
+* **Append-only** (write-only, never update)
+* Ideal for **audit trails**, **compliance**, **analytics**, and **debugging**
+* Linked to the `FileTransferStatus` table (but captures *all steps*, not just latest)
+
+---
+
+## 🧩 Key Schema
+
+| Key Type      | Key Name | Example Value                                  |
+| ------------- | -------- | ---------------------------------------------- |
+| Partition Key | `PK`     | `FILE#bankpacific_transactions_2025-06-28.csv` |
+| Sort Key      | `SK`     | `TS#2025-06-28T21:02:55Z`                      |
+
+This schema allows **time-ordered logs per file**.
+
+---
+
+## 📋 Attributes
+
+| Attribute        | Type   | Description                                                                                               |
+| ---------------- | ------ | --------------------------------------------------------------------------------------------------------- |
+| `PK`             | String | Partition key: always in format `FILE#<fileName>`                                                         |
+| `SK`             | String | Sort key: timestamp prefixed with `TS#`                                                                   |
+| `eventType`      | String | The stage or operation (e.g., `UPLOAD_RECEIVED`, `VALIDATED`, `COPY_TO_S3`, `RETRY`, `SUCCESS`, `FAILED`) |
+| `status`         | String | Status after this event (e.g., `IN_PROGRESS`, `FAILED`)                                                   |
+| `retryCount`     | Number | Retry count at that point in time                                                                         |
+| `workflowId`     | String | ID of the workflow that was active during this event                                                      |
+| `stepFunctionId` | String | Execution ID of the Step Function                                                                         |
+| `customerId`     | String | Name or ID of the customer                                                                                |
+| `message`        | String | Log message or error description                                                                          |
+| `metadata`       | Map    | Optional additional metadata (file size, region, actor, etc.)                                             |
+
+---
+
+## 🧾 Example AuditLog Record
+
+```json
+{
+  "PK": "FILE#bankpacific_transactions_2025-06-28.csv",
+  "SK": "TS#2025-06-28T21:02:55Z",
+  "eventType": "RETRY",
+  "status": "IN_PROGRESS",
+  "retryCount": 2,
+  "workflowId": "copy-sftp-to-s3-and-sftp",
+  "stepFunctionId": "execution-abc-123",
+  "customerId": "bankpacific",
+  "message": "Retrying file transfer to S3. Previous attempt failed due to timeout.",
+  "metadata": {
+    "region": "us-west-2",
+    "handler": "lambda_sftp_to_s3",
+    "durationMs": 1173
+  }
+}
+```
+
+---
+
+## 🔍 Use Cases & Access Patterns
+
+| Use Case                                         | How it works                                            |
+| ------------------------------------------------ | ------------------------------------------------------- |
+| View full lifecycle of a file                    | Query by `PK = FILE#<fileName>`, sort by `SK` ascending |
+| Filter only failed events for a file             | Query by PK, filter by `status = FAILED`                |
+| Compliance/audit reporting                       | Export logs to S3 and run Athena or QuickSight on them  |
+| Group by `eventType`, `customerId` for reporting | Use DDB → Firehose → S3 export → Athena for queries     |
+
+---
+
+## 💡 Example Audit Log Timeline for a File
+
+| Timestamp            | Event Type        | Status        | Retry Count | Message                                      |
+| -------------------- | ----------------- | ------------- | ----------- | -------------------------------------------- |
+| 2025-06-28T21:01:00Z | `UPLOAD_RECEIVED` | `PENDING`     | 0           | File landed in S3 via AWS Transfer Family    |
+| 2025-06-28T21:01:10Z | `VALIDATED`       | `IN_PROGRESS` | 0           | Filename format passed                       |
+| 2025-06-28T21:01:30Z | `COPY_TO_S3`      | `FAILED`      | 0           | S3 Access Denied                             |
+| 2025-06-28T21:02:55Z | `RETRY`           | `IN_PROGRESS` | 2           | Retrying file transfer to S3                 |
+| 2025-06-28T21:03:50Z | `SUCCESS`         | `SUCCESS`     | 2           | File successfully transferred to all targets |
+
+---
+
+## 🔐 IAM Policy (to Write to Audit Table)
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["dynamodb:PutItem"],
+  "Resource": "arn:aws:dynamodb:<region>:<account>:table/FileTransferAuditLog"
+}
+```
+
+---
+
+## 🧠 Best Practices
+
+* Make this table **append-only** (no overwrites)
+* Use **Time-to-Live (TTL)** if you want to auto-delete old logs (e.g., after 1 year)
+* Use **DynamoDB Streams → Firehose → S3** to export for audit/BI
+* Consider writing to **CloudWatch Logs** and `FileTransferAuditLog` in parallel (for real-time and historical logging)
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+Let’s now deep-dive into the **`TransferFailureQueue`** DynamoDB table — an important component in your file transfer architecture used to **persistently track files that failed** even after all retry attempts.
+
+---
+
+## ✅ **Table: `TransferFailureQueue`**
+
+### 📌 Purpose:
+
+Capture **permanently failed** file transfers that:
+
+* Exceeded their maximum retry limit in Step Functions
+* Require **manual intervention** or re-processing later
+* Should be reviewed by operations/support teams
+
+---
+
+## 🧩 Key Schema
+
+| Key Type      | Key Name | Example Value                                     |
+| ------------- | -------- | ------------------------------------------------- |
+| Partition Key | `PK`     | `FAILURE#bankpacific_transactions_2025-06-28.csv` |
+
+This ensures one record per failed file (latest failure).
+
+---
+
+## 📋 Attributes
+
+| Attribute        | Type   | Description                                                                |
+| ---------------- | ------ | -------------------------------------------------------------------------- |
+| `PK`             | String | Primary key in format: `FAILURE#<fileName>`                                |
+| `fileName`       | String | Name of the file that failed                                               |
+| `customerId`     | String | Client who submitted the file                                              |
+| `status`         | String | Always `FAILED`                                                            |
+| `workflowId`     | String | The workflow that failed (e.g., `copy-sftp-to-s3`)                         |
+| `retryCount`     | Number | Number of attempts made before giving up                                   |
+| `errorMessage`   | String | Last error message returned by the Lambda or Step Function                 |
+| `failureReason`  | String | Optional: custom mapped reason code (e.g., `PERMISSION_DENIED`, `TIMEOUT`) |
+| `stepFunctionId` | String | Execution ID for debugging                                                 |
+| `timestamp`      | String | When the failure was recorded (ISO 8601)                                   |
+| `metadata`       | Map    | Optional map: region, lambda function, retry history, etc.                 |
+
+---
+
+## 🧾 Sample Record
+
+```json
+{
+  "PK": "FAILURE#bankpacific_transactions_2025-06-28.csv",
+  "fileName": "bankpacific_transactions_2025-06-28.csv",
+  "customerId": "bankpacific",
+  "status": "FAILED",
+  "workflowId": "copy-sftp-to-s3-and-sftp",
+  "retryCount": 3,
+  "errorMessage": "AccessDenied: S3 bucket not found or IAM role misconfigured.",
+  "failureReason": "PERMISSION_DENIED",
+  "stepFunctionId": "exec-1234-abc",
+  "timestamp": "2025-06-28T22:15:03Z",
+  "metadata": {
+    "region": "us-west-2",
+    "lambda": "lambda_sftp_to_s3",
+    "fileSizeBytes": 4293123
+  }
+}
+```
+
+---
+
+## 🔍 Use Cases & Benefits
+
+| Use Case                                     | Description                                                           |
+| -------------------------------------------- | --------------------------------------------------------------------- |
+| Post-mortem investigation                    | Engineers or support can review `errorMessage` and `stepFunctionId`   |
+| Manual re-processing                         | Admins can re-submit failed files via UI/API                          |
+| Customer communication                       | Helpdesk teams can notify clients of the failure with clear messages  |
+| Metrics dashboard                            | Count of failed files per client, per workflow, per reason            |
+| Clean separation of **active** vs **failed** | Keeps `FileTransferStatus` lightweight for recent success/in-progress |
+
+---
+
+## 🔁 When to Write
+
+You write to this table **after all retries have failed** in your Step Function — typically from a `Log Failure` Lambda state.
+
+---
+
+## 🛠️ Lambda: Sample Write to `TransferFailureQueue`
+
+```python
+import boto3
+import datetime
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('TransferFailureQueue')
+
+def write_failure_record(file_name, customer_id, workflow_id, retry_count, error_msg, step_fn_id, failure_reason, metadata):
+    timestamp = datetime.datetime.utcnow().isoformat()
+
+    item = {
+        'PK': f'FAILURE#{file_name}',
+        'fileName': file_name,
+        'customerId': customer_id,
+        'status': 'FAILED',
+        'workflowId': workflow_id,
+        'retryCount': retry_count,
+        'errorMessage': error_msg,
+        'failureReason': failure_reason,
+        'stepFunctionId': step_fn_id,
+        'timestamp': timestamp,
+        'metadata': metadata or {}
+    }
+
+    table.put_item(Item=item)
+```
+
+---
+
+## 🔐 IAM Policy
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["dynamodb:PutItem"],
+  "Resource": "arn:aws:dynamodb:<region>:<account>:table/TransferFailureQueue"
+}
+```
+
+---
+
+## 📈 Optional Enhancements
+
+| Feature                   | Value                                                 |
+| ------------------------- | ----------------------------------------------------- |
+| TTL enabled               | Auto-expire records older than 30 days if reprocessed |
+| GSI on `customerId`       | To list all failures per customer (dashboard or API)  |
+| Filter by `failureReason` | For trending root causes and mitigation tracking      |
+| SNS alert integration     | Trigger alerts when a new failure is logged           |
+
+![image](https://github.com/user-attachments/assets/84aea64c-8cc8-4a3d-abc9-58a8f6fbcc3b)
+
+
+
+Let’s now walk through the **`TransferNotificationLog`** DynamoDB table — designed to track all notifications triggered by your file transfer workflow, such as **email alerts**, **SNS messages**, or **webhooks**.
+
+---
+
+## ✅ **Table: `TransferNotificationLog`**
+
+### 📌 **Purpose**
+
+Keep a log of **when, how, and to whom** a notification was sent, for auditing, support, and traceability.
+
+It helps:
+
+* Prove notification delivery (for compliance)
+* Avoid duplicate alerts
+* Debug missing notifications
+* Track webhook performance or failure
+
+---
+
+## 🧩 **Key Schema**
+
+| Key Type      | Key Name | Example Value                                    |
+| ------------- | -------- | ------------------------------------------------ |
+| Partition Key | `PK`     | `NOTIFY#bankpacific_transactions_2025-06-28.csv` |
+| Sort Key      | `SK`     | `TS#2025-06-28T22:01:35Z`                        |
+
+---
+
+## 📋 **Attributes**
+
+| Attribute    | Type   | Description                                                          |
+| ------------ | ------ | -------------------------------------------------------------------- |
+| `PK`         | String | Notification log per file (`NOTIFY#<fileName>`)                      |
+| `SK`         | String | Timestamp of the notification (`TS#<ISO timestamp>`)                 |
+| `fileName`   | String | The name of the file associated with this notification               |
+| `customerId` | String | The client ID                                                        |
+| `status`     | String | `SENT`, `FAILED`, `RETRYING`                                         |
+| `type`       | String | `SNS`, `EMAIL`, `WEBHOOK`, `TEAMS`, etc.                             |
+| `target`     | String | Destination endpoint (email address, webhook URL, SNS topic ARN)     |
+| `messageId`  | String | ID returned by service (e.g., SNS message ID or HTTP response ID)    |
+| `response`   | String | Status message from provider (e.g., HTTP 200, SNS message delivered) |
+| `retryCount` | Number | Retry attempts made                                                  |
+| `workflowId` | String | Workflow associated with this file transfer                          |
+| `timestamp`  | String | ISO timestamp (redundant with SK for queries)                        |
+| `metadata`   | Map    | Optional: region, source Lambda, error trace, etc.                   |
+
+---
+
+## 🧾 **Sample Record**
+
+```json
+{
+  "PK": "NOTIFY#bankpacific_transactions_2025-06-28.csv",
+  "SK": "TS#2025-06-28T22:01:35Z",
+  "fileName": "bankpacific_transactions_2025-06-28.csv",
+  "customerId": "bankpacific",
+  "status": "SENT",
+  "type": "SNS",
+  "target": "arn:aws:sns:us-west-2:123456789012:file-transfer-notify",
+  "messageId": "b7f57d33-4fbf-490c-832c-52d157b92c31",
+  "response": "Message published to SNS",
+  "retryCount": 0,
+  "workflowId": "copy-sftp-to-s3-and-sftp",
+  "timestamp": "2025-06-28T22:01:35Z",
+  "metadata": {
+    "region": "us-west-2",
+    "lambda": "lambda_send_notification"
+  }
+}
+```
+
+---
+
+## 🔍 **Use Cases**
+
+| Use Case                          | Query Example                                                    |
+| --------------------------------- | ---------------------------------------------------------------- |
+| View all notifications for a file | Query by `PK = NOTIFY#<fileName>`                                |
+| Audit all alerts sent to client   | Filter by `customerId` and `type`                                |
+| Analyze failures for retry        | Query by `status = FAILED`                                       |
+| Re-publish failed messages        | Fetch `target`, `messageId`, and `message body` for reprocessing |
+| Daily notification metrics        | Count by `workflowId`, `type`, or `status`                       |
+
+---
+
+## 🧠 Best Practices
+
+* Write a log **after** SNS publish, webhook POST, or email send.
+* On `FAILED` or `RETRYING`, include failure reason in `response`.
+* Enable **TTL** to purge logs older than X days if logs are exported to S3.
+
+---
+
+## 🛠️ Lambda Snippet: Write Notification Log
+
+```python
+import boto3
+from datetime import datetime
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('TransferNotificationLog')
+
+def log_notification(file_name, customer_id, status, notif_type, target, msg_id, response_msg, retry_count, workflow_id, metadata=None):
+    timestamp = datetime.utcnow().isoformat()
+    pk = f"NOTIFY#{file_name}"
+    sk = f"TS#{timestamp}"
+    
+    item = {
+        "PK": pk,
+        "SK": sk,
+        "fileName": file_name,
+        "customerId": customer_id,
+        "status": status,
+        "type": notif_type,
+        "target": target,
+        "messageId": msg_id,
+        "response": response_msg,
+        "retryCount": retry_count,
+        "workflowId": workflow_id,
+        "timestamp": timestamp,
+        "metadata": metadata or {}
+    }
+    
+    table.put_item(Item=item)
+```
+
+---
+
+## 🧪 Example Athena Query (If Logs Exported to S3)
+
+```sql
+SELECT customerId, COUNT(*) as notifications, status
+FROM transfer_notification_log
+WHERE timestamp > current_date - interval '7' day
+GROUP BY customerId, status
+ORDER BY notifications DESC;
+```
+
+---
+
+Here’s a detailed concept for both a **Slack/Teams bot** and a **dashboard** to monitor `TransferNotificationLog` data in real-time and improve observability for your file transfer pipeline.
+
+---
+
+## 🤖 Slack or Microsoft Teams Bot Concept
+
+### ✅ Bot Name: `TransferAlertBot`
+
+---
+
+### 🔧 **Bot Capabilities**
+
+| Command                              | Description                                                     |
+| ------------------------------------ | --------------------------------------------------------------- |
+| `/transfer-status <fileName>`        | Fetches latest notification status for a file                   |
+| `/transfer-notifications <customer>` | Lists recent notifications for a customer                       |
+| `/transfer-failed-notifications`     | Lists last 5 failed notifications across the system             |
+| `/transfer-retry <fileName>`         | Triggers re-send logic (calls Lambda or Step Function to retry) |
+| `/transfer-alert-summary`            | Summary of notifications by status (past 24h or 7d)             |
+
+---
+
+### 📥 Sample Bot Interaction (Slack)
+
+```
+👤 User:
+/transfer-status bankpacific_transactions_2025-06-28.csv
+
+🤖 TransferAlertBot:
+📄 *File:* `bankpacific_transactions_2025-06-28.csv`
+👤 *Customer:* `bankpacific`
+🛠 *Workflow:* `copy-sftp-to-s3-and-sftp`
+📣 *Notification Type:* SNS  
+✅ *Status:* SENT  
+📬 *Sent To:* arn:aws:sns:us-west-2:123:file-transfer-notify  
+🕒 *Time:* 2025-06-28T22:01:35Z
+📎 *Message ID:* b7f57d33-4fbf-490c-832c-52d157b92c31
+```
+
+---
+
+### ⚙️ Tech Stack
+
+| Component       | Description                                      |
+| --------------- | ------------------------------------------------ |
+| Slack/Teams App | Built with Bolt (Slack) or Bot Framework (Teams) |
+| AWS Lambda      | Backend for each bot command (Python)            |
+| DynamoDB        | Reads from `TransferNotificationLog`             |
+| API Gateway     | Optional for webhook endpoints                   |
+| IAM Role        | Read-only access to DynamoDB                     |
+
+---
+
+### 🔐 IAM Permissions
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["dynamodb:Query", "dynamodb:GetItem"],
+  "Resource": "arn:aws:dynamodb:<region>:<account>:table/TransferNotificationLog"
+}
+```
+
+---
+
+## 📊 Notification Health Dashboard
+
+### 🖥️ Platform Options
+
+* **Amazon QuickSight** (built on S3 export + Athena)
+* **Grafana** (using CloudWatch + Lambda metrics)
+* **Tableau or Power BI** (if exported to Redshift or S3)
+
+---
+
+### 📈 Key Metrics to Visualize
+
+| Metric                                 | Chart Type           |
+| -------------------------------------- | -------------------- |
+| Notifications sent per customer        | Bar or Pie Chart     |
+| Failed notifications (7-day trend)     | Line or Area Chart   |
+| Delivery time latency per notification | Box or Histogram     |
+| SNS/Webhook response errors            | Table + Bar          |
+| Retry attempts distribution            | Line or Scatter Plot |
+| Notification type usage (SNS, Email…)  | Donut Chart          |
+
+---
+
+### 📊 Example Dashboard Cards
+
+1. ✅ **Success vs Failed Notification Ratio**
+2. 📉 **Top 5 Customers with Most Notification Failures**
+3. 🧭 **Average Notification Latency per Workflow**
+4. 🛠️ **Real-Time Table of Recent Failed Notifications**
+5. 📬 **Last 10 Notification Messages Sent**
+
+---
+
+### 🔁 Data Source Options
+
+* Use **DynamoDB Streams → Kinesis Firehose → S3**
+* Or schedule a Lambda to export logs to **S3 as JSON**
+* Use AWS Glue Crawler → Athena → QuickSight
+
+---
+
+✅ All three deliverables are now available:
+
+### 1. **Terraform Slack Bot Module**
+
+* Deploys a Lambda-powered Slack bot behind an API Gateway.
+* Located in: `Terraform Slack Bot Module`
+
+### 2. **Athena + Glue Export Setup**
+
+* Exports `TransferNotificationLog` from DynamoDB to S3 using Glue.
+* Located in: `Athena Glue Export Setup`
+
+### 3. **Grafana Notification Dashboard**
+
+* Visualizes CloudWatch metrics: sent/failure trends, error tables, and volume by customer.
+* Located in: `Grafana Notification Dashboard`
+
+Would you like:
+
+* A combined deployment guide for all three components?
+* Or integration instructions to wire all of these together in one CI/CD flow?
+
+
+
+
+Absolutely! Let’s explain in detail the use of **Global Secondary Indexes (GSI)** in the context of your DynamoDB-based file transfer architecture, specifically for tables like:
+
+* `FileTransferStatus`
+* `TransferNotificationLog`
+* `TransferFailureQueue`
+
+---
+
+## 🧠 What is a GSI (Global Secondary Index)?
+
+A **Global Secondary Index** allows you to query your DynamoDB table **on attributes other than the primary key** (i.e., PK/SK).
+
+* You define a **GSI partition key** and an optional **sort key**.
+* You can project additional attributes to the GSI for efficient querying.
+* Unlike the base table’s key schema, **GSI queries are flexible** and support **filtering, sorting, and alternate access patterns**.
+
+---
+
+## 🔍 Why Use GSIs in File Transfer Architecture?
+
+DynamoDB tables like `FileTransferStatus` are designed for **file-specific tracking** using `PK = FILE#<customerId>#<fileName>`. But if you want to:
+
+* List all transfers by a **customer ID**
+* Get all **FAILED** transfers by a **workflow**
+* View all files transferred on a **given day**
+
+—you **need GSIs**, because those fields are not part of the base key.
+
+---
+
+## ✅ Recommended Global Secondary Indexes (GSIs)
+
+### ✅ GSI #1: `CustomerIndex`
+
+| Field                  | Purpose                 |
+| ---------------------- | ----------------------- |
+| Partition Key (GSI1PK) | `customerId`            |
+| Sort Key (GSI1SK)      | `timestamp` or `status` |
+
+#### 🔹 Use Case:
+
+* Show all files processed by a specific customer
+* Filter by date or status (success/failure)
+
+---
+
+### ✅ GSI #2: `WorkflowStatusIndex`
+
+| Field                  | Purpose      |
+| ---------------------- | ------------ |
+| Partition Key (GSI2PK) | `workflowId` |
+| Sort Key (GSI2SK)      | `status`     |
+
+#### 🔹 Use Case:
+
+* Count how many files **failed** under a specific workflow
+* Monitor health of each routing path
+
+---
+
+### ✅ GSI #3: `DateStatusIndex` (Optional for BI use)
+
+| Field                  | Purpose                 |
+| ---------------------- | ----------------------- |
+| Partition Key (GSI3PK) | `date` (from timestamp) |
+| Sort Key (GSI3SK)      | `status`                |
+
+#### 🔹 Use Case:
+
+* Daily transfer success/failure rates
+* Aggregate by status over time
+
+---
+
+## 🧩 Example for `FileTransferStatus` Table
+
+### Base Table Key Schema:
+
+| PK                                         | SK                        |
+| ------------------------------------------ | ------------------------- |
+| `FILE#bankpacific#transactions_2025-06-28` | `TS#2025-06-28T21:01:00Z` |
+
+### GSI: `CustomerIndex`
+
+| GSI1PK        | GSI1SK       | status  | fileName         | timestamp           |
+| ------------- | ------------ | ------- | ---------------- | ------------------- |
+| `bankpacific` | `2025-06-28` | SUCCESS | transactions.csv | `2025-06-28T21:01Z` |
+
+You can now run queries like:
+
+```sql
+GSI1PK = 'bankpacific'
+AND GSI1SK BETWEEN '2025-06-27' AND '2025-06-29'
+```
+
+---
+
+## 🛠️ Terraform GSI Example for FileTransferStatus
+
+```hcl
+global_secondary_index {
+  name            = "CustomerIndex"
+  hash_key        = "customerId"
+  range_key       = "timestamp"
+  projection_type = "ALL"
+  read_capacity   = 5
+  write_capacity  = 5
+}
+```
+
+---
+
+## 🔄 Projected Attributes
+
+When you define a GSI, you can specify:
+
+* `KEYS_ONLY`: Just PK and SK
+* `INCLUDE`: Specific attributes (e.g., `status`, `workflowId`)
+* `ALL`: Full item copy (easiest for reporting, higher cost)
+
+---
+
+## 📈 Best Practices
+
+| Tip                                                  | Why it Helps                                               |
+| ---------------------------------------------------- | ---------------------------------------------------------- |
+| Use ISO date parts in sort keys                      | Enables range queries (e.g., `2025-06-01` to `2025-06-30`) |
+| Keep indexes sparse                                  | Avoid indexing attributes not used in filtering            |
+| Consider write cost implications                     | Each write incurs cost for every GSI it updates            |
+| Use **GSI for dashboard data**, not detailed history | Keep main table for workflow logic; GSI for analytics      |
+
+---
+
+## ✅ Summary Table of Suggested GSIs
+
+| Table Name                | GSI Name                    | PK Field     | SK Field    | Use Case                             |
+| ------------------------- | --------------------------- | ------------ | ----------- | ------------------------------------ |
+| `FileTransferStatus`      | `CustomerIndex`             | `customerId` | `timestamp` | Show all files for a customer        |
+| `FileTransferStatus`      | `WorkflowStatusIndex`       | `workflowId` | `status`    | Track workflow health                |
+| `TransferNotificationLog` | `NotificationCustomerIndex` | `customerId` | `status`    | Failed alerts per customer           |
+| `TransferFailureQueue`    | `FailureByCustomer`         | `customerId` | `timestamp` | Reprocess all failed files by client |
+
+---
+
+Here is the updated **Entity-Relationship Diagram (ERD)** that includes all your DynamoDB Global Secondary Indexes (GSIs) for the file transfer pipeline:
+
+📌 **[Click to view or download the ERD with GSIs »](sandbox:/mnt/data/updated_dynamodb_erd_with_gsi.png)**
+
+---
+
+Next, here are a few Athena query examples assuming your DynamoDB tables are exported to S3:
+
+---
+
+### 📊 **Athena Query: List Failed Files by Workflow**
+
+```sql
+SELECT fileName, customerId, status, timestamp
+FROM file_transfer_status
+WHERE workflowId = 'copy-sftp-to-s3'
+  AND status = 'FAILED'
+ORDER BY timestamp DESC;
+```
+
+---
+
+### 📊 **Athena Query: Get All File Status for a Customer in Last 7 Days**
+
+```sql
+SELECT fileName, status, timestamp
+FROM file_transfer_status
+WHERE customerId = 'bankpacific'
+  AND timestamp > date_format(current_timestamp - interval '7' day, '%Y-%m-%d')
+ORDER BY timestamp DESC;
+```
+
+---
+
+### 📊 **Athena Query: Summary by Status**
+
+```sql
+SELECT status, COUNT(*) AS total_files
+FROM file_transfer_status
+GROUP BY status;
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
