@@ -1,25 +1,26 @@
-Here’s a **professional Microsoft Teams message** you can send to your **VP, Principal Architect, and Manager** to review the list of additional modules for the File Transfer Services architecture:
+Here’s a professional Microsoft Teams message write-up you can use to share the self-serve onboarding HTML mockups with your **UX team** and **senior managers**:
 
 ---
 
+**📢 Teams Message for UX Team & Senior Managers**
 
+---
 
-As part of our initiative to enhance the scalability, resilience, and governance of Group N’s File Transfer Services, I’ve compiled a comprehensive list of **additional architectural modules** that can be layered into the current design.
+Hi Team 👋,
 
-These modules address advanced use cases such as:
+We've put together a complete set of **HTML wireframe mockups** to support our vision for a **Self-Serve Customer Onboarding Experience**. These mockups can serve as **inspiration or starting points** as we further refine the UI/UX and integrate it with our backend systems.
 
-* Cross-region and cross-account transfers
-* Delta-based and bulk folder ingestion
-* Pre/post-transfer validations
-* Reprocessing, anomaly detection, quarantine handling, and more
+Here’s what’s included in the current prototype suite:
 
-The goal is to **future-proof the architecture** while supporting **operational flexibility**, **compliance**, and **customer self-service**.
-
-📄 Please review the proposed modules here:
-👉 \[Attach list or link to Confluence/GDrive/SharePoint document]
-
-I’d appreciate your input on which of these we should prioritize for implementation or flag for future roadmap planning.
-
-Let me know a good time to walk through the highlights, or I’m happy to include them in the upcoming design review.
-
+🔹 **Login Page**
+🔹 **Sign-Up Page**
+🔹 **Customer Metadata Form**
+🔹 **Workflow Selection Page**
+🔹 **Transfer Configuration Page** (with Source, Target & Customer sections)
+🔹 **Review & Confirmation Page**
+🔹 **Success Confirmation Page**
+🔹 **Dashboard & Transfer Status Page** (includes charts and reports)
+🔹 **Clone Previous Transfers Page** (pre-fill forms from past setups)
+🔹 **AI Chatbot Integration Page**
+🔹 ✅ **Navigation Portal** to access all mockups
 
