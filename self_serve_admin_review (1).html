@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Review Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      padding: 40px;
+      margin: 0;
+    }
+    .review-container {
+      max-width: 1100px;
+      margin: auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .filters input {
+      width: 250px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    td button {
+      padding: 8px 12px;
+      font-size: 14px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .approve-btn {
+      background-color: #28a745;
+      color: white;
+    }
+    .reject-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination button {
+      padding: 10px 16px;
+      margin: 0 5px;
+      font-size: 14px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .pagination button:disabled {
+      background-color: #ccc;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <div class="review-container">
+    <h2>Admin Review Dashboard</h2>
+    <div class="filters">
+      <input type="text" id="searchCustomer" placeholder="Search by Customer..." oninput="filterTable()" />
+      <input type="text" id="searchStatus" placeholder="Search by Status..." oninput="filterTable()" />
+    </div>
+    <table id="reviewTable">
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Customer</th>
+          <th>Source</th>
+          <th>Target</th>
+          <th>Status</th>
+          <th>Submitted On</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Rows inserted dynamically -->
+      </tbody>
+    </table>
+    <div class="pagination">
+      <button onclick="prevPage()" id="prevBtn">Previous</button>
+      <button onclick="nextPage()" id="nextBtn">Next</button>
+    </div>
+  </div>
+
+  <script>
+    const data = [
+      { id: "REQ-001245", customer: "Example Corp", source: "SFTP: /uploads", target: "S3: /target-folder", status: "Pending", date: "2025-07-14" },
+      { id: "REQ-001244", customer: "Beta LLC", source: "S3: /incoming-data", target: "SFTP: /export", status: "Pending", date: "2025-07-13" },
+      { id: "REQ-001243", customer: "Delta Inc", source: "SFTP: /client-data", target: "S3: /final-drop", status: "Approved", date: "2025-07-12" },
+      { id: "REQ-001242", customer: "Gamma Group", source: "S3: /raw", target: "S3: /archive", status: "Rejected", date: "2025-07-11" },
+      { id: "REQ-001241", customer: "Omega Corp", source: "SFTP: /incoming", target: "SFTP: /processed", status: "Pending", date: "2025-07-10" }
+    ];
+
+    let currentPage = 0;
+    const rowsPerPage = 3;
+
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      const start = currentPage * rowsPerPage;
+      const paginated = filteredData.slice(start, start + rowsPerPage);
+      for (const row of paginated) {
+        tbody.innerHTML += `
+          <tr>
+            <td>${row.id}</td>
+            <td>${row.customer}</td>
+            <td>${row.source}</td>
+            <td>${row.target}</td>
+            <td>${row.status}</td>
+            <td>${row.date}</td>
+            <td>
+              ${row.status === "Pending" ? `
+              <button class="approve-btn">Approve</button>
+              <button class="reject-btn">Reject</button>` :
+              `<span style="color:${row.status === 'Approved' ? '#28a745' : '#dc3545'};">✔ ${row.status}</span>`}
+            </td>
+          </tr>
+        `;
+      }
+      document.getElementById('prevBtn').disabled = currentPage === 0;
+      document.getElementById('nextBtn').disabled = (start + rowsPerPage) >= filteredData.length;
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        currentPage--;
+        renderTable();
+      }
+    }
+
+    function nextPage() {
+      if ((currentPage + 1) * rowsPerPage < filteredData.length) {
+        currentPage++;
+        renderTable();
+      }
+    }
+
+    let filteredData = [...data];
+
+    function filterTable() {
+      const searchCustomer = document.getElementById('searchCustomer').value.toLowerCase();
+      const searchStatus = document.getElementById('searchStatus').value.toLowerCase();
+      filteredData = data.filter(row => 
+        row.customer.toLowerCase().includes(searchCustomer) &&
+        row.status.toLowerCase().includes(searchStatus)
+      );
+      currentPage = 0;
+      renderTable();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
