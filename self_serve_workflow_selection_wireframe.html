@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Onboarding - Workflow Selection</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
+      margin: 0;
+    }
+    .workflow-container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 700px;
+    }
+    .workflow-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .workflow-header h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #333333;
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #444;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .description {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #555;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #17a2b8;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #138496;
+    }
+  </style>
+</head>
+<body>
+  <div class="workflow-container">
+    <div class="workflow-header">
+      <h2>Select a File Transfer Workflow</h2>
+    </div>
+    <form>
+      <div class="form-group">
+        <label for="workflow">Available Workflows</label>
+        <select id="workflow">
+          <option value="">-- Choose a Workflow --</option>
+          <option value="sftp-to-s3">SFTP → S3</option>
+          <option value="s3-to-sftp">S3 → SFTP</option>
+          <option value="sftp-to-sftp">SFTP → SFTP</option>
+          <option value="s3-to-s3">S3 → S3</option>
+        </select>
+        <div class="description" id="workflow-description">
+          Select a workflow to see a brief description.
+        </div>
+      </div>
+      <button type="submit">Proceed to Configure</button>
+    </form>
+  </div>
+
+  <script>
+    const descriptions = {
+      "sftp-to-s3": "Transfer files from an external or on-premises SFTP server to an Amazon S3 bucket.",
+      "s3-to-sftp": "Send files from an Amazon S3 bucket to a target SFTP server.",
+      "sftp-to-sftp": "Direct transfer between two SFTP servers, with optional processing in-between.",
+      "s3-to-s3": "Move files between S3 buckets across accounts or regions with transformation or tagging."
+    };
+    document.getElementById('workflow').addEventListener('change', function() {
+      const value = this.value;
+      const desc = descriptions[value] || "Select a workflow to see a brief description.";
+      document.getElementById('workflow-description').textContent = desc;
+    });
+  </script>
+</body>
+</html>

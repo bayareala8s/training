@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Onboarding - Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .login-header h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #333333;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #444;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005bb5;
+    }
+    .small-link {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #0066cc;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h2>Customer Onboarding Login</h2>
+    </div>
+    <form>
+      <div class="form-group">
+        <label for="username">Email / Username</label>
+        <input type="text" id="username" placeholder="Enter your email or username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password">
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <div class="login-footer">
+      <div class="small-link">Forgot Password?</div>
+      <div class="small-link">New Customer? <strong>Sign Up</strong></div>
+    </div>
+  </div>
+</body>
+</html>

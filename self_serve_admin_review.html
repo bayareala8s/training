@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Review Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      padding: 40px;
+      margin: 0;
+    }
+    .review-container {
+      max-width: 1100px;
+      margin: auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    td button {
+      padding: 8px 12px;
+      font-size: 14px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .approve-btn {
+      background-color: #28a745;
+      color: white;
+    }
+    .reject-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+    td button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="review-container">
+    <h2>Admin Review Dashboard</h2>
+    <p>Review pending customer file transfer configurations and take action.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Customer</th>
+          <th>Source</th>
+          <th>Target</th>
+          <th>Status</th>
+          <th>Submitted On</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>REQ-001245</td>
+          <td>FSO</td>
+          <td>SFTP: /uploads</td>
+          <td>S3: /target-folder</td>
+          <td>Pending</td>
+          <td>2025-07-14</td>
+          <td>
+            <button class="approve-btn">Approve</button>
+            <button class="reject-btn">Reject</button>
+          </td>
+        </tr>
+        <tr>
+          <td>REQ-001244</td>
+          <td>Easy</td>
+          <td>S3: /incoming-data</td>
+          <td>SFTP: /export</td>
+          <td>Pending</td>
+          <td>2025-07-13</td>
+          <td>
+            <button class="approve-btn">Approve</button>
+            <button class="reject-btn">Reject</button>
+          </td>
+        </tr>
+        <tr>
+          <td>REQ-001243</td>
+          <td>Cash</td>
+          <td>SFTP: /client-data</td>
+          <td>S3: /final-drop</td>
+          <td>Approved</td>
+          <td>2025-07-12</td>
+          <td>
+            <span style="color: #28a745;">✔ Approved</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Onboarding - Metadata Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
+      margin: 0;
+    }
+    .metadata-container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 700px;
+    }
+    .metadata-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .metadata-header h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #333333;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #444;
+    }
+    input[type="text"], input[type="email"], select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0069d9;
+    }
+  </style>
+</head>
+<body>
+  <div class="metadata-container">
+    <div class="metadata-header">
+      <h2>Customer Metadata Information</h2>
+    </div>
+    <form>
+      <div class="form-group">
+        <label for="customer-id">Customer ID</label>
+        <input type="text" id="customer-id" placeholder="e.g. CUST001">
+      </div>
+      <div class="form-group">
+        <label for="customer-name">Customer Name</label>
+        <input type="text" id="customer-name" placeholder="Customer Name">
+      </div>
+      <div class="form-group">
+        <label for="contact-email">Contact Email</label>
+        <input type="email" id="contact-email" placeholder="support@example.com">
+      </div>
+      <div class="form-group">
+        <label for="source-type">Source Type</label>
+        <select id="source-type">
+          <option value="">Select</option>
+          <option value="S3">Amazon S3</option>
+          <option value="SFTP">SFTP Server</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="target-type">Target Type</label>
+        <select id="target-type">
+          <option value="">Select</option>
+          <option value="S3">Amazon S3</option>
+          <option value="SFTP">SFTP Server</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="business-use">Business Use Case Description</label>
+        <textarea id="business-use" rows="4" placeholder="Describe what this transfer will be used for..."></textarea>
+      </div>
+      <button type="submit">Submit Metadata</button>
+    </form>
+  </div>
+</body>
+</html>
