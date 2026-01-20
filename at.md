@@ -263,9 +263,6 @@ The new Self-Serve service produces **complete, correlated, and immutable audit 
 
 How often and by whom are the new events being monitored?
 
-Below is a **concise, audit-ready response** you can provide to **SAFR / CARE**. It is written in **control language** and avoids implementation details unless required.
-
----
 
 ## How Often and by Whom Are the New Audit Events Monitored?
 
