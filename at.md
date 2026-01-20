@@ -447,6 +447,46 @@ Automated alerting is fully implemented and integrated into the Self-Serve servi
 
 ---
 
+Does this release add or modify elements of the security services such as SIEM, Vulnerability Scanning, DLP, Host-based IPS/IDS and Malware Protection, PKI, Firewalls, WAF, Whilelisting?
+
+
+**No material changes to core enterprise security services are introduced.**
+This release **leverages existing, enterprise-approved security services** and introduces **service-scoped integrations only**, without altering global configurations or control planes.
+
+---
+
+### Security Services Impact Summary
+
+| Security Service                | Add / Modify / No Change   | Description                                                                                                                                                               |
+| ------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SIEM**                        | **Add (Integration Only)** | New service audit and security events are forwarded to the existing SIEM for centralized monitoring and correlation. No changes to SIEM infrastructure or rulesets.       |
+| **Vulnerability Scanning**      | **No Change**              | The service inherits existing enterprise vulnerability scanning and patch management processes. No new scanners or scanning mechanisms introduced.                        |
+| **DLP**                         | **No Change**              | No sensitive payload data is inspected or stored by the service. Existing enterprise DLP controls remain unchanged and applicable where data traverses approved services. |
+| **Host-based IPS / IDS**        | **No Change**              | The service runs on enterprise-managed platforms that already have host-based protection enabled. No custom IDS/IPS agents are introduced.                                |
+| **Malware Protection**          | **No Change**              | Inherits malware protection controls provided by the underlying enterprise-managed infrastructure and storage services.                                                   |
+| **PKI**                         | **No Change**              | Uses existing enterprise certificate management and encryption mechanisms. No new certificate authorities or trust chains are introduced.                                 |
+| **Firewalls**                   | **No Change**              | Network access is governed by existing firewall rules and segmentation. No changes to enterprise firewall configurations are required.                                    |
+| **WAF**                         | **No Change**              | The service does not introduce new public-facing web endpoints requiring separate WAF configuration. Existing protections apply where relevant.                           |
+| **Whitelisting (Allowlisting)** | **Add (Service-Scoped)**   | Endpoint allowlisting is enforced at the service level for approved source/target endpoints. This does not alter enterprise-wide allowlists.                              |
+
+---
+
+### Additional Security Control Notes
+
+* No new perimeter security layers are introduced.
+* No changes to global firewall, WAF, PKI, or malware protection policies.
+* All integrations are **additive and service-scoped**, not platform-wide.
+* Security telemetry produced by the service enhances visibility without expanding the attack surface.
+
+---
+
+### Key Assurance Statement
+
+This release does **not modify or weaken existing enterprise security services**. It integrates with approved security controls—such as SIEM and allowlisting—in a **non-invasive, service-scoped manner**, ensuring continued alignment with established security architecture, governance standards, and risk tolerance.
+
+
+
+
 
 Does this release add or modify elements of the management services such as IAM, Log Management, Orchestration Services, Monitoring Services, DNS, NTP, Backup and Recovery, Flaw Remediation?
 
