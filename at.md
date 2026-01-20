@@ -19,7 +19,7 @@ The **Self-Serve Backend** is a secure, policy-driven automation layer that enab
 
 #### 1. Policy-Controlled Workflow Orchestration
 
-* Only **predefined, SAFR-approved workflow types** can be executed
+* Only **predefined, approved workflow types** can be executed
 * Guardrails enforce:
 
   * Approved endpoints
@@ -82,24 +82,9 @@ Every request is validated for:
 
 ---
 
-### Why This Aligns with SAFR / CARE Goals
-
-* **Risk Reduction**: No ad-hoc scripts or manual access
-* **Compliance by Design**: Guardrails baked into execution
-* **Operational Scale**: Onboards many users without proportional ops load
-* **Audit-Ready**: End-to-end traceability
-* **Future-Proof**: New workflows can be added without redesigning the platform
-
----
-
 ### Key Takeaway
 
-This Self-Serve Backend is **not a custom solution per customer**—it is a **controlled enterprise platform** that balances **speed, safety, and scale**, while meeting **SAFR governance and CARE operational requirements**.
+This Self-Serve Backend is **not a custom solution per customer**—it is a **controlled enterprise platform** that balances **speed, safety, and scale**, while meeting SAFR governance and CARE operational requirements**.
 
 ---
 
-If you want, next I can:
-
-* Convert this into a **1-slide executive summary**
-* Map this explicitly to **SAFR control domains**
-* Produce a **CARE-focused operational flow** (Day-2 ops view)
