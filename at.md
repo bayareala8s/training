@@ -492,16 +492,12 @@ This release **leverages and extends existing enterprise management services** w
 
 ---
 
-### Key Assurance Statement
+### Key Takeaway
 
 This release introduces **service-scoped extensions** to IAM, logging, orchestration, and monitoring **only where necessary**, while fully **inheriting existing enterprise management services** for DNS, NTP, backup and recovery, and flaw remediation—ensuring **no disruption to established controls** and **no expansion of unmanaged risk**.
 
 ---
 
-If helpful, I can next:
 
-* Provide a **before-and-after impact diagram**
-* Map these changes to **SAFR control domains**
-* Draft a **change-risk classification summary** for release documentation
 
 
