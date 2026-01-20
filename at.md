@@ -449,16 +449,12 @@ All alert acknowledgments and actions taken are **logged and auditable**.
 
 ---
 
-### Key Assurance Statement
+### Key Takeaway
 
 Automated alerting is fully implemented and integrated into the Self-Serve service, enabling **real-time detection of security, compliance, and operational events**, with **defined escalation paths and accountability**, supporting both **CARE operational readiness** and **SAFR risk management requirements**.
 
 ---
 
-If you want, I can also:
 
-* Provide a **sample alert catalog**
-* Map alerts to **incident severity definitions**
-* Align alert types to **specific SAFR control objectives**
 
 
