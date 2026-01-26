@@ -1,267 +1,187 @@
-Perfect move 👍
-Starting with a **strong, ARC-ready Table of Contents (ToC)** will save you *hours* later and makes the document feel “official” from page 1.
+Got it — this is a *career-defining* document, not a checkbox exercise.
+Below is a **Principal Architect–aligned 2026 performance goal set** you can paste directly into most corporate performance systems and tune wording as needed.
 
-Below is a **complete, enterprise-grade Table of Contents** tailored specifically to your **Self-Serve File Transfer Backend Engine**, aligned to **Architecture Review Board expectations**, **AWS Well-Architected pillars**, **GovCloud**, and **System IT standards**.
-
-You can paste this directly into **Microsoft Word** and then apply **Heading styles (Heading 1 / 2 / 3)** so Word can auto-generate the ToC.
+I’ve grouped them by **how leadership actually evaluates Principal Architects** (even if they don’t say it explicitly).
 
 ---
 
-# Software Architecture Design Document
+# 2026 Performance Goals — Principal Architect Track
 
-## Table of Contents
+## 1️⃣ Enterprise Architecture Leadership (Core Pillar)
 
----
+**Goal:**
+Drive end-to-end architecture for complex, cross-domain initiatives that materially improve platform scalability, resilience, and security.
 
-### 1. Document Control
+**Success Criteria:**
 
-1.1 Document Purpose
-1.2 Intended Audience
-1.3 Scope of Document
-1.4 Definitions, Acronyms, and Abbreviations
-1.5 References
-1.6 Revision History
+* Serve as **Lead Architect** for **2–3 enterprise-level initiatives** (multi-team, multi-quarter).
+* Produce **approved target-state architectures** with clear migration paths from current state.
+* Architecture adopted by **multiple delivery teams** (not just designed, but implemented).
+* Reduce architectural ambiguity by standardizing patterns (reference architectures, golden paths).
 
----
-
-### 2. Executive Summary
-
-2.1 Business Context
-2.2 Problem Statement
-2.3 Proposed Solution Overview
-2.4 Key Architectural Decisions
-2.5 Summary of Benefits
+**Why this screams “Principal”:**
+Principals own *direction*, not just diagrams.
 
 ---
 
-### 3. Business and Functional Overview
+## 2️⃣ Strategic Influence & Decision-Making Under Ambiguity
 
-3.1 Business Objectives
-3.2 In-Scope Capabilities
-3.3 Out-of-Scope Capabilities
-3.4 Supported File Transfer Flows
-    3.4.1 SFTP → SFTP
-    3.4.2 SFTP → S3
-    3.4.3 S3 → S3
-    3.4.4 S3 → SFTP
-3.5 Supported Deployment Regions (GovCloud)
+**Goal:**
+Influence senior technical and product stakeholders by framing trade-offs, risks, and long-term implications of architectural decisions.
 
----
+**Success Criteria:**
 
-### 4. Requirements
+* Lead **architecture reviews** where multiple options exist and trade-offs are non-obvious.
+* Present **executive-level recommendations** (VP/AVP/Director audience) with:
 
-4.1 Functional Requirements
-4.2 Non-Functional Requirements
-    4.2.1 Availability
-    4.2.2 Scalability
-    4.2.3 Performance
-    4.2.4 Security
-    4.2.5 Compliance
-    4.2.6 Observability
+  * Cost
+  * Risk
+  * Time-to-value
+  * Operational impact
+* Be the **go-to escalation point** for at least one high-risk architectural decision.
+
+**Language leadership loves:**
+
+> “Trusted advisor for ambiguous, high-impact technical decisions.”
 
 ---
 
-### 5. Architectural Principles and Constraints
+## 3️⃣ Platform Thinking & Reuse (Force Multiplier)
 
-5.1 Architecture Principles
-5.2 Design Constraints
-5.3 Assumptions
-5.4 Key Trade-offs
+**Goal:**
+Design reusable architectural patterns and shared services that reduce duplication and accelerate delivery across teams.
 
----
+**Success Criteria:**
 
-### 6. High-Level Architecture Overview
+* Define **2+ reusable architecture patterns** (e.g., self-service onboarding, automation frameworks, security baselines).
+* Patterns adopted by **multiple teams or products**.
+* Demonstrate **measurable impact**:
 
-6.1 Architecture Overview
-6.2 Control Plane vs Data Plane Separation
-6.3 Logical Architecture Diagram
-6.4 Deployment Architecture Diagram
+  * Reduced onboarding time
+  * Reduced manual effort
+  * Improved consistency / compliance
 
----
-
-### 7. Detailed Architecture Design
-
-7.1 Control Plane Architecture
-    7.1.1 API Gateway
-    7.1.2 AWS Lambda
-    7.1.3 AWS Step Functions
-    7.1.4 Amazon SQS
-    7.1.5 Amazon EventBridge
-    7.1.6 Amazon DynamoDB
-
-7.2 Data Plane Architecture
-    7.2.1 Amazon S3
-    7.2.2 AWS Transfer Family (SFTP)
-    7.2.3 Amazon ECS Fargate
-    7.2.4 Network Architecture (VPC, NAT, Egress)
+**Principal signal:**
+You’re optimizing the *system*, not solving one team’s problem.
 
 ---
 
-### 8. Transfer Job and Endpoint Model
+## 4️⃣ Security, Resilience & Risk Ownership
 
-8.1 Transfer Job Lifecycle
-8.2 Job State Management
-8.3 Idempotency and De-duplication
-8.4 Endpoint Configuration Model
-8.5 Customer-Managed Endpoints
-8.6 Secrets Management Strategy
+**Goal:**
+Embed security, resiliency, and compliance into architecture decisions from inception, aligned with enterprise risk posture.
 
----
+**Success Criteria:**
 
-### 9. End-to-End Flow Walkthroughs
+* Proactively identify **architectural risks** and propose mitigations early.
+* Partner with Security/Compliance teams to ensure:
 
-9.1 SFTP → S3 Flow
-9.2 S3 → SFTP Flow
-9.3 S3 → S3 Flow
-9.4 SFTP → SFTP Flow
-9.5 Push vs Pull Transfer Models
+  * Defense-in-depth
+  * Zero Trust alignment
+  * Audit-ready designs
+* Lead at least **one architecture effort with elevated security or regulatory constraints**.
 
----
+**Executive framing:**
 
-### 10. Active-Active Architecture and Regional Strategy
-
-10.1 Multi-Region Deployment Overview
-10.2 Partitioned Active-Active Model
-10.3 Region Ownership and Lease Management
-10.4 Cross-Region Data Replication
-10.5 Failover and Recovery Behavior
+> “Shifts risk left instead of reacting to findings.”
 
 ---
 
-### 11. Performance and Efficiency Pillar
+## 5️⃣ Cost & Operational Excellence (Architect, Not Engineer)
 
-11.1 Workload Characteristics and Expectations
-11.2 Resource Sizing Strategy
-11.3 Horizontal and Vertical Scaling Strategy
-11.4 Dynamic vs Manual Scaling
-11.5 Handling Large Files (1KB – 30GB)
-11.6 Resource Utilization Monitoring
-11.7 Known Resource Limits
+**Goal:**
+Optimize architectures for total cost of ownership (TCO), operational simplicity, and long-term sustainability.
 
----
+**Success Criteria:**
 
-### 12. Resiliency and Reliability Pillar
+* Produce **cost-aware architectures** with clear cost drivers and trade-offs.
+* Recommend optimizations that:
 
-12.1 Availability and Fault Tolerance
-12.2 RTO and RPO Targets
-12.3 Maximum Tolerable Downtime (MTD)
-12.4 Same-Site Fault Tolerance
-12.5 Disaster Recovery Strategy
-12.6 Resiliency Patterns Used
-12.7 Failure Scenarios and Impact Analysis
-12.8 Resiliency Matrix / Failure Table
+  * Reduce run-rate costs
+  * Improve operational efficiency
+  * Balance build vs buy decisions
+* Partner with FinOps / Ops teams where applicable.
+
+**Principal mindset:**
+Cost is an architectural dimension, not an afterthought.
 
 ---
 
-### 13. Security and Compliance Pillar
+## 6️⃣ Technical Mentorship & Architecture Culture
 
-13.1 Security Architecture Overview
-13.2 Defense-in-Depth Strategy
-13.3 Authentication and Authorization
-13.4 Encryption and Data Protection
-13.5 Zero Trust Architecture Alignment
-    13.5.1 Identity and Access Management
-    13.5.2 Network Security
-    13.5.3 Application Security
-    13.5.4 Data Security
-13.6 Compliance with System IT Policies
-13.7 FRISS Policy Alignment
-13.8 Security Gaps and Approved Exceptions
-13.9 ARC Security Decisions
+**Goal:**
+Raise the architectural maturity of teams by mentoring senior engineers and architects.
+
+**Success Criteria:**
+
+* Mentor **2–4 senior engineers / architects** on system design and trade-off thinking.
+* Lead architecture forums, design reviews, or internal knowledge sessions.
+* Improve quality of designs produced *without* direct involvement.
+
+**Promotion-critical signal:**
+Others get better *because* of you.
 
 ---
 
-### 14. Operational Excellence Pillar
+## 7️⃣ Executive Communication & Narrative Building
 
-14.1 Operational Model Overview
-14.2 FOMC Freeze Impact
-14.3 SDLC and Change Management
-    14.3.1 Code Review
-    14.3.2 Testing Strategy
-    14.3.3 Deployment Strategy
-14.4 Rollback and Recovery Procedures
-14.5 Logging and Monitoring Strategy
-14.6 Alerting and Incident Management
-14.7 Customer Onboarding Flow
-14.8 Operational Runbooks
+**Goal:**
+Communicate complex technical topics clearly to non-technical and executive audiences.
 
----
+**Success Criteria:**
 
-### 15. Cost Optimization Pillar
+* Deliver **executive-ready architecture narratives** (1-pager + diagrams).
+* Translate technical complexity into:
 
-15.1 Total Cost of Ownership (TCO) Overview
-15.2 Resource Acquisition Costs
-15.3 Resource Utilization Costs
-15.4 Resource Maintenance Costs
-15.5 Resource Decommissioning
-15.6 Cost Monitoring and Forecasting
-15.7 Cost Comparison of Architecture Patterns
-15.8 Cost Risks and Mitigations
-15.9 Cost Disclaimer
+  * Business impact
+  * Risk posture
+  * Strategic alignment
+* Be invited to discussions **before** decisions are made.
+
+**This matters more than people admit.**
 
 ---
 
-### 16. Risks, Assumptions, and Mitigations
+## 8️⃣ Long-Term Vision & Roadmapping
 
-16.1 Key Risks
-16.2 Mitigation Strategies
-16.3 Open Issues
+**Goal:**
+Contribute to or define **multi-year architectural direction** aligned with business strategy.
 
----
+**Success Criteria:**
 
-### 17. Alternatives Considered
+* Develop **12–36 month architecture roadmaps**.
+* Align near-term delivery with long-term platform evolution.
+* Influence standards, guardrails, or strategic technology choices.
 
-17.1 Architecture Options Considered
-17.2 Rationale for Selected Architecture
-17.3 Rejected Alternatives
-
----
-
-### 18. Architecture Review Board (ARB/ARC) Decisions
-
-18.1 Summary of Key Decisions
-18.2 Deviations from Standards
-18.3 Approved Exceptions
+**Principal reality:**
+You’re shaping the future, not just shipping the present.
 
 ---
 
-### 19. Conclusion
+# Optional “Stretch” Goal (Highly Recommended)
 
-19.1 Summary
-19.2 Next Steps
+**Goal:**
+Establish a recognizable architectural domain of ownership (e.g., File Transfer Platforms, Integration Services, Automation Frameworks).
 
----
+**Success Criteria:**
 
-### 20. Appendices
-
-20.1 Glossary
-20.2 API Specifications
-20.3 DynamoDB Schema Details
-20.4 IAM Policy Samples
-20.5 Monitoring Dashboards
-20.6 Test Evidence and Validation Results
+* Become the **recognized authority** for a critical platform or domain.
+* Drive consistency, standards, and long-term evolution for that space.
+* Be consulted automatically for changes impacting the domain.
 
 ---
 
-## 💡 How to use this in Word (quick tip)
+## How to Position This with Your Manager (One-Line Framing)
 
-1. Paste this into Word
-2. Apply:
-
-   * **Heading 1** → Major sections (1, 2, 3…)
-   * **Heading 2** → Subsections (1.1, 1.2…)
-   * **Heading 3** → Nested sections
-3. Go to **References → Table of Contents → Automatic**
+> “These goals are focused on operating at a Principal Architect level — driving cross-team impact, long-term architectural direction, and executive-level decision support.”
 
 ---
 
-### If you want next
+If you want, next I can:
 
-I can:
+* 🔥 **Rewrite these in your company’s exact performance-system language**
+* 📊 **Map each goal to promotion evidence**
+* 🎯 **Turn this into a mid-year / end-year self-review**
+* 💬 **Coach you on how to discuss these goals with your manager**
 
-* Convert this into a **Word (.docx) template**
-* Mark **“mandatory vs optional” sections** for ARC
-* Create a **shortened executive ToC** (for leadership decks)
-* Help you prioritize **which sections to write first** for fastest ARC approval
-
-Just tell me how your ARC typically reviews (full doc vs staged review).
+Just tell me which one you want next.
