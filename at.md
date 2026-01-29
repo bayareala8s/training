@@ -1555,4 +1555,755 @@ This section defines the core **job and endpoint models** that underpin the syst
 
 
 
+# 9. End-to-End Flow Walkthroughs
+
+This section provides **step-by-step walkthroughs** of each supported file transfer flow, illustrating how control plane and data plane components interact during real-world execution. Each walkthrough highlights correctness, resiliency, and operational behavior.
+
+---
+
+## 9.1 Common Flow Elements (Applies to All Transfers)
+
+Before diving into individual flows, the following steps are **common across all transfer types**:
+
+1. **Trigger**
+
+   * API request, schedule, or event
+2. **Validation**
+
+   * Endpoint existence, permissions, configuration
+3. **Job Creation**
+
+   * Durable job record in DynamoDB
+   * Idempotency enforced
+4. **Lease Acquisition**
+
+   * Partition ownership determined
+5. **Workflow Orchestration**
+
+   * Step Functions controls execution
+6. **Transfer Execution**
+
+   * Data Plane performs streaming transfer
+7. **Verification**
+
+   * Optional checksum or file size validation
+8. **Completion**
+
+   * Job marked SUCCEEDED or FAILED
+9. **Observability**
+
+   * Logs, metrics, alerts generated
+
+---
+
+## 9.2 SFTP → S3 Flow
+
+### 9.2.1 Business Scenario
+
+An external partner publishes batch files to their SFTP server. The platform pulls these files into an internal S3 bucket for downstream processing.
+
+---
+
+### 9.2.2 Step-by-Step Flow
+
+1. **Trigger (Pull Model)**
+
+   * EventBridge schedule triggers polling job
+2. **Control Plane Validation**
+
+   * Validate source SFTP endpoint
+   * Validate target S3 bucket
+3. **Job Creation**
+
+   * Job created with unique idempotency key
+4. **Lease Acquisition**
+
+   * Region acquires partition lease
+5. **Data Plane Execution**
+
+   * ECS Fargate task starts
+   * SFTP connection established
+   * File streamed directly into S3 using multipart upload
+6. **Verification**
+
+   * File size or checksum validated
+7. **Completion**
+
+   * Job marked SUCCEEDED
+   * Metadata recorded
+
+---
+
+### 9.2.3 Failure Handling
+
+* SFTP unavailable → retry with backoff
+* Partial upload → multipart retry
+* Lease expiration → safe takeover
+
+---
+
+## 9.3 S3 → SFTP Flow
+
+### 9.3.1 Business Scenario
+
+An internal system generates a daily report in S3 that must be delivered to an external partner’s SFTP server.
+
+---
+
+### 9.3.2 Step-by-Step Flow
+
+1. **Trigger (Push Model)**
+
+   * S3 ObjectCreated event fires
+2. **Control Plane Validation**
+
+   * Validate S3 object metadata
+   * Validate SFTP endpoint availability
+3. **Job Creation**
+
+   * Job created referencing S3 object key
+4. **Lease Acquisition**
+
+   * Execution region determined
+5. **Data Plane Execution**
+
+   * ECS Fargate downloads object from S3
+   * Streams upload to SFTP as `.tmp` file
+6. **Atomic Publish**
+
+   * Rename `.tmp` → final filename
+7. **Completion**
+
+   * Job marked SUCCEEDED
+
+---
+
+### 9.3.3 Failure Handling
+
+* Network interruption → retry upload
+* Rename failure → retry atomic step
+* Partner outage → job delayed
+
+---
+
+## 9.4 S3 → S3 Flow
+
+### 9.4.1 Business Scenario
+
+Files arriving in a landing bucket must be moved to a raw or curated bucket.
+
+---
+
+### 9.4.2 Step-by-Step Flow
+
+1. **Trigger**
+
+   * S3 ObjectCreated event
+2. **Control Plane Validation**
+
+   * Validate source and target buckets
+3. **Job Creation**
+
+   * Job created (idempotent)
+4. **Execution**
+
+   * Native S3 CopyObject operation
+5. **Completion**
+
+   * Job marked SUCCEEDED
+
+---
+
+### 9.4.3 Key Characteristics
+
+* No ECS tasks required
+* No data plane compute
+* Extremely fast and cost-efficient
+
+---
+
+## 9.5 SFTP → SFTP Flow
+
+### 9.5.1 Business Scenario
+
+The platform acts as an intermediary, receiving files from one partner and delivering them to another.
+
+---
+
+### 9.5.2 Step-by-Step Flow
+
+1. **Inbound Stage**
+
+   * Partner A uploads file to SFTP (Transfer Family)
+   * File lands in S3 staging bucket
+2. **Trigger**
+
+   * S3 ObjectCreated event fires
+3. **Control Plane Validation**
+
+   * Validate inbound and outbound endpoints
+4. **Job Creation**
+
+   * Job created referencing staged file
+5. **Lease Acquisition**
+
+   * Region acquires execution lease
+6. **Data Plane Execution**
+
+   * ECS Fargate downloads from S3
+   * Streams upload to Partner B’s SFTP
+7. **Atomic Publish**
+
+   * `.tmp` → final filename
+8. **Completion**
+
+   * Job marked SUCCEEDED
+
+---
+
+### 9.5.3 Why S3 Staging Is Used
+
+* Supports retry without re-pulling source
+* Enables DR and re-drive
+* Improves observability
+
+---
+
+## 9.6 Push vs Pull Execution Comparison
+
+| Aspect             | Push           | Pull               |
+| ------------------ | -------------- | ------------------ |
+| Trigger            | Event-driven   | Scheduled          |
+| Latency            | Near real-time | Predictable        |
+| Partner dependency | Partner pushes | Platform initiates |
+| Complexity         | Lower          | Higher             |
+| Common use         | Outbound       | Inbound external   |
+
+---
+
+## 9.7 Control Plane vs Data Plane Interaction (Flow View)
+
+```
+Trigger
+  ↓
+API / Event
+  ↓
+Control Plane
+  - Validate
+  - Create Job
+  - Acquire Lease
+  - Orchestrate
+  ↓
+Data Plane
+  - Stream File
+  - Retry
+  - Publish
+  ↓
+Control Plane
+  - Verify
+  - Update Status
+```
+
+---
+
+## 9.8 Observability During Flows
+
+For every flow:
+
+* Job ID propagated across components
+* Metrics emitted per stage
+* Logs correlated by job_id
+* Alerts triggered on failures
+
+---
+
+## 9.9 Section Summary
+
+This section demonstrates how the platform executes each supported transfer flow in a deterministic, resilient, and auditable manner. By clearly separating orchestration from data movement and enforcing idempotency and leases, the system guarantees correctness even under retries, failures, and multi-region operation.
+
+---
+
+
+
+# 10. Active-Active Architecture and Regional Strategy
+
+This section describes the **multi-region deployment strategy**, the **Active-Active execution model**, and the **disaster recovery behavior** of the Self-Serve File Transfer Backend Engine deployed in **AWS GovCloud**.
+
+---
+
+## 10.1 Multi-Region Deployment Overview
+
+The platform is deployed in two AWS GovCloud regions:
+
+* **us-gov-west-1**
+* **us-gov-east-1**
+
+Each region hosts:
+
+* A full **control plane**
+* A full **data plane**
+* Independent networking and egress
+* Independent monitoring and alerting
+
+There is **no standby region**. Both regions are active, healthy, and capable of executing transfers at all times.
+
+---
+
+## 10.2 Why Active-Active Was Selected
+
+### 10.2.1 Business Drivers
+
+* Mission-critical file transfers must remain available during regional outages
+* Customers require predictable recovery behavior
+* DR testing must not require manual intervention
+* No tolerance for duplicate file delivery
+
+---
+
+### 10.2.2 Alternatives Considered
+
+| Model              | Rejected Because               |
+| ------------------ | ------------------------------ |
+| Active-Passive     | Idle capacity, slower failover |
+| Pilot Light        | Manual promotion required      |
+| Warm Standby       | Partial idle cost              |
+| True Active-Active | Duplicate transfer risk        |
+
+---
+
+### 10.2.3 Selected Model: **Partitioned Active-Active**
+
+The system uses a **partitioned Active-Active model**, where:
+
+* Both regions are active
+* Each partition is owned by exactly one region at a time
+* Ownership is enforced via leases
+
+This model provides:
+
+* High availability
+* Deterministic execution
+* Strong correctness guarantees
+
+---
+
+## 10.3 Partitioning Strategy
+
+### 10.3.1 Partition Definition
+
+A **partition** represents a logical ownership boundary for execution:
+
+```
+partition_id = customer_id + source_endpoint_id + target_endpoint_id
+```
+
+All jobs belonging to the same partition must execute in the **same region** at any given time.
+
+---
+
+### 10.3.2 Why This Partitioning Works
+
+* Prevents duplicate delivery to the same endpoint
+* Aligns with partner concurrency expectations
+* Enables parallelism across customers and endpoints
+* Simplifies failover logic
+
+---
+
+## 10.4 Lease-Based Ownership Model
+
+### 10.4.1 Lease Purpose
+
+Leases ensure:
+
+* Only one region executes jobs for a partition
+* Safe failover without coordination storms
+* Controlled takeover after failures
+
+---
+
+### 10.4.2 Lease Implementation
+
+* Leases stored in **Amazon DynamoDB Global Tables**
+* Lease attributes:
+
+  * partition_id
+  * owning_region
+  * lease_expiry_timestamp
+  * heartbeat_timestamp
+
+---
+
+### 10.4.3 Lease Lifecycle
+
+1. Region attempts to acquire lease
+2. Conditional write succeeds → ownership granted
+3. Lease renewed periodically during execution
+4. If region fails, lease expires
+5. Other region safely acquires lease
+
+---
+
+## 10.5 Normal Operation (Steady State)
+
+During normal operations:
+
+* Both regions accept inbound requests
+* Job creation occurs in either region
+* Lease acquisition determines execution region
+* Only one region executes per partition
+* Other region remains ready for takeover
+
+This provides **continuous availability without contention**.
+
+---
+
+## 10.6 Failure Scenarios and Behavior
+
+### 10.6.1 Control Plane Failure (Single Region)
+
+**Scenario**
+
+* Lambda / Step Functions unavailable in us-gov-west-1
+
+**Behavior**
+
+* Route 53 routes API traffic to us-gov-east-1
+* New jobs created in east
+* East acquires leases for partitions
+* West resumes once healthy
+
+**Outcome**
+
+* No downtime
+* No duplicate execution
+
+---
+
+### 10.6.2 Data Plane Failure (Partial)
+
+**Scenario**
+
+* ECS tasks fail mid-transfer
+
+**Behavior**
+
+* Job remains RUNNING
+* Lease expires if heartbeat stops
+* Task retried or taken over by other region
+
+**Outcome**
+
+* At-most-once delivery preserved
+* Safe retry from checkpoint
+
+---
+
+### 10.6.3 Full Regional Outage
+
+**Scenario**
+
+* us-gov-west-1 unavailable
+
+**Behavior**
+
+* East region acquires all expired leases
+* Pending jobs resume execution
+* New jobs execute in east
+* No manual intervention required
+
+**Outcome**
+
+* RTO limited by lease expiry
+* No data loss
+
+---
+
+## 10.7 Cross-Region Data Strategy
+
+### 10.7.1 S3 Replication
+
+* S3 buckets use **Cross-Region Replication**
+* Ensures:
+
+  * Staged files available in both regions
+  * DR-safe re-drive
+* Replication lag monitored
+
+---
+
+### 10.7.2 DynamoDB Global Tables
+
+* Endpoint metadata
+* Job records
+* Lease records
+* Deduplication keys
+
+Provides:
+
+* Low-latency reads
+* Multi-region consistency
+* Automatic replication
+
+---
+
+## 10.8 DR Characteristics Summary
+
+| Aspect               | Behavior               |
+| -------------------- | ---------------------- |
+| RTO                  | Minutes (lease expiry) |
+| RPO                  | Near-zero              |
+| Manual intervention  | Not required           |
+| Duplicate prevention | Guaranteed             |
+| DR testing           | Non-disruptive         |
+
+---
+
+## 10.9 Why This Model Is ARC-Safe
+
+* Avoids classic Active-Active pitfalls
+* Enforces correctness over speed
+* Explicitly documents trade-offs
+* Aligns with enterprise DR guidance
+* Proven pattern for distributed systems
+
+---
+
+## 10.10 Section Summary
+
+This section describes a **partitioned Active-Active architecture** that delivers high availability and disaster recovery while preserving correctness and auditability. Lease-based ownership ensures that only one region executes a given transfer at a time, enabling safe failover without duplication or manual intervention.
+
+---
+
+
+
+# 11. Performance and Efficiency Pillar
+
+This section documents how the Self-Serve File Transfer Backend Engine is designed to meet performance goals efficiently while scaling predictably under variable workloads. It focuses on **resource sizing, scaling strategies, workload characteristics, known limits, and monitoring**.
+
+---
+
+## 11.1 Workload Characteristics and Expectations
+
+### 11.1.1 Transfer Size Profile
+
+The platform supports file sizes ranging from **1KB to 30GB**, resulting in highly variable workload characteristics:
+
+| File Size Category | Typical Behavior             |
+| ------------------ | ---------------------------- |
+| Small (1KB–10MB)   | High frequency, low duration |
+| Medium (10MB–1GB)  | Moderate throughput          |
+| Large (1GB–30GB)   | Long-running, network-bound  |
+
+---
+
+### 11.1.2 Transfer Frequency
+
+* On-demand transfers (API-triggered)
+* Scheduled polling transfers (e.g., every 5–15 minutes)
+* Event-driven transfers (S3/SFTP push)
+* Burst behavior expected during peak windows
+
+---
+
+### 11.1.3 External Dependencies
+
+* External SFTP endpoints introduce:
+
+  * Variable latency
+  * Throttling limits
+  * Availability uncertainty
+
+The architecture assumes **non-uniform partner performance**.
+
+---
+
+## 11.2 Resource Sizing Strategy
+
+### 11.2.1 Control Plane Sizing
+
+| Component      | Sizing Strategy                    |
+| -------------- | ---------------------------------- |
+| API Gateway    | Managed auto-scaling               |
+| Lambda         | Right-sized memory for low latency |
+| Step Functions | Standard workflows                 |
+| DynamoDB       | On-demand or autoscaling           |
+| SQS            | Elastic by design                  |
+
+**Rationale**
+
+* Control plane workloads are lightweight
+* CPU and memory demands are minimal
+* Scaling driven by request volume, not file size
+
+---
+
+### 11.2.2 Data Plane Sizing (ECS Fargate)
+
+Fargate task sizing is based on **file size tiers**:
+
+| File Size | vCPU | Memory |
+| --------- | ---- | ------ |
+| < 100MB   | 0.5  | 1GB    |
+| 100MB–1GB | 1    | 2GB    |
+| 1GB–10GB  | 2    | 4GB    |
+| 10GB–30GB | 4    | 8GB    |
+
+**Key Considerations**
+
+* Network throughput is the dominant factor
+* Memory sized to support streaming buffers
+* CPU sized to avoid throttling during encryption and retries
+
+---
+
+## 11.3 Scaling Strategy
+
+### 11.3.1 Horizontal Scaling
+
+**Primary scaling mechanism** across the platform.
+
+* Lambda scales per invocation
+* Step Functions scales per execution
+* ECS Fargate scales by task count
+* SQS absorbs spikes and smooths load
+
+**Benefits**
+
+* No shared state contention
+* Predictable scale behavior
+* No single bottleneck
+
+---
+
+### 11.3.2 Vertical Scaling
+
+Used selectively:
+
+* ECS task definitions vary by file size
+* Avoids over-provisioning for small files
+* Improves performance for large transfers
+
+---
+
+### 11.3.3 Dynamic vs Manual Scaling
+
+| Area          | Strategy                 |
+| ------------- | ------------------------ |
+| Control Plane | Fully dynamic            |
+| Data Plane    | Dynamic with guardrails  |
+| Networking    | Capacity pre-provisioned |
+| Storage       | Fully elastic            |
+
+Manual intervention is not required for normal scaling events.
+
+---
+
+## 11.4 Handling Large Files (1KB–30GB)
+
+### 11.4.1 Streaming Architecture
+
+* Files are streamed end-to-end
+* No full file buffering in memory
+* Back-pressure handled by stream controls
+
+---
+
+### 11.4.2 Multipart Transfers
+
+* S3 multipart uploads/downloads
+* Resume supported for partial failures
+* Reduces re-transfer cost
+
+---
+
+### 11.4.3 Checkpointing and Recovery
+
+* S3 staging acts as a durable checkpoint
+* Lease renewal prevents partial execution conflicts
+* Failed transfers can resume safely
+
+---
+
+## 11.5 Resource Constraint Management
+
+### 11.5.1 Concurrency Controls
+
+| Resource       | Constraint              |
+| -------------- | ----------------------- |
+| ECS Tasks      | Per-partner limits      |
+| SFTP Sessions  | Configurable caps       |
+| NAT Throughput | Guarded via concurrency |
+| Step Functions | Execution limits        |
+
+---
+
+### 11.5.2 Backpressure Strategy
+
+* SQS queues throttle inflow
+* Step Functions enforce execution caps
+* ECS launch rate limited
+
+---
+
+## 11.6 Known Resource Limits
+
+| Resource                | Limit         |
+| ----------------------- | ------------- |
+| Lambda execution time   | 15 minutes    |
+| Step Functions duration | 1 year        |
+| S3 object size          | 5TB           |
+| ECS Fargate task        | Network-bound |
+| Partner SFTP            | Variable      |
+
+The design avoids placing large transfers in components with hard runtime limits.
+
+---
+
+## 11.7 Resource Utilization Monitoring Strategy
+
+### 11.7.1 Key Metrics
+
+| Component      | Metrics                    |
+| -------------- | -------------------------- |
+| ECS Fargate    | CPU, memory, task duration |
+| SQS            | Queue depth, age           |
+| Lambda         | Duration, error rate       |
+| Step Functions | Execution time             |
+| NAT Gateway    | Bytes processed            |
+
+---
+
+### 11.7.2 Alerting Thresholds
+
+* High CPU or memory usage
+* Long-running tasks exceeding expected duration
+* Queue backlog growth
+* Partner-specific failure patterns
+
+Alerts trigger investigation and, if required, scaling adjustments.
+
+---
+
+## 11.8 Performance Optimization Techniques
+
+* Tiered task sizing
+* Avoidance of unnecessary data hops
+* Direct streaming where possible
+* Native S3 operations for S3→S3
+* Controlled retry policies
+
+---
+
+## 11.9 Section Summary
+
+This section demonstrates how the architecture achieves efficient performance across highly variable workloads. By separating orchestration from data movement, using streaming transfers, and applying tiered resource sizing, the platform delivers predictable performance while minimizing cost and operational overhead.
+
+---
+
+
+
+
+
+
 
