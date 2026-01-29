@@ -724,5 +724,835 @@ This section outlines the principles, assumptions, constraints, and trade-offs t
 
 ---
 
+# 6. High-Level Architecture Overview
+
+This section provides a **top-down view of the system architecture**, introducing the major components, their responsibilities, and how they interact. Detailed component behavior and flow-level walkthroughs are covered in later sections.
+
+---
+
+## 6.1 Architecture Overview
+
+The Self-Serve File Transfer Backend Engine is a **distributed, event-driven system** designed to orchestrate and execute file transfers across SFTP and S3 endpoints in a secure and resilient manner.
+
+The architecture is intentionally divided into two logical planes:
+
+* **Control Plane** – responsible for orchestration, governance, validation, and state management
+* **Data Plane** – responsible for the actual movement of file bytes
+
+This separation ensures:
+
+* Independent scaling characteristics
+* Clear ownership of responsibilities
+* Reduced blast radius during failures
+* Improved security posture
+
+---
+
+## 6.2 Control Plane vs Data Plane Separation
+
+### 6.2.1 Control Plane Responsibilities
+
+The Control Plane manages **what should happen** and **when**, but never performs heavy data movement.
+
+**Primary responsibilities:**
+
+* Accept API requests (endpoint onboarding, transfer requests)
+* Validate inputs and enforce policy
+* Create and persist transfer jobs
+* Orchestrate workflows and retries
+* Enforce idempotency and lease ownership
+* Track job lifecycle and status
+* Emit logs, metrics, and audit records
+
+**Key characteristics:**
+
+* Stateless compute
+* Durable state stored externally
+* Highly available and multi-region
+* Optimized for correctness and governance
+
+---
+
+### 6.2.2 Data Plane Responsibilities
+
+The Data Plane performs **how data moves**, focusing on efficiency and reliability for file transfer workloads.
+
+**Primary responsibilities:**
+
+* Establish SFTP connections
+* Stream files between endpoints
+* Perform multipart uploads for large files
+* Enforce atomic delivery patterns
+* Handle retries at the transport layer
+* Emit transfer-level logs and metrics
+
+**Key characteristics:**
+
+* Network-intensive workloads
+* Streaming-based (no full file buffering)
+* Horizontally scalable
+* Short-lived, ephemeral compute
+
+---
+
+### 6.2.3 Control vs Data Plane Summary
+
+| Aspect         | Control Plane                   | Data Plane        |
+| -------------- | ------------------------------- | ----------------- |
+| Purpose        | Orchestration & governance      | Byte movement     |
+| State          | Durable (DynamoDB, S3 metadata) | Stateless         |
+| Scaling        | Event-driven                    | Throughput-driven |
+| Failure impact | Job delay                       | Transfer retry    |
+| Security       | IAM-centric                     | Network + IAM     |
+
+---
+
+## 6.3 Logical Architecture (Component View)
+
+At a logical level, the system consists of the following layers:
+
+### 6.3.1 Ingress Layer
+
+* API entry point for customers
+* Accepts endpoint onboarding, transfer requests, and status queries
+* Routes requests to the control plane
+
+---
+
+### 6.3.2 Orchestration Layer
+
+* Creates and manages transfer jobs
+* Drives workflow execution
+* Applies retries, branching, and error handling
+* Coordinates execution across regions
+
+---
+
+### 6.3.3 State and Metadata Layer
+
+* Stores:
+
+  * endpoint configurations
+  * job records
+  * execution leases
+  * deduplication keys
+* Serves as the system of record
+
+---
+
+### 6.3.4 Transfer Execution Layer
+
+* Executes file transfers using streaming workers
+* Interfaces with SFTP servers and S3
+* Handles large files and retries
+* Isolated from orchestration logic
+
+---
+
+### 6.3.5 Observability Layer
+
+* Centralized logging
+* Metrics and alarms
+* Audit trail for compliance and investigations
+
+---
+
+## 6.4 Deployment Architecture (Multi-Region View)
+
+### 6.4.1 Regional Deployment Model
+
+The platform is deployed identically in:
+
+* **us-gov-west-1**
+* **us-gov-east-1**
+
+Each region includes:
+
+* Full control plane stack
+* Full data plane capability
+* Independent networking and egress paths
+* Independent monitoring and alarms
+
+---
+
+### 6.4.2 Active-Active Behavior
+
+* Both regions accept inbound requests
+* Both regions can execute transfers
+* Only one region executes a given partition at a time
+* Ownership is enforced using a lease-based mechanism
+
+**Result:**
+
+* High availability without duplicate processing
+* Predictable failover behavior
+* No “cold standby” region
+
+---
+
+## 6.5 High-Level Textual Architecture Diagram
+
+```
+                +--------------------+
+                |      Clients       |
+                | (Customers / Apps) |
+                +----------+---------+
+                           |
+                           v
+                    +-------------+
+                    | API Gateway |
+                    +------+------+
+                           |
+                           v
+              +----------------------------+
+              |        Control Plane       |
+              |----------------------------|
+              | Lambda (Validation)        |
+              | Step Functions (Workflow)  |
+              | EventBridge / SQS          |
+              | DynamoDB (Jobs, Endpoints) |
+              +-------------+--------------+
+                            |
+                            | (Task Launch)
+                            v
+              +----------------------------+
+              |         Data Plane         |
+              |----------------------------|
+              | ECS Fargate Transfer Tasks |
+              | SFTP Clients               |
+              | Multipart S3 Uploads       |
+              +-------------+--------------+
+                            |
+          +-----------------+------------------+
+          |                                    |
+          v                                    v
+   +-------------+                     +--------------+
+   |   S3 Buckets |                     | SFTP Servers |
+   | (Raw/Staging)|                     | (Internal /  |
+   +-------------+                     |  External)   |
+                                        +--------------+
+```
+
+---
+
+## 6.6 High-Level Data Flow Summary
+
+1. Customer submits endpoint or transfer request
+2. Control plane validates and creates a transfer job
+3. Workflow orchestration determines execution path
+4. Data plane worker streams data between endpoints
+5. Job status is updated and exposed via API
+6. Logs and metrics are captured throughout execution
+
+---
+
+## 6.7 Key Design Outcomes
+
+This high-level architecture:
+
+* Cleanly separates concerns
+* Scales independently for orchestration vs data movement
+* Supports large file transfers reliably
+* Enables Active-Active multi-region deployment
+* Aligns with security, resiliency, and operational standards
+
+---
+
+## 6.8 Section Summary
+
+This section provides a top-level view of the system architecture, highlighting the separation of control and data planes, the logical layering of components, and the multi-region deployment model. Detailed component behavior, job lifecycle management, and flow-specific logic are covered in subsequent sections.
+
+---
+
+
+
+# 7. Detailed Architecture Design
+
+This section provides a **component-level deep dive** into the architecture, describing how each major service participates in the system and how responsibilities are clearly divided between the **Control Plane** and the **Data Plane**.
+
+---
+
+## 7.1 Control Plane Architecture
+
+The Control Plane is responsible for **governance, orchestration, validation, correctness, and state management**.
+It does **not** perform any heavy file movement.
+
+---
+
+### 7.1.1 API Gateway
+
+**Purpose**
+API Gateway serves as the **single ingress point** for all customer and system interactions.
+
+**Responsibilities**
+
+* Expose REST APIs for:
+
+  * Endpoint onboarding (`POST /endpoints`)
+  * Transfer initiation (`POST /transfers`)
+  * Schedule creation (`POST /schedules`)
+  * Status queries (`GET /jobs/{jobId}`)
+* Enforce authentication and authorization
+* Apply request validation and throttling
+* Provide consistent error handling
+
+**Design Decisions**
+
+* API Gateway is used instead of direct Lambda invocation to:
+
+  * centralize auth
+  * enforce rate limits
+  * provide auditability
+* Payload size limits enforced to prevent misuse
+* No file data is ever sent through APIs
+
+**Failure Behavior**
+
+* If API Gateway is unavailable in one region, Route53 routes traffic to the other region
+* Requests are idempotent and safe to retry
+
+---
+
+### 7.1.2 AWS Lambda (Control Plane Functions)
+
+**Purpose**
+Lambda functions implement **control logic**, not data transfer.
+
+**Key Lambda Roles**
+
+* Endpoint validation and registration
+* Transfer job creation
+* Schedule processing
+* Status and metadata retrieval
+* Helper functions (policy evaluation, endpoint resolution)
+
+**Responsibilities**
+
+* Validate request schemas
+* Enforce customer ownership and isolation
+* Generate job IDs and idempotency keys
+* Persist state in DynamoDB
+* Publish events to EventBridge/SQS
+
+**Design Decisions**
+
+* Lambdas are stateless
+* No secrets stored in environment variables
+* No file content processed in Lambda
+
+**Failure Behavior**
+
+* Transient failures retried automatically
+* Errors surfaced to caller with correlation IDs
+
+---
+
+### 7.1.3 AWS Step Functions (Workflow Orchestration)
+
+**Purpose**
+Step Functions orchestrate **end-to-end transfer workflows**.
+
+**Responsibilities**
+
+* Drive job lifecycle:
+
+  * RECEIVED
+  * QUEUED
+  * RUNNING
+  * VERIFYING
+  * SUCCEEDED / FAILED
+* Acquire and renew execution leases
+* Determine execution paths by flow type
+* Handle retries and compensating actions
+* Launch ECS Fargate tasks for data plane execution
+
+**Design Decisions**
+
+* One primary state machine with flow-specific branches
+* Explicit retry and backoff policies
+* Timeouts defined per workflow stage
+* Map states used only when concurrency is explicitly controlled
+
+**Failure Behavior**
+
+* Failed states transition jobs to FAILED with reason codes
+* Execution can be re-driven safely using idempotency keys
+
+---
+
+### 7.1.4 Amazon SQS
+
+**Purpose**
+SQS provides **buffering and decoupling** between job creation and execution.
+
+**Responsibilities**
+
+* Absorb traffic spikes
+* Prevent overload of downstream components
+* Enable asynchronous execution
+
+**Design Decisions**
+
+* Separate queues by workflow category where necessary
+* DLQs configured for poison messages
+* Visibility timeout aligned to processing start latency
+
+**Failure Behavior**
+
+* Messages retried automatically
+* DLQ alerts trigger operator investigation
+
+---
+
+### 7.1.5 Amazon EventBridge
+
+**Purpose**
+EventBridge routes **events and schedules** into the system.
+
+**Responsibilities**
+
+* Receive S3 ObjectCreated events
+* Trigger scheduled polling jobs
+* Fan-out events to SQS or Step Functions
+* Provide loose coupling between producers and consumers
+
+**Design Decisions**
+
+* Event-driven model preferred over polling where possible
+* Rules scoped by event source and detail type
+
+**Failure Behavior**
+
+* Events retried by AWS
+* Missed events mitigated via idempotent job creation
+
+---
+
+### 7.1.6 Amazon DynamoDB (State and Metadata)
+
+**Purpose**
+DynamoDB serves as the **system of record**.
+
+**Data Stored**
+
+* Endpoint configurations
+* Transfer jobs
+* Lease/lock records
+* Deduplication keys
+
+**Design Decisions**
+
+* Strongly consistent reads for lease acquisition
+* Global Tables used for multi-region availability
+* Partition keys designed to avoid hot partitions
+
+**Failure Behavior**
+
+* Built-in multi-AZ resilience
+* Retry logic handles throttling
+* PITR enabled for recovery
+
+---
+
+## 7.2 Data Plane Architecture
+
+The Data Plane is responsible for **efficient, reliable movement of file bytes**.
+
+---
+
+### 7.2.1 Amazon S3
+
+**Purpose**
+S3 provides durable storage for:
+
+* Raw inbound files
+* Staging for SFTP→SFTP transfers
+* Outbound delivery sources
+
+**Responsibilities**
+
+* Persist file data durably
+* Trigger events on object creation
+* Serve as a DR checkpoint
+
+**Design Decisions**
+
+* Server-side copy for S3→S3 flows
+* Multipart uploads for large files
+* Cross-Region Replication for DR
+* Lifecycle policies for cost control
+
+**Failure Behavior**
+
+* High durability and availability
+* Replication lag monitored
+
+---
+
+### 7.2.2 AWS Transfer Family (SFTP)
+
+**Purpose**
+Provides a **managed SFTP endpoint** for inbound partner uploads.
+
+**Responsibilities**
+
+* Authenticate partners using SSH keys
+* Write uploaded files directly to S3
+* Emit audit logs
+
+**Design Decisions**
+
+* No self-managed SFTP servers
+* Centralized inbound SFTP reduces operational burden
+* Used primarily for inbound (push) scenarios
+
+**Failure Behavior**
+
+* AWS-managed HA
+* Partner retries if service unavailable
+
+---
+
+### 7.2.3 Amazon ECS Fargate (Transfer Workers)
+
+**Purpose**
+ECS Fargate executes **streaming transfer workers** for SFTP-based flows.
+
+**Responsibilities**
+
+* Establish SFTP connections
+* Stream data between endpoints
+* Perform multipart uploads/downloads
+* Enforce atomic delivery (`.tmp → rename`)
+* Emit detailed transfer logs and metrics
+
+**Design Decisions**
+
+* Task-per-job execution model
+* CPU/memory sized dynamically based on file size
+* No persistent storage required
+* No inbound network access
+
+**Failure Behavior**
+
+* Task failures retried by orchestration
+* Partial transfers safely retried due to idempotency
+
+---
+
+### 7.2.4 Network Architecture (VPC, NAT, Egress)
+
+**Purpose**
+Provide secure and controlled network access for data plane tasks.
+
+**Design Decisions**
+
+* Private subnets only
+* No public IPs for compute
+* NAT Gateways provide controlled egress
+* Static egress IPs allow partner allowlisting
+* Security Groups deny-by-default
+
+**Failure Behavior**
+
+* NAT failures mitigated via AZ redundancy
+* Concurrency limits prevent saturation
+
+---
+
+## 7.3 Control Plane vs Data Plane Interaction
+
+### Execution Flow Summary
+
+1. Control Plane validates and creates job
+2. Step Functions acquire lease
+3. Control Plane launches Data Plane task
+4. Data Plane streams data
+5. Data Plane reports result
+6. Control Plane updates job state
+
+---
+
+## 7.4 Detailed Design Outcomes
+
+This architecture:
+
+* Prevents duplicate transfers
+* Supports large files reliably
+* Is resilient to partial and full failures
+* Separates concerns cleanly
+* Scales independently for orchestration and throughput
+
+---
+
+## 7.5 Section Summary
+
+This section detailed the internal architecture of both the control plane and data plane components, explaining how each AWS service contributes to reliability, scalability, and operational clarity. Subsequent sections build on this foundation to describe job lifecycle, flows, resiliency, security, and operations.
+
+---
+
+
+
+
+# 8. Transfer Job and Endpoint Model
+
+This section describes how **transfer jobs** and **endpoint configurations** are modeled, stored, and managed within the platform. These models form the **core system of record** and enable idempotent execution, auditability, and safe multi-region operation.
+
+---
+
+## 8.1 Transfer Job Definition
+
+A **Transfer Job** represents a single, logical unit of work to move one or more files from a **source endpoint** to a **target endpoint** under a defined policy.
+
+Each transfer job is:
+
+* Immutable once created (state transitions only)
+* Identifiable by a unique job ID
+* Traceable across logs, metrics, and audit records
+* Executed exactly once (per idempotency key)
+
+---
+
+## 8.2 Transfer Job Lifecycle
+
+### 8.2.1 Job States
+
+The following lifecycle states are supported:
+
+| State     | Description                        |
+| --------- | ---------------------------------- |
+| RECEIVED  | Job has been created and persisted |
+| QUEUED    | Job is awaiting execution          |
+| RUNNING   | Job execution in progress          |
+| VERIFYING | Post-transfer verification         |
+| SUCCEEDED | Transfer completed successfully    |
+| FAILED    | Transfer failed permanently        |
+| CANCELLED | Job cancelled prior to execution   |
+
+State transitions are **explicit, auditable, and monotonic** (no backward transitions).
+
+---
+
+### 8.2.2 Job Lifecycle Guarantees
+
+* A job is persisted **before execution**
+* State transitions are recorded in DynamoDB
+* Partial failures result in retry or FAILED state
+* Jobs are never deleted automatically
+* Re-drives create a **new job** referencing the original job
+
+---
+
+## 8.3 Job Creation and Ownership
+
+### 8.3.1 Job Creation Triggers
+
+Transfer jobs can be created by:
+
+* Customer API calls (on-demand)
+* Scheduled triggers (polling)
+* Event-driven triggers (S3 ObjectCreated)
+
+In all cases, job creation is handled by a **dedicated control-plane function**.
+
+---
+
+### 8.3.2 Job Ownership and Partitioning
+
+To support Active-Active execution without duplication, each job is assigned a **partition identifier**:
+
+```
+partition_id = customer_id + source_endpoint_id + target_endpoint_id
+```
+
+Only one region may execute jobs for a given partition at a time, enforced through a **lease mechanism**.
+
+---
+
+## 8.4 Idempotency and De-duplication
+
+### 8.4.1 Idempotency Key
+
+Each job is associated with an **idempotency key** computed from deterministic inputs such as:
+
+* Source endpoint
+* Target endpoint
+* File path or object key
+* File metadata (size, timestamp, version)
+
+This ensures:
+
+* Event replay does not create duplicate jobs
+* API retries are safe
+* Failover does not cause duplicate execution
+
+---
+
+### 8.4.2 Deduplication Behavior
+
+* Job creation uses **conditional writes** in DynamoDB
+* Duplicate idempotency keys are rejected or mapped to existing jobs
+* Execution retries reference the same job record
+
+---
+
+## 8.5 Lease and Lock Management
+
+### 8.5.1 Lease Purpose
+
+Leases prevent:
+
+* Concurrent execution of the same job
+* Dual-region execution during failover
+* Race conditions under retry scenarios
+
+---
+
+### 8.5.2 Lease Behavior
+
+* Lease records stored in DynamoDB
+* Leases include:
+
+  * owning region
+  * expiration timestamp
+  * heartbeat timestamp
+* Long-running jobs renew leases periodically
+* Lease expiration allows safe takeover
+
+---
+
+## 8.6 Transfer Job Data Model (Logical)
+
+A transfer job record contains the following logical attributes:
+
+* job_id
+* customer_id
+* flow_type
+* source_endpoint_id
+* target_endpoint_id
+* policy_id
+* partition_id
+* idempotency_key
+* status
+* retry_count
+* error_code / error_message
+* timestamps (created, started, completed)
+* execution_region
+
+The job record does **not** contain:
+
+* Credentials
+* Secrets
+* File content
+
+---
+
+## 8.7 Endpoint Configuration Model
+
+### 8.7.1 Endpoint Definition
+
+An **Endpoint** describes a reusable connection configuration to a source or target system.
+
+Endpoints are:
+
+* Created and managed by customers
+* Long-lived and reusable
+* Referenced by ID in transfer jobs
+
+---
+
+### 8.7.2 Supported Endpoint Types
+
+| Endpoint Type        | Description               |
+| -------------------- | ------------------------- |
+| S3                   | Amazon S3 bucket + prefix |
+| Transfer Family SFTP | Managed inbound SFTP      |
+| External SFTP        | Partner-hosted SFTP       |
+
+---
+
+### 8.7.3 Endpoint Attributes (Logical)
+
+| Attribute        | Description               |
+| ---------------- | ------------------------- |
+| endpoint_id      | Unique identifier         |
+| endpoint_type    | SFTP or S3                |
+| direction        | INBOUND / OUTBOUND / BOTH |
+| host / bucket    | Remote host or S3 bucket  |
+| path / prefix    | Base directory or prefix  |
+| auth_type        | SSH key (SFTP)            |
+| secret_ref       | Secrets Manager ARN       |
+| preferred_region | Optional execution hint   |
+| max_concurrency  | Partner protection        |
+| status           | ACTIVE / DISABLED         |
+
+---
+
+## 8.8 Secrets Management Strategy
+
+### 8.8.1 Secrets Handling
+
+* Secrets are stored **only** in AWS Secrets Manager
+* Endpoint records store only a reference (ARN)
+* Secrets include:
+
+  * private SSH keys
+  * passwords (if required)
+* Secrets are never logged or returned via APIs
+
+---
+
+### 8.8.2 Access Control
+
+* ECS tasks and Lambdas have scoped IAM permissions
+* Only authorized components can retrieve secrets
+* Secrets rotation supported without job recreation
+
+---
+
+## 8.9 Endpoint Lifecycle Management
+
+### 8.9.1 Endpoint Creation
+
+* Customer submits endpoint via POST API
+* Validation and connectivity checks performed
+* Endpoint stored as ACTIVE
+
+### 8.9.2 Endpoint Update
+
+* Endpoint can be updated without affecting existing jobs
+* Future jobs reference updated configuration
+
+### 8.9.3 Endpoint Deactivation
+
+* Endpoint can be DISABLED
+* New jobs are rejected
+* Existing jobs complete or fail gracefully
+
+---
+
+## 8.10 Auditability and Traceability
+
+Every job and endpoint change is:
+
+* Logged with timestamp and actor
+* Traceable via job_id and endpoint_id
+* Retained per audit policy
+
+This enables:
+
+* Compliance reviews
+* Incident investigation
+* Historical reporting
+
+---
+
+## 8.11 Section Summary
+
+This section defines the core **job and endpoint models** that underpin the system’s reliability and correctness. By separating configuration from execution, enforcing idempotency, and using lease-based ownership, the platform ensures safe, auditable, and deterministic file transfers across regions and failure scenarios.
+
+---
+
+
 
 
