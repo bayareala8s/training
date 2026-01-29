@@ -177,3 +177,216 @@ This architecture provides a secure, resilient, self-service backend engine for 
 ---
 
 
+
+# 3. Business and Functional Overview
+
+## 3.1 Business Objectives
+
+The Self-Serve File Transfer Backend Engine is designed to achieve the following business objectives:
+
+* Provide a **standardized, enterprise-approved file transfer capability** for internal systems and external partners
+* Enable **self-service onboarding** of file transfer endpoints without manual infrastructure changes
+* Improve **operational reliability** and reduce incidents caused by bespoke scripts or unmanaged transfers
+* Support **regulatory and audit requirements** through end-to-end traceability and logging
+* Reduce **time-to-onboard** new integrations while maintaining strong security controls
+* Ensure **high availability and disaster recovery** for mission-critical file exchanges
+
+---
+
+## 3.2 In-Scope Capabilities
+
+The following capabilities are included in the scope of this architecture:
+
+* Self-service registration of **SFTP and S3 endpoints**
+* On-demand and scheduled file transfers
+* Event-driven (push) and polling-based (pull) transfer models
+* External partner SFTP integration
+* Support for file sizes ranging from **1KB to 30GB**
+* End-to-end job tracking and status visibility
+* Idempotent execution and duplicate prevention
+* Multi-region Active-Active deployment for HA/DR
+* Secure secret handling and encryption
+* Operational observability and audit logging
+
+---
+
+## 3.3 Out-of-Scope Capabilities
+
+The following capabilities are explicitly out of scope for the initial implementation:
+
+* Graphical user interface (UI) or customer portal
+* Protocols other than SFTP and S3 (e.g., FTPS, HTTPS)
+* Inline data transformation beyond optional checksum or validation
+* Real-time streaming or message-based ingestion
+* Content-level business validation of transferred files
+* Manual file manipulation or operator-driven transfers
+
+These capabilities may be considered for future iterations but are not required for ARC approval of this design.
+
+---
+
+## 3.4 Supported File Transfer Flows
+
+The platform supports four primary file transfer flows, each designed to meet different business and integration needs.
+
+### 3.4.1 SFTP → SFTP
+
+**Business Use Case**
+
+* Receive files from one external partner and forward them to another
+* Act as an intermediary or clearing layer between two systems
+
+**Key Characteristics**
+
+* External or internal SFTP endpoints
+* Two-leg transfer using S3 as a staging and checkpoint layer
+* Supports large files and retries without re-pulling from source
+
+**Example**
+
+> Partner A uploads a daily claims file. The platform securely stages the file and delivers it to Partner B’s SFTP.
+
+---
+
+### 3.4.2 SFTP → S3
+
+**Business Use Case**
+
+* Ingest files from partners into cloud storage for downstream processing
+* Centralize raw data storage for analytics or compliance
+
+**Key Characteristics**
+
+* Supports both AWS Transfer Family SFTP and external partner SFTP
+* Streaming upload to S3 with multipart support
+* Event-driven or scheduled polling
+
+**Example**
+
+> A partner uploads transaction files via SFTP, which are automatically stored in an S3 raw bucket.
+
+---
+
+### 3.4.3 S3 → S3
+
+**Business Use Case**
+
+* Internal data movement between buckets or storage tiers
+* Lifecycle-driven or event-driven internal transfers
+
+**Key Characteristics**
+
+* Uses native S3 server-side copy
+* No data plane compute required
+* High throughput and low cost
+
+**Example**
+
+> Files arriving in a landing bucket are moved to a raw or curated bucket automatically.
+
+---
+
+### 3.4.4 S3 → SFTP
+
+**Business Use Case**
+
+* Deliver outbound files to external partners
+* Publish generated reports, statements, or batch outputs
+
+**Key Characteristics**
+
+* Event-driven or on-demand execution
+* Streaming download from S3 and upload to SFTP
+* Atomic publish pattern (`.tmp` → rename)
+
+**Example**
+
+> A nightly report is generated in S3 and delivered to a partner’s SFTP endpoint.
+
+---
+
+## 3.5 Push vs Pull Transfer Models
+
+The platform supports both **push-based** and **pull-based** transfer models to accommodate different partner and system behaviors.
+
+### 3.5.1 Push Model (Event-Driven)
+
+**Description**
+
+* A transfer is triggered automatically when a file arrives
+* Typical triggers include:
+
+  * S3 ObjectCreated events
+  * AWS Transfer Family uploads
+
+**Advantages**
+
+* Near real-time processing
+* No polling overhead
+* Lower latency
+
+**Example**
+
+> When a file lands in an S3 outbox, it is immediately delivered to a partner SFTP.
+
+---
+
+### 3.5.2 Pull Model (Scheduled or On-Demand)
+
+**Description**
+
+* The system initiates the transfer by polling or requesting files
+* Typically used for external partner SFTP sources
+
+**Advantages**
+
+* Compatible with partners that cannot push
+* Controlled execution and throttling
+* Predictable schedules
+
+**Example**
+
+> Every 5 minutes, the system checks a partner SFTP directory for new files and downloads them.
+
+---
+
+## 3.6 Supported Deployment Regions
+
+The platform is deployed in the following AWS GovCloud regions:
+
+* **us-gov-west-1**
+* **us-gov-east-1**
+
+Both regions are:
+
+* Fully provisioned
+* Actively serving traffic
+* Capable of executing transfers
+
+Execution ownership is controlled through a **partitioned Active-Active model**, ensuring high availability without duplicate processing.
+
+---
+
+## 3.7 Functional Summary Table
+
+| Capability                     | Supported |
+| ------------------------------ | --------- |
+| External SFTP integration      | Yes       |
+| Managed SFTP (Transfer Family) | Yes       |
+| S3 storage integration         | Yes       |
+| Push transfers                 | Yes       |
+| Pull transfers                 | Yes       |
+| Large file support (30GB)      | Yes       |
+| Multi-region HA/DR             | Yes       |
+| Self-service onboarding        | Yes       |
+| End-to-end status tracking     | Yes       |
+
+---
+
+## 3.8 Section Summary
+
+This section outlines the business drivers and functional capabilities supported by the Self-Serve File Transfer Backend Engine. The platform provides a consistent, secure, and scalable foundation for file transfers across internal systems and external partners, while supporting multiple transfer models and deployment regions.
+
+---
+
+
