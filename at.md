@@ -390,3 +390,339 @@ This section outlines the business drivers and functional capabilities supported
 ---
 
 
+
+# 4. Requirements
+
+This section defines the **functional and non-functional requirements** that drive the architecture and design decisions for the Self-Serve File Transfer Backend Engine. These requirements represent the minimum capabilities needed to support business use cases, regulatory expectations, and operational standards.
+
+---
+
+## 4.1 Functional Requirements
+
+The system shall provide the following functional capabilities.
+
+### 4.1.1 Endpoint Management
+
+| ID   | Requirement                                                                        |
+| ---- | ---------------------------------------------------------------------------------- |
+| FR-1 | The system shall allow customers to register SFTP and S3 endpoints via secure APIs |
+| FR-2 | The system shall store endpoint configuration metadata in a durable data store     |
+| FR-3 | The system shall store credentials securely using AWS Secrets Manager              |
+| FR-4 | The system shall support activation, deactivation, and update of endpoints         |
+| FR-5 | The system shall validate endpoint connectivity prior to activation                |
+
+---
+
+### 4.1.2 Transfer Job Management
+
+| ID    | Requirement                                                                      |
+| ----- | -------------------------------------------------------------------------------- |
+| FR-6  | The system shall allow customers to initiate transfers on demand                 |
+| FR-7  | The system shall support scheduled transfers (polling model)                     |
+| FR-8  | The system shall support event-driven transfers (push model)                     |
+| FR-9  | The system shall create a durable transfer job record for every transfer attempt |
+| FR-10 | The system shall track transfer job lifecycle states                             |
+| FR-11 | The system shall prevent duplicate job execution                                 |
+
+---
+
+### 4.1.3 Supported Transfer Flows
+
+| ID    | Requirement                                    |
+| ----- | ---------------------------------------------- |
+| FR-12 | The system shall support SFTP → SFTP transfers |
+| FR-13 | The system shall support SFTP → S3 transfers   |
+| FR-14 | The system shall support S3 → S3 transfers     |
+| FR-15 | The system shall support S3 → SFTP transfers   |
+
+---
+
+### 4.1.4 Large File Handling
+
+| ID    | Requirement                                                                           |
+| ----- | ------------------------------------------------------------------------------------- |
+| FR-16 | The system shall support file sizes from 1KB up to 30GB                               |
+| FR-17 | The system shall support streaming transfers without loading entire files into memory |
+| FR-18 | The system shall support multipart uploads for large files                            |
+| FR-19 | The system shall retry failed transfers in a controlled manner                        |
+
+---
+
+### 4.1.5 Status and Observability
+
+| ID    | Requirement                                                         |
+| ----- | ------------------------------------------------------------------- |
+| FR-20 | The system shall expose transfer job status via API                 |
+| FR-21 | The system shall provide detailed error information for failed jobs |
+| FR-22 | The system shall provide audit logs for transfer activity           |
+| FR-23 | The system shall correlate logs and metrics using a job identifier  |
+
+---
+
+## 4.2 Non-Functional Requirements
+
+### 4.2.1 Availability
+
+| ID     | Requirement                                                                   |
+| ------ | ----------------------------------------------------------------------------- |
+| NFR-A1 | The system shall be highly available across multiple Availability Zones       |
+| NFR-A2 | The system shall be deployed across multiple AWS GovCloud regions             |
+| NFR-A3 | The system shall continue processing transfers during a single-region failure |
+| NFR-A4 | The system shall prevent duplicate transfers during failover                  |
+
+---
+
+### 4.2.2 Scalability
+
+| ID     | Requirement                                                                     |
+| ------ | ------------------------------------------------------------------------------- |
+| NFR-S1 | The system shall scale horizontally to support concurrent transfers             |
+| NFR-S2 | The system shall support burst traffic without manual intervention              |
+| NFR-S3 | The system shall apply backpressure to protect partner systems                  |
+| NFR-S4 | The system shall scale independently for control plane and data plane workloads |
+
+---
+
+### 4.2.3 Performance
+
+| ID     | Requirement                                                     |
+| ------ | --------------------------------------------------------------- |
+| NFR-P1 | The system shall efficiently transfer files up to 30GB          |
+| NFR-P2 | The system shall minimize transfer latency for push-based flows |
+| NFR-P3 | The system shall optimize throughput for large file transfers   |
+| NFR-P4 | The system shall avoid unnecessary data movement or duplication |
+
+---
+
+### 4.2.4 Security
+
+| ID      | Requirement                                                      |
+| ------- | ---------------------------------------------------------------- |
+| NFR-SC1 | The system shall enforce strong authentication and authorization |
+| NFR-SC2 | The system shall encrypt data in transit and at rest             |
+| NFR-SC3 | The system shall enforce least-privilege access controls         |
+| NFR-SC4 | The system shall isolate customers and endpoints                 |
+| NFR-SC5 | The system shall securely integrate with external partners       |
+
+---
+
+### 4.2.5 Compliance
+
+| ID     | Requirement                                                 |
+| ------ | ----------------------------------------------------------- |
+| NFR-C1 | The system shall operate in AWS GovCloud regions            |
+| NFR-C2 | The system shall comply with System IT security standards   |
+| NFR-C3 | The system shall align with FRISS policies where applicable |
+| NFR-C4 | The system shall retain audit logs per policy requirements  |
+
+---
+
+### 4.2.6 Observability
+
+| ID     | Requirement                                                |
+| ------ | ---------------------------------------------------------- |
+| NFR-O1 | The system shall provide centralized logging               |
+| NFR-O2 | The system shall expose operational metrics                |
+| NFR-O3 | The system shall generate alerts on failures and anomalies |
+| NFR-O4 | The system shall support root-cause analysis               |
+
+---
+
+## 4.3 Requirements Traceability (High-Level)
+
+This architecture is designed so that:
+
+* **Functional requirements** map directly to control plane components (API Gateway, Lambda, Step Functions)
+* **Performance and scalability requirements** are primarily addressed by the data plane (ECS Fargate, S3)
+* **Availability and resiliency requirements** are addressed through multi-region deployment and lease-based ownership
+* **Security and compliance requirements** are enforced through IAM, encryption, and audit logging
+
+Detailed traceability is documented in subsequent sections.
+
+---
+
+## 4.4 Section Summary
+
+This section establishes the functional and non-functional requirements that guide the architecture. These requirements form the basis for design decisions related to scalability, resiliency, security, and operational excellence described in later sections of this document.
+
+---
+
+
+
+# 5. Architectural Principles and Constraints
+
+This section describes the **core architectural principles**, **assumptions**, **constraints**, and **trade-offs** that shape the design of the Self-Serve File Transfer Backend Engine. These principles ensure the solution aligns with enterprise architecture standards while meeting business, security, and operational requirements.
+
+---
+
+## 5.1 Architectural Principles
+
+The architecture is guided by the following principles:
+
+### 5.1.1 Separation of Control Plane and Data Plane
+
+* The system explicitly separates **orchestration and governance (control plane)** from **file movement (data plane)**.
+* Control plane components manage:
+
+  * validation
+  * job creation
+  * orchestration
+  * status tracking
+* Data plane components handle:
+
+  * streaming transfers
+  * large file handling
+  * network-intensive operations
+
+**Benefit:** Improves scalability, reliability, and operational clarity.
+
+---
+
+### 5.1.2 Event-Driven and Asynchronous Processing
+
+* Transfers are initiated through events (S3, schedules, API calls).
+* Components communicate via EventBridge and SQS.
+* Processing is decoupled and resilient to spikes.
+
+**Benefit:** Enables elastic scaling and fault isolation.
+
+---
+
+### 5.1.3 Idempotent and Deterministic Execution
+
+* Every transfer job is uniquely identified.
+* Idempotency keys ensure retries do not result in duplicate transfers.
+* Deterministic execution paths ensure predictable outcomes.
+
+**Benefit:** Safe retries and consistent behavior under failure.
+
+---
+
+### 5.1.4 Stateless Compute with Durable State
+
+* Compute components (Lambda, ECS Fargate) are stateless.
+* All state is persisted in durable storage (DynamoDB, S3).
+* Failures do not result in state loss.
+
+**Benefit:** Simplifies recovery and scaling.
+
+---
+
+### 5.1.5 Secure by Design
+
+* Security controls are applied at every layer.
+* Least privilege is enforced by default.
+* No secrets are embedded in code or configuration.
+
+**Benefit:** Aligns with Zero Trust and compliance standards.
+
+---
+
+### 5.1.6 Managed Services First
+
+* Preference for AWS managed services over self-managed infrastructure.
+* Reduces operational overhead and patching requirements.
+
+**Benefit:** Improves reliability and reduces total cost of ownership.
+
+---
+
+## 5.2 Assumptions
+
+The architecture is based on the following assumptions:
+
+| ID  | Assumption                                                 |
+| --- | ---------------------------------------------------------- |
+| A-1 | All deployments occur in AWS GovCloud                      |
+| A-2 | External partners support SFTP with SSH key authentication |
+| A-3 | Partners may not support push-based delivery               |
+| A-4 | File sizes can be as large as 30GB                         |
+| A-5 | External endpoints may be intermittently unavailable       |
+| A-6 | Network latency and bandwidth vary across partners         |
+| A-7 | System IT policies allow managed AWS services              |
+| A-8 | Customers accept eventual retry for transient failures     |
+
+---
+
+## 5.3 Constraints
+
+The architecture must operate within the following constraints:
+
+### 5.3.1 Regulatory and Compliance Constraints
+
+* Data must remain within AWS GovCloud regions.
+* Encryption must be enforced in transit and at rest.
+* Audit logs must be retained per policy.
+
+---
+
+### 5.3.2 Technical Constraints
+
+| Constraint          | Description                                    |
+| ------------------- | ---------------------------------------------- |
+| Protocol support    | Only SFTP and S3 are supported                 |
+| External systems    | External partner behavior cannot be controlled |
+| Lambda limits       | Lambda cannot handle large file transfers      |
+| Network egress      | External transfers require NAT gateways        |
+| Partner concurrency | Partners may impose session limits             |
+
+---
+
+### 5.3.3 Operational Constraints
+
+* Changes during FOMC freeze are restricted.
+* No direct SSH or admin access to compute resources.
+* Operations must rely on logs, metrics, and runbooks.
+
+---
+
+## 5.4 Key Trade-Offs
+
+### 5.4.1 Reliability vs Simplicity
+
+* Chosen approach uses S3 staging for SFTP→SFTP instead of direct streaming.
+* This increases steps but improves retry and DR reliability.
+
+---
+
+### 5.4.2 Cost vs Performance
+
+* Fargate is more expensive than serverless options for small files.
+* Fargate is chosen to reliably support large file transfers and external network dependencies.
+
+---
+
+### 5.4.3 Availability vs Duplicate Risk
+
+* True active-active execution was rejected.
+* Partitioned Active-Active model chosen to eliminate duplicate transfers.
+
+---
+
+### 5.4.4 Flexibility vs Standardization
+
+* Endpoint configurations are customer-managed.
+* Standardized schemas and validations restrict unsupported configurations.
+
+---
+
+## 5.5 Architecture Constraints Summary
+
+| Area              | Constraint             | Impact                       |
+| ----------------- | ---------------------- | ---------------------------- |
+| External partners | Limited control        | Retry/backoff required       |
+| File size         | Up to 30GB             | Streaming required           |
+| GovCloud          | Region restrictions    | Limited service availability |
+| Security          | No static secrets      | Secrets Manager required     |
+| Operations        | No manual intervention | Automation required          |
+
+---
+
+## 5.6 Section Summary
+
+This section outlines the principles, assumptions, constraints, and trade-offs that inform the architectural design. These elements establish clear boundaries and rationale for design decisions presented in subsequent sections.
+
+---
+
+
+
