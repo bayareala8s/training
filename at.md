@@ -1,181 +1,179 @@
-Great call — **Principal Architects are evaluated not just on impact, but on how intentionally they’re evolving**.
-Below are **development goals that are credible, promotion-safe, and aligned with Principal/Distinguished trajectories** (not “training-for-training’s-sake”).
 
-I’ll give you:
 
-1. **Paste-ready development goals (performance-system language)**
-2. **How each maps to Principal expectations**
-3. **What *not* to include (common traps)**
-4. **How to discuss these with your manager**
+# 1. Document Control
 
----
+## 1.1 Document Purpose
 
-# 1️⃣ Development Goals (Paste-Ready)
+This Software Architecture Design Document (SAD) describes the target architecture for the **Self-Serve File Transfer Backend Engine** deployed in **AWS GovCloud**. The document is intended for review and approval by the **Architecture Review Board (ARB/ARC)** and serves as the authoritative reference for design decisions, security posture, resiliency strategy, operational model, and cost considerations.
 
-## Development Goal 1: Executive-Level Communication & Influence
+The goal is to provide an enterprise-grade, scalable, and secure backend engine that enables file transfers between:
 
-**Development Objective:**
-Strengthen ability to communicate architectural trade-offs, risks, and long-term implications to executive stakeholders with clarity and confidence.
+* **SFTP → SFTP**
+* **SFTP → S3**
+* **S3 → S3**
+* **S3 → SFTP**
 
-**Development Actions:**
-
-* Practice delivering concise architecture narratives to Director/VP audiences
-* Seek feedback on executive presentations and decision memos
-* Observe and model communication styles of senior architects and leaders
-
-**Success Indicators:**
-
-* Increased invitations to executive or leadership forums
-* More decisions made with fewer follow-up clarifications
-* Clear alignment after architecture discussions
-
-**Why this matters:**
-Principals are trusted **before** decisions are made.
+with support for both **push and pull** models, including **external partner SFTP endpoints**, and file sizes ranging from **1KB to 30GB**.
 
 ---
 
-## Development Goal 2: Deepening Enterprise Risk & Compliance Judgment
+## 1.2 Intended Audience
 
-**Development Objective:**
-Further develop judgment around regulatory, security, and operational risk in large, regulated systems.
+This document is intended for:
 
-**Development Actions:**
-
-* Partner more closely with Security, Compliance, and Risk teams
-* Review past incidents, audit findings, and post-mortems to identify architectural patterns
-* Incorporate risk modeling earlier in design phases
-
-**Success Indicators:**
-
-* Risks identified earlier in the lifecycle
-* Fewer late-stage design changes driven by compliance concerns
-* Stronger alignment with risk stakeholders
-
-**Why this matters:**
-At Principal level, **risk avoided** matters more than features delivered.
+* Architecture Review Board members
+* Enterprise Architecture and Platform Architecture teams
+* Information Security / Risk / Compliance teams
+* Infrastructure / Operations / SRE teams
+* Product Management stakeholders
+* Development teams responsible for implementation and support
 
 ---
 
-## Development Goal 3: Platform Architecture & System-of-Systems Thinking
+## 1.3 Scope of Document
 
-**Development Objective:**
-Continue evolving from solution-level design to platform and ecosystem-level architecture.
+This document covers:
 
-**Development Actions:**
-
-* Actively design architectures that span multiple products and services
-* Evaluate long-term platform impacts of design decisions
-* Formalize reusable patterns and guardrails
-
-**Success Indicators:**
-
-* Increased reuse across teams
-* Reduced architectural fragmentation
-* Clear platform roadmaps
-
-**Why this matters:**
-This separates Principal from Staff.
+* System context and architectural overview
+* Detailed control plane and data plane design
+* Transfer job model and endpoint configuration model
+* Active-Active deployment strategy across **us-gov-west-1** and **us-gov-east-1**
+* Security and compliance controls aligned with Zero Trust
+* Performance, resiliency, operations, and cost pillars
+* Known constraints, risks, and mitigations
+* Evidence plans (testing, monitoring, operational readiness)
 
 ---
 
-## Development Goal 4: Organizational Leverage & Delegation
+## 1.4 Definitions, Acronyms, and Abbreviations
 
-**Development Objective:**
-Increase impact by scaling architectural influence through others rather than direct ownership.
-
-**Development Actions:**
-
-* Delegate solution-level design while retaining architectural direction
-* Mentor senior engineers and architects to lead designs independently
-* Focus time on highest-leverage architectural decisions
-
-**Success Indicators:**
-
-* Teams execute aligned architectures without direct involvement
-* Reduced dependency on a single individual
-* Improved architectural consistency
-
-**Why this matters:**
-Principals build systems that work *without them*.
+| Term          | Definition                                                                             |
+| ------------- | -------------------------------------------------------------------------------------- |
+| ARC / ARB     | Architecture Review Committee / Board                                                  |
+| Control Plane | Components that validate, orchestrate, and track transfers (API, orchestration, state) |
+| Data Plane    | Components that move file bytes (S3, Transfer Family, Fargate workers)                 |
+| HA            | High Availability                                                                      |
+| DR            | Disaster Recovery                                                                      |
+| RTO           | Recovery Time Objective                                                                |
+| RPO           | Recovery Point Objective                                                               |
+| MTD           | Maximum Tolerable Downtime                                                             |
+| CRR           | Cross-Region Replication (S3)                                                          |
+| Idempotency   | Safe retry without duplication                                                         |
+| Lease         | Time-bound lock to prevent dual-region execution                                       |
+| Endpoint      | Configuration describing a source or target (SFTP or S3)                               |
+| Transfer Job  | A unit of work describing a file transfer attempt and lifecycle                        |
 
 ---
 
-## Development Goal 5: Strategic Foresight & Long-Term Roadmapping
+## 1.5 References
 
-**Development Objective:**
-Strengthen ability to anticipate future architectural needs and guide long-term evolution.
+* AWS Well-Architected Framework (GovCloud deployment principles)
+* Internal System IT security policies and standards
+* FRISS policies (as applicable)
+* Internal SDLC and change management standards
+* Architecture Review Board submission guidelines
 
-**Development Actions:**
-
-* Develop multi-year architecture roadmaps
-* Track industry and platform trends relevant to enterprise systems
-* Validate assumptions with stakeholders
-
-**Success Indicators:**
-
-* Fewer reactive architecture changes
-* Better alignment between short-term delivery and long-term strategy
-* Stronger leadership confidence in direction
-
-**Why this matters:**
-Time horizon is a promotion discriminator.
+*(Links intentionally omitted for document portability; can be added as footnotes in final version.)*
 
 ---
 
-# 2️⃣ Development Goals → Principal Promotion Mapping
+## 1.6 Revision History
 
-| Development Area           | What It Signals to Reviewers     |
-| -------------------------- | -------------------------------- |
-| Executive Communication    | Ready for VP-level interactions  |
-| Risk & Compliance Judgment | Trusted with enterprise risk     |
-| Platform Thinking          | Operating above team-level scope |
-| Delegation & Leverage      | Scales impact beyond self        |
-| Strategic Foresight        | Thinks in years, not quarters    |
+| Version | Date       | Author   | Summary                                          |
+| ------- | ---------- | -------- | ------------------------------------------------ |
+| 0.1     | YYYY-MM-DD | Himanshu | Initial draft for ARC review                     |
+| 0.2     | YYYY-MM-DD | Himanshu | Added multi-region DR, security, and ops details |
+| 1.0     | YYYY-MM-DD | Himanshu | Final ARC submission                             |
 
 ---
 
-# 3️⃣ What *Not* to Put (Avoid These Traps)
+# 2. Executive Summary
 
-❌ “Complete training courses”
-❌ “Learn new programming languages”
-❌ “Get certifications” (unless directly tied to enterprise policy)
-❌ “Improve technical skills” (too vague / junior-coded)
+## 2.1 Business Context
 
-These read as **Staff Engineer development**, not Principal.
+Multiple business and integration teams require secure and reliable file transfers across internal systems and external partners. Existing transfer mechanisms often involve manual onboarding, bespoke scripts, inconsistent operational monitoring, and limited resiliency guarantees. This increases operational risk and reduces transparency for customers and leadership.
 
 ---
 
-# 4️⃣ How to Discuss Development Goals with Your Manager
+## 2.2 Problem Statement
 
-### Open Like This:
+Current file transfer approaches have the following challenges:
 
-> “These development goals are focused on strengthening the behaviors expected at a Principal Architect level, particularly around executive influence, risk judgment, and long-term platform thinking.”
-
-### If They Push for Training:
-
-> “I’m happy to do targeted learning, but my focus is applying it directly to high-impact architectural decisions.”
-
-### Close With This:
-
-> “I want development to be visible in outcomes, not just activities.”
+* Manual onboarding and inconsistent standards for endpoints and credentials
+* Limited self-service capability for customers
+* Incomplete end-to-end observability and status tracking
+* Weak multi-region resiliency and unclear DR behavior
+* Difficulty handling large transfers reliably (up to 30GB), especially across external SFTP
 
 ---
 
-## Optional Add-On (Very Strong)
+## 2.3 Proposed Solution Overview
 
-Add **one development goal tied directly to your signature win**:
+The proposed solution is a **Self-Serve File Transfer Backend Engine** built using AWS GovCloud managed services and event-driven orchestration. The platform separates:
 
-> “Develop repeatable executive storytelling by presenting the Golden Path architecture quarterly to senior leadership and incorporating feedback.”
+* **Control Plane** for job creation, orchestration, policy enforcement, and status tracking
+* **Data Plane** for streaming byte transfer across SFTP and S3, optimized for 1KB–30GB workloads
 
-This links **growth + impact**, which promotion committees love.
+The system is deployed in **Active-Active mode** across **us-gov-west-1** and **us-gov-east-1**, using a **partitioned ownership model (Option B)** to prevent duplicate transfers while enabling failover.
 
 ---
 
-If you want next, I can:
+## 2.4 Key Architectural Decisions
 
-* ✍️ Merge **delivery + development goals** into one flawless review
-* 📊 Turn development goals into a **quarterly growth tracker**
-* 🎤 Practice a **development-focused calibration conversation**
-* 🧠 Help you choose **one visible development bet** for 2026
+1. **Partitioned Active-Active execution**
 
-Just say the next move.
+   * Both regions accept requests; only one executes per partition using a DynamoDB lease.
+2. **Fargate-based transfer workers for SFTP**
+
+   * Supports streaming, large files, retries, and controlled egress.
+3. **S3 staging for SFTP→SFTP**
+
+   * Improves reliability, DR, and operational re-drive.
+4. **Event-driven architecture**
+
+   * S3 events and scheduled triggers drive jobs through EventBridge/SQS into Step Functions.
+5. **Endpoint configuration via APIs**
+
+   * Customer registers endpoints (SFTP/S3) via POST API; secrets stored in Secrets Manager; configs in DynamoDB.
+
+---
+
+## 2.5 Summary of Benefits
+
+* **Resiliency:** Multi-region HA/DR with controlled failover behavior
+* **Security:** Zero Trust aligned identity + encryption + least privilege
+* **Reliability:** Idempotency and leases prevent duplicate delivery
+* **Scalability:** Supports small to very large files with predictable performance
+* **Operational Excellence:** Centralized logs/metrics, runbooks, and rollback strategy
+* **Self-Service:** Customers can onboard endpoints and track transfers with clear status APIs
+
+---
+
+## 2.6 ARC Decision Requested
+
+Approval is requested for:
+
+* Deploying the system across **us-gov-west-1 and us-gov-east-1** in partitioned Active-Active mode
+* Using ECS Fargate streaming workers for SFTP transfers (including external partners)
+* Using S3 staging patterns for SFTP→SFTP delivery reliability and DR
+
+---
+
+## 2.7 Non-Goals (clarity for reviewers)
+
+The following are not goals for the initial release:
+
+* Full UI portal (backend-first)
+* Non-SFTP protocols such as FTPS/HTTPS transfers
+* Real-time streaming ingestion beyond file transfers
+* Complex transformations beyond optional checksum/scan
+
+---
+
+## 2.8 Stakeholder Summary (One-liner)
+
+This architecture provides a secure, resilient, self-service backend engine for enterprise file transfers in GovCloud, with clear operational controls and predictable DR behavior.
+
+---
+
+
