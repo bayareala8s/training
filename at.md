@@ -831,4 +831,680 @@ Runbooks are versioned and reviewed regularly.
 This section demonstrates that the platform is **operationally mature**, capable of running continuously through restricted change windows, and supported by strong SDLC, observability, rollback, and onboarding practices. The design minimizes operational risk while enabling safe and predictable change.
 
 
+# 15. Cost Optimization Pillar
+
+This section documents how the Self-Serve File Transfer Backend Engine is designed to **optimize cost across its full lifecycle**, including acquisition, utilization, maintenance, and decommissioning. It also outlines the ongoing strategy for **monitoring, forecasting, and governing spend**, and compares alternative architectural patterns from a cost perspective.
+
+---
+
+## 15.1 Total Cost of Ownership (TCO) Overview
+
+Total Cost of Ownership (TCO) is evaluated across the **entire lifecycle of the solution**, not only runtime infrastructure.
+
+TCO includes:
+
+* Resource acquisition and build
+* Runtime utilization
+* Operational support and maintenance
+* Decommissioning and scale-down
+
+The architecture is intentionally designed to:
+
+* Minimize fixed and idle costs
+* Shift spend toward usage-based services
+* Reduce operational labor costs
+* Avoid long-term infrastructure commitments
+
+---
+
+## 15.2 Resource Acquisition Costs
+
+### 15.2.1 Hardware and Infrastructure
+
+| Cost Category | Approach               | Cost Impact                 |
+| ------------- | ---------------------- | --------------------------- |
+| Servers       | Fully managed services | No hardware cost            |
+| SFTP servers  | AWS Transfer Family    | No self-managed hosts       |
+| Compute       | Serverless / Fargate   | No pre-provisioned capacity |
+| Storage       | Amazon S3              | Pay per GB stored           |
+
+There are **no upfront capital expenditures** for hardware.
+
+---
+
+### 15.2.2 Software and Build Costs
+
+| Area              | Cost Consideration          |
+| ----------------- | --------------------------- |
+| Operating systems | Included (managed services) |
+| Middleware        | Included                    |
+| Licensing         | None                        |
+| CI/CD             | Shared enterprise tooling   |
+
+The platform relies entirely on **AWS-managed services**, eliminating third-party licensing costs.
+
+---
+
+## 15.3 Resource Utilization Costs
+
+### 15.3.1 Primary Runtime Cost Drivers
+
+| Component       | Cost Driver                 |
+| --------------- | --------------------------- |
+| API Gateway     | Requests                    |
+| Lambda          | Invocations and duration    |
+| Step Functions  | State transitions           |
+| ECS Fargate     | vCPU/memory × runtime       |
+| S3              | Storage and requests        |
+| NAT Gateway     | Data processed              |
+| Transfer Family | Endpoint-hours and sessions |
+| DynamoDB        | Read/write capacity         |
+
+---
+
+### 15.3.2 Utilization-Based Design Decisions
+
+* No always-on compute
+* ECS tasks run **only during transfers**
+* Large files consume more resources **only while active**
+* Control plane remains low-cost due to lightweight operations
+
+This ensures costs scale **linearly with usage**, not provisioned capacity.
+
+---
+
+### 15.3.3 Support, Licensing, and Training
+
+| Area               | Cost Impact                |
+| ------------------ | -------------------------- |
+| Software licensing | None                       |
+| OS patching        | None                       |
+| SFTP maintenance   | None                       |
+| On-call operations | Shared enterprise rotation |
+| Training           | One-time enablement        |
+
+Operational labor costs are significantly lower than self-managed alternatives.
+
+---
+
+## 15.4 Resource Maintenance Costs
+
+### 15.4.1 Patching and Upgrades
+
+| Component      | Maintenance Model |
+| -------------- | ----------------- |
+| API Gateway    | AWS managed       |
+| Lambda         | AWS managed       |
+| Step Functions | AWS managed       |
+| ECS Fargate    | AWS managed       |
+| S3 / DynamoDB  | AWS managed       |
+
+There are:
+
+* No patching windows
+* No OS upgrades
+* No middleware upgrades
+
+---
+
+### 15.4.2 Operational Maintenance
+
+| Activity              | Cost Impact |
+| --------------------- | ----------- |
+| Configuration updates | Low         |
+| Scaling adjustments   | Automatic   |
+| Incident remediation  | Infrequent  |
+
+---
+
+## 15.5 Resource Removal and Decommissioning
+
+### 15.5.1 Decommissioning Strategy
+
+| Resource         | Removal Cost                         |
+| ---------------- | ------------------------------------ |
+| ECS tasks        | Zero                                 |
+| Lambda functions | Zero                                 |
+| Step Functions   | Zero                                 |
+| DynamoDB tables  | Zero after deletion                  |
+| S3 buckets       | Storage cost until retention expires |
+
+---
+
+### 15.5.2 Cost Implications
+
+* No stranded infrastructure
+* No sunk cost on unused capacity
+* Storage costs controlled via lifecycle policies
+
+---
+
+## 15.6 Ongoing Cost Monitoring, Forecasting, and Analysis
+
+### 15.6.1 Monitoring Tools
+
+| Tool                 | Purpose             |
+| -------------------- | ------------------- |
+| AWS Cost Explorer    | Historical analysis |
+| AWS Budgets          | Threshold alerts    |
+| CloudWatch           | Usage correlation   |
+| Cost allocation tags | Chargeback/showback |
+
+---
+
+### 15.6.2 Cost Allocation Strategy
+
+Mandatory tags include:
+
+* `Application = SelfServeFileTransfer`
+* `CustomerId`
+* `FlowType`
+* `Environment`
+* `Region`
+
+This enables:
+
+* Per-customer cost visibility
+* Per-flow cost analysis
+* Trend-based forecasting
+
+---
+
+### 15.6.3 Governance and Review
+
+| Activity                   | Frequency |
+| -------------------------- | --------- |
+| Cost review                | Monthly   |
+| Budget validation          | Quarterly |
+| Optimization review        | Quarterly |
+| Architecture re-evaluation | Annually  |
+
+---
+
+## 15.7 Cost Comparison Across Architecture Patterns
+
+### 15.7.1 Patterns Evaluated
+
+| Pattern              | Description                     |
+| -------------------- | ------------------------------- |
+| Pattern A            | Self-managed EC2 SFTP + scripts |
+| Pattern B            | Lambda-heavy transfer approach  |
+| Pattern C (Selected) | Managed services + Fargate      |
+
+---
+
+### 15.7.2 Relative Cost Comparison
+
+| Dimension             | Pattern A | Pattern B | Pattern C     |
+| --------------------- | --------- | --------- | ------------- |
+| Idle capacity         | High      | Medium    | **Low**       |
+| Maintenance labor     | High      | Medium    | **Low**       |
+| Large file efficiency | Poor      | Limited   | **High**      |
+| DR cost               | High      | Medium    | **Optimized** |
+| Cost predictability   | Low       | Medium    | **High**      |
+| TCO                   | High      | Medium    | **Lowest**    |
+
+---
+
+### 15.7.3 Current vs Target State Cost View
+
+| Aspect               | Current State | Target State |
+| -------------------- | ------------- | ------------ |
+| Fixed infrastructure | Yes           | No           |
+| Idle cost            | High          | Minimal      |
+| DR duplication       | Manual        | Built-in     |
+| Cost visibility      | Low           | High         |
+
+---
+
+## 15.8 Cost Risks and Mitigations
+
+| Risk               | Impact            | Mitigation          |
+| ------------------ | ----------------- | ------------------- |
+| Unexpected spikes  | Cost surge        | Budgets + throttles |
+| Large-file retries | Increased runtime | Checkpointing       |
+| NAT saturation     | Increased cost    | Concurrency limits  |
+| Log growth         | Storage cost      | Retention policies  |
+
+---
+
+## 15.9 Cost Disclaimer (ARC-Required)
+
+> **Cost Disclaimer**
+>
+> All cost values, estimates, and comparisons in this document represent a **single point-in-time view** and are based on **current pricing, workload assumptions, and inputs provided by Product Teams**.
+>
+> Actual costs may vary due to:
+>
+> * Changes in usage patterns
+> * AWS pricing updates
+> * Regional pricing differences
+> * External partner behavior
+>
+> Cost projections should be revisited periodically as the system scales and evolves.
+
+---
+
+## 15.10 Section Summary
+
+This section demonstrates that the architecture is **cost-efficient by design**, minimizes idle spend, leverages managed services to reduce operational labor, and provides strong mechanisms for cost visibility, governance, and optimization over time.
+
+---
+
+
+
+# 16. Risks, Assumptions, and Mitigations
+
+This section documents the **key risks**, **underlying assumptions**, and **mitigation strategies** associated with the Self-Serve File Transfer Backend Engine. It provides transparency into areas of uncertainty and demonstrates proactive risk management.
+
+---
+
+## 16.1 Key Risks
+
+### 16.1.1 External Partner Availability Risk
+
+**Description**
+External SFTP endpoints are outside the control of the platform and may experience downtime, latency, or throttling.
+
+**Impact**
+
+* Delayed inbound or outbound file transfers
+* Increased retries and execution duration
+
+**Mitigation**
+
+* Configurable retry and backoff policies
+* Partner-specific concurrency limits
+* Alerting on repeated failures
+* Clear ownership boundaries documented
+
+**Residual Risk**
+
+* Medium (accepted)
+
+---
+
+### 16.1.2 Duplicate Transfer Risk
+
+**Description**
+Multi-region execution introduces risk of duplicate file delivery if ownership is not strictly controlled.
+
+**Impact**
+
+* Data integrity issues
+* Partner reconciliation challenges
+
+**Mitigation**
+
+* Partitioned Active-Active model
+* Lease-based execution control
+* Idempotency keys
+* Atomic delivery (`.tmp → rename`)
+
+**Residual Risk**
+
+* Low
+
+---
+
+### 16.1.3 Large File Transfer Failures
+
+**Description**
+Transfers of files up to 30GB may fail due to network interruptions or partner limitations.
+
+**Impact**
+
+* Extended execution times
+* Partial or failed transfers
+
+**Mitigation**
+
+* Streaming-based transfers
+* Multipart uploads
+* Retry with resume capability
+* S3 staging for checkpointing
+
+**Residual Risk**
+
+* Low to Medium
+
+---
+
+### 16.1.4 Cost Spikes During Burst Traffic
+
+**Description**
+Unexpected spikes in transfer volume or file size can increase runtime costs.
+
+**Impact**
+
+* Budget overruns
+* Increased NAT and compute spend
+
+**Mitigation**
+
+* Concurrency throttling
+* AWS Budgets and alerts
+* Per-customer quotas
+* Periodic cost reviews
+
+**Residual Risk**
+
+* Low
+
+---
+
+### 16.1.5 Configuration Errors During Onboarding
+
+**Description**
+Incorrect endpoint or schedule configuration by customers may cause job failures.
+
+**Impact**
+
+* Failed transfers
+* Support tickets
+
+**Mitigation**
+
+* Strong schema validation
+* Connectivity tests before activation
+* Soft-disable and rollback options
+* Clear error messages
+
+**Residual Risk**
+
+* Low
+
+---
+
+### 16.1.6 Regional Outage Risk
+
+**Description**
+A full AWS GovCloud region outage could disrupt in-flight transfers.
+
+**Impact**
+
+* Temporary service degradation
+* Job delays
+
+**Mitigation**
+
+* Partitioned Active-Active deployment
+* Lease expiration and takeover
+* Cross-region data replication
+* Automated failover
+
+**Residual Risk**
+
+* Low
+
+---
+
+## 16.2 Assumptions
+
+The architecture is built on the following assumptions:
+
+| ID   | Assumption                                                 |
+| ---- | ---------------------------------------------------------- |
+| AS-1 | AWS GovCloud services remain available per published SLAs  |
+| AS-2 | External partners support SFTP with SSH key authentication |
+| AS-3 | External partners may not support push-based transfers     |
+| AS-4 | File sizes may reach up to 30GB                            |
+| AS-5 | Customers accept eventual consistency during failover      |
+| AS-6 | System IT policies allow managed AWS services              |
+| AS-7 | Retry-based delivery is acceptable for transient failures  |
+
+These assumptions are reviewed periodically as usage evolves.
+
+---
+
+## 16.3 Mitigation Strategy Summary
+
+| Risk Category  | Mitigation Strategy           |
+| -------------- | ----------------------------- |
+| Availability   | Multi-region Active-Active    |
+| Data integrity | Idempotency + atomic delivery |
+| Performance    | Streaming + tiered sizing     |
+| Security       | Defense-in-depth + Zero Trust |
+| Operations     | Automation + observability    |
+| Cost           | Quotas + budgets              |
+
+---
+
+## 16.4 Open Issues and Follow-Ups
+
+The following items are tracked for future evaluation:
+
+| ID   | Item                        | Owner        | Status       |
+| ---- | --------------------------- | ------------ | ------------ |
+| OI-1 | UI portal for onboarding    | Product      | Backlog      |
+| OI-2 | Additional protocols (FTPS) | Architecture | Future       |
+| OI-3 | Partner SLA automation      | Product      | Under review |
+| OI-4 | Advanced content validation | Architecture | Future       |
+
+These items do not block ARC approval.
+
+---
+
+## 16.5 Section Summary
+
+This section demonstrates that key architectural and operational risks have been identified, analyzed, and mitigated through design and process controls. Residual risks are explicitly documented and accepted where appropriate, providing transparency and confidence for ARC approval.
+
+---
+
+
+
+
+# 17. Alternatives Considered
+
+This section documents the **architectural alternatives evaluated**, the **trade-offs analyzed**, and the **rationale for selecting the final architecture**. The goal is to demonstrate that multiple viable options were reviewed and that the chosen solution best satisfies business, technical, security, resiliency, and cost requirements.
+
+---
+
+## 17.1 Evaluation Criteria
+
+All alternatives were evaluated against the following criteria:
+
+* Support for **SFTP and S3** transfer flows
+* Ability to handle **large files (up to 30GB)**
+* Multi-region **high availability and disaster recovery**
+* **Duplicate prevention** and correctness guarantees
+* Alignment with **Zero Trust** and System IT security standards
+* Operational complexity and supportability
+* Cost efficiency and predictability
+* Suitability for **GovCloud** deployment
+
+---
+
+## 17.2 Alternative 1: Self-Managed EC2-Based SFTP and Transfer Scripts
+
+### Description
+
+This option uses:
+
+* EC2-hosted SFTP servers
+* Custom scripts or cron jobs for file transfers
+* Manual scaling and DR configuration
+
+---
+
+### Pros
+
+* Full control over environment
+* Familiar operational model
+
+---
+
+### Cons
+
+* High operational overhead (patching, upgrades, monitoring)
+* Always-on infrastructure with idle cost
+* Complex DR setup and testing
+* Higher security risk due to persistent servers
+* Poor scalability for burst and large-file workloads
+
+---
+
+### Decision
+
+**Rejected**
+
+**Rationale**
+
+* Does not meet operational excellence or cost optimization goals
+* Introduces unnecessary security and maintenance risk
+
+---
+
+## 17.3 Alternative 2: Lambda-Only Serverless Transfer Model
+
+### Description
+
+This option relies exclusively on AWS Lambda for file transfers, including SFTP interactions.
+
+---
+
+### Pros
+
+* Fully serverless
+* No infrastructure management
+* Cost-effective for very small files
+
+---
+
+### Cons
+
+* Lambda execution time limit (15 minutes)
+* Memory and disk limitations
+* Unsuitable for files approaching 30GB
+* Complex workaround logic required
+* Increased risk of partial failures
+
+---
+
+### Decision
+
+**Rejected**
+
+**Rationale**
+
+* Cannot reliably support large files or external SFTP transfers
+* Violates performance and reliability requirements
+
+---
+
+## 17.4 Alternative 3: Active-Passive Multi-Region Architecture
+
+### Description
+
+One region actively processes transfers while the other remains on standby.
+
+---
+
+### Pros
+
+* Simpler failover logic
+* Clear primary/secondary roles
+
+---
+
+### Cons
+
+* Idle infrastructure cost
+* Slower recovery during failover
+* Manual promotion often required
+* Underutilization of secondary region
+
+---
+
+### Decision
+
+**Rejected**
+
+**Rationale**
+
+* Does not meet availability and efficiency goals
+* Higher RTO compared to Active-Active
+
+---
+
+## 17.5 Alternative 4: True Active-Active Without Partitioning
+
+### Description
+
+Both regions process all jobs concurrently with minimal coordination.
+
+---
+
+### Pros
+
+* Maximum throughput
+* Simplified routing logic
+
+---
+
+### Cons
+
+* High risk of duplicate transfers
+* Complex reconciliation logic
+* Not acceptable for file-based integrations
+* Violates data integrity expectations
+
+---
+
+### Decision
+
+**Rejected**
+
+**Rationale**
+
+* Duplicate delivery risk is unacceptable for enterprise file transfers
+
+---
+
+## 17.6 Selected Architecture: Partitioned Active-Active with Managed Services
+
+### Description
+
+The selected architecture:
+
+* Uses AWS managed services in GovCloud
+* Separates control plane and data plane
+* Employs partitioned Active-Active execution
+* Uses lease-based ownership and idempotency
+* Leverages ECS Fargate for large-file transfers
+
+---
+
+### Why This Option Was Selected
+
+| Criterion            | Outcome         |
+| -------------------- | --------------- |
+| Large file support   | Fully supported |
+| Duplicate prevention | Guaranteed      |
+| Multi-region HA/DR   | Automated       |
+| Security alignment   | Strong          |
+| Operational overhead | Low             |
+| Cost predictability  | High            |
+| GovCloud readiness   | Fully compliant |
+
+---
+
+## 17.7 Summary Comparison Table
+
+| Option             | Availability | Scalability | Security | Cost          | Operational Risk |
+| ------------------ | ------------ | ----------- | -------- | ------------- | ---------------- |
+| EC2-based          | Medium       | Low         | Medium   | High          | High             |
+| Lambda-only        | Medium       | Medium      | High     | Low           | Medium           |
+| Active-Passive     | Medium       | Medium      | High     | Medium        | Medium           |
+| True Active-Active | High         | High        | Medium   | Medium        | High             |
+| **Selected**       | **High**     | **High**    | **High** | **Optimized** | **Low**          |
+
+---
+
+## 17.8 Section Summary
+
+Multiple architectural approaches were evaluated to meet the system’s functional and non-functional requirements. The selected **partitioned Active-Active architecture using AWS managed services** provides the best balance of **availability, correctness, security, operational simplicity, and cost efficiency**, making it the most suitable choice for enterprise-grade file transfers in AWS GovCloud.
+
+---
+
 
