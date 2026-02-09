@@ -1,225 +1,246 @@
-Below is a **complete, end-to-end, ARC-ready workflow** that explains **exactly what happens when a customer connects to the SFTP server in us-gov-west and that region goes down**.
-This is written so you can **paste it into the document** *and* **walk it verbally in ARC**.
+Below is the **same level of end-to-end detail** for the **S3 → S3** flow when **West is down**, written in an ARC-ready way.
+
+I’ll cover:
+
+* steady state
+* what “West down” means for S3→S3
+* how Route 53/DNS applies (API layer, not S3 itself)
+* what happens to in-flight transfers
+* what customers/partners experience
+* timing vs RTO/RPO targets
 
 ---
 
 # End-to-End Failover Workflow
 
-### Scenario: Customer connects to SFTP (us-gov-west) → West goes down
+## Scenario: **S3 → S3 transfer**, primary execution in **us-gov-west**, then **West goes down**
 
 ---
 
 ## 0️⃣ Pre-conditions (steady state)
 
-* **Two AWS Transfer Family (SFTP) servers**
+### Data & control endpoints
 
-  * `sftp-west.company.gov` → us-gov-west
-  * `sftp-east.company.gov` → us-gov-east
-* **Route 53 DNS**
+* **Source bucket**: `source-bucket` (could be customer-owned or partner-owned)
+* **Target bucket**: `target-bucket` (could be platform-owned or customer-owned)
+* Buckets may be:
 
-  * `sftp.company.gov` points to **both** endpoints
-  * Health checks enabled
-  * Low TTL (e.g., 60s)
-* **Backend services**
+  * in the same region
+  * cross-region
+  * replicated (CRR) depending on design
 
-  * Active-Active orchestration in both regions
-  * DynamoDB Global Tables for metadata & leases
-  * S3 with CRR for staged files
+### Service endpoints
+
+* Customer calls a single API DNS name:
+
+  * `eft.company.gov` (Route 53 routes to West/East API endpoints)
+
+### Backend in both regions (Active-Active)
+
+* Orchestration services running in **West** and **East**
+* Job metadata and ownership in **DynamoDB Global Tables**
+* Queues/events in each region (EventBridge/SQS)
+* Execution workers (ECS/Lambda) in each region
 
 ---
 
 ## 1️⃣ Normal operation (before failure)
 
-1. Customer resolves:
+### Step-by-step (S3 → S3)
 
-   ```
-   sftp.company.gov
-   ```
-2. Route 53 returns **us-gov-west** (healthy)
-3. Customer establishes SFTP session with **Transfer Family – West**
-4. File upload or download proceeds normally
-5. Backend services track:
+1. Customer submits a job:
 
-   * Job metadata
-   * Transfer state
-   * Ownership/lease
+   * “Copy from `source-bucket/prefix/...` to `target-bucket/prefix/...`”
+2. API request goes to `eft.company.gov`
+3. Route 53 returns **West** (healthy)
+4. West orchestration:
 
-👉 Everything is operating normally.
+   * validates request
+   * writes job metadata to DynamoDB Global Tables
+   * acquires execution ownership lease
+   * schedules transfer execution
+5. Execution worker starts:
 
----
+   * reads object(s) from source bucket
+   * writes to target bucket
+   * uses multipart for large objects
+6. Job status updates continuously
 
-## 2️⃣ Failure occurs: us-gov-west goes down
-
-This could be:
-
-* Regional outage
-* Transfer Family endpoint unavailable
-* Network isolation
-
-### Immediate impact
-
-* Existing SFTP sessions to West **drop**
-* New connection attempts to West **fail**
-
-This is expected and unavoidable.
+✅ Everything runs normally
 
 ---
 
-## 3️⃣ DNS & Route 53 response (control shift)
+## 2️⃣ Failure occurs: **us-gov-west goes down**
 
-1. Route 53 health checks fail for:
+This affects:
 
-   ```
-   sftp-west.company.gov
-   ```
-2. Route 53 marks **West UNHEALTHY**
-3. Route 53 **stops returning West** in DNS responses
-4. DNS cache TTL begins expiring across clients
+* West API endpoint
+* West orchestration services
+* West execution workers
+
+**But note:**
+S3 itself is a regional managed service; the “West down” scenario here means **your service stack in West** is unavailable (or the region has a broader outage).
+
+---
+
+## 3️⃣ DNS & Route 53 response (for your API)
+
+Even though S3 doesn’t use your Route 53, **your customers do** for the API.
+
+1. Route 53 health checks fail for West API (`api-west`)
+2. Route 53 marks West unhealthy
+3. Route 53 stops returning West
+4. New client requests resolve to East
 
 ⏱ Typical DNS convergence: **1–3 minutes**
 
 ---
 
-## 4️⃣ Customer reconnects (this is key)
+## 4️⃣ Customer experience during failure
 
-### What the customer does
+### If the customer is calling your API
 
-* Customer retries connection
-* Uses **same hostname**:
+* A request in progress may fail (timeout/5xx)
+* Client retries the same API DNS name:
 
-  ```
-  sftp.company.gov
-  ```
+  * `eft.company.gov`
+* Request is routed to East
+* No client configuration change required
 
-### What DNS now returns
-
-* Route 53 returns:
-
-  ```
-  sftp-east.company.gov
-  ```
-
-### Result
-
-* Customer establishes a **new SFTP session to East**
-* No hostname or configuration change required by customer
-
-👉 Failover is **transparent at the DNS layer**.
+✅ Transparent failover at the API layer
 
 ---
 
-## 5️⃣ Backend orchestration during the outage
+## 5️⃣ Backend failover behavior (how jobs recover)
 
-While DNS is shifting traffic:
+### 5.1 Ownership takeover (prevents duplicates)
 
-1. **DynamoDB Global Tables**
+1. West-held lease eventually expires (time-bound)
+2. East acquires execution ownership
+3. East begins/resumes job progression
 
-   * Metadata remains available in both regions
-   * Lease ownership from West eventually expires
-2. **Lease expiration**
+This ensures:
 
-   * Prevents split-brain execution
-3. **East region acquires ownership**
-
-   * Becomes execution authority
-4. **Transfer jobs resume or retry**
-
-   * Based on last known safe state
-
-⏱ Lease-driven takeover contributes to overall **RTO = 15 minutes (target)**
+* only one active executor per partition
+* no duplicate object copies
+* clean retry behavior
 
 ---
 
-## 6️⃣ What happens to the file being transferred?
+## 6️⃣ What happens to **in-flight S3→S3 copies**?
 
-### Case A — File already fully uploaded before failure
+This depends on whether you’re copying:
 
-* File exists in S3 (West)
-* CRR replicates to East (≤ 15 minutes)
-* Backend resumes downstream processing
+* **single object**
+* **multipart large object**
+* **multiple objects in a batch**
 
-✅ No data loss
+### Case A — Small object copy completed before outage
+
+* Object is already in target bucket
+* Job can be marked succeeded when East takes over
+
+✅ No impact, maybe minor status delay
+
+---
+
+### Case B — Large object copy was in progress (multipart)
+
+When West fails mid-transfer:
+
+* Multipart upload may be incomplete in the target bucket
+* Incomplete multipart uploads are not visible as a completed object
+* East re-executes the copy step
+
+**Your worker logic should do:**
+
+* Check if a valid completed object exists (size/etag/checksum)
+* If not, restart multipart upload
+* Optionally abort stale multipart uploads after a threshold
+
+✅ No partial file exposure
+✅ Safe retry
 ⏱ Possible delay
 
 ---
 
-### Case B — File partially uploaded when West failed
+### Case C — Batch copy (many objects)
 
-* Partial file is **discarded**
-* Customer reconnects to East
-* Customer re-uploads file
+* Some objects may already be copied successfully
+* East resumes and copies remaining objects
+* Idempotency prevents re-copy issues
 
-✅ No partial file exposure
-✅ No corruption
-⏱ Re-upload required (expected SFTP behavior)
-
----
-
-## 7️⃣ What the customer experiences (plain English)
-
-| Aspect             | Customer Experience |
-| ------------------ | ------------------- |
-| Connection         | Session drops       |
-| Reconnect          | Works after retry   |
-| Hostname change    | ❌ None              |
-| Credentials change | ❌ None              |
-| Data loss          | ❌ No                |
-| Duplicate files    | ❌ No                |
-| Delay              | ✅ Possible          |
-
-You can say this verbatim in ARC:
-
-> *During a regional failure, customers experience a dropped SFTP session and need to reconnect. Once DNS converges, they reconnect to the East region using the same hostname, with no configuration changes.*
+✅ Safe resume
+✅ No duplicates (or duplicates overwritten deterministically if versioning rules allow)
+⏱ Delay proportional to remaining work
 
 ---
 
-## 8️⃣ Why this design is correct (ARC framing)
+## 7️⃣ RPO implications (S3→S3 case)
 
-* **SFTP is stateful** → session loss is expected on failure
-* **DNS is the correct failover mechanism** for SFTP
-* **Active-Active backend** ensures:
+For S3→S3 transfers, RPO depends on **what data is considered critical**:
 
-  * No duplicate processing
-  * No data corruption
-  * Deterministic recovery
-* **Correctness prioritized over speed**
+### Orchestration metadata (jobs/endpoints/leases)
+
+* Stored in DynamoDB Global Tables
+* **RPO: near-zero (target)**
+
+### Object data in destination bucket
+
+* If the destination is directly written in East or replicated:
+
+  * the object exists once upload completes
+* If your design uses S3 CRR for staging:
+
+  * **RPO can be up to 15 minutes** for staged data replication
+
+In most S3→S3 implementations, the destination object is the “truth” once written, so RPO is mainly about **job state**, not object state.
+
+---
+
+## 8️⃣ What customers/partners experience (plain English)
+
+| Aspect            | Experience                                   |
+| ----------------- | -------------------------------------------- |
+| API calls         | Retry may be needed                          |
+| Job execution     | Resumes in East after lease takeover         |
+| Object integrity  | No partial objects exposed                   |
+| Data loss         | No (objects either exist or re-copy happens) |
+| Duplicate objects | Prevented via ownership + idempotency        |
+| Delay             | Possible during failover                     |
 
 ---
 
 ## 9️⃣ Timing summary (end-to-end)
 
-| Step                            | Time       |
-| ------------------------------- | ---------- |
-| Failure detection               | ~1–2 min   |
-| DNS convergence                 | ~1–3 min   |
-| Lease expiration & takeover     | ~10 min    |
-| **Total recovery target (RTO)** | **15 min** |
+| Step                        | Typical Time            |
+| --------------------------- | ----------------------- |
+| DNS failover for API        | ~1–3 minutes            |
+| Lease expiration + takeover | ~10 minutes             |
+| Re-execution / resume       | depends on object sizes |
+| **Target recovery (RTO)**   | **15 minutes (target)** |
 
 ---
 
 ## 🔟 ARC-ready summary (memorize this)
 
-> *When us-gov-west fails, existing SFTP sessions drop. Route 53 health checks remove West from DNS, and customers reconnect using the same hostname to us-gov-east. Backend services recover automatically using Active-Active orchestration and lease-based ownership, ensuring no data loss or duplication, with a target RTO of 15 minutes.*
-
-Pause after saying that.
+> *For S3-to-S3 transfers, Route 53 fails over the API traffic from West to East within minutes. Job metadata is replicated across regions, and East takes over execution after lease expiration. Any in-progress multipart copies are safely retried without exposing partial objects. The outcome is correctness-first recovery: no data loss, no duplicates, and only a short delay during regional failover.*
 
 ---
 
-## If ARC asks: *“Can we make this seamless without reconnect?”*
+## If ARC asks: “Do customers need to change anything?”
 
-Answer calmly:
+Answer:
 
-> *No — SFTP sessions are stateful. Session reconnection is expected and documented behavior during regional failures.*
-
-That answer is **100% correct**.
+> *No. Clients continue using the same API DNS name. Only retries may be required depending on when the outage occurs.*
 
 ---
 
-If you want next, I can:
+## If you want, I can tailor this to your exact model
 
-* Turn this into a **one-page ARC appendix**
-* Add a **sequence diagram with SFTP + DNS**
-* Help you explain **why Global Accelerator is not appropriate for SFTP**
-* Prep a **partner-facing explanation**
+Two quick variants exist for S3→S3:
 
-Just tell me where this will be used (doc / slide / spoken).
+1. **Direct copy** (worker reads source and writes target)
+2. **Stage then copy** (source → staging bucket → target)
+
+Tell me which one you’re using and I’ll tighten the wording to match precisely.
