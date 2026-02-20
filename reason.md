@@ -1,18 +1,117 @@
-| Layer                           | Current State                | AWS Proposed Architecture           | Future Vision (Target State)                 | Gap/Alignment Notes                                       | **Vote**<br>👍/👎 | **Engineer Name** | **Feedback / Concerns / Suggestions** |
-| ------------------------------- | ---------------------------- | ----------------------------------- | -------------------------------------------- | --------------------------------------------------------- | ----------------- | ----------------- | ------------------------------------- |
-| **Authentication**              | Local SFTP users             | IAM or Directory Service            | Federated Auth + Token Support               | ✅ Alignment. 🔍 Validate auto-expiry and token lifecycle. |                   |                   |                                       |
-| **Customer Onboarding**         | Manual setup via scripts     | Manual or scripted (Terraform)      | Self-service JSON onboarding with automation | 🔍 Needs automation via UI or API                         |                   |                   |                                       |
-| **Workflow Triggering**         | Cron jobs                    | Lambda or EventBridge               | Event-driven Step Functions                  | ✅ Alignment. 🔍 Confirm rule-based triggers.              |                   |                   |                                       |
-| **Transfer Protocol Support**   | SFTP only                    | AWS Transfer Family (SFTP/FTP/FTPS) | Same + auto-scaling                          | ✅ Fully aligned                                           |                   |                   |                                       |
-| **File Validation**             | Manual or post-upload script | Lambda validation                   | Built-in in orchestration (Step Functions)   | 🔍 Consider embedding checks + audit logs                 |                   |                   |                                       |
-| **Audit & Logging**             | Basic logging                | CloudWatch + optional S3 logs       | Searchable logs (Athena, OpenSearch)         | 🔍 Validate fine-grained file-level audit                 |                   |                   |                                       |
-| **Monitoring & Alerts**         | Few CloudWatch alarms        | Basic alerts                        | Real-time alerts w/ routing (SNS, Teams)     | 🔍 Needs severity-based routing setup                     |                   |                   |                                       |
-| **Data Movement**               | SFTP to EC2/S3               | Transfer Family to S3               | Transfer Family → S3 → ETL/target            | ✅ Alignment. 🔍 Integrate with Glue/Data Lake             |                   |                   |                                       |
-| **Configuration Management**    | Hardcoded scripts            | Param-based Terraform               | JSON-driven with environment abstraction     | 🔍 Needs flexible config modules                          |                   |                   |                                       |
-| **Infrastructure Provisioning** | Manual or partial IaC        | Partial Terraform                   | Fully dynamic via Terraform/CDK + JSON       | 🔍 Validate support for modular + dynamic creation        |                   |                   |                                       |
-| **Error Handling & Rollback**   | Manual                       | Lambda retries                      | Step Function-based retries and rollback     | 🔍 Requires clear rollback policy                         |                   |                   |                                       |
-| **Security & Compliance**       | Basic IAM/S3 policies        | Encrypted + IAM roles               | KMS + AWS Config + Policy as Code            | 🔍 Strengthen key policies and compliance scans           |                   |                   |                                       |
-| **Customer Status Tracking**    | Not available                | Not covered                         | Self-serve API/Portal with DynamoDB          | 🔍 Requires implementation from scratch                   |                   |                   |                                       |
-| **Governance & Visibility**     | No tagging/policy            | Some tagging                        | Full tagging + SCPs + config compliance      | 🔍 Define tagging strategy per env/customer               |                   |                   |                                       |
-| **Scalability & HA**            | Manual scale                 | Multi-AZ S3 + Transfer Family       | Cross-region DR + Active/Passive             | 🔍 Confirm CRR, Route 53 setup                            |                   |                   |                                       |
-| **Customer Support & Debug**    | Manual log digging           | Not addressed                       | Self-serve logs + support portal             | 🔍 Needs debug UI/log link surfacing                      |                   |                   |                                       |
+Perfect.
+Here is a clean, **Principal-level 1-page summary** you can attach (PDF or image).
+It is structured, reusable, and non-hype.
+
+You can copy this into a one-page document.
+
+---
+
+# Policy-Driven Automation Backbone
+
+### Reusable Orchestration Pattern for Long-Running & Governance-Sensitive Workflows
+
+---
+
+## 1️⃣ Problem Pattern
+
+As workload volume and complexity increase, manual or ticket-driven workflows introduce:
+
+* Repetitive provisioning steps
+* Configuration inconsistencies
+* SME concentration risk
+* Fragmented audit traceability
+* Difficulty scaling multi-step or long-running processes
+* Serverless runtime constraints for large payloads
+
+The need:
+A scalable, policy-embedded automation model that preserves elasticity while maintaining governance.
+
+---
+
+## 2️⃣ Architectural Approach
+
+The solution was designed as a reusable automation backbone with clear separation of concerns:
+
+### • Config-Driven Input
+
+Structured configuration initiates execution (JSON today; UI abstraction optional).
+
+### • Validation & Guardrails
+
+Policy-as-code enforced before provisioning begins.
+
+### • Deterministic Orchestration
+
+Stateful workflow engine breaks processes into idempotent, predictable steps.
+
+### • Stateless Execution Units
+
+Horizontally scalable serverless execution without persistent infrastructure.
+
+### • Observability & Audit
+
+Structured execution metadata for traceability, retry logic, and audit alignment.
+
+Core principle:
+**Governance embedded at the orchestration boundary.**
+
+---
+
+## 3️⃣ Handling Long-Running Workloads
+
+To address serverless execution limits:
+
+* Chunk-based segmentation
+* Deterministic Lambda chaining
+* Externalized state tracking
+* Independent retry isolation
+* Resume capability
+* Checksum validation
+
+This preserves:
+
+* Elasticity
+* Operational simplicity
+* Cost predictability
+* Infrastructure minimization
+
+Without introducing EC2/ECS infrastructure ownership.
+
+---
+
+## 4️⃣ Reuse Potential (Domain-Agnostic)
+
+The orchestration pattern may apply to:
+
+* Bulk data ingestion workflows
+* Multi-step provisioning tasks
+* Compliance validation jobs
+* Cross-account orchestration
+* DR simulation/testing workflows
+* Long-running transformation processes
+
+Any config-driven, policy-sensitive, multi-step workflow can leverage this pattern.
+
+---
+
+## 5️⃣ Governance Model (Scalable)
+
+Recommended model:
+
+* Centralized guardrails & orchestration standards
+* Federated domain-level configuration ownership
+* Modular extensibility without re-architecting
+
+Balancing enterprise control with scalable autonomy.
+
+---
+
+## Summary
+
+This initiative establishes a **deterministic, policy-embedded automation backbone** that:
+
+* Reduces operational friction
+* Preserves governance
+* Handles long-running workloads within a serverless posture
+* Enables extensible reuse across domains
+
