@@ -1106,6 +1106,416 @@ This is not surface-level encryption talk — this is layered security architect
 
 ---
 
+Perfect — we will now **deeply expand**:
+
+# 🔔 NOTIFICATIONS (FR-076 – FR-100)
+
+This section is often underestimated — but in enterprise platforms, notifications are:
+
+* Operational early warning systems
+* Customer trust enablers
+* SLA transparency tools
+* Incident accelerators
+* Audit evidence generators
+
+For ARC review, this section must demonstrate:
+
+* Deterministic notification logic
+* Idempotency
+* Failure isolation
+* Delivery assurance
+* Governance controls
+* Scalability under load
+* Multi-channel flexibility
+
+Below is the expanded Principal-level articulation.
+
+---
+
+# 🔔 NOTIFICATION REQUIREMENTS (FR-076 – FR-100)
+
+---
+
+## 🔹 FR-076 – SNS Notification Publishing per Status Change
+
+The system shall publish structured notification events to Amazon SNS for each significant file lifecycle transition, including:
+
+* Received
+* Delivered
+* Failed
+* Retried
+* Replayed
+* Failover triggered
+
+Each SNS message must include:
+
+* TransactionID
+* RuleID
+* CustomerID
+* DestinationID
+* Current state
+* Timestamp (UTC)
+* Failure reason (if applicable)
+
+Notification events must be generated asynchronously and must not block delivery workflow.
+
+**Acceptance Criteria**
+
+* SNS message published within 2 seconds of state change.
+* SNS message format validated as structured JSON.
+* Notification publishing failure does not interrupt file delivery.
+
+---
+
+## 🔹 FR-077 – Internal SNS Topic Separation
+
+The system shall support separate SNS topics for internal operational teams to receive detailed technical notifications.
+
+Internal notifications may include:
+
+* Full error traces
+* Retry counts
+* Failover triggers
+* Latency metrics
+
+This ensures internal visibility without exposing sensitive technical data to customers.
+
+**Acceptance Criteria**
+
+* Internal topic configurable per environment.
+* Internal topic receives expanded metadata.
+* IAM policies restrict subscription access.
+
+---
+
+## 🔹 FR-078 – Customer SNS Topic Separation
+
+Customer-facing SNS topics must be logically isolated from internal topics.
+
+Customer notifications shall include:
+
+* TransactionID
+* File name
+* Delivery status
+* Delivery timestamp
+
+They must exclude:
+
+* Internal stack traces
+* Sensitive endpoint details
+
+**Acceptance Criteria**
+
+* Customer topic only includes sanitized message format.
+* Topic access restricted to approved customer endpoints.
+
+---
+
+## 🔹 FR-079 – SES-Based Email Notification
+
+The system shall support email notifications via Amazon SES for customers who do not subscribe to SNS.
+
+Features:
+
+* Templated email body
+* Subject line standardized
+* Optional attachment-free design
+* HTML + Plain Text support
+
+**Acceptance Criteria**
+
+* Email delivered successfully to test recipient.
+* Email format validated.
+* SES bounce/complaint metrics monitored.
+
+---
+
+## 🔹 FR-080 – Email Address Validation
+
+Before storing customer email address in rule configuration, system must validate:
+
+* RFC-compliant format
+* Domain existence (optional MX check)
+
+**Acceptance Criteria**
+
+* Invalid email rejected at rule creation.
+* Valid email stored securely.
+
+---
+
+## 🔹 FR-081 – Standardized Notification Template
+
+All notifications must use standardized template structure for consistency.
+
+Template must include:
+
+* Header (Platform Name)
+* File Identifier
+* Delivery Summary
+* Timestamp
+* Support Contact
+
+Templates must be version-controlled.
+
+**Acceptance Criteria**
+
+* Template stored in configuration.
+* Template update reflected without redeployment.
+
+---
+
+## 🔹 FR-082 – SMTP Support for External Partners
+
+For organizations requiring SMTP integration, the platform must support configurable SMTP relay.
+
+This must:
+
+* Use TLS encryption
+* Authenticate securely
+* Avoid storing plaintext credentials
+
+**Acceptance Criteria**
+
+* SMTP relay connection validated.
+* Credentials stored in Secrets Manager.
+
+---
+
+## 🔹 FR-083 – Notification Failure Logging
+
+If notification delivery fails (SNS publish failure, SES bounce, SMTP rejection), the system must:
+
+* Log failure reason
+* Retry based on retry policy
+* Avoid infinite retry loops
+
+**Acceptance Criteria**
+
+* Notification failure recorded in DynamoDB.
+* Retry attempts capped.
+
+---
+
+## 🔹 FR-084 – Configurable Notification Trigger States
+
+Each rule must allow configuration of which state changes trigger notifications:
+
+Examples:
+
+* Notify only on failure
+* Notify on success + failure
+* Notify on replay
+
+**Acceptance Criteria**
+
+* Configurable toggle per rule.
+* Notification behavior aligns with configuration.
+
+---
+
+## 🔹 FR-085 – TransactionID in Notification
+
+All notifications must include TransactionID to enable correlation.
+
+**Acceptance Criteria**
+
+* TransactionID present in message payload.
+
+---
+
+## 🔹 FR-086 – File Name in Notification
+
+Notification must include original file name.
+
+**Acceptance Criteria**
+
+* File name visible in notification body.
+
+---
+
+## 🔹 FR-087 – Destination Name in Notification
+
+For multi-destination rules, notification must clearly indicate which destination succeeded or failed.
+
+**Acceptance Criteria**
+
+* Destination field included.
+* Multi-destination status represented independently.
+
+---
+
+## 🔹 FR-088 – Notification Retry Logic
+
+Notification attempts must implement exponential backoff retry similar to delivery retry.
+
+Retry cap must prevent endless loops.
+
+**Acceptance Criteria**
+
+* Retry interval increases.
+* Retry cap enforced.
+
+---
+
+## 🔹 FR-089 – Webhook Support (Future-Ready)
+
+System architecture must support future webhook-based notification.
+
+Webhook support must:
+
+* Validate endpoint signature
+* Enforce HTTPS
+* Protect against replay attacks
+
+**Acceptance Criteria**
+
+* Webhook interface defined in API layer.
+* Placeholder documented.
+
+---
+
+## 🔹 FR-090 – Notification Delivery Tracking
+
+System must track notification status per event:
+
+* Sent
+* Delivered
+* Failed
+* Retried
+
+This ensures notification SLA transparency.
+
+**Acceptance Criteria**
+
+* Notification state stored.
+* Queryable via API.
+
+---
+
+## 🔹 FR-091 – Duplicate Notification Prevention
+
+Notifications must be idempotent. If the same state transition event is retried, duplicate notifications must not be sent.
+
+Mechanism:
+
+* NotificationID
+* Event hashing
+
+**Acceptance Criteria**
+
+* Duplicate publish attempt suppressed.
+
+---
+
+## 🔹 FR-092 – SNS Encryption
+
+SNS topics must use KMS encryption.
+
+**Acceptance Criteria**
+
+* Encryption enabled.
+* KMS key validated.
+
+---
+
+## 🔹 FR-093 – SNS Publishing Restrictions
+
+Only authorized service roles may publish to SNS topics.
+
+**Acceptance Criteria**
+
+* IAM policy review confirms restricted publisher.
+
+---
+
+## 🔹 FR-094 – SES Relay Support for On-Prem Systems
+
+SES must support relay for customers that require integration with on-prem email infrastructure.
+
+**Acceptance Criteria**
+
+* Relay configuration tested.
+* No plaintext credentials exposed.
+
+---
+
+## 🔹 FR-095 – Notification Throttling
+
+To prevent notification storms, the system must support throttling policies:
+
+Example:
+
+* Max 100 notifications per minute per customer.
+
+**Acceptance Criteria**
+
+* Throttle enforced.
+* Excess attempts logged.
+
+---
+
+## 🔹 FR-096 – Notification Dead Letter Queue (DLQ)
+
+Failed notification events must route to SQS DLQ for investigation.
+
+**Acceptance Criteria**
+
+* Failed notification visible in DLQ.
+* Replay mechanism available.
+
+---
+
+## 🔹 FR-097 – SMS Support (Future-Ready)
+
+Architecture must support SMS integration via SNS for critical alerts.
+
+Not required in v1 but must not require redesign.
+
+---
+
+## 🔹 FR-098 – Notification Metrics Dashboard
+
+Dashboard must display:
+
+* Notification success rate
+* Bounce rate
+* Retry rate
+* DLQ count
+
+**Acceptance Criteria**
+
+* Metrics visible in CloudWatch.
+
+---
+
+## 🔹 FR-099 – Alert on Excessive Failures
+
+If notification failure rate exceeds threshold (e.g., 5% within 10 minutes), alert must trigger.
+
+**Acceptance Criteria**
+
+* CloudWatch alarm configured.
+* Alarm test validated.
+
+---
+
+## 🔹 FR-100 – Notification Retention Policy
+
+Notification logs must be retained:
+
+* Operational logs ≥ 90 days
+* Audit logs ≥ 365 days
+
+**Acceptance Criteria**
+
+* Retention policy verified.
+
+---
+
+
+
+
 # 🔐 5️⃣ SECURITY REQUIREMENTS (SEC-101 – SEC-130)
 
 This section defines:
