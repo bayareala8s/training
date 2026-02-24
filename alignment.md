@@ -145,4 +145,24 @@ Audit logs must capture cross-boundary operations, and failover procedures must 
 I-8 interactions represent segmented high trust but introduce cross-boundary complexity. Controls focus on explicit trust configuration, replication validation, and comprehensive monitoring.
 
 
+4.X.2 Internal Automated Actors (Unattended – I-6 Profile)
 
+Internal Automated Actors operating within the same enclave as the protected resource are classified under the I-6 trust profile. The I-6 profile represents internal-origin, automated, unattended system interactions within the intra-enclave boundary. These actors include enterprise batch jobs, scheduled integration services, internal application services, CI/CD pipelines, and automation workflows that upload, retrieve, or process files without direct human participation.
+
+Under the I-6 classification, actors are considered to have a higher trust posture than external or cross-enclave profiles, as they originate within the same trusted enclave as the resource. However, because they are automated and unattended, they still present operational risk due to execution at scale and absence of real-time human supervision. As such, I-6 actors are governed by strict least-privilege IAM role scoping, prefix-level S3 access controls, encryption in transit (TLS 1.2+) and at rest (SSE-KMS), checksum validation, event verification, idempotency enforcement via TransferTracker, and workflow-based execution controls.
+
+All I-6 interactions are fully logged via CloudTrail and CloudWatch, with anomaly detection and monitoring applied to detect abnormal transfer volume, unauthorized access attempts, or behavioral deviations. Despite operating within the enclave boundary, I-6 actors remain subject to zero-trust principles, ensuring traceability, containment, and audit compliance across the platform.
+
+Explicit classification of these actors as I-6 differentiates them from:
+
+I-1 (External Automated – Lowest Trust)
+
+I-2 (External Attended)
+
+I-3 (Internal Human User)
+
+I-4 (Privileged Administrative User)
+
+I-8 (Inter-Enclave Automated)
+
+This alignment preserves the integrity of the resource risk segmentation model and ensures consistent enforcement of trust-based controls across all actor types.
