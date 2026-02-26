@@ -178,3 +178,108 @@ Slow down.
 Stop.
 Do not overtalk.
 
+
+
+
+Excellent — this is a strong slide.
+This is where you demonstrate **maturity, risk awareness, and governance alignment**.
+
+Below is a **clean, confident speaking script** tailored exactly to this slide.
+
+---
+
+# 🎤 Slide Script
+
+Enterprise File Transfer Backend Engine – Key Points
+
+---
+
+## 🔷 Opening Transition
+
+> “This slide highlights the architectural guardrails and the key shifts from our current approach.”
+
+Pause.
+
+---
+
+## 🔷 Constraints
+
+> “First, the design operates under several important constraints.”
+
+> “We must comply with Federal Reserve security baselines and encryption standards. That is non-negotiable.”
+
+> “Second, we are intentionally avoiding persistent server infrastructure. This is a serverless-first model.”
+
+> “Third, we are limiting modifications to upstream and downstream systems. This platform enables integration — it does not force redesign.”
+
+> “We are also operating within cloud service quotas and concurrency limits, which are actively managed through reserved concurrency and throttling controls.”
+
+> “Finally, we are aligning to a 15-minute RTO objective, which drives our multi-region resiliency decisions.”
+
+Pause.
+
+This shows discipline and design within boundaries.
+
+---
+
+## 🔷 Security & Resiliency Considerations
+
+Shift tone slightly more deliberate.
+
+> “Security and resiliency were designed in from the start — not added afterward.”
+
+> “All data is encrypted in transit using TLS 1.2 or higher.”
+
+> “All storage is encrypted at rest using KMS-managed keys.”
+
+> “We enforce a strict least-privilege IAM model to ensure scoped execution roles.”
+
+> “Audit logging is centralized for traceability and compliance.”
+
+> “Retry logic is implemented with failure isolation, preventing cascading failures.”
+
+> “And finally, the architecture supports a multi-region disaster recovery strategy aligned to our RTO objectives.”
+
+Pause.
+
+---
+
+## 🔷 Changes to Current Standards
+
+Now emphasize the shift.
+
+> “This initiative intentionally changes how file transfer is implemented.”
+
+**Retiring:**
+
+> “We are retiring environment-specific custom automation and reducing infrastructure-managed patterns.”
+
+**Gaining:**
+
+> “In exchange, we gain a standardized enterprise transfer pattern.”
+
+> “We gain automated validation and centralized observability.”
+
+> “We gain infrastructure-less scaling — no idle compute.”
+
+> “And we significantly improve audit traceability.”
+
+Now deliver the line at the bottom confidently:
+
+> “This design intentionally shifts file transfer from infrastructure management to orchestrated event-driven execution, reducing operational risk while increasing elasticity.”
+
+Pause. Let that sit.
+
+---
+
+## 🔷 Close This Slide
+
+> “In short, we are not just changing technology — we are changing the operating model.”
+
+Then transition:
+
+> “Next, I’ll walk through how this integrates at a high level.”
+
+
+
+
