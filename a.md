@@ -1003,6 +1003,33 @@ The architecture supports burst traffic through its event-driven design, elimina
 
 
 
+3.5.1 Design Resiliency Features
+
+The EFT Backend Services platform incorporates multiple resiliency patterns aligned with enterprise availability principles. The architecture employs a multi-region Active-Active deployment model to eliminate single-region dependency and ensure continuity of service during regional impairment. Stateless orchestration components, implemented through AWS Lambda and Step Functions, eliminate shared runtime bottlenecks and support horizontal scaling. Cross-region data replication is implemented using Amazon S3 Cross-Region Replication and DynamoDB Global Tables to ensure metadata and transfer state continuity across regions. Network segmentation and tenant isolation restrict blast radius and prevent lateral impact between customers or workloads. Execution workloads are containerized using AWS Fargate to confine processing failures to individual tasks rather than shared environments. Least-privilege IAM policies enforce strict access boundaries across services and actors. Together, these patterns provide redundancy, fault isolation, replication-based durability, and controlled recovery mechanisms that support the defined SLA, RTO, and RPO objectives.
+
+
+3.5.9 Resiliency Specific Testing
+
+The EFT Backend Services platform incorporates a structured resiliency testing program designed to validate the architecture’s ability to meet defined SLA, RTO, and RPO targets. Resiliency testing includes controlled regional failover simulations, component-level fault injection, network impairment scenarios, and dependency disruption testing. Planned test cases include sub-second DNS propagation validation, multi-minute regional impairment requiring traffic shift, cross-region metadata reconciliation validation, and partial service degradation scenarios. These tests verify that failover mechanisms, idempotency controls, replay logic, and client retry guidance function as designed without data loss or duplication.
+
+Where appropriate, controlled chaos testing principles are applied in non-production environments to simulate infrastructure, network, and service failures under monitored conditions. Failover decision criteria are operationally defined in runbooks, and exercises are conducted to validate escalation paths and automated failover triggers. Repeatable resiliency validation is embedded into operational checkpoint intervals, including pre-production validation, major release cycles, and periodic operational readiness exercises.
+
+Success criteria for resiliency validation include:
+
+Demonstrated ability to sustain service continuity during single-region impairment
+
+Verified RTO within defined recovery thresholds
+
+Verified RPO of zero for committed transfer state metadata
+
+No duplicate file processing during retry or replay scenarios
+
+Confirmed blast-radius containment to tenant or workflow scope
+
+For workloads requiring high availability (e.g., ≥99.9% or higher classification tiers), testing artifacts, execution logs, and post-test reports are retained to provide objective evidence that resiliency targets are met and validated. This ensures that availability commitments are not theoretical design claims but operationally proven outcomes supported by repeatable testing and documented recovery procedures.
+
+
+
 
 
 
