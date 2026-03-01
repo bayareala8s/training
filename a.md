@@ -995,6 +995,13 @@ From an Architecture Review Committee perspective:
 ---
 
 
+Capacity Requirements (ARC Description)
+
+The Self-Serve File Transfer Platform is designed for elastic, horizontally scalable operation without reliance on fixed infrastructure capacity. The primary scaling unit is the individual file transfer workflow, enabling the system to scale dynamically based on workload demand. Lambda functions scale per invocation to support orchestration activities, while AWS Fargate tasks scale independently for large file processing workloads. Amazon S3 provides virtually unlimited storage scalability, and DynamoDB operates in on-demand capacity mode to automatically adjust throughput based on traffic patterns.
+
+The architecture supports burst traffic through its event-driven design, eliminating the need for static server capacity planning. Queue-based workload absorption prevents upstream throttling and isolates surges at the workflow level. Large file transfers are processed in dedicated container execution paths to prevent resource contention with smaller or latency-sensitive workflows. Capacity planning considerations focus primarily on regional service quota limits, concurrency thresholds, and performance tuning for large file transfers. The orchestration layer remains stateless, eliminating the need for vertical scaling of monolithic components.
+
+
 
 
 
