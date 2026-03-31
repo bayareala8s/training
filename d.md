@@ -1129,5 +1129,530 @@ All components operate within the **AWS Cloud boundary**, forming the NIS EFT Ba
 
 ---
 
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/ecaddc73-e974-4805-a835-6fd50b11dbe8" />
+
+Perfect — this is where you **win the room**. I’ll give you a **clear, confident speaking script** you can use while presenting the diagram.
+
+---
+
+# 🎤 How to Explain the Diagram (Principal Architect Style)
+
+## 🔷 1. Start with the big picture (10–15 sec)
+
+> “This diagram shows how we evolve from a traditional RAG model to an **agent-driven architecture**, where the system not only retrieves information but also **makes decisions and executes workflows** across our platform.”
+
+---
+
+## 🔷 2. Walk top → down (layer by layer)
+
+### 🟦 Layer 1 — User / Client Layer
+
+> “At the top, we have the user or system interface — this could be a UI, API, chatbot, or self-service portal. This is where requests originate.”
+
+---
+
+### 🟧 Layer 2 — API Gateway / Entry Layer
+
+> “All requests are routed through API Gateway, which acts as the entry point, handling authentication, routing, and request validation.”
+
+---
+
+### 🟥 Layer 3 — Agent Orchestrator Layer ⭐ (core idea)
+
+> “This is the key evolution point — the Agent Orchestrator layer.”
+
+> “Instead of directly calling an LLM, we introduce an **agent layer** that can:
+
+* Understand the request
+* Break it into steps
+* Decide what actions to take”
+
+> “This can be implemented using:
+
+* Bedrock Agents (managed)
+* Or a custom orchestrator using Lambda”
+
+👉 Key line (important):
+
+> “This layer introduces **decision-making and orchestration**, which is not present in traditional RAG.”
+
+---
+
+### 🟨 Layer 4 — Reasoning / Retrieval / State Layer
+
+> “Once the agent receives a request, it interacts with three key components:”
+
+#### 1. Planner / Reasoning (LLM)
+
+> “This is where multi-step reasoning happens — the system plans what to do next.”
+
+#### 2. Retriever (Vector DB)
+
+> “This is traditional RAG — retrieving relevant context or knowledge.”
+
+#### 3. Memory / State (DynamoDB)
+
+> “This is critical — unlike RAG, we now maintain **state**, which allows:
+
+* Tracking progress
+* Remembering past steps
+* Supporting long-running workflows”
+
+👉 Key line:
+
+> “This is what enables **stateful and iterative execution**, instead of one-shot responses.”
+
+---
+
+### 🟩 Layer 5 — Tool Execution Layer
+
+> “Based on reasoning, the agent invokes tools to actually perform actions.”
+
+Examples:
+
+* Lambda → lightweight logic
+* ECS Fargate → large file transfers
+* Step Functions → workflow orchestration
+* APIs → external integrations
+
+👉 Key line:
+
+> “This is where the system moves from **‘thinking’ to ‘doing’**.”
+
+---
+
+### ⬛ Layer 6 — Data / Systems Layer
+
+> “Finally, these tools interact with underlying systems like:
+
+* S3 (storage)
+* SFTP (Transfer Family)
+* Logs and external systems”
+
+👉 Tie to your platform:
+
+> “This is where actual file transfers and data operations happen.”
+
+---
+
+# 🔷 3. Close with the key takeaway (very important)
+
+> “So overall, the key shift here is:
+
+* From **RAG → answering questions**
+* To **Agentic RAG → making decisions and executing workflows**
+
+> “For our platform, this enables use cases like:
+
+* Intelligent file transfer routing
+* Automated failover decisions
+* Self-service onboarding workflows”
+
+---
+
+# 🔥 4. One-liner if someone challenges you (ARC style)
+
+If asked *“Why not just use Step Functions?”*:
+
+> “Step Functions handle predefined workflows well, but the agent layer adds **dynamic decision-making**, allowing the system to adapt at runtime instead of following a fixed path.”
+
+---
+
+# 🧠 Delivery Tips (important)
+
+* Speak **top → down (never jump around)**
+* Pause slightly after each layer
+* Emphasize:
+
+  * **Orchestration**
+  * **State**
+  * **Action execution**
+
+---
+
+Perfect — let’s upgrade your **1-pager** by adding the **concrete example flow** (this is what makes it *ARC-ready and compelling*).
+
+I’ll give you a **final polished 1-pager** you can directly share.
+
+---
+
+# 🔷 RAG → Agentic RAG Evolution (Final 1-Pager)
+
+## 1. Current State — Traditional RAG
+
+* Query → Retrieve → Generate response
+* Stateless, single-step interaction
+* No workflow execution or decision-making
+
+👉 **Limitation:** Cannot orchestrate actions or adapt dynamically
+
+---
+
+## 2. Target State — Agentic RAG
+
+* Multi-step reasoning (plan → act → observe → refine)
+* Tool usage (APIs, workflows, systems)
+* Stateful (memory + context retention)
+* Decision-driven execution
+
+👉 **Shift:** *From answering → to acting & orchestrating*
+
+---
+
+## 3. Architecture Overview
+
+* **Agent Orchestrator**
+
+  * Bedrock Agent / Custom Lambda controller
+* **Reasoning Layer**
+
+  * LLM (planning + decisioning)
+* **Retriever**
+
+  * Vector DB (context retrieval)
+* **State**
+
+  * DynamoDB (workflow tracking)
+* **Execution Layer**
+
+  * Lambda, ECS Fargate, Step Functions
+* **Data Layer**
+
+  * S3, SFTP, Logs, External systems
+
+---
+
+## 4. Gap Analysis
+
+| Area        | Current     | Target               | Gap       |
+| ----------- | ----------- | -------------------- | --------- |
+| Flow        | Single-step | Multi-step workflows | 🔴 High   |
+| Reasoning   | One-pass    | Iterative planning   | 🟠 Medium |
+| Integration | Limited     | Tool-driven          | 🔴 High   |
+| State       | Stateless   | Stateful             | 🔴 High   |
+| Automation  | None        | Action execution     | 🔴 High   |
+
+---
+
+## 5. High-Value Use Cases
+
+### 🔹 File Transfer Platform
+
+* Intelligent routing (S3 vs SFTP)
+* Retry + failover decisions
+* Workflow orchestration
+
+### 🔹 Incident Analysis
+
+* Log analysis (CloudWatch/S3)
+* Root cause detection
+* Automated remediation
+
+### 🔹 Self-Service Onboarding
+
+* Guided configuration
+* Validation + provisioning
+* Automation via APIs/Terraform
+
+---
+
+# ⭐ 6. Example Flow (THIS IS THE KEY ADDITION)
+
+## 🔁 Intelligent File Transfer Failover (Agentic Flow)
+
+**Scenario:** File transfer fails in Region A
+
+### Step-by-step:
+
+1. **Event Trigger**
+
+   * Failure detected via CloudWatch / EventBridge
+
+2. **Agent Activation**
+
+   * Agent receives context:
+
+     * File metadata
+     * Source/target
+     * Failure reason
+
+3. **Reasoning (LLM)**
+
+   * Determines:
+
+     * Retry vs failover
+     * Best alternate region
+
+4. **State Check (DynamoDB)**
+
+   * Checks:
+
+     * Previous attempts
+     * Retry count
+     * SLA constraints
+
+5. **Decision**
+
+   * Example:
+
+     * Retry not viable → initiate failover
+
+6. **Action Execution**
+
+   * Trigger Step Functions workflow
+   * Launch ECS Fargate task (large file transfer)
+   * Update routing
+
+7. **State Update**
+
+   * Store:
+
+     * New region
+     * Transfer status
+     * Execution logs
+
+8. **Response / Notification**
+
+   * Update system / notify user
+
+---
+
+👉 **Key Insight (say this in meeting):**
+
+> “The agent dynamically evaluates the situation and decides the next action, rather than following a predefined workflow.”
+
+---
+
+## 7. Recommended Approach
+
+### Phase 1 — Enhanced RAG
+
+* Improve retrieval + prompts
+
+### Phase 2 — Hybrid (Recommended Start)
+
+* RAG + selective agentic capabilities
+* Introduce:
+
+  * Tool calling
+  * Limited orchestration
+
+### Phase 3 — Full Agentic Architecture
+
+* Stateful workflows
+* Autonomous decision loops
+
+---
+
+## 8. Key Design Considerations
+
+* **Orchestration**
+
+  * Step Functions vs Agent control
+* **State Management**
+
+  * DynamoDB (single source of truth)
+* **Execution**
+
+  * Lambda vs ECS Fargate (based on workload)
+* **Observability**
+
+  * CloudWatch + tracing
+
+---
+
+# 🔥 How to Use This
+
+### Send as follow-up:
+
+> “I’ve put together a 1-page view including an example flow for how agentic RAG would apply to our file transfer platform. Happy to walk through.”
+
+---
+
+Perfect — adding a **second example flow** (customer onboarding) is a **very strong move**. It shows breadth beyond ops → into platform experience.
+
+Here’s your **ARC-ready second flow** you can plug directly into your 1-pager 👇
+
+---
+
+# ⭐ Example Flow 2 — Self-Service Customer Onboarding (Agentic)
+
+## 🎯 Scenario
+
+A new customer submits onboarding request via **self-service portal (JSON config)**
+
+---
+
+## 🔁 Step-by-Step Flow
+
+### 1. **Request Submission**
+
+* User uploads JSON config:
+
+  * Source (SFTP/S3)
+  * Target (SFTP/S3)
+  * Credentials / endpoints
+  * Workflow type
+
+👉 Entry via:
+
+* API Gateway / Portal
+
+---
+
+### 2. **Agent Activation**
+
+* Agent receives:
+
+  * JSON config
+  * Customer metadata
+  * Requested workflow
+
+👉 Instead of static validation pipeline, agent evaluates dynamically
+
+---
+
+### 3. **Reasoning (LLM)**
+
+Agent analyzes:
+
+* Is config complete?
+* Are source/target compatible?
+* Which workflow template applies?
+
+👉 Example decisions:
+
+* Missing field → request clarification
+* Invalid combination → suggest correction
+* Valid → proceed
+
+---
+
+### 4. **Policy & Validation Checks**
+
+* Validate against:
+
+  * Security policies
+  * Naming conventions
+  * Environment constraints (Dev/Test/Prod)
+
+👉 Can call:
+
+* Validation APIs / rule engines
+
+---
+
+### 5. **State Check (DynamoDB)**
+
+* Check:
+
+  * Existing onboarding records
+  * Duplicate requests
+  * Customer history
+
+---
+
+### 6. **Decision**
+
+Agent determines:
+
+* Proceed
+* Request correction
+* Reject
+
+👉 Key point:
+
+> “Decision is dynamic — not just rule-based pipeline”
+
+---
+
+### 7. **Action Execution**
+
+If approved:
+
+* Trigger **Step Functions workflow**
+
+  * Create S3 buckets
+  * Provision Transfer Family (SFTP)
+  * Create IAM roles
+  * Configure routing
+
+* Call:
+
+  * Lambda (light tasks)
+  * Terraform pipeline / APIs
+  * ECS (if needed)
+
+---
+
+### 8. **Progress Tracking (State Management)**
+
+* Update DynamoDB:
+
+  * Step status
+  * Resource creation
+  * Errors / retries
+
+---
+
+### 9. **Feedback Loop**
+
+If issues detected:
+
+* Agent:
+
+  * Explains issue
+  * Suggests fix
+  * Waits for updated input
+
+👉 This is **key agentic capability**
+
+---
+
+### 10. **Completion**
+
+* Notify user:
+
+  * “Onboarding complete”
+* Provide:
+
+  * Endpoints
+  * Credentials
+  * Usage instructions
+
+---
+
+# 🔥 Key Insight (say this in session)
+
+> “Instead of a rigid onboarding pipeline, the agent enables a guided, adaptive onboarding experience — validating, correcting, and orchestrating infrastructure dynamically.”
+
+---
+
+# 🔷 Why This Flow is Powerful
+
+Compared to traditional approach:
+
+| Traditional               | Agentic                 |
+| ------------------------- | ----------------------- |
+| Static validation scripts | Dynamic reasoning       |
+| Fixed workflow            | Adaptive orchestration  |
+| Fail on error             | Guide + recover         |
+| Manual intervention       | Automated + intelligent |
+
+---
+
+# 🔷 How to Position This (very important)
+
+When you present:
+
+> “This is where agentic RAG goes beyond automation — it improves **user experience**, reduces onboarding friction, and enables true self-service.”
+
+---
+
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/7ecea567-3498-4d22-8513-c23a00063a97" />
+
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/cb0ddd5a-7407-47b0-bcb7-d7084d72f65e" />
+
+
 
 
