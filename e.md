@@ -1,360 +1,268 @@
-Great—that’s a **foundational step** 👍
-Now let’s make your **Requirements page Principal Architect–grade** so it becomes the **single source of truth for ARC, SADD, and implementation teams**.
+Perfect—this is a **high-visibility page for ARC** 🔐
+If done right, your **Security page** will signal **enterprise rigor, compliance readiness, and Principal Architect depth**.
+
+Below is a **production-grade Confluence page** you can use directly.
 
 ---
 
-# 🧭 **How to Structure Your Requirements Page (Best Practice)**
+# 🔐 **Security Architecture & Compliance**
 
-## 🔷 **1. Purpose of This Page (Top Section)**
-
-Start with a short, crisp intro:
-
-> This page defines the functional, non-functional, and operational requirements for the Enterprise File Transfer platform. These requirements serve as the baseline for architecture design, implementation, testing, and ARC validation.
+### *Enterprise File Transfer Architecture & Innovation Hub*
 
 ---
 
-## 🔷 **2. Requirements Classification**
+## 🔷 **1. Overview**
 
-Clearly separate requirements (this is critical for ARC clarity):
+The Enterprise File Transfer platform is designed with a **security-first, zero-trust architecture**, ensuring that all data transfers are protected across **ingestion, processing, storage, and transmission layers**.
 
-### Categories:
-
-* **Functional Requirements (FR)**
-* **Non-Functional Requirements (NFR)**
-* **Operational Requirements (OR)**
-* **Security & Compliance Requirements (SR)**
-* **Resiliency & DR Requirements (DR)**
+This page defines the **security architecture, controls, and compliance mechanisms** implemented to safeguard sensitive data, enforce least privilege access, and meet enterprise and regulatory requirements.
 
 ---
 
-## 🔷 **3. Requirements Table (Core Section)**
+## 🔷 **2. Security Principles**
 
-👉 This is your **most important artifact**
-👉 Make it structured, measurable, and traceable
+The platform adheres to the following core principles:
 
-### Recommended Table Format:
+* **Zero Trust Architecture**
+  No implicit trust—every request is authenticated and authorized.
 
-| ID | Category | Requirement | Description | Priority | Acceptance Criteria | Owner |
-| -- | -------- | ----------- | ----------- | -------- | ------------------- | ----- |
+* **Least Privilege Access**
+  Access is restricted to the minimum permissions required.
 
----
+* **Defense in Depth**
+  Multiple layers of security across network, application, and data.
 
-## 🔥 **4. Sample High-Quality Requirements (Use These Directly)**
+* **Encryption Everywhere**
+  Data is encrypted both in transit and at rest.
 
-### ✅ Functional Requirements
-
-| ID    | Category   | Requirement             | Description                                                       | Acceptance Criteria                                |
-| ----- | ---------- | ----------------------- | ----------------------------------------------------------------- | -------------------------------------------------- |
-| FR-01 | Functional | Multi-Protocol Support  | System must support SFTP ↔ SFTP, SFTP ↔ S3, and S3 ↔ S3 transfers | All 3 patterns successfully tested in lower + prod |
-| FR-02 | Functional | Self-Service Onboarding | Customers must onboard via API/JSON without manual intervention   | Onboarding completes within <10 mins               |
-| FR-03 | Functional | Event-Driven Processing | File transfers must be triggered via events (S3, SFTP upload)     | Event → workflow triggered within <5 sec           |
+* **Auditability & Traceability**
+  All actions are logged and traceable for compliance and forensics.
 
 ---
 
-### ⚡ Non-Functional Requirements
+## 🔷 **3. Security Architecture Overview**
 
-| ID     | Category     | Requirement  | Description                                                | Acceptance Criteria           |
-| ------ | ------------ | ------------ | ---------------------------------------------------------- | ----------------------------- |
-| NFR-01 | Performance  | Throughput   | System must support ≥100,000 transfers/day                 | Load test validated           |
-| NFR-02 | Availability | SLA          | Platform must achieve 99.9% uptime                         | Monthly uptime reports        |
-| NFR-03 | Scalability  | Auto Scaling | System must scale horizontally without manual intervention | No throttling under peak load |
+### Layers:
 
----
+* **Edge Layer**
 
-### 🛠️ Operational Requirements
+  * Secure endpoints (SFTP via AWS Transfer Family)
+  * API Gateway (authenticated access)
 
-| ID    | Category   | Requirement    | Description                                    | Acceptance Criteria             |
-| ----- | ---------- | -------------- | ---------------------------------------------- | ------------------------------- |
-| OR-01 | Monitoring | Observability  | All components must emit logs, metrics, traces | CloudWatch dashboards available |
-| OR-02 | Alerting   | Failure Alerts | Failures must trigger alerts within <1 min     | Alerts visible in SNS/Slack     |
-| OR-03 | Runbooks   | Recovery       | Runbooks must exist for all critical failures  | Runbooks tested quarterly       |
+* **Application Layer**
 
----
+  * Lambda, Step Functions, ECS Fargate
+  * IAM roles per service
 
-### 🔐 Security Requirements
+* **Data Layer**
 
-| ID    | Category | Requirement    | Description                                   | Acceptance Criteria     |
-| ----- | -------- | -------------- | --------------------------------------------- | ----------------------- |
-| SR-01 | Security | Encryption     | Data must be encrypted in transit and at rest | TLS + KMS enforced      |
-| SR-02 | IAM      | Access Control | Least privilege IAM policies must be enforced | IAM audit passed        |
-| SR-03 | Audit    | Logging        | All transfers must be auditable               | Logs retained ≥ 90 days |
+  * S3 buckets (encrypted)
+  * DynamoDB (encrypted, access-controlled)
+
+* **Control Plane**
+
+  * IAM, KMS, CloudTrail, Config
 
 ---
 
-### 🔁 Resiliency & DR Requirements
+## 🔷 **4. Identity & Access Management (IAM)**
 
-| ID    | Category | Requirement   | Description                                  | Acceptance Criteria     |
-| ----- | -------- | ------------- | -------------------------------------------- | ----------------------- |
-| DR-01 | DR       | Multi-Region  | System must support active-active deployment | Traffic failover <5 min |
-| DR-02 | RTO      | Recovery Time | RTO must be ≤ 15 minutes                     | DR drill validated      |
-| DR-03 | RPO      | Data Loss     | RPO must be ≤ 15 minutes                     | Replication verified    |
+### Key Controls:
 
----
+* Role-based access using **IAM Roles**
+* **No hardcoded credentials**
+* Temporary credentials via **STS**
+* Fine-grained access control for:
 
-# 🔷 **5. Requirements Traceability (VERY IMPORTANT)**
+  * S3 buckets
+  * Transfer Family users
+  * Lambda functions
 
-Add a section:
+### Example:
 
-## **Traceability to Architecture**
-
-| Requirement ID | Architecture Component | Design Pattern          |
-| -------------- | ---------------------- | ----------------------- |
-| FR-02          | API Gateway + Lambda   | Self-Service Onboarding |
-| DR-01          | Route53 + Multi-Region | Active-Active Failover  |
-
-👉 This is what **ARC reviewers LOVE**
+* SFTP user → mapped to IAM role → restricted S3 path
+* Lambda → scoped permissions to only required services
 
 ---
 
-# 🔷 **6. Risks & Assumptions Section**
+## 🔷 **5. Data Protection & Encryption**
 
-## Assumptions
+### 🔐 Encryption in Transit
 
-* Customers provide valid source/target configs
-* Network connectivity exists between endpoints
+* TLS 1.2+ enforced for:
 
-## Risks
+  * SFTP (SSH)
+  * API Gateway endpoints
+  * Service-to-service communication
 
-* Large file transfers may exceed Lambda limits
-* Cross-region latency impacts performance
+### 🔐 Encryption at Rest
+
+* **S3 → SSE-KMS**
+* **DynamoDB → KMS encryption**
+* **Logs → encrypted storage**
+
+### 🔐 Key Management
+
+* AWS KMS for:
+
+  * Key rotation
+  * Access control
+  * Audit tracking
 
 ---
 
-# 🔷 **7. Prioritization (Optional but Powerful)**
+## 🔷 **6. Network Security**
 
-Add:
+### Controls:
 
-* **P0 (Critical)**
-* **P1 (Important)**
-* **P2 (Nice-to-have)**
+* VPC isolation for backend services
+* Private subnets for Lambda / ECS (where applicable)
+* Security groups with least privilege rules
+* Optional:
+
+  * VPC endpoints for S3
+  * No public exposure for internal components
 
 ---
 
-# 🔥 **What This Achieves (Principal Level)**
+## 🔷 **7. Authentication & Authorization**
 
-Your Requirements page now becomes:
+### Mechanisms:
 
-✅ Input to **SADD**
-✅ Input to **Architecture Diagrams**
-✅ Input to **Testing Strategy**
-✅ Input to **ARC defense**
-✅ Input to **Implementation (Terraform / Code)**
+* SFTP authentication:
+
+  * SSH key-based authentication (preferred)
+* API authentication:
+
+  * IAM / OAuth / API keys
+* Service-to-service:
+
+  * IAM roles only
+
+---
+
+## 🔷 **8. Logging, Monitoring & Audit**
+
+### 🔍 Logging
+
+* AWS CloudTrail → API activity logging
+* CloudWatch Logs → application logs
+* Transfer logs → file-level tracking
+
+### 📊 Monitoring
+
+* CloudWatch metrics:
+
+  * Transfer success/failure
+  * Latency
+  * Throughput
+
+### 📢 Alerts
+
+* SNS / Slack alerts for:
+
+  * Failed transfers
+  * Unauthorized access attempts
+  * System anomalies
+
+---
+
+## 🔷 **9. Compliance & Governance**
+
+### Supported Controls:
+
+* Data encryption policies enforced
+* IAM access reviews
+* Audit trails for all transfers
+* Data retention policies (e.g., 90+ days logs)
+
+### Alignment:
+
+* SOC 2 (controls mapping)
+* Internal enterprise security standards
+* Regulatory frameworks (as applicable)
+
+---
+
+## 🔷 **10. Threat Model & Risk Mitigation**
+
+| Threat              | Mitigation                       |
+| ------------------- | -------------------------------- |
+| Unauthorized access | IAM + SSH keys + least privilege |
+| Data interception   | TLS encryption                   |
+| Data loss           | S3 versioning + replication      |
+| Region failure      | Multi-region architecture        |
+| Insider threat      | Audit logs + access reviews      |
+
+---
+
+## 🔷 **11. Secrets Management**
+
+* AWS Secrets Manager for:
+
+  * Credentials
+  * API keys
+* No secrets stored in code or config files
+* Automatic rotation enabled (where applicable)
+
+---
+
+## 🔷 **12. Security Testing & Validation**
+
+### Testing Types:
+
+* **Penetration Testing**
+* **Vulnerability Scanning**
+* **IAM Policy Audits**
+* **Encryption Validation**
+* **DR Security Testing**
+
+---
+
+## 🔷 **13. Shared Responsibility Model**
+
+| Layer           | Responsibility         |
+| --------------- | ---------------------- |
+| Infrastructure  | AWS                    |
+| Platform Config | Engineering            |
+| Access Control  | Security + Engineering |
+| Data Protection | Shared                 |
+
+---
+
+# 🔥 **What Makes This Page “Principal-Level”**
+
+You are showing:
+
+✅ Security **architecture**, not just controls
+✅ Mapping to **actual AWS services**
+✅ Clear **threat → mitigation thinking**
+✅ Alignment to **compliance + audit**
+✅ Integration with **operations & DR**
 
 ---
 
 # ⭐ **Next Step (Highly Recommended)**
 
-Now that Requirements page is done:
+To make this even stronger:
 
-👉 Create this next page:
+👉 Create a companion page:
 
-## **“Architecture Mapping to Requirements”**
-
-(Or I can build it for you)
-
-This is where you:
-
-* Show **each requirement → mapped to design**
-* Add **diagram references**
-* Add **decision justification**
-
----
-
-If you want, I can next:
-
-* Convert your requirements into a **200+ row RTM (ARC-ready)**
-* Or create a **visual heatmap (coverage vs gaps)**
-* Or align it to your **exact AWS architecture components**
-
-Perfect—that’s a **big milestone** 👍
-Now the key is to **elevate your RTM from “just a spreadsheet” → “ARC-grade decision and validation artifact.”**
-
-Let’s make sure you’re using it at **Principal Architect level impact**.
-
----
-
-# 🧭 **How to Position Your RTM in Confluence**
-
-Create a page:
-
-## **Requirements Traceability Matrix (RTM)**
-
-### 🔷 Intro (Top of Page)
-
-Use something like:
-
-> The Requirements Traceability Matrix (RTM) provides end-to-end traceability from business and system requirements to architecture components, design patterns, and validation mechanisms.
-> It ensures completeness, accountability, and alignment across design, implementation, and testing phases.
-
----
-
-# 🔥 **How to Structure Your RTM (Critical Enhancements)**
-
-Your Excel is great—but make sure it includes these **columns**:
-
-| Req ID | Category | Requirement | Architecture Component | Design Pattern | Validation Method | Status |
-| ------ | -------- | ----------- | ---------------------- | -------------- | ----------------- | ------ |
-
----
-
-## 🔷 Add These Columns (Game Changer)
-
-### 1. **Architecture Component**
-
-👉 Maps requirement → actual system
+## **“Security Mapping to Requirements (RTM)”**
 
 Example:
 
-* S3
-* Transfer Family
-* Step Functions
-* DynamoDB
-* Route53
+| Req ID | Security Control    |
+| ------ | ------------------- |
+| SR-01  | KMS Encryption      |
+| SR-02  | IAM Least Privilege |
 
 ---
 
-### 2. **Design Pattern**
+If you want next, I can:
 
-👉 Shows architectural thinking
+* Create a **security architecture diagram (C2/C3 style)**
+* Map this directly to your **Terraform implementation**
+* Or build an **ARC Q&A defense script for security section**
 
-Example:
-
-* Event-driven processing
-* Active-Active failover
-* Idempotent workflow
-* Self-service onboarding
-
----
-
-### 3. **Validation Method**
-
-👉 ARC LOVES THIS
-
-Example:
-
-* Load Test
-* DR Drill
-* Chaos Testing
-* Unit + Integration Test
-* Synthetic Monitoring
-
----
-
-### 4. **Status**
-
-👉 Shows execution maturity
-
-* Not Started
-* In Design
-* Implemented
-* Validated
-
----
-
-# 🔷 **Example (Strong RTM Row)**
-
-| Req ID | Requirement             | Component                | Pattern            | Validation       | Status      |
-| ------ | ----------------------- | ------------------------ | ------------------ | ---------------- | ----------- |
-| DR-01  | Multi-region failover   | Route53 + S3 CRR         | Active-Active      | DR Drill         | In Progress |
-| FR-02  | Self-service onboarding | API GW + Lambda          | Event-driven       | Integration Test | Implemented |
-| NFR-01 | 100K transfers/day      | Step Functions + Fargate | Horizontal scaling | Load Test        | Planned     |
-
----
-
-# 🧠 **How to Use RTM in ARC (Very Important)**
-
-When ARC asks:
-
-👉 *“How do you ensure all requirements are covered?”*
-
-You say:
-
-> “We maintain a Requirements Traceability Matrix mapping each requirement to architecture components, design patterns, and validation mechanisms. This ensures full coverage and testability across the system.”
-
----
-
-# 🔥 **Next-Level Enhancements (This Sets You Apart)**
-
-## ✅ 1. **Coverage Summary (Add to Confluence)**
-
-| Category   | Total | Covered | %    |
-| ---------- | ----- | ------- | ---- |
-| Functional | 25    | 25      | 100% |
-| NFR        | 30    | 28      | 93%  |
-| DR         | 15    | 15      | 100% |
-
-👉 This is **executive gold**
-
----
-
-## ✅ 2. **Gap Analysis Section**
-
-Example:
-
-* NFR-07 (Latency < 2 sec) → Not yet validated
-* DR-03 (RPO ≤ 15 min) → Pending testing
-
----
-
-## ✅ 3. **Heatmap (Optional but Powerful)**
-
-* Green → Implemented
-* Yellow → In Progress
-* Red → Gap
-
----
-
-# 🔷 **How to Link RTM to Your Wiki (Important)**
-
-Add links:
-
-* Requirements Page → RTM
-* RTM → Architecture Page
-* RTM → Testing Page
-* RTM → Runbooks
-
-👉 This creates a **closed-loop system**
-
----
-
-# 🏆 **What This Does for You**
-
-This is where you move from:
-
-❌ “Engineer who built system”
-➡️
-✅ **Principal Architect who governs system**
-
-You now demonstrate:
-
-* Traceability
-* Measurability
-* Accountability
-* Architecture rigor
-
----
-
-# ⭐ **Next Step (High Impact)**
-
-I strongly recommend next:
-
-## 👉 **“Architecture Decision Mapping (ADM)” page**
-
-This will show:
-
-* Why DynamoDB vs Aurora
-* Why Step Functions vs ECS
-* Why Active-Active
-
-👉 This is where **ARC pushes hardest**
-
----
-
-If you want, I can:
-
-* Review your RTM structure and **upgrade it to 200+ row ARC-ready version**
-* Or create a **coverage dashboard (exec-ready)**
-* Or build a **complete ARC presentation script using your RTM**
-
-Just say 👍
-
+Just tell me 👍
