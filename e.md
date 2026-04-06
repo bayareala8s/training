@@ -1,11 +1,11 @@
-Perfect—this is a **high-impact ARC section** 🔥
-Resiliency & Reliability is where you demonstrate **Principal Architect depth + system thinking + failure handling maturity**.
+Excellent—this is a **key differentiator section** 🔥
+Most teams do basic performance notes, but this is where you can show **Principal Architect-level thinking: scale, efficiency, cost-performance tradeoffs, and system behavior under load**.
 
-Below is a **production-ready Confluence page** you can directly use.
+Below is a **production-ready Confluence page** you can use directly.
 
 ---
 
-# 🔁 **Resiliency & Reliability Architecture**
+# ⚡ **Performance & Efficiency Architecture**
 
 ### *Enterprise File Transfer Architecture & Innovation Hub*
 
@@ -13,186 +13,175 @@ Below is a **production-ready Confluence page** you can directly use.
 
 ## 🔷 **1. Overview**
 
-The Enterprise File Transfer platform is designed to deliver **high availability, fault tolerance, and operational continuity** under both normal and failure conditions.
+The Enterprise File Transfer platform is designed to deliver **high throughput, low latency, and cost-efficient processing** at scale.
 
-This page defines the **resiliency strategies, reliability patterns, and failure handling mechanisms** that ensure uninterrupted service, data integrity, and rapid recovery aligned with enterprise SLAs.
-
----
-
-## 🔷 **2. Resiliency Objectives**
-
-| Metric                         | Target                      |
-| ------------------------------ | --------------------------- |
-| Availability (SLA)             | ≥ 99.9%                     |
-| Recovery Time Objective (RTO)  | ≤ 15 minutes                |
-| Recovery Point Objective (RPO) | ≤ 15 minutes                |
-| Data Durability                | 99.999999999% (S3 standard) |
+This page defines the **performance characteristics, scalability strategies, and efficiency optimizations** that enable the platform to support enterprise workloads while maintaining optimal resource utilization.
 
 ---
 
-## 🔷 **3. Core Resiliency Principles**
+## 🔷 **2. Performance Objectives**
 
-* **Design for Failure**
-  Assume components, services, and regions can fail at any time
-
-* **Loose Coupling & Event-Driven Architecture**
-  Reduce dependencies between components
-
-* **Idempotent Processing**
-  Ensure operations can be safely retried without duplication
-
-* **Multi-Layer Redundancy**
-  Redundancy across compute, storage, and network layers
-
-* **Automated Recovery**
-  Minimal manual intervention during failure scenarios
+| Metric                             | Target                                 |
+| ---------------------------------- | -------------------------------------- |
+| Throughput                         | ≥ 100,000 transfers/day                |
+| Latency (event → processing start) | ≤ 5 seconds                            |
+| Concurrent Transfers               | Horizontally scalable (no fixed limit) |
+| Large File Support                 | Up to 10–30 GB+                        |
+| System Scalability                 | Auto-scale with demand                 |
 
 ---
 
-## 🔷 **4. Architecture Resiliency Model**
+## 🔷 **3. Core Principles**
 
-### 🏗️ Multi-Region Strategy
+* **Horizontal Scalability**
+  Scale out instead of scaling up
 
-* **Active-Active deployment** across regions
-* Traffic routed via **Route53 failover policies**
-* No single point of failure
+* **Event-Driven Processing**
+  Trigger workflows only when needed (no idle compute)
 
-### 🧱 Component-Level Resilience
+* **Right Compute for Right Workload**
+  Lambda for lightweight tasks, Fargate for heavy transfers
 
-| Component           | Resiliency Strategy                          |
-| ------------------- | -------------------------------------------- |
-| AWS Transfer Family | Managed HA service                           |
-| S3                  | Cross-Region Replication (CRR)               |
-| DynamoDB            | PITR + AWS Backup + (optional Global Tables) |
-| Step Functions      | Built-in retry + state persistence           |
-| Lambda              | Auto scaling + retry                         |
-| ECS Fargate         | Multi-AZ deployment                          |
+* **Asynchronous Processing**
+  Decouple producers and consumers via messaging
+
+* **Cost-Performance Optimization**
+  Balance performance with efficient resource utilization
 
 ---
 
-## 🔷 **5. Failure Handling Patterns**
+## 🔷 **4. Architecture for Performance**
 
-### 🔁 Retry Strategy
+### 🧱 Component-Level Optimization
 
-* Exponential backoff for:
-
-  * Lambda
-  * Step Functions
-  * API calls
-
-### 🔄 Idempotency
-
-* Unique transaction IDs stored in DynamoDB
-* Prevent duplicate file processing
-
-### 📬 Decoupling via Messaging
-
-* Use **SQS/EventBridge** to buffer and isolate failures
+| Component       | Optimization Strategy                       |
+| --------------- | ------------------------------------------- |
+| S3              | High throughput, parallel uploads/downloads |
+| Transfer Family | Managed scaling for SFTP                    |
+| Lambda          | Short-lived, burst scaling                  |
+| Step Functions  | Orchestration without overhead              |
+| ECS Fargate     | Handles large file transfers efficiently    |
+| DynamoDB        | Low-latency metadata access                 |
 
 ---
 
-## 🔷 **6. Disaster Recovery (DR) Strategy**
+## 🔷 **5. Throughput & Scale Design**
 
-### DR Model: **Active-Active**
+### 📊 Expected Workload
 
-* Both regions are live and processing
-* Automatic failover via **Route53**
-* No cold/warm standby delays
+* Up to **100K+ transfers/day**
+* Mix of:
 
-### Failover Flow:
+  * Small files (KB–MB)
+  * Medium files (100MB–1GB)
+  * Large files (1GB–30GB+)
 
-1. Primary region failure detected
-2. Route53 redirects traffic
-3. Secondary region continues processing
-4. No data loss due to replication
+### ⚙️ Scaling Strategy
 
----
-
-## 🔷 **7. Data Resiliency**
-
-### S3
-
-* Cross-region replication enabled
-* Versioning enabled
-
-### DynamoDB
-
-* PITR (35-day recovery window)
-* AWS Backup for long-term retention
-
-### Metadata Consistency
-
-* Idempotent updates prevent corruption
-* Retry-safe workflows
+* **Lambda auto-scales** for event bursts
+* **Fargate scales based on workload**
+* **SQS/EventBridge buffers traffic spikes**
 
 ---
 
-## 🔷 **8. Reliability Patterns in Workflows**
+## 🔷 **6. Large File Transfer Optimization**
 
-### Step Functions
+### Strategy:
 
-* Retry policies defined per step
-* Failure states with fallback logic
+* Use **ECS Fargate** for large file processing
+* Avoid Lambda timeout limitations
+* Implement:
 
-### Lambda
-
-* Automatic retries
-* DLQ (Dead Letter Queue) for failed events
-
-### ECS Fargate
-
-* Restart on failure
-* Health checks
+  * Chunking (if required)
+  * Parallel streams
+  * Resume/retry logic
 
 ---
 
-## 🔷 **9. Monitoring & Failure Detection**
+## 🔷 **7. Latency Optimization**
 
-### 📊 Metrics
-
-* Transfer success/failure rate
-* Latency
-* Queue depth (SQS)
-
-### 🚨 Alerts
-
-* Real-time alerts via SNS / Slack:
-
-  * Transfer failures
-  * Region degradation
-  * Retry exhaustion
+* Event-driven triggers (S3, SFTP)
+* Minimal synchronous processing
+* Optimized workflow orchestration via Step Functions
+* Low-latency reads via DynamoDB
 
 ---
 
-## 🔷 **10. Testing & Validation**
+## 🔷 **8. Efficiency & Cost Optimization**
 
-### Types of Testing:
+### 💰 Cost-Efficient Design
 
-* **Chaos Testing** → simulate failures
-* **DR Drills** → validate failover
-* **Load Testing** → validate scale
-* **Failure Injection Testing**
+* Serverless-first approach (Lambda, Step Functions)
+* Pay-per-use compute model
+* Avoid idle infrastructure
 
----
+### ⚖️ Right-Sizing Strategy
 
-## 🔷 **11. Key Failure Scenarios**
-
-| Scenario           | Handling                         |
-| ------------------ | -------------------------------- |
-| SFTP server down   | Retry + failover to other region |
-| Lambda failure     | Automatic retry + DLQ            |
-| Region outage      | Route53 failover                 |
-| Data corruption    | PITR restore                     |
-| Large file failure | Resume/retry logic               |
+| Workload Type | Service        |
+| ------------- | -------------- |
+| Small files   | Lambda         |
+| Large files   | ECS Fargate    |
+| Orchestration | Step Functions |
 
 ---
 
-## 🔷 **12. Architectural Value**
+## 🔷 **9. Bottleneck Prevention**
 
-* **Zero Single Point of Failure**
-* **Fast Recovery (≤15 min)**
-* **High Throughput with Stability**
-* **Enterprise-Grade Fault Isolation**
+### Potential Bottlenecks & Mitigation
+
+| Bottleneck                | Mitigation                |
+| ------------------------- | ------------------------- |
+| Lambda concurrency limits | Increase limits / use SQS |
+| Large file processing     | Use Fargate               |
+| API throttling            | Retry + backoff           |
+| S3 request spikes         | Parallelization           |
+
+---
+
+## 🔷 **10. Monitoring & Performance Metrics**
+
+### 📊 Key Metrics
+
+* Transfer success rate
+* Processing latency
+* Throughput per minute/hour
+* SQS queue depth
+* Lambda duration
+
+### 📢 Alerts
+
+* High latency
+* Queue backlog
+* Failure spikes
+
+---
+
+## 🔷 **11. Testing Strategy**
+
+### Performance Testing Types
+
+* **Load Testing** → simulate 100K transfers/day
+* **Stress Testing** → peak + burst loads
+* **Endurance Testing** → long-running stability
+* **Large File Testing** → GB-scale transfers
+
+---
+
+## 🔷 **12. Optimization Opportunities (Future)**
+
+* AI-based workload prediction
+* Intelligent routing (optimize region selection)
+* Transfer prioritization (high-priority files first)
+* Adaptive scaling policies
+
+---
+
+## 🔷 **13. Architectural Value**
+
+* **High Throughput at Scale**
+* **Low Latency Event Processing**
+* **Cost-Optimized Serverless Model**
+* **Efficient Resource Utilization**
 
 ---
 
@@ -200,32 +189,34 @@ This page defines the **resiliency strategies, reliability patterns, and failure
 
 You are demonstrating:
 
-✅ System-wide resiliency (not just DR)
-✅ Component + workflow + data resilience
-✅ Clear failure handling strategy
-✅ Measurable SLAs (RTO/RPO)
-✅ Alignment with AWS best practices
+✅ Scale modeling (100K/day, file size mix)
+✅ Compute selection strategy (Lambda vs Fargate)
+✅ Bottleneck awareness
+✅ Cost vs performance tradeoffs
+✅ Real-world workload thinking
 
 ---
 
-# ⭐ **Next Step (Very Powerful for ARC)**
+# ⭐ **Next Step (Very Strong Addition)**
 
 Create:
 
-## 👉 **“Failure Mode Analysis (FMA)” Page**
+## 👉 **“Capacity Planning & Load Model” Page**
 
-Where you list:
+Include:
 
-* Every component
-* What happens when it fails
-* How system recovers
+* Daily → hourly → per-second breakdown
+* Peak vs average load
+* Cost estimation per workload
+
+👉 This is **interview + ARC gold**
 
 ---
 
 If you want next, I can:
 
-* Create a **Resiliency Architecture Diagram (PNG, ARC-ready)**
-* Build **Failure Mode Matrix (very strong for interviews + ARC)**
-* Or write a **20-min ARC explanation script for this section**
+* Create a **performance architecture diagram (PNG)**
+* Build a **throughput math model (your 318GB/week type calculations)**
+* Or generate a **capacity planning sheet**
 
 Just tell me 👍
