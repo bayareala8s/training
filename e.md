@@ -1,11 +1,11 @@
-Perfect—this is a **high-visibility page for ARC** 🔐
-If done right, your **Security page** will signal **enterprise rigor, compliance readiness, and Principal Architect depth**.
+Perfect—this is a **high-impact ARC section** 🔥
+Resiliency & Reliability is where you demonstrate **Principal Architect depth + system thinking + failure handling maturity**.
 
-Below is a **production-grade Confluence page** you can use directly.
+Below is a **production-ready Confluence page** you can directly use.
 
 ---
 
-# 🔐 **Security Architecture & Compliance**
+# 🔁 **Resiliency & Reliability Architecture**
 
 ### *Enterprise File Transfer Architecture & Innovation Hub*
 
@@ -13,256 +13,219 @@ Below is a **production-grade Confluence page** you can use directly.
 
 ## 🔷 **1. Overview**
 
-The Enterprise File Transfer platform is designed with a **security-first, zero-trust architecture**, ensuring that all data transfers are protected across **ingestion, processing, storage, and transmission layers**.
+The Enterprise File Transfer platform is designed to deliver **high availability, fault tolerance, and operational continuity** under both normal and failure conditions.
 
-This page defines the **security architecture, controls, and compliance mechanisms** implemented to safeguard sensitive data, enforce least privilege access, and meet enterprise and regulatory requirements.
-
----
-
-## 🔷 **2. Security Principles**
-
-The platform adheres to the following core principles:
-
-* **Zero Trust Architecture**
-  No implicit trust—every request is authenticated and authorized.
-
-* **Least Privilege Access**
-  Access is restricted to the minimum permissions required.
-
-* **Defense in Depth**
-  Multiple layers of security across network, application, and data.
-
-* **Encryption Everywhere**
-  Data is encrypted both in transit and at rest.
-
-* **Auditability & Traceability**
-  All actions are logged and traceable for compliance and forensics.
+This page defines the **resiliency strategies, reliability patterns, and failure handling mechanisms** that ensure uninterrupted service, data integrity, and rapid recovery aligned with enterprise SLAs.
 
 ---
 
-## 🔷 **3. Security Architecture Overview**
+## 🔷 **2. Resiliency Objectives**
 
-### Layers:
-
-* **Edge Layer**
-
-  * Secure endpoints (SFTP via AWS Transfer Family)
-  * API Gateway (authenticated access)
-
-* **Application Layer**
-
-  * Lambda, Step Functions, ECS Fargate
-  * IAM roles per service
-
-* **Data Layer**
-
-  * S3 buckets (encrypted)
-  * DynamoDB (encrypted, access-controlled)
-
-* **Control Plane**
-
-  * IAM, KMS, CloudTrail, Config
+| Metric                         | Target                      |
+| ------------------------------ | --------------------------- |
+| Availability (SLA)             | ≥ 99.9%                     |
+| Recovery Time Objective (RTO)  | ≤ 15 minutes                |
+| Recovery Point Objective (RPO) | ≤ 15 minutes                |
+| Data Durability                | 99.999999999% (S3 standard) |
 
 ---
 
-## 🔷 **4. Identity & Access Management (IAM)**
+## 🔷 **3. Core Resiliency Principles**
 
-### Key Controls:
+* **Design for Failure**
+  Assume components, services, and regions can fail at any time
 
-* Role-based access using **IAM Roles**
-* **No hardcoded credentials**
-* Temporary credentials via **STS**
-* Fine-grained access control for:
+* **Loose Coupling & Event-Driven Architecture**
+  Reduce dependencies between components
 
-  * S3 buckets
-  * Transfer Family users
-  * Lambda functions
+* **Idempotent Processing**
+  Ensure operations can be safely retried without duplication
 
-### Example:
+* **Multi-Layer Redundancy**
+  Redundancy across compute, storage, and network layers
 
-* SFTP user → mapped to IAM role → restricted S3 path
-* Lambda → scoped permissions to only required services
-
----
-
-## 🔷 **5. Data Protection & Encryption**
-
-### 🔐 Encryption in Transit
-
-* TLS 1.2+ enforced for:
-
-  * SFTP (SSH)
-  * API Gateway endpoints
-  * Service-to-service communication
-
-### 🔐 Encryption at Rest
-
-* **S3 → SSE-KMS**
-* **DynamoDB → KMS encryption**
-* **Logs → encrypted storage**
-
-### 🔐 Key Management
-
-* AWS KMS for:
-
-  * Key rotation
-  * Access control
-  * Audit tracking
+* **Automated Recovery**
+  Minimal manual intervention during failure scenarios
 
 ---
 
-## 🔷 **6. Network Security**
+## 🔷 **4. Architecture Resiliency Model**
 
-### Controls:
+### 🏗️ Multi-Region Strategy
 
-* VPC isolation for backend services
-* Private subnets for Lambda / ECS (where applicable)
-* Security groups with least privilege rules
-* Optional:
+* **Active-Active deployment** across regions
+* Traffic routed via **Route53 failover policies**
+* No single point of failure
 
-  * VPC endpoints for S3
-  * No public exposure for internal components
+### 🧱 Component-Level Resilience
 
----
-
-## 🔷 **7. Authentication & Authorization**
-
-### Mechanisms:
-
-* SFTP authentication:
-
-  * SSH key-based authentication (preferred)
-* API authentication:
-
-  * IAM / OAuth / API keys
-* Service-to-service:
-
-  * IAM roles only
+| Component           | Resiliency Strategy                          |
+| ------------------- | -------------------------------------------- |
+| AWS Transfer Family | Managed HA service                           |
+| S3                  | Cross-Region Replication (CRR)               |
+| DynamoDB            | PITR + AWS Backup + (optional Global Tables) |
+| Step Functions      | Built-in retry + state persistence           |
+| Lambda              | Auto scaling + retry                         |
+| ECS Fargate         | Multi-AZ deployment                          |
 
 ---
 
-## 🔷 **8. Logging, Monitoring & Audit**
+## 🔷 **5. Failure Handling Patterns**
 
-### 🔍 Logging
+### 🔁 Retry Strategy
 
-* AWS CloudTrail → API activity logging
-* CloudWatch Logs → application logs
-* Transfer logs → file-level tracking
+* Exponential backoff for:
 
-### 📊 Monitoring
+  * Lambda
+  * Step Functions
+  * API calls
 
-* CloudWatch metrics:
+### 🔄 Idempotency
 
-  * Transfer success/failure
-  * Latency
-  * Throughput
+* Unique transaction IDs stored in DynamoDB
+* Prevent duplicate file processing
 
-### 📢 Alerts
+### 📬 Decoupling via Messaging
 
-* SNS / Slack alerts for:
-
-  * Failed transfers
-  * Unauthorized access attempts
-  * System anomalies
+* Use **SQS/EventBridge** to buffer and isolate failures
 
 ---
 
-## 🔷 **9. Compliance & Governance**
+## 🔷 **6. Disaster Recovery (DR) Strategy**
 
-### Supported Controls:
+### DR Model: **Active-Active**
 
-* Data encryption policies enforced
-* IAM access reviews
-* Audit trails for all transfers
-* Data retention policies (e.g., 90+ days logs)
+* Both regions are live and processing
+* Automatic failover via **Route53**
+* No cold/warm standby delays
 
-### Alignment:
+### Failover Flow:
 
-* SOC 2 (controls mapping)
-* Internal enterprise security standards
-* Regulatory frameworks (as applicable)
-
----
-
-## 🔷 **10. Threat Model & Risk Mitigation**
-
-| Threat              | Mitigation                       |
-| ------------------- | -------------------------------- |
-| Unauthorized access | IAM + SSH keys + least privilege |
-| Data interception   | TLS encryption                   |
-| Data loss           | S3 versioning + replication      |
-| Region failure      | Multi-region architecture        |
-| Insider threat      | Audit logs + access reviews      |
+1. Primary region failure detected
+2. Route53 redirects traffic
+3. Secondary region continues processing
+4. No data loss due to replication
 
 ---
 
-## 🔷 **11. Secrets Management**
+## 🔷 **7. Data Resiliency**
 
-* AWS Secrets Manager for:
+### S3
 
-  * Credentials
-  * API keys
-* No secrets stored in code or config files
-* Automatic rotation enabled (where applicable)
+* Cross-region replication enabled
+* Versioning enabled
 
----
+### DynamoDB
 
-## 🔷 **12. Security Testing & Validation**
+* PITR (35-day recovery window)
+* AWS Backup for long-term retention
 
-### Testing Types:
+### Metadata Consistency
 
-* **Penetration Testing**
-* **Vulnerability Scanning**
-* **IAM Policy Audits**
-* **Encryption Validation**
-* **DR Security Testing**
+* Idempotent updates prevent corruption
+* Retry-safe workflows
 
 ---
 
-## 🔷 **13. Shared Responsibility Model**
+## 🔷 **8. Reliability Patterns in Workflows**
 
-| Layer           | Responsibility         |
-| --------------- | ---------------------- |
-| Infrastructure  | AWS                    |
-| Platform Config | Engineering            |
-| Access Control  | Security + Engineering |
-| Data Protection | Shared                 |
+### Step Functions
 
----
+* Retry policies defined per step
+* Failure states with fallback logic
 
-# 🔥 **What Makes This Page “Principal-Level”**
+### Lambda
 
-You are showing:
+* Automatic retries
+* DLQ (Dead Letter Queue) for failed events
 
-✅ Security **architecture**, not just controls
-✅ Mapping to **actual AWS services**
-✅ Clear **threat → mitigation thinking**
-✅ Alignment to **compliance + audit**
-✅ Integration with **operations & DR**
+### ECS Fargate
+
+* Restart on failure
+* Health checks
 
 ---
 
-# ⭐ **Next Step (Highly Recommended)**
+## 🔷 **9. Monitoring & Failure Detection**
 
-To make this even stronger:
+### 📊 Metrics
 
-👉 Create a companion page:
+* Transfer success/failure rate
+* Latency
+* Queue depth (SQS)
 
-## **“Security Mapping to Requirements (RTM)”**
+### 🚨 Alerts
 
-Example:
+* Real-time alerts via SNS / Slack:
 
-| Req ID | Security Control    |
-| ------ | ------------------- |
-| SR-01  | KMS Encryption      |
-| SR-02  | IAM Least Privilege |
+  * Transfer failures
+  * Region degradation
+  * Retry exhaustion
+
+---
+
+## 🔷 **10. Testing & Validation**
+
+### Types of Testing:
+
+* **Chaos Testing** → simulate failures
+* **DR Drills** → validate failover
+* **Load Testing** → validate scale
+* **Failure Injection Testing**
+
+---
+
+## 🔷 **11. Key Failure Scenarios**
+
+| Scenario           | Handling                         |
+| ------------------ | -------------------------------- |
+| SFTP server down   | Retry + failover to other region |
+| Lambda failure     | Automatic retry + DLQ            |
+| Region outage      | Route53 failover                 |
+| Data corruption    | PITR restore                     |
+| Large file failure | Resume/retry logic               |
+
+---
+
+## 🔷 **12. Architectural Value**
+
+* **Zero Single Point of Failure**
+* **Fast Recovery (≤15 min)**
+* **High Throughput with Stability**
+* **Enterprise-Grade Fault Isolation**
+
+---
+
+# 🔥 **What Makes This Principal-Level**
+
+You are demonstrating:
+
+✅ System-wide resiliency (not just DR)
+✅ Component + workflow + data resilience
+✅ Clear failure handling strategy
+✅ Measurable SLAs (RTO/RPO)
+✅ Alignment with AWS best practices
+
+---
+
+# ⭐ **Next Step (Very Powerful for ARC)**
+
+Create:
+
+## 👉 **“Failure Mode Analysis (FMA)” Page**
+
+Where you list:
+
+* Every component
+* What happens when it fails
+* How system recovers
 
 ---
 
 If you want next, I can:
 
-* Create a **security architecture diagram (C2/C3 style)**
-* Map this directly to your **Terraform implementation**
-* Or build an **ARC Q&A defense script for security section**
+* Create a **Resiliency Architecture Diagram (PNG, ARC-ready)**
+* Build **Failure Mode Matrix (very strong for interviews + ARC)**
+* Or write a **20-min ARC explanation script for this section**
 
 Just tell me 👍
