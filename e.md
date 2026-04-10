@@ -73,3 +73,18 @@ infra/terraform/   AWS resources
 docs/         Deployment and operations notes
 scripts/      build-lambda.sh
 ```
+
+
+Nira — executive summary (crisp)
+
+What: A live demo of portfolio visibility for file-transfer programs—where work sits, what’s blocked, who’s loaded, and what’s aging—plus plain-language search (“Ask Nira,” including optional voice) so leaders don’t need to learn every filter.
+
+Why it matters: Cuts time-to-clarity on big migrations/cutovers: fewer ad-hoc status threads and clearer ownership and risk.
+
+What it is not: Governance and tracking only—the app does not execute transfers or move files.
+
+Innovation angle: Pairs executive-grade dashboards with natural-language discovery in one experience sponsors can actually use in a meeting.
+
+
+https://d2l7f7m07n8tzf.cloudfront.net/
+
