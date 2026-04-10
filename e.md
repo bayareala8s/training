@@ -1,227 +1,75 @@
-Perfect—this is where you show **Principal Architect maturity + CFO-level thinking** 💰
-Cost isn’t just “tracking spend”—it’s about **designing for efficiency, transparency, and optimization at scale**.
+# Nira — NIS TransferTrack Voice
 
-Below is a **production-ready Confluence page** you can use directly.
+Voice-enabled **lifecycle tracking and governance** for file transfer requests. This is **not** a transfer engine: no SFTP/S3 execution, orchestration, or provisioning.
 
----
+## Executive & innovation briefing
 
-# 💰 **Cost & Cost Optimization**
+**One line**  
+Nira shows how leadership could **see the whole transfer portfolio at a glance** and **get answers quickly**—including by **asking in plain language**—instead of chasing spreadsheets and status meetings.
 
-### *Enterprise File Transfer Architecture & Innovation Hub*
+**Problem it illustrates**  
+Large programs generate many interdependent requests. Executives need fast answers: *Where are we stuck? What’s off track? Who owns the risk?* That often still means ad-hoc updates and meetings.
 
----
+**What to show (about 3–4 minutes)**  
+1. **Dashboard** — Volume, blockers, aging risk, and how work sits across owners (portfolio story first).  
+2. **Discovery** — **Advanced search** for precision; then **Ask Nira** so sponsors can describe what they want (“blocked in prod,” “still has open tasks”) without learning every field. The same intent drives the structured view either way.  
+3. **Drill-down** — One request: lifecycle position, task health, evidence and audit trail—**accountability and governance** without claiming the app executes transfers.
 
-## 🔷 **1. Overview**
+**How to position voice**  
+Lead with **outcomes** (clarity, speed, fewer surprises), not the microphone. Treat voice as **optional**: busy executives can **speak or type** natural language; it’s differentiation for hands-busy moments, not the only path. One line that works in the room: *“You can ask what’s blocked or who’s overloaded in plain language—including voice—without learning the product.”*
 
-The Enterprise File Transfer platform is designed with a **cost-efficient, pay-per-use architecture**, leveraging serverless and managed services to minimize idle resources and optimize total cost of ownership (TCO).
+**Scope (say once)**  
+Demo = **visibility and governance only**; it does **not** run file transfers.
 
-This page defines the **cost model, key cost drivers, and optimization strategies** to ensure sustainable and scalable operations while maintaining performance and reliability.
+**Innovation takeaway**  
+**AI-assisted discovery** plus **portfolio analytics** in a form a sponsor can use in a meeting—faster clarity and clearer ownership, grounded in a working experience.
 
----
+## Stack
 
-## 🔷 **2. Cost Objectives**
+- **Frontend:** React, TypeScript, Vite (browser Speech Recognition for Nira)
+- **Backend:** Python FastAPI on AWS Lambda (Mangum), DynamoDB, S3 presigned uploads
+- **Infra:** Terraform (API Gateway HTTP API, Lambda, DynamoDB, S3, CloudFront, IAM, CloudWatch)
 
-| Objective            | Target                                  |
-| -------------------- | --------------------------------------- |
-| Cost Efficiency      | Optimize cost per transfer              |
-| Resource Utilization | Maximize utilization, minimize idle     |
-| Scalability          | Cost scales linearly with usage         |
-| Transparency         | Full visibility via tagging & reporting |
+## Quick start (local)
 
----
+```bash
+# Terminal 1 — API
+cd backend && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 
-## 🔷 **3. Cost Model Overview**
+# Terminal 2 — UI (see docs for env vars if using real AWS tables)
+cd frontend && npm install && npm run dev
+```
 
-### 💡 Pay-Per-Use Architecture
+## Deploy to AWS
 
-* No always-on infrastructure
-* Costs incurred only when:
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-  * Files are transferred
-  * Workflows are executed
-  * Storage is used
+### Demo environment (this account)
 
----
+After `terraform apply` and `npm run build` + `aws s3 sync`, use Terraform outputs:
 
-## 🔷 **4. Key Cost Drivers**
+- **App (HTTPS):** run `terraform -chdir=infra/terraform output -raw app_url`
+- **API:** run `terraform -chdir=infra/terraform output -raw api_endpoint`
 
-| Component       | Cost Driver                       |
-| --------------- | --------------------------------- |
-| S3              | Storage + PUT/GET + data transfer |
-| Transfer Family | Per-hour endpoint + data transfer |
-| Lambda          | Execution time + requests         |
-| Step Functions  | State transitions                 |
-| ECS Fargate     | CPU + memory usage                |
-| DynamoDB        | Read/write capacity               |
-| Data Transfer   | Cross-region / internet transfer  |
+Tight browser CORS (API + presigned S3 uploads): copy [infra/terraform/demo.tfvars.example](infra/terraform/demo.tfvars.example) to `infra/terraform/demo.tfvars`, set `cors_origins` to your `app_url`, then `terraform apply -var-file=demo.tfvars`.
 
----
+**Redeploy UI + API (demo):** `bash scripts/deploy-demo.sh` (requires AWS CLI, Terraform, Node/npm, and `infra/terraform/demo.tfvars`).
 
-## 🔷 **5. Cost Breakdown by Workflow**
+## Tests
 
-### Example:
+```bash
+cd backend && pytest -q
+cd frontend && npm run build
+```
 
-**SFTP → S3 Transfer Flow**
+## Project layout
 
-* Transfer Family → connection + data transfer
-* S3 → storage + PUT requests
-* Lambda → trigger + processing
-* Step Functions → orchestration
-
----
-
-## 🔷 **6. Cost Optimization Strategies**
-
-### ⚡ Compute Optimization
-
-* Use **Lambda** for short-lived workloads
-* Use **Fargate** only for large file transfers
-* Avoid long-running compute
-
----
-
-### 📦 Storage Optimization
-
-* S3 lifecycle policies:
-
-  * Move to **Standard-IA / Glacier**
-* Delete temporary/intermediate files
-
----
-
-### 🔄 Data Transfer Optimization
-
-* Minimize cross-region transfers
-* Compress large files (if applicable)
-* Optimize transfer batching
-
----
-
-### 🧠 Workflow Optimization
-
-* Reduce unnecessary Step Function transitions
-* Optimize retries to avoid excessive cost
-* Use event-driven triggers (no polling)
-
----
-
-### 📊 DynamoDB Optimization
-
-* Use **on-demand capacity** (if variable workload)
-* Optimize read/write patterns
-* Use TTL for cleanup
-
----
-
-## 🔷 **7. Cost Visibility & Governance**
-
-### 🏷️ Tagging Strategy
-
-* Tag by:
-
-  * Customer
-  * Environment (Dev/Test/Prod)
-  * Workflow type
-
-### 📈 Monitoring
-
-* AWS Cost Explorer
-* Cost allocation reports
-
-### 📊 Alerts
-
-* Budget alerts for:
-
-  * Monthly thresholds
-  * Unexpected spikes
-
----
-
-## 🔷 **8. Cost per Transfer Model**
-
-### Example Calculation:
-
-* Small file → low cost (Lambda only)
-* Large file → higher cost (Fargate + transfer)
-
-👉 Enables:
-
-* Chargeback / showback model
-* Customer-level cost tracking
-
----
-
-## 🔷 **9. Scaling & Cost Behavior**
-
-| Load   | Cost Behavior                           |
-| ------ | --------------------------------------- |
-| Low    | Minimal cost (serverless idle)          |
-| Medium | Linear growth                           |
-| High   | Scales with usage (no overprovisioning) |
-
----
-
-## 🔷 **10. Optimization Opportunities (Future)**
-
-* AI-based cost prediction
-* Intelligent routing (cheapest region)
-* Transfer scheduling (off-peak optimization)
-* Reserved capacity (if predictable workload)
-
----
-
-## 🔷 **11. Risks & Mitigation**
-
-| Risk                   | Mitigation                    |
-| ---------------------- | ----------------------------- |
-| Unexpected cost spikes | Budget alerts                 |
-| Over-provisioning      | Serverless architecture       |
-| Inefficient workflows  | Continuous optimization       |
-| Cross-region costs     | Optimize replication strategy |
-
----
-
-## 🔷 **12. Architectural Value**
-
-* **Cost-Efficient at Scale**
-* **Transparent Cost Model**
-* **Optimized Resource Utilization**
-* **Supports Chargeback Models**
-
----
-
-# 🔥 **What Makes This Principal-Level**
-
-You are demonstrating:
-
-✅ Cost as **architecture concern (not afterthought)**
-✅ Awareness of **AWS pricing levers**
-✅ Ability to **model cost per workflow**
-✅ Governance (tagging, alerts, reporting)
-✅ Future optimization thinking
-
----
-
-# ⭐ **Next Step (Very Strong for ARC & Interviews)**
-
-Create:
-
-## 👉 **“Cost Modeling & Estimation” Page**
-
-Include:
-
-* 100K transfers/day → cost estimate
-* Small vs large file cost comparison
-* Monthly projection
-
-👉 This is **CFO + ARC gold**
-
----
-
-If you want next, I can:
-
-* Build a **detailed cost calculator (your architecture-specific)**
-* Create a **cost vs performance tradeoff table**
-* Or generate a **cost architecture diagram (PNG)**
-
-Just tell me 👍
+```
+frontend/     React app
+backend/      FastAPI application + lambda_handler.py
+infra/terraform/   AWS resources
+docs/         Deployment and operations notes
+scripts/      build-lambda.sh
+```
