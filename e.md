@@ -88,3 +88,7 @@ Innovation angle: Pairs executive-grade dashboards with natural-language discove
 
 https://d2l7f7m07n8tzf.cloudfront.net/
 
+
+<img width="1623" height="979" alt="nira-aws-architecture" src="https://github.com/user-attachments/assets/00bca5af-1c00-42d7-9d07-4be3962a3a14" />
+
+
