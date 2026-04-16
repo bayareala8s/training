@@ -456,4 +456,232 @@ System is considered operationally ready if:
 ---
 
 
+Perfect—this is a **critical ARC page** (ties directly to RTO/RPO, DR, compliance).
+Here’s a **fully polished Confluence page** you can copy-paste.
+
+---
+
+# ♻️ Recovery & Restore Test Cases
+
+### *Enterprise File Transfer – Data Protection, Backup & Disaster Recovery Validation*
+
+---
+
+## 🔷 1. Overview
+
+This page defines the **recovery and restore testing strategy** for the Enterprise File Transfer platform.
+
+The objective is to ensure that:
+
+* data can be **recovered reliably**
+* systems can be **restored within defined RTO/RPO targets**
+* backups are **valid and usable**
+* disaster recovery scenarios are **fully tested and proven**
+
+This supports:
+
+* **Resiliency & Reliability**
+* **Business Continuity / Disaster Recovery (BC/DR)**
+* **Regulatory and audit compliance**
+
+---
+
+## 🔷 2. Objectives
+
+* Validate **backup mechanisms**
+* Validate **restore procedures**
+* Ensure **data integrity after recovery**
+* Validate **cross-region DR readiness**
+* Ensure compliance with:
+
+  * **RTO (Recovery Time Objective)**
+  * **RPO (Recovery Point Objective)**
+
+---
+
+## 🔷 3. Scope
+
+### ✅ In Scope
+
+* DynamoDB backups (PITR + AWS Backup)
+* S3 versioning and restore
+* Cross-region replication (CRR)
+* Metadata recovery
+* Workflow recovery
+* Regional failover scenarios
+
+### ❌ Out of Scope
+
+* External partner system recovery
+
+---
+
+## 🔷 4. Recovery Architecture (High-Level)
+
+The platform uses:
+
+* **DynamoDB**
+
+  * Point-in-Time Recovery (PITR)
+  * AWS Backup integration
+* **S3**
+
+  * Versioning enabled
+  * Cross-Region Replication (CRR)
+* **Multi-region deployment**
+
+  * Active-Active / Failover-ready design
+* **Infrastructure as Code (Terraform)**
+
+  * Rebuild capability
+
+---
+
+## 🔷 5. Recovery Types
+
+| Recovery Type          | Description                        |
+| ---------------------- | ---------------------------------- |
+| Point-in-Time Recovery | Restore to specific timestamp      |
+| Backup Restore         | Restore from scheduled backups     |
+| Object Version Restore | Recover previous S3 object version |
+| Regional Failover      | Switch to secondary region         |
+| Workflow Replay        | Re-trigger failed transfers        |
+| Metadata Recovery      | Restore DynamoDB state             |
+
+---
+
+# 🔥 6. Test Cases
+
+## 📊 Recovery & Restore Test Table
+
+| Test ID | Scenario | Objective | Steps | Expected Result | Priority | Automation |
+| ------- | -------- | --------- | ----- | --------------- | -------- | ---------- |
+
+---
+
+## 🔹 **DynamoDB Recovery**
+
+| Test ID    | Scenario             | Objective                       | Steps                          | Expected Result              | Priority | Automation |
+| ---------- | -------------------- | ------------------------------- | ------------------------------ | ---------------------------- | -------- | ---------- |
+| TC-RCV-001 | PITR Restore         | Validate point-in-time recovery | Modify/delete record → restore | Data restored correctly      | High     | Partial    |
+| TC-RCV-002 | AWS Backup Restore   | Validate backup recovery        | Restore backup to new table    | Data accessible and accurate | High     | Partial    |
+| TC-RCV-003 | Metadata Consistency | Validate metadata integrity     | Restore metadata               | Correct workflow states      | High     | Partial    |
+
+---
+
+## 🔹 **S3 Recovery**
+
+| Test ID    | Scenario               | Objective                | Steps                            | Expected Result             | Priority | Automation |
+| ---------- | ---------------------- | ------------------------ | -------------------------------- | --------------------------- | -------- | ---------- |
+| TC-RCV-004 | Object Version Restore | Recover overwritten file | Upload new version → restore old | Correct version restored    | High     | Yes        |
+| TC-RCV-005 | Deleted File Recovery  | Recover deleted file     | Delete object → restore          | File recovered              | High     | Yes        |
+| TC-RCV-006 | Cross-Region Restore   | Validate CRR recovery    | Simulate region issue            | File available in DR region | High     | Partial    |
+
+---
+
+## 🔹 **Workflow Recovery**
+
+| Test ID    | Scenario               | Objective         | Steps                    | Expected Result       | Priority | Automation |
+| ---------- | ---------------------- | ----------------- | ------------------------ | --------------------- | -------- | ---------- |
+| TC-RCV-007 | Replay Failed Workflow | Validate replay   | Trigger failure → replay | Successful completion | High     | Yes        |
+| TC-RCV-008 | Idempotent Recovery    | Avoid duplication | Replay same event        | No duplicate transfer | High     | Yes        |
+
+---
+
+## 🔹 **Disaster Recovery (Region-Level)**
+
+| Test ID    | Scenario        | Objective                 | Steps                  | Expected Result             | Priority | Automation |
+| ---------- | --------------- | ------------------------- | ---------------------- | --------------------------- | -------- | ---------- |
+| TC-RCV-009 | Region Failover | Validate DR switch        | Simulate region outage | Traffic routed to DR region | High     | Partial    |
+| TC-RCV-010 | RTO Validation  | Measure recovery time     | Failover test          | Recovery within SLA         | High     | Partial    |
+| TC-RCV-011 | RPO Validation  | Validate data loss window | Restore data           | Within acceptable RPO       | High     | Partial    |
+
+---
+
+## 🔹 **Infrastructure Recovery**
+
+| Test ID    | Scenario             | Objective                | Steps                     | Expected Result   | Priority | Automation |
+| ---------- | -------------------- | ------------------------ | ------------------------- | ----------------- | -------- | ---------- |
+| TC-RCV-012 | Terraform Rebuild    | Validate infra rebuild   | Deploy from scratch       | System restored   | High     | Partial    |
+| TC-RCV-013 | Environment Recovery | Full environment restore | Simulate environment loss | Platform restored | High     | Partial    |
+
+---
+
+## 🔷 7. RTO / RPO Targets
+
+| Metric | Target                             |
+| ------ | ---------------------------------- |
+| RTO    | ≤ 15 minutes                       |
+| RPO    | ≤ 15 minutes (aligned with S3 CRR) |
+
+---
+
+## 🔷 8. Test Execution Strategy
+
+### 🔹 Scheduled Testing
+
+* Monthly DR drills
+* Quarterly full recovery testing
+
+### 🔹 On-Demand Testing
+
+* Before major releases
+* After architecture changes
+
+### 🔹 Synthetic Testing
+
+* Controlled failure injection
+* Automated validation of recovery
+
+---
+
+## 🔷 9. Validation Criteria
+
+Recovery is considered successful if:
+
+* data is restored accurately
+* workflows resume correctly
+* no data corruption
+* system becomes operational within RTO
+* data loss is within RPO
+
+---
+
+## 🔷 10. Risks & Mitigation
+
+| Risk               | Mitigation                 |
+| ------------------ | -------------------------- |
+| Backup corruption  | Regular validation tests   |
+| Incomplete restore | End-to-end testing         |
+| Data inconsistency | Checksum validation        |
+| Slow recovery      | Optimize failover strategy |
+
+---
+
+## 🔷 11. Observability During Recovery
+
+Track:
+
+* recovery duration
+* restore success rate
+* error logs
+* system availability post-recovery
+
+---
+
+## 🔷 12. Summary
+
+> The recovery and restore testing framework ensures that the Enterprise File Transfer platform can withstand failures, recover data accurately, and resume operations within defined service level objectives, thereby ensuring business continuity and operational resilience.
+
+---
+
+# 🔥 Principal-Level Add-On (Highly Recommended)
+
+Add this line at top or bottom:
+
+> “Recovery is not assumed—it is continuously validated through controlled testing, ensuring that RTO and RPO targets are consistently met.”
+
+---
+
+
 
