@@ -213,7 +213,247 @@ A rehydrated image is considered valid if:
 
 > The ECS Fargate image rehydration testing framework ensures that containerized workloads remain secure, stable, and production-ready through continuous validation, automated testing, and controlled deployment practices.
 
+----
+
+Perfect—this is an **important page (Operational Excellence + ARC critical)**.
+Below is a **clean, Confluence-ready page** specifically for:
+
+# 🛠️ Operational / Alerting Test Cases
+
+### *Enterprise File Transfer – Monitoring, Alerting & Incident Response Validation*
+
+---
+
+## 🔷 1. Overview
+
+This page defines the **operational and alerting validation strategy** for the Enterprise File Transfer platform.
+
+The objective is to ensure that:
+
+* system issues are **detected quickly**
+* alerts are **triggered accurately**
+* teams can **diagnose and respond effectively**
+* end-to-end workflows are **observable and traceable**
+
+This directly supports:
+
+* **Operational Excellence**
+* **Resiliency & Reliability**
+* **Incident Response Readiness**
+
+---
+
+## 🔷 2. Objectives
+
+* Validate **alert generation and delivery**
+* Ensure **monitoring coverage across all components**
+* Confirm **log traceability using correlation IDs**
+* Validate **dashboard visibility**
+* Test **incident creation and runbook execution**
+* Reduce **MTTD (Mean Time to Detect)** and **MTTR (Mean Time to Resolve)**
+
+---
+
+## 🔷 3. Scope
+
+### ✅ In Scope
+
+* CloudWatch metrics & alarms
+* Logging (CloudWatch Logs)
+* Alerting (SNS, Slack, PagerDuty)
+* Dashboard visibility
+* Correlation ID tracing
+* Incident/ticket integration
+* Synthetic alert validation
+
+### ❌ Out of Scope
+
+* External system monitoring outside platform control
+
+---
+
+## 🔷 4. Monitoring Architecture (High-Level)
+
+The platform monitors:
+
+* Transfer workflows (Step Functions)
+* Compute execution (Lambda / Fargate)
+* Messaging (SQS / EventBridge)
+* Storage (S3)
+* Metadata (DynamoDB)
+
+Alerts are generated based on:
+
+* failures
+* latency thresholds
+* queue backlogs
+* abnormal patterns
+
+---
+
+## 🔷 5. Key Metrics Monitored
+
+| Category       | Metrics                                     |
+| -------------- | ------------------------------------------- |
+| Workflow       | Success rate, failure count, execution time |
+| Lambda         | Duration, errors, throttles                 |
+| Step Functions | Failed executions, retries                  |
+| SQS            | Queue depth, message age                    |
+| S3             | Request errors, latency                     |
+| Fargate        | CPU, memory, task failures                  |
+| DynamoDB       | Throttles, latency                          |
+| System         | End-to-end transfer success                 |
+
+---
+
+## 🔷 6. Alerting Strategy
+
+### 🔹 Alert Types
+
+| Alert Type       | Trigger                               |
+| ---------------- | ------------------------------------- |
+| Critical (Sev-1) | System outage, transfer failure spike |
+| High (Sev-2)     | Degradation, queue backlog            |
+| Medium (Sev-3)   | Latency increase                      |
+| Informational    | Normal events                         |
+
+---
+
+### 🔹 Alert Channels
+
+* SNS Topics
+* Slack Channels
+* PagerDuty
+* Email Notifications
+
+---
+
+### 🔹 Alert Characteristics
+
+* Real-time (< 1 min latency)
+* Includes:
+
+  * correlation ID
+  * service impacted
+  * failure reason
+  * runbook link
+
+---
+
+# 🔥 7. Test Cases
+
+## 📊 Operational & Alerting Test Table
+
+| Test ID | Scenario | Objective | Steps | Expected Result | Priority | Automation |
+| ------- | -------- | --------- | ----- | --------------- | -------- | ---------- |
+
+---
+
+### 🔴 **Alert Generation**
+
+| Test ID    | Scenario                    | Objective                    | Steps                  | Expected Result | Priority | Automation |
+| ---------- | --------------------------- | ---------------------------- | ---------------------- | --------------- | -------- | ---------- |
+| TC-OPS-001 | Workflow Failure Alert      | Validate failure alert       | Force workflow failure | Alert triggered | High     | Partial    |
+| TC-OPS-002 | Lambda Error Alert          | Validate Lambda monitoring   | Inject Lambda error    | Alert generated | High     | Partial    |
+| TC-OPS-003 | Step Function Failure Alert | Validate orchestration alert | Fail state machine     | Alert triggered | High     | Partial    |
+| TC-OPS-004 | Queue Backlog Alert         | Validate backpressure alert  | Create SQS backlog     | Alert triggered | High     | Yes        |
+
+---
+
+### 🟠 **Alert Delivery**
+
+| Test ID    | Scenario           | Objective                  | Steps                  | Expected Result            | Priority | Automation |
+| ---------- | ------------------ | -------------------------- | ---------------------- | -------------------------- | -------- | ---------- |
+| TC-OPS-005 | SNS Delivery       | Validate SNS notification  | Trigger alert          | SNS message delivered      | High     | Yes        |
+| TC-OPS-006 | Slack Notification | Validate Slack integration | Trigger alert          | Message posted in Slack    | High     | Partial    |
+| TC-OPS-007 | PagerDuty Trigger  | Validate incident alert    | Trigger critical alert | PagerDuty incident created | High     | Partial    |
+
+---
+
+### 🟡 **Log & Traceability**
+
+| Test ID    | Scenario                | Objective             | Steps            | Expected Result        | Priority | Automation |
+| ---------- | ----------------------- | --------------------- | ---------------- | ---------------------- | -------- | ---------- |
+| TC-OPS-008 | Correlation ID Trace    | Validate traceability | Run workflow     | Logs searchable via ID | High     | Yes        |
+| TC-OPS-009 | End-to-End Log Coverage | Validate logging      | Execute transfer | All steps logged       | High     | Yes        |
+
+---
+
+### 🔵 **Dashboard & Monitoring**
+
+| Test ID    | Scenario          | Objective                   | Steps         | Expected Result                   | Priority | Automation |
+| ---------- | ----------------- | --------------------------- | ------------- | --------------------------------- | -------- | ---------- |
+| TC-OPS-010 | Dashboard Update  | Validate metrics visibility | Run workflow  | Metrics visible in dashboard      | Medium   | Yes        |
+| TC-OPS-011 | Real-Time Metrics | Validate latency            | Trigger event | Metrics updated in near real-time | Medium   | Yes        |
+
+---
+
+### 🟢 **Incident & Runbook**
+
+| Test ID    | Scenario          | Objective              | Steps                 | Expected Result            | Priority | Automation |
+| ---------- | ----------------- | ---------------------- | --------------------- | -------------------------- | -------- | ---------- |
+| TC-OPS-012 | Incident Creation | Validate ticketing     | Trigger Sev-1 failure | Ticket created             | High     | Partial    |
+| TC-OPS-013 | Runbook Execution | Validate ops readiness | Simulate failure      | Issue resolved via runbook | High     | Partial    |
+
+---
+
+## 🔷 8. Synthetic Alert Testing
+
+Synthetic tests are used to validate operational readiness.
+
+### Examples:
+
+* trigger controlled failure
+* simulate queue backlog
+* simulate Lambda timeout
+
+👉 Expected:
+
+* alert generated
+* delivered correctly
+* visible in dashboards
+
+---
+
+## 🔷 9. Success Criteria
+
+System is considered operationally ready if:
+
+* alerts are triggered within **≤ 1 minute**
+* all critical paths are monitored
+* logs provide **end-to-end traceability**
+* dashboards reflect **real-time system state**
+* incidents can be created and resolved using runbooks
+
+---
+
+## 🔷 10. Risks & Mitigation
+
+| Risk              | Mitigation              |
+| ----------------- | ----------------------- |
+| Alert noise       | Tune thresholds         |
+| Missed alerts     | Add synthetic tests     |
+| Poor traceability | Enforce correlation IDs |
+| Slow response     | Improve runbooks        |
+
+---
+
+## 🔷 11. KPIs
+
+| KPI                 | Target              |
+| ------------------- | ------------------- |
+| MTTD                | ≤ 5 min             |
+| MTTR                | ≤ 30 min            |
+| Alert latency       | ≤ 1 min             |
+| Monitoring coverage | 100% critical paths |
+
+---
+
+## 🔷 12. Summary
+
+> The operational and alerting testing framework ensures that the Enterprise File Transfer platform is fully observable, failures are detected in near real-time, and operational teams are equipped to respond quickly and effectively.
+
 ---
 
 
-Just say 👍
+
