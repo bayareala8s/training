@@ -187,3 +187,100 @@
 
 
 
+# ✅ Replace With This (ARC-READY VERSION)
+
+## **Performance & Scaling Model**
+
+### **Workload Assumptions (Baseline)**
+
+| Metric               | Current    | Target         | Source                                      |
+| -------------------- | ---------- | -------------- | ------------------------------------------- |
+| Transfers/day        | 100K       | 10M            | Existing system metrics + growth projection |
+| TPS (avg)            | ~1.16/sec  | ~116/sec       | Derived                                     |
+| Peak TPS (2x)        | ~2.3/sec   | ~230/sec       | Burst assumption                            |
+| Avg file size        | ~0.45 MB   | ~0.45 MB       | Observed                                    |
+| Throughput (avg)     | ~0.53 MB/s | ~52.5 MB/s     | Calculated                                  |
+| Concurrent workflows | 16         | 16–100 (burst) | Design assumption                           |
+| Large file threshold | >100 MB    | >100 MB        | Defined boundary                            |
+
+---
+
+## **Scaling Strategy**
+
+| Area                   | Approach       | Control                      |
+| ---------------------- | -------------- | ---------------------------- |
+| Orchestration          | Step Functions | Execution concurrency limits |
+| Lightweight processing | Lambda         | Reserved concurrency         |
+| Heavy processing       | ECS Fargate    | Task scaling                 |
+| Queue buffering        | SQS            | Queue depth control          |
+
+---
+
+## **Concurrency Management**
+
+| Component      | Limit                | Strategy                          |
+| -------------- | -------------------- | --------------------------------- |
+| Lambda         | Regional concurrency | Reserved concurrency + throttling |
+| Step Functions | Execution limits     | Controlled parallelism            |
+| SQS            | Virtually unlimited  | Backpressure buffer               |
+| Fargate        | Task limits          | Auto scaling                      |
+
+---
+
+## **Backpressure & Throttling**
+
+| Scenario            | Handling                         |
+| ------------------- | -------------------------------- |
+| Spike in requests   | SQS absorbs load                 |
+| Lambda saturation   | Throttling + retry               |
+| Downstream slowdown | Queue buildup + controlled drain |
+| Retry storms        | Exponential backoff              |
+
+---
+
+## **Queue Depth & Alerting**
+
+| Metric             | Threshold    | Action               |
+| ------------------ | ------------ | -------------------- |
+| Queue depth        | > X messages | Scale consumers      |
+| Processing latency | > Y sec      | Trigger alert        |
+| Error rate         | > Z%         | Pause ingestion      |
+| Lambda throttles   | > threshold  | Increase concurrency |
+
+---
+
+## **Large File Handling**
+
+| Category | Definition | Handling                |
+| -------- | ---------- | ----------------------- |
+| Small    | < 10 MB    | Lambda                  |
+| Medium   | 10–100 MB  | Lambda / Step Functions |
+| Large    | > 100 MB   | ECS Fargate             |
+
+---
+
+## **Monitoring Metrics (Driving Scaling Decisions)**
+
+| Metric             | Usage                  |
+| ------------------ | ---------------------- |
+| Queue depth        | Scaling trigger        |
+| Lambda concurrency | Capacity control       |
+| Execution latency  | Bottleneck detection   |
+| Error rate         | Stability signal       |
+| Throughput (MB/s)  | Performance validation |
+
+---
+
+## **Failover Scaling Consideration**
+
+| Scenario            | Behavior                         |
+| ------------------- | -------------------------------- |
+| Regional failover   | 2x workload handled              |
+| Retry burst         | Temporary spike absorbed via SQS |
+| Reconciliation load | Processed via batch scaling      |
+
+---
+
+
+
+
