@@ -1,39 +1,24 @@
 
 
-## **Key Architectural Decisions (Current State)**
+## **Key Architectural Decisions (Container Layer – Current State)**
 
-| #  | Decision                                              | Rationale                                  | Impact / Trade-off                                  |
-| -- | ----------------------------------------------------- | ------------------------------------------ | --------------------------------------------------- |
-| 1  | Deployment in CFS2 (Cloud-native environment)         | Align with enterprise cloud strategy       | Dependency on cloud services and networking         |
-| 2  | Centralized EFT Backend Engine                        | Simplifies orchestration and routing       | Potential bottleneck and scaling limitation         |
-| 3  | Support SFTP-based file transfers                     | Industry standard for secure file exchange | Limited scalability and performance vs event-driven |
-| 4  | Support S3-based transfers (PUT/GET via HTTPS)        | Enables cloud-native storage integration   | Mixed protocol complexity                           |
-| 5  | Backend-driven orchestration (synchronous/semi-batch) | Simpler control flow                       | Less resilient vs event-driven model                |
-| 6  | Limited event-driven architecture                     | Legacy design pattern                      | Reduced scalability and responsiveness              |
-| 7  | No standardized idempotency enforcement               | Simpler implementation                     | Risk of duplicate processing                        |
-| 8  | Basic retry mechanisms                                | Handles transient failures                 | Not optimized (no exponential backoff control)      |
-| 9  | Observability via ELMA                                | Central monitoring                         | Limited end-to-end traceability                     |
-| 10 | CI/CD via GitLab pipelines                            | Standardized deployments                   | Limited automation for infra changes                |
-| 11 | No explicit malware scanning for external transfers   | Not implemented today                      | Security gap (explicit ARC concern)                 |
-| 12 | Tight coupling between ingestion and processing       | Simpler flow                               | Limits scalability and isolation                    |
-
-
-
-# 📌 **External Systems / Dependencies Table**
-
-👉 Copy-paste this next
+| #  | Decision                                                             | Rationale                                                    | Impact / Trade-offs                                     |
+| -- | -------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------- |
+| 1  | Use AWS Transfer Family as managed SFTP ingress layer                | Avoid building custom SFTP servers                           | Limited protocol flexibility, dependency on AWS service |
+| 2  | Use centralized Execution Workers (Lambda-based) for file processing | Simplifies compute model and reduces infrastructure overhead | Constrained by Lambda limits (timeout, memory)          |
+| 3  | Backend service tightly orchestrates transfer workflows              | Centralized control and routing logic                        | Creates coupling and scaling bottleneck                 |
+| 4  | Synchronous / semi-batch execution model                             | Easier to reason about flows                                 | Lower scalability vs event-driven                       |
+| 5  | No dedicated orchestration engine (e.g., Step Functions not used)    | Simpler implementation                                       | Limited visibility, retry control, and state management |
+| 6  | Logging handled via CloudWatch integrated with ELMA                  | Centralized observability                                    | Limited correlation across distributed flows            |
+| 7  | Alerts via SNS / Webhooks                                            | Basic operational awareness                                  | Reactive instead of proactive alerting                  |
+| 8  | CI/CD pipeline via GitLab                                            | Standardized deployments                                     | Limited environment-aware automation                    |
+| 9  | No separation between ingestion, processing, and delivery layers     | Simpler architecture                                         | Reduced isolation, impacts fault containment            |
+| 10 | Lack of explicit idempotency layer                                   | Simpler processing logic                                     | Risk of duplicate file processing                       |
+| 11 | No anti-malware scanning container/service                           | Not implemented currently                                    | **Critical security gap (explicit ARC concern)**        |
+| 12 | No dedicated metadata store for workflow state tracking              | Lightweight design                                           | Limits observability, recovery, and auditability        |
 
 ---
 
-## **External Systems & Dependencies**
-
-| Dependency     | Type                   | Description                                            | Interaction                            | Criticality |
-| -------------- | ---------------------- | ------------------------------------------------------ | -------------------------------------- | ----------- |
-| ELMA           | Observability System   | Provides logging, monitoring, and operational insights | Receives logs and metrics from backend | High        |
-| GitLab         | CI/CD Platform         | Manages build and deployment pipelines                 | Deploys backend services               | Medium      |
-| Source Systems | External/Internal Apps | Systems that initiate file transfers                   | Push (SFTP/S3) or Pull workflows       | High        |
-| Target Systems | External/Internal Apps | Systems that receive files                             | Receive via SFTP or S3                 | High        |
-| SFTP Endpoints | External Systems       | Partner-managed secure file transfer endpoints         | File ingestion and delivery            | High        |
-| S3 Storage     | Cloud Storage          | Intermediate or final storage layer                    | File staging and transfer              | High        |
 
 
+👉 **“Create target container decisions”**
