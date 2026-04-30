@@ -123,3 +123,67 @@
 
 
 
+
+
+# 📌 **Operational Excellence (Rewritten — ARC Ready)**
+
+## **Key Decisions**
+
+| # | Decision                           | Description                                                   |
+| - | ---------------------------------- | ------------------------------------------------------------- |
+| 1 | Centralized logging via CloudWatch | All system events, transfers, and errors are logged centrally |
+| 2 | Metrics-based monitoring           | Track success rate, latency, error rate                       |
+| 3 | Alerting via SNS                   | Trigger alerts on threshold breaches                          |
+| 4 | CI/CD via GitLab                   | Automated build, test, and deployment pipelines               |
+| 5 | Infrastructure as Code (Terraform) | Consistent and repeatable environment provisioning            |
+| 6 | Versioned deployments              | All components deployed as immutable versions                 |
+| 7 | Automated rollback                 | Rollback triggered on failure or threshold breach             |
+
+---
+
+## **Observability**
+
+| Area    | Implementation            |
+| ------- | ------------------------- |
+| Logging | CloudWatch Logs           |
+| Metrics | CloudWatch Metrics        |
+| Alerts  | SNS notifications         |
+| Audit   | Centralized log retention |
+
+---
+
+## **Deployment Model**
+
+| Area              | Approach                |
+| ----------------- | ----------------------- |
+| Deployment        | CI/CD pipeline (GitLab) |
+| Promotion         | Dev → QA → UAT → Prod   |
+| Release Type      | Versioned deployments   |
+| Downtime Strategy | Rolling / zero-downtime |
+
+---
+
+## **Testing Strategy**
+
+| Type                | Scope                          |
+| ------------------- | ------------------------------ |
+| Unit Testing        | Component-level validation     |
+| Integration Testing | Service interaction validation |
+| End-to-End Testing  | Full workflow validation       |
+| Resiliency Testing  | Failure and retry scenarios    |
+
+---
+
+## **Rollback Strategy**
+
+| Area       | Approach                            |
+| ---------- | ----------------------------------- |
+| Mechanism  | Version rollback                    |
+| Trigger    | Failure detection / alert threshold |
+| Automation | Automatic + manual                  |
+| Scope      | Lambda, Step Functions, ECS, APIs   |
+
+
+
+
+
