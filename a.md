@@ -1,69 +1,39 @@
 
 
-# ✅ REFACTORED VERSION (Use This)
+## **Key Architectural Decisions (Current State)**
 
-## **Requirements**
+| #  | Decision                                              | Rationale                                  | Impact / Trade-off                                  |
+| -- | ----------------------------------------------------- | ------------------------------------------ | --------------------------------------------------- |
+| 1  | Deployment in CFS2 (Cloud-native environment)         | Align with enterprise cloud strategy       | Dependency on cloud services and networking         |
+| 2  | Centralized EFT Backend Engine                        | Simplifies orchestration and routing       | Potential bottleneck and scaling limitation         |
+| 3  | Support SFTP-based file transfers                     | Industry standard for secure file exchange | Limited scalability and performance vs event-driven |
+| 4  | Support S3-based transfers (PUT/GET via HTTPS)        | Enables cloud-native storage integration   | Mixed protocol complexity                           |
+| 5  | Backend-driven orchestration (synchronous/semi-batch) | Simpler control flow                       | Less resilient vs event-driven model                |
+| 6  | Limited event-driven architecture                     | Legacy design pattern                      | Reduced scalability and responsiveness              |
+| 7  | No standardized idempotency enforcement               | Simpler implementation                     | Risk of duplicate processing                        |
+| 8  | Basic retry mechanisms                                | Handles transient failures                 | Not optimized (no exponential backoff control)      |
+| 9  | Observability via ELMA                                | Central monitoring                         | Limited end-to-end traceability                     |
+| 10 | CI/CD via GitLab pipelines                            | Standardized deployments                   | Limited automation for infra changes                |
+| 11 | No explicit malware scanning for external transfers   | Not implemented today                      | Security gap (explicit ARC concern)                 |
+| 12 | Tight coupling between ingestion and processing       | Simpler flow                               | Limits scalability and isolation                    |
 
-The Enterprise File Transfer (EFT) platform must support the following functional and non-functional requirements to enable scalable, secure, and reliable file transfer operations.
 
----
 
-## **Functional Requirements**
+# 📌 **External Systems / Dependencies Table**
 
-* Support end-to-end file transfer workflows across **SFTP and Amazon S3** (push and pull models)
-* Enable **self-service onboarding** using a configuration-driven (JSON-based) approach
-* Provide **end-to-end visibility** into file transfers, including status tracking and workflow states
-* Support **event-driven and scheduled** execution models
-* Enable secure integration with **external partners via SFTP**
-* Support **large file transfers** with validation mechanisms (checksum, retries)
-* Provide **automated error handling, retry, and recovery mechanisms**
-* Perform **anti-malware scanning** for files entering and leaving the platform
-
----
-
-## **Non-Functional Requirements**
-
-### **Performance & Scalability**
-
-* Support high-volume file transfer workloads with horizontal scalability
-* Scale using **serverless and distributed components** to handle concurrent workflows
-* Maintain consistent performance under increasing load conditions
+👉 Copy-paste this next
 
 ---
 
-### **Reliability & Resiliency**
+## **External Systems & Dependencies**
 
-* Target **99.9%+ availability**
-* Recovery Time Objective (RTO): **≤ 15 minutes**
-* Recovery Point Objective (RPO):
-
-  * Metadata: **near-zero**
-  * File data: **≤ 15 minutes (via cross-region replication)**
-* Support **automated failover and recovery mechanisms**
-
----
-
-### **Security & Compliance**
-
-* Enforce **encryption in transit and at rest**
-* Implement **IAM-based access control** with least privilege
-* Maintain **audit logging** for all operations
-* Ensure compliance with enterprise security standards
-
----
-
-### **Usability & Operability**
-
-* Provide **simple onboarding experience** with minimal operational dependency
-* Expose APIs for **status tracking and system integration**
-* Enable centralized monitoring and alerting
-
----
-
-## **Requirements Traceability**
-
-A Requirements Traceability Matrix (RTM) is maintained separately to map requirements to architecture components and validation mechanisms.
-
-
+| Dependency     | Type                   | Description                                            | Interaction                            | Criticality |
+| -------------- | ---------------------- | ------------------------------------------------------ | -------------------------------------- | ----------- |
+| ELMA           | Observability System   | Provides logging, monitoring, and operational insights | Receives logs and metrics from backend | High        |
+| GitLab         | CI/CD Platform         | Manages build and deployment pipelines                 | Deploys backend services               | Medium      |
+| Source Systems | External/Internal Apps | Systems that initiate file transfers                   | Push (SFTP/S3) or Pull workflows       | High        |
+| Target Systems | External/Internal Apps | Systems that receive files                             | Receive via SFTP or S3                 | High        |
+| SFTP Endpoints | External Systems       | Partner-managed secure file transfer endpoints         | File ingestion and delivery            | High        |
+| S3 Storage     | Cloud Storage          | Intermediate or final storage layer                    | File staging and transfer              | High        |
 
 
