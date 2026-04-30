@@ -1,70 +1,69 @@
 
 
-# ✅ CONSOLIDATED VERSION (Use This)
+# ✅ REFACTORED VERSION (Use This)
 
-## **Business Functionality (Rewritten – ARC Ready)**
+## **Requirements**
 
-### **Overview**
-
-The NIS Enterprise File Transfer Engine (backend) provides standardized capabilities for managing file transfers across internal systems and external partners. This document outlines the functional capabilities in the current state and how they evolve in the target state.
+The Enterprise File Transfer (EFT) platform must support the following functional and non-functional requirements to enable scalable, secure, and reliable file transfer operations.
 
 ---
 
-## **Functional Capability Evolution**
+## **Functional Requirements**
 
-### **1. Endpoint Registration & Management**
-
-* **Current:** Endpoint configurations (SFTP, storage) are managed with limited standardization across implementations.
-* **Target:** Centralized and standardized registration and management of SFTP endpoints and Amazon S3 storage, ensuring consistent configuration and credential handling.
-
----
-
-### **2. File Transfer Orchestration**
-
-* **Current:** File transfers are executed through a mix of manual and batch-driven processes.
-* **Target:** Event-driven and scheduled workflows supporting both push and pull models, enabling automated and flexible orchestration across upstream and downstream systems.
+* Support end-to-end file transfer workflows across **SFTP and Amazon S3** (push and pull models)
+* Enable **self-service onboarding** using a configuration-driven (JSON-based) approach
+* Provide **end-to-end visibility** into file transfers, including status tracking and workflow states
+* Support **event-driven and scheduled** execution models
+* Enable secure integration with **external partners via SFTP**
+* Support **large file transfers** with validation mechanisms (checksum, retries)
+* Provide **automated error handling, retry, and recovery mechanisms**
+* Perform **anti-malware scanning** for files entering and leaving the platform
 
 ---
 
-### **3. External Partner Integration**
+## **Non-Functional Requirements**
 
-* **Current:** External integrations are supported but require custom configurations per use case.
-* **Target:** Standardized integration patterns for secure SFTP-based communication with external partners, enabling consistent and scalable onboarding.
+### **Performance & Scalability**
 
----
-
-### **4. Monitoring & Lifecycle Visibility**
-
-* **Current:** Monitoring capabilities are distributed, with limited visibility into end-to-end transfer status.
-* **Target:** Centralized tracking of file transfer lifecycle, including real-time visibility into processing stages, success states, and failure conditions.
+* Support high-volume file transfer workloads with horizontal scalability
+* Scale using **serverless and distributed components** to handle concurrent workflows
+* Maintain consistent performance under increasing load conditions
 
 ---
 
-### **5. Self-Service Configuration**
+### **Reliability & Resiliency**
 
-* **Current:** Configuration changes and onboarding require engineering intervention.
-* **Target:** Self-service onboarding and configuration using a JSON-driven model, reducing dependency on engineering teams and accelerating onboarding timelines.
+* Target **99.9%+ availability**
+* Recovery Time Objective (RTO): **≤ 15 minutes**
+* Recovery Point Objective (RPO):
 
----
-
-### **6. Scalability & Resiliency**
-
-* **Current:** Scalability and resiliency depend on existing implementation patterns and manual intervention in failure scenarios.
-* **Target:** Cloud-native architecture designed for high-volume workloads, with built-in resiliency and multi-region disaster recovery capabilities.
+  * Metadata: **near-zero**
+  * File data: **≤ 15 minutes (via cross-region replication)**
+* Support **automated failover and recovery mechanisms**
 
 ---
 
-## **Capability Summary**
+### **Security & Compliance**
 
-| Capability Area     | Current State       | Target State               |
-| ------------------- | ------------------- | -------------------------- |
-| Endpoint Management | Decentralized       | Centralized & standardized |
-| Orchestration       | Manual / batch      | Event-driven & automated   |
-| Partner Integration | Custom per use case | Standardized patterns      |
-| Monitoring          | Limited visibility  | End-to-end tracking        |
-| Onboarding          | Engineering-driven  | Self-service               |
-| Resiliency          | Manual recovery     | Automated DR & failover    |
+* Enforce **encryption in transit and at rest**
+* Implement **IAM-based access control** with least privilege
+* Maintain **audit logging** for all operations
+* Ensure compliance with enterprise security standards
+
+---
+
+### **Usability & Operability**
+
+* Provide **simple onboarding experience** with minimal operational dependency
+* Expose APIs for **status tracking and system integration**
+* Enable centralized monitoring and alerting
+
+---
+
+## **Requirements Traceability**
+
+A Requirements Traceability Matrix (RTM) is maintained separately to map requirements to architecture components and validation mechanisms.
 
 
 
-You’re very close now—this is the turning point 🚀
+
