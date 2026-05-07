@@ -1,81 +1,33 @@
+# Business Functionality
 
+## Current State
 
-# 🔧 **Refactored: Security & Compliance (ARC-ready)**
+The current NIS Enterprise File Transfer platform supports secure file transfers between internal systems and external partners using SFTP and Amazon S3. While the platform supports multiple integration patterns, onboarding, configuration, and operational management are largely implementation-specific and require engineering involvement.
 
-### Security & Compliance
+Current workflows rely on custom configurations for individual customer implementations, resulting in inconsistent onboarding approaches, limited operational visibility, and increased dependency on manual support processes. Monitoring and lifecycle tracking capabilities are distributed across components, making end-to-end transfer visibility and troubleshooting operationally challenging.
 
-The platform follows a defense-in-depth model aligned with Zero Trust principles, implementing security controls across identity, network, application, and data layers to ensure secure and compliant file transfer operations.
-
----
-
-### Access Control
-
-* Enforced using AWS IAM roles and policies based on least privilege
-* Roles are scoped to specific services and workflows
-* No long-lived credentials; all access is role-based
+The current platform provides foundational scalability and resiliency capabilities; however, recovery handling, configuration management, and operational processes are not fully standardized across all integrations.
 
 ---
 
-### Encryption
+## Target State
 
-**Encryption in Transit**
+The target state modernizes the NIS Enterprise File Transfer platform into a standardized, cloud-native, and scalable enterprise integration service aligned with ARC-approved integration patterns.
 
-* SFTP transfers use SSH-based encryption (public-key cryptography + symmetric session encryption)
-* API-based integrations (e.g., S3 access) use HTTPS/TLS
+The solution introduces centralized endpoint registration and configuration management for SFTP and Amazon S3 integrations using a metadata-driven onboarding model. This reduces engineering dependency, improves onboarding timelines, and enables more consistent customer implementations.
 
-**Encryption at Rest**
+The target architecture supports both event-driven and scheduled file transfer models, enabling flexible orchestration across upstream and downstream systems while improving automation and operational efficiency.
 
-* All data stored in S3 and DynamoDB is encrypted using AWS KMS
-* Server-side encryption is enforced by default
+The platform also enhances operational visibility through centralized lifecycle tracking, real-time monitoring, and standardized status reporting for file transfers, failures, and processing stages.
 
-**Secrets Management**
+Key business outcomes include:
 
-* AWS Secrets Manager is used for secure storage and rotation of credentials and API keys
-* No secrets are hardcoded in application code or configuration
+* Standardized and repeatable onboarding processes
+* Improved operational visibility and supportability
+* Reduced manual intervention and engineering effort
+* Enhanced scalability and resiliency for high-volume workloads
+* Multi-region disaster recovery capabilities
+* Alignment with enterprise security and integration standards
+* Extensible architecture supporting future automation and AI-driven orchestration capabilities
 
----
-
-### Key Management & Isolation
-
-* KMS keys are logically isolated per customer to reduce blast radius
-* Key usage is enforced via IAM policies and scoped access
-* Scales using centralized KMS with per-customer key segregation strategy (no key sprawl / controlled lifecycle)
-
----
-
-### Data Protection & Backup
-
-* DynamoDB Point-In-Time Recovery (PITR) is enabled for continuous data protection
-* AWS Backup is used for centralized backup governance, retention, and compliance policies
-* PITR provides fine-grained recovery; AWS Backup provides policy-driven backup management (non-duplicative roles)
-
----
-
-### Network Security
-
-* Services are deployed within VPCs with restricted access via security groups and endpoint policies
-* No public exposure of internal services
-* All communication between components is secured and restricted
-
----
-
-### Compliance Gap (Current Release)
-
-* Malware/content inspection (per FRISS Control CFL02.010) is not included in this release
-* A POAM has been established to address this in a future release
-
----
-
-# 🎯 What this fixes (mapping to comments)
-
-| Comment                                 | Fix                                           |
-| --------------------------------------- | --------------------------------------------- |
-| “Separate encryption items”             | Split into Transit / At Rest / Secrets        |
-| “SFTP does not use TLS”                 | Corrected to SSH-based encryption             |
-| “KMS per customer unclear”              | Explicit section + scaling clarification      |
-| “Backup confusion (PITR vs AWS Backup)” | Clearly separated responsibilities            |
-| “Too verbose / unclear”                 | Reduced + structured bullets                  |
-| “IDD vs Wiki detail level”              | Kept high-level, no deep implementation noise |
-
----
-
+This target state positions the NIS Enterprise File Transfer platform as a scalable enterprise integration capability supporting current operational needs and future growth initiatives.
