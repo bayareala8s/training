@@ -1,50 +1,36 @@
+# Target State: System Context Diagram
 
+The target state positions the NIS EFT Backend as the centralized orchestration platform for enterprise file transfer operations across internal systems, external partners, and downstream consumers.
 
-# Requirements
+The platform standardizes onboarding, transfer execution, monitoring, and operational visibility using enterprise integration patterns and cloud-native services.
 
-The Enterprise File Transfer (EFT) platform must provide secure, scalable, and resilient file transfer capabilities across internal systems and external partners.
+## Core Platform Responsibilities
 
----
+* Manage inbound and outbound file transfer workflows
+* Support SFTP, Amazon S3, and API-based integrations
+* Provide centralized workflow tracking and operational visibility
+* Enable scalable, resilient, and automated transfer processing
+* Integrate with enterprise monitoring and DevOps platforms
 
-# Functional Requirements
+## External Systems & Interactions
 
-The solution shall:
+| System                       | Purpose                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| Self-Serve Onboarding Portal | Supports onboarding requests, endpoint registration, and status tracking |
+| Source Systems               | Send files through standardized SFTP or S3 integration patterns          |
+| Target Systems               | Receive outbound file deliveries from the platform                       |
+| GitLab                       | Provides CI/CD and deployment automation support                         |
+| ELMA / Dynatrace             | Provide enterprise monitoring, logging, and operational visibility       |
 
-* Support secure file transfers using SFTP and Amazon S3
-* Support push and pull integration models
-* Enable standardized and configuration-driven onboarding
-* Provide end-to-end transfer visibility and status tracking
-* Support event-driven and scheduled workflows
-* Provide automated retry, recovery, and operational alerting
-* Support large-file and high-volume transfer processing
-* Support enterprise security controls including malware scanning and file validation
+# Key Architectural Decisions – Target State System Context
 
----
+| Area              | Decision                                                   | Business Outcome                                             |
+| ----------------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| Core Architecture | NIS EFT Backend acts as the central orchestration platform | Improves consistency, governance, and operational visibility |
+| Integration Model | Source and target systems remain loosely coupled           | Simplifies onboarding and scalability                        |
+| Protocol Strategy | Supports SFTP, S3 (HTTPS), and API integrations            | Enables both legacy and cloud-native integration patterns    |
+| Observability     | Uses enterprise monitoring platforms (ELMA and Dynatrace)  | Provides centralized monitoring and operational insights     |
+| DevOps            | GitLab used for CI/CD and deployment automation            | Supports standardized and automated deployments              |
+| Scalability       | Horizontal scaling and parallel workflow execution         | Supports high-volume enterprise workloads and burst handling |
 
-# Non-Functional Requirements
-
-## Performance & Scalability
-
-* Support enterprise-scale transfer workloads
-* Scale using cloud-native AWS managed services
-* Support future growth and onboarding expansion
-
-## Reliability & Resiliency
-
-* Provide resilient and highly available processing
-* Support multi-region disaster recovery capabilities
-* Minimize operational disruption during failures
-
-## Security & Compliance
-
-* Encrypt data in transit and at rest
-* Enforce least-privilege access controls
-* Support centralized secrets and credential management
-* Align with enterprise security standards
-
-## Operational Visibility
-
-* Provide centralized monitoring and alerting
-* Support end-to-end operational visibility
-* Reduce manual operational overhead through automation
 
