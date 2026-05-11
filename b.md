@@ -1,57 +1,53 @@
+# Figure 6 – Target State – C4 Component View
 
-# Resiliency & Reliability
+The Target State Component View illustrates the core components of the NIS Enterprise File Transfer (EFT) Backend Engine and how they collectively enable a scalable, resilient, secure, and event-driven enterprise file transfer platform. The architecture leverages managed AWS services to support high-volume file transfers, operational resiliency, workflow orchestration, and automated recovery across multiple regions.
 
-The NIS Enterprise File Transfer (EFT) platform is designed as a resilient, multi-region file transfer platform deployed across AWS GovCloud regions using an active-passive recovery model between us-gov-west-1 (primary) and us-gov-east-1 (secondary). The architecture supports automated failover, replay-based recovery, replicated storage, and operational resiliency to minimize service disruption and data loss during infrastructure or application failures.
+## Core Components
 
-The platform provides the following resiliency capabilities:
+* **API Gateway + Lambda**
+  Provides the control-plane APIs for onboarding, configuration, and operational management.
 
-* Multi-region deployment with Route53-based failover routing
-* Cross-region metadata replication using DynamoDB Global Tables
-* Cross-region file replication using Amazon S3 replication
-* Queue-based asynchronous workflow processing for failure isolation
-* Replay and recovery orchestration for incomplete or failed transfers
-* Centralized monitoring, alerting, and operational visibility
-* Idempotent processing controls to prevent duplicate delivery
+* **AWS Transfer Family (SFTP)**
+  Serves as the secure managed ingress/egress layer for external file transfers.
 
-The resiliency strategy is designed to support:
+* **Amazon S3**
+  Acts as the durable storage layer for inbound and outbound files and triggers downstream processing events.
 
-* 99.90% service availability
-* 15-minute recovery time objective (RTO)
-* Near-zero metadata recovery point objective (RPO)
-* ≤15-minute file recovery point objective through replicated storage
+* **Amazon EventBridge**
+  Enables centralized event routing and decoupled event-driven processing.
 
-The architecture isolates failures through decoupled workflow processing using queues, retry mechanisms, replay processing, and workflow orchestration. Recovery orchestration services continuously monitor for stale transfers, missed processing events, and incomplete workflows to automatically initiate recovery processing when required.
+* **Amazon SQS**
+  Provides asynchronous buffering, retry handling, workload decoupling, and resiliency.
 
-The platform is designed to handle multiple failure scenarios including:
+* **AWS Step Functions**
+  Orchestrates end-to-end file transfer workflows, retries, branching, and recovery logic.
 
-* Regional outages
-* SFTP endpoint failures
-* Storage service disruptions
-* Workflow execution failures
-* Queue backlogs or throttling
-* Event delivery failures
-* Metadata replication lag
-* Large file transfer interruptions
-* Cross-account integration failures
-* Dependency service outages
+* **AWS Lambda & ECS Fargate**
+  Deliver hybrid compute processing optimized for both small and large file workloads.
 
-To support operational resiliency, the platform integrates with enterprise observability and monitoring systems to provide:
+* **Amazon DynamoDB**
+  Maintains onboarding metadata, workflow state, transfer tracking, and idempotency records.
 
-* Transfer visibility
-* Regional health monitoring
-* Workflow monitoring
-* Failure detection and alerting
-* Replication monitoring
-* Queue and processing visibility
+* **Recovery Orchestrator & DLQs**
+  Support automated recovery, replay handling, operational resiliency, and failure management.
 
-Key resiliency mechanisms implemented within the platform include:
+## Key Architectural Decisions
 
-* Automated retry handling
-* Dead-letter queue processing
-* Replay-safe workflow execution
-* Transaction deduplication controls
-* Recovery orchestration workflows
-* Distributed regional deployment
-* Fault-isolated processing pipelines
+* API Gateway + Lambda used only for control-plane APIs; no data-plane file movement through APIs
+* API layer stores onboarding metadata in DynamoDB before workflow initiation
+* Amazon S3 acts as the primary ingestion and event trigger layer
+* S3 ObjectCreated events routed through EventBridge for centralized event handling
+* Amazon SQS introduced between EventBridge and Step Functions for buffering and resiliency
+* Asynchronous event-driven processing model adopted to eliminate tight coupling
+* AWS Step Functions selected as the central workflow orchestrator
+* Conditional workflow branching implemented for small vs large file processing paths
+* AWS Lambda used for lightweight/small file processing workloads
+* Amazon ECS Fargate used for large file and long-running transfer operations
+* Retry handling centralized within Step Functions instead of embedded worker retries
+* DynamoDB used as the single source of truth for workflow state and idempotency
+* Workflow checkpoints persisted after major processing stages to support recovery
+* Recovery model supports resume-from-last-successful-step capability
+* Centralized observability enabled using CloudWatch integrated with enterprise monitoring platforms
+* Security enforced through least-privilege IAM roles per component
+* Data-plane transfers restricted to S3/SFTP paths only; no file payloads traverse API layer
 
-Residual risks remain for certain scenarios such as in-flight uploads during regional failover, replication timing dependencies, and external AWS service outages. These risks are mitigated through replay operations, operational monitoring, and regional recovery procedures where applicable.
