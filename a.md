@@ -1,42 +1,78 @@
-# Security & Compliance
+# Core Containers & Responsibilities
 
-The platform adopts a defense-in-depth and Zero Trust security model to provide secure, resilient, and compliant enterprise file transfer capabilities across cloud-native services.
+* **API Layer (API Gateway + Lambda)**
+  Provides secure onboarding, operational APIs, and workflow initiation capabilities.
 
-### Key Security Controls
+* **AWS Transfer Family (SFTP)**
+  Delivers managed and secure external file transfer connectivity.
 
-* Least-privilege access enforced through AWS IAM role-based access controls
-* No long-lived credentials; access is temporary and service scoped
-* Encryption enabled for data in transit and at rest using TLS/SSH and AWS KMS
-* Customer data and metadata protected through server-side encryption by default
-* AWS Secrets Manager used for centralized secret storage and credential rotation
-* Customer-specific KMS key isolation reduces operational blast radius
+* **Eventing & Queueing (EventBridge + SQS)**
+  Enables asynchronous processing, workload buffering, and traffic spike handling.
 
-### Data Protection & Recoverability
+* **Workflow Orchestration (Step Functions)**
+  Coordinates end-to-end workflows with built-in retries and resiliency controls.
 
-* DynamoDB metadata store protected using Point-in-Time Recovery (PITR)
-* AWS Backup provides centralized backup governance and retention management
-* Recovery controls support operational resiliency and compliance objectives
+* **Execution Workers (ECS Fargate + Lambda)**
+  Executes transfer, validation, and processing workloads using a hybrid compute model.
 
-### Network & Application Security
+* **State & Metadata Store (DynamoDB)**
+  Maintains workflow state, metadata, checkpointing, and recovery capabilities.
 
-* Services deployed within private VPC boundaries with restricted access controls
-* Security groups and endpoint policies limit internal service exposure
-* All inter-service communication is encrypted and authenticated
-* APIs implement validation and controlled access patterns
+* **Observability (CloudWatch + ELMA + Dynatrace)**
+  Provides centralized monitoring, alerting, logging, and operational visibility.
 
-### Zero Trust Architecture
+* **Architecture Outcome**
+  Delivers a scalable, resilient, and secure event-driven platform designed to support future growth targets up to 10M transfers per day.
 
-* Identity-driven access enforcement across all services and workflows
-* Network segmentation and workload isolation across processing layers
-* Continuous encryption, authentication, and authorization validation
-* No direct public exposure of internal processing services
 
-### Compliance Considerations
+# Key Architectural Decisions – Container Layer (C2)
 
-* Architecture aligns with enterprise security standards and FRISS control objectives
-* Current release does not include malware/content inspection capabilities
-* POAM established to address advanced inspection controls in a future release
+## Eventing & Queueing (EventBridge + SQS)
 
-### Security Outcome
+* Adopted an event-driven architecture using EventBridge for service decoupling and scalable event routing.
+* Implemented SQS buffering to absorb traffic spikes and improve workload resiliency.
+* Enabled asynchronous processing to isolate ingestion from execution workloads.
+* Improves scalability, fault isolation, and operational stability.
 
-The solution delivers a secure, auditable, and compliant enterprise file transfer platform through layered security controls, strong encryption standards, workload isolation, and centralized governance.
+---
+
+## Workflow Orchestration (AWS Step Functions)
+
+* AWS Step Functions selected as the centralized orchestration engine.
+* Supports retries, branching, exception handling, and workflow coordination.
+* Orchestrates execution across Lambda and ECS Fargate workers.
+* Simplifies complex workflow management while improving resiliency and recoverability.
+
+---
+
+## Execution Model (Lambda + ECS Fargate)
+
+* Adopted a hybrid compute model aligned to workload characteristics.
+* Lambda handles lightweight and short-duration operations.
+* ECS Fargate processes large-file and compute-intensive workloads.
+* Enables elastic scaling and optimized compute cost utilization.
+
+---
+
+## State & Metadata Management (DynamoDB)
+
+* DynamoDB selected for workflow state, execution metadata, and status tracking.
+* Supports idempotency, checkpointing, and resume/restart capabilities.
+* Provides low-latency and highly scalable storage for high-throughput workloads.
+* Enhances resiliency, auditability, and operational recovery.
+
+---
+
+## Observability & Monitoring
+
+* CloudWatch used for native AWS logging, metrics, and alerting.
+* Operational telemetry integrated with ELMA and Dynatrace for enterprise observability.
+* Centralized monitoring enables proactive detection, troubleshooting, and operational visibility.
+
+---
+
+## Security & Scalability
+
+* Implemented Zero Trust and defense-in-depth security principles across all layers.
+* Services are independently scalable to support future growth targets up to 10M transfers per day.
+* Queue-based buffering and orchestration improve resiliency during peak load conditions.
