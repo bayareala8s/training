@@ -2,151 +2,181 @@
 
 ## Purpose
 
-This appendix describes how the Enterprise File Transfer (EFT) platform handles failures, regional outages, retries, recovery, and failover operations. The design focuses on protecting customer data, preventing duplicate processing, and keeping file transfers operational during infrastructure or application failures.
+This appendix explains how the Enterprise File Transfer (EFT) platform continues operating during failures, outages, and processing interruptions. The design focuses on protecting customer data, avoiding duplicate file delivery, and restoring services in a controlled and predictable manner.
 
-The platform runs across two AWS GovCloud regions using an active/warm-standby design. The primary region handles normal traffic while the secondary region remains ready for failover when required.
+The platform uses multiple recovery layers including retries, queue-based buffering, regional failover, monitoring, and operational recovery procedures.
 
 ---
 
 # Regional Failover Design
 
-The platform supports manual regional failover for both DMZ and internal SFTP services. Failover is intentionally operator-controlled to avoid unnecessary failovers caused by temporary network or service issues.
+The EFT platform operates across two AWS GovCloud regions using a primary and secondary region model. The primary region handles normal traffic while the secondary region remains available for failover when needed.
 
-When failover occurs, traffic is moved from the primary region to the secondary region using the operational failover script. The script updates public DNS records, internal PHZ records, scheduler states, and recovery services together. Both DMZ and internal SFTP endpoints always fail over together. Independent failover of only one endpoint type is not supported because that could create split-brain processing conditions.
+Failover is intentionally controlled by operations teams instead of being fully automatic. This reduces the risk of unnecessary failovers caused by temporary network or infrastructure issues.
 
-The failover process also enables processing services in the secondary region and disables services that should no longer run in the primary region.
+During failover:
+
+* Traffic is redirected from the primary region to the secondary region
+* DNS and internal routing records are updated
+* Processing services are enabled in the secondary region
+* Processing services in the primary region are disabled
+
+Both DMZ SFTP endpoints and internal SFTP endpoints fail over together as a single operational activity. Independent failover of individual endpoint types is not supported because it could create inconsistent processing behavior.
 
 ---
 
-# Failure Detection
+# Failure Detection and Monitoring
 
-The platform uses multiple monitoring signals before raising an operational alert. CloudWatch composite alarms combine health checks, transfer activity, and processing metrics to confirm a real outage before escalation occurs.
+The platform continuously monitors system health and transfer activity before raising operational alerts.
 
-For external SFTP services, Route53 TCP health checks monitor connectivity while Transfer Family metrics monitor file activity. Internal SFTP services use CloudWatch metrics such as error counts and missing upload events because the internal endpoints are not internet-facing.
+CloudWatch monitoring combines multiple signals including:
+
+* Service health checks
+* Transfer processing activity
+* Queue depth monitoring
+* Workflow execution status
+* File ingestion activity
+
+For external SFTP services, Route53 health checks monitor endpoint connectivity. Internal SFTP services use CloudWatch metrics because those endpoints are not internet-facing.
 
 Additional monitoring exists for:
 
-* Lambda failures
-* SQS queue depth
-* Step Functions execution failures
-* DynamoDB replication lag
-* Poller activity
+* Lambda execution failures
 * ECS task failures
-* RecoveryOrchestrator execution health
+* SQS queue growth
+* Step Functions workflow failures
+* DynamoDB replication lag
+* Poller execution activity
+* RecoveryOrchestrator health status
 
-SNS notifications alert the operations team when thresholds are exceeded.
+SNS notifications alert operations teams when configured thresholds are exceeded.
 
 ---
 
 # Failback Process
 
-After the primary region becomes healthy again, operators perform failback using the failback action of the same operational script.
+After the primary region becomes healthy again, operations teams perform a controlled failback process.
 
-Failback occurs in two stages. First, new traffic is redirected back to the primary region. During this time, the secondary region continues processing any remaining in-flight work. Once queues are drained and active Step Functions executions complete, processing services are fully re-enabled in the primary region.
+Failback occurs in two stages:
 
-This approach prevents files from being processed twice during failback.
+1. New inbound traffic is redirected back to the primary region
+2. Remaining in-flight processing in the secondary region is allowed to complete safely
+
+Once processing queues are drained and active workflows complete, processing services are re-enabled in the primary region.
+
+This controlled approach reduces the risk of duplicate processing or incomplete transfers during recovery operations.
 
 ---
 
 # Split-Brain Prevention
 
-The architecture is designed to prevent split-brain conditions where two regions process the same workload independently.
+The platform is designed to prevent situations where both regions process the same workload simultaneously.
 
-The failover script always updates both DMZ and internal endpoints together in a single operation. There are no separate failover scripts for individual endpoints.
+To reduce this risk:
 
-Each region has its own processing pipeline with separate SQS queues, Lambda functions, and Step Functions workflows. Shared services are limited to DynamoDB Global Tables and S3 cross-region replication.
+* Only one region actively processes workloads at a time
+* Failover updates all related services together
+* Each region maintains independent processing queues and workflows
+* Shared services are limited to metadata replication and object replication services
 
-Duplicate delivery protection is handled in multiple layers. Regional TransactionDedup tables prevent duplicate processing inside a region, while the TransferTracker global table prevents duplicate outbound deliveries across regions.
+The design also uses multiple validation checks before outbound delivery occurs.
+
+Each region maintains a local deduplication table to prevent duplicate processing within the region. A shared TransferTracker table provides an additional validation step before files are delivered externally.
+
+Conditional database updates are used to ensure the same file cannot be delivered twice.
 
 ---
 
 # SQS Retry and Recovery Behavior
 
-Amazon SQS acts as the primary resiliency buffer for the platform. Messages remain in the queue until processing succeeds. If a Lambda function fails or times out, the message becomes visible again after the visibility timeout expires and is retried automatically.
+Amazon SQS acts as the primary buffering and retry layer for the platform.
 
-If processing continues to fail after the configured retry limit, the message is moved to a Dead Letter Queue (DLQ) for investigation.
+If processing temporarily fails, messages remain in the queue and are retried automatically after the visibility timeout expires.
 
-This design prevents data loss during temporary failures and allows processing to recover automatically without operator involvement in most cases.
+If retries continue to fail after configured retry limits are reached, the message is moved to a Dead Letter Queue (DLQ) for investigation.
+
+This design allows the platform to recover automatically from most temporary failures without manual intervention.
 
 ---
 
-# RecoveryOrchestrator
+# RecoveryOrchestrator Service
 
-The RecoveryOrchestrator service provides an additional recovery layer for failures not handled by standard retries.
+The RecoveryOrchestrator service provides an additional recovery layer for failures not handled through standard retries.
 
-The RecoveryOrchestrator periodically scans for:
+The service periodically scans for:
 
-* Files stuck in staging buckets
-* Transfers marked as “in-progress” for too long
-* Missing EventBridge notifications
+* Files stuck in staging locations
+* Transfers remaining in-progress for extended periods
+* Missing processing notifications
 * Incomplete failover states
+* Stale or orphaned transfers
 
-When stale or orphaned transfers are found, the files are safely re-queued for processing.
+When issues are identified, transfers are safely re-queued for processing.
 
-This mechanism helps recover transfers that could otherwise remain incomplete after failover events or unexpected processing interruptions.
+This mechanism helps recover transfers that could otherwise remain incomplete after outages or interrupted processing events.
 
 ---
 
 # Handling Large File Transfers
 
-Large files are processed using ECS Fargate tasks. If a task fails because of timeout, memory issues, or destination connectivity problems, Step Functions retries the operation automatically.
+Large file transfers are processed using ECS Fargate tasks.
 
-If retries continue to fail, the workflow can fail over to a secondary destination when configured. Files remain stored in Amazon S3 during the entire process, so data is not lost even if compute processing fails.
+If a processing task fails because of timeout, memory pressure, or connectivity issues, Step Functions automatically retries the operation.
 
-CloudWatch alarms monitor ECS task failures and workflow execution failures to provide operational visibility.
+Files remain stored in Amazon S3 throughout processing so that data is not lost even if compute services fail.
+
+CloudWatch alarms monitor large file transfer workflows and ECS task execution failures to provide operational visibility.
 
 ---
 
 # DynamoDB Replication and Deduplication
 
-DynamoDB Global Tables replicate metadata between both regions with near real-time replication. Small replication delays can occur during failover events, so the design avoids relying only on replicated state for deduplication.
+DynamoDB Global Tables replicate metadata between regions using near real-time replication.
 
-Each region maintains its own TransactionDedup table to prevent duplicate processing locally. The TransferTracker global table provides the final validation step before delivery to external destinations.
+Small replication delays can occur during failover events, so the design does not rely entirely on replicated metadata for duplicate prevention.
 
-Conditional DynamoDB updates are used to ensure the same file cannot be delivered twice.
+Each region maintains local transaction validation controls while the shared TransferTracker table provides final outbound validation before delivery occurs.
+
+This layered approach reduces the risk of duplicate file delivery across regions.
 
 ---
 
 # Poller Recovery
 
-The SFTP poller service runs in both regions but only one region is active at a time. During failover, the primary poller is disabled and the secondary poller is enabled.
+The SFTP poller service exists in both regions, but only one region actively polls external systems at a time.
+
+During failover:
+
+* The primary poller is disabled
+* The secondary poller is enabled
 
 This prevents duplicate polling and duplicate ingestion from external SFTP servers.
 
-CloudWatch alarms monitor poller execution activity and queue depth to detect failures or stalled processing.
+CloudWatch alarms monitor poller activity and queue behavior to detect stalled or failed polling operations.
 
 ---
 
 # S3 and Regional Failure Handling
 
-Amazon S3 provides durable storage for all inbound and processing files. S3 Replication Time Control (RTC) replicates completed objects between regions.
+Amazon S3 provides durable storage for inbound and processing files.
 
-If a regional outage occurs during an active upload, partially uploaded files may not replicate because S3 replication only occurs after upload completion. In those cases, customers must reconnect and re-upload the file after failover completes.
+S3 Replication Time Control (RTC) replicates completed files between regions.
+
+If a regional outage occurs during an active upload, partially uploaded files may not replicate because replication only starts after upload completion. In those situations, customers may need to reconnect and upload the file again after failover completes.
 
 Completed files already stored in S3 remain protected and available in the secondary region.
 
 ---
 
-# VPC Endpoint and Infrastructure Failures
-
-Lambda and ECS services access AWS services through VPC endpoints. Interface endpoints are deployed across multiple Availability Zones to reduce the risk of endpoint outages.
-
-Gateway endpoints for S3 and DynamoDB are highly available by design. If a VPC endpoint issue occurs, processing for affected workflows may pause until AWS infrastructure connectivity is restored.
-
-CloudWatch metrics and VPC Flow Logs provide operational visibility into connectivity failures.
-
----
-
 # Reliability Summary
 
-The EFT platform uses a layered resiliency design based on queues, retries, regional isolation, monitoring, and controlled failover procedures.
+The EFT platform uses a layered resiliency approach based on:
 
-The design focuses on:
+* Queue-based buffering
+* Automatic retries
+* Controlled regional failover
+* Recovery workflows
+* Monitoring and operational visibility
+* Duplicate prevention controls
 
-* Protecting completed transfers
-* Preventing duplicate delivery
-* Recovering in-flight processing safely
-* Limiting operational risk during failover
-* Providing clear operational visibility
-
-Most transient failures recover automatically through retries and queue-based processing. Larger failures such as regional outages are handled through controlled operational failover procedures designed to maintain processing integrity and minimize customer impact.
+Most temporary failures recover automatically through retries and queue-based processing. Larger outages are handled through controlled operational failover procedures designed to minimize customer impact and maintain processing integrity.
