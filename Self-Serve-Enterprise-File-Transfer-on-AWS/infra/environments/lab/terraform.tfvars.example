@@ -1,0 +1,16 @@
+aws_region             = "us-west-2"
+project                = "baylearn-mft"
+environment            = "lab"
+force_destroy          = true
+enable_transfer_family = true
+enable_connector       = true
+partner_id             = "demo"
+inbound_username       = "partner-demo"
+admin_email            = "you@example.com"
+admin_password         = "ChangeMe1!"
+
+# Lab 9 — ECS Fargate large file worker (pay per task; no always-on ECS service)
+enable_ecs_worker      = true
+ecs_task_cpu           = "1024"
+ecs_task_memory        = "2048"
+# skip_ecs_image_build = false   # set true if image already in ECR

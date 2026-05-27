@@ -1,0 +1,173 @@
+{
+  "schema_version": "1.0",
+  "course": {
+    "id": "baylearn-mft-aws-001",
+    "title": "Self-Serve Enterprise File Transfer on AWS",
+    "provider": "BayAreaLa8s",
+    "academy": "BayLearn",
+    "version": "1.0.0",
+    "duration_weeks": 8,
+    "effort_hours_min": 48,
+    "effort_hours_max": 64,
+    "level": "intermediate",
+    "language": "en-US",
+    "passing_grade_percent": 80,
+    "capstone_min_percent": 70,
+    "certificate": "BayLearn Certificate of Completion: Enterprise File Transfer on AWS",
+    "master_document": "COURSE.md",
+    "tags": [
+      "AWS",
+      "Transfer Family",
+      "SFTP",
+      "MFT",
+      "S3",
+      "Step Functions",
+      "Serverless",
+      "Enterprise Integration"
+    ]
+  },
+  "gradebook": {
+    "labs_weight_percent": 40,
+    "quizzes_weight_percent": 15,
+    "participation_weight_percent": 10,
+    "capstone_weight_percent": 35,
+    "columns": [
+      { "id": "lab01", "title": "Lab 1: Transfer Family SFTP", "weight_percent": 5.71, "max_points": 10 },
+      { "id": "lab02", "title": "Lab 2: Security Hardening", "weight_percent": 5.71, "max_points": 10 },
+      { "id": "lab03", "title": "Lab 3: S3 Event Processor", "weight_percent": 5.71, "max_points": 10 },
+      { "id": "lab04", "title": "Lab 4: Step Functions", "weight_percent": 5.71, "max_points": 10 },
+      { "id": "lab05", "title": "Lab 5: SFTP Connector", "weight_percent": 5.71, "max_points": 10 },
+      { "id": "lab06", "title": "Lab 6: Self-Serve API", "weight_percent": 5.71, "max_points": 10 },
+      { "id": "lab07", "title": "Lab 7: Observability", "weight_percent": 5.74, "max_points": 10 },
+      { "id": "quiz01", "title": "Quiz Week 1", "weight_percent": 2.5, "max_points": 100 },
+      { "id": "quiz02", "title": "Quiz Week 2", "weight_percent": 2.5, "max_points": 100 },
+      { "id": "quiz03", "title": "Quiz Week 3", "weight_percent": 2.5, "max_points": 100 },
+      { "id": "quiz04", "title": "Quiz Week 4", "weight_percent": 2.5, "max_points": 100 },
+      { "id": "quiz05", "title": "Quiz Week 5", "weight_percent": 2.5, "max_points": 100 },
+      { "id": "quiz06", "title": "Quiz Week 6", "weight_percent": 2.5, "max_points": 100 },
+      { "id": "participation", "title": "Participation", "weight_percent": 10, "max_points": 100 },
+      { "id": "capstone", "title": "Capstone Project", "weight_percent": 35, "max_points": 100 }
+    ]
+  },
+  "modules": [
+    {
+      "week": 1,
+      "id": "mod-week-01",
+      "title": "Enterprise MFT on AWS",
+      "syllabus": "docs/syllabus/week-01.md",
+      "content": "docs/modules/week-01.md",
+      "lab": "docs/labs/lab-01-transfer-family-sftp.md",
+      "quiz": true,
+      "deliverable": "Architecture diagram + SFTP upload proof"
+    },
+    {
+      "week": 2,
+      "id": "mod-week-02",
+      "title": "Security, Encryption & Governance",
+      "syllabus": "docs/syllabus/week-02.md",
+      "content": "docs/modules/week-02.md",
+      "lab": "docs/labs/lab-02-security-hardening.md",
+      "quiz": true,
+      "deliverable": "Security baseline checklist"
+    },
+    {
+      "week": 3,
+      "id": "mod-week-03",
+      "title": "Event-Driven Automation",
+      "syllabus": "docs/syllabus/week-03.md",
+      "content": "docs/modules/week-03.md",
+      "lab": "docs/labs/lab-03-s3-event-processor.md",
+      "quiz": true,
+      "deliverable": "Lambda processor + logs"
+    },
+    {
+      "week": 4,
+      "id": "mod-week-04",
+      "title": "Workflow Orchestration",
+      "syllabus": "docs/syllabus/week-04.md",
+      "content": "docs/modules/week-04.md",
+      "lab": "docs/labs/lab-04-step-functions-workflow.md",
+      "quiz": true,
+      "deliverable": "Step Functions ASL + execution proof"
+    },
+    {
+      "week": 5,
+      "id": "mod-week-05",
+      "title": "Connectors & Partner Routing",
+      "syllabus": "docs/syllabus/week-05.md",
+      "content": "docs/modules/week-05.md",
+      "lab": "docs/labs/lab-05-sftp-connector.md",
+      "quiz": true,
+      "deliverable": "Partner matrix + connector demo"
+    },
+    {
+      "week": 6,
+      "id": "mod-week-06",
+      "title": "Self-Serve Platform Experience",
+      "syllabus": "docs/syllabus/week-06.md",
+      "content": "docs/modules/week-06.md",
+      "lab": "docs/labs/lab-06-self-serve-api.md",
+      "quiz": true,
+      "deliverable": "OpenAPI + Postman or UI demo"
+    },
+    {
+      "week": 7,
+      "id": "mod-week-07",
+      "title": "Operations, Reliability & Cost",
+      "syllabus": "docs/syllabus/week-07.md",
+      "content": "docs/modules/week-07.md",
+      "lab": "docs/labs/lab-07-observability.md",
+      "quiz": false,
+      "deliverable": "Operations runbook v0.1"
+    },
+    {
+      "week": 8,
+      "id": "mod-week-08",
+      "title": "Capstone Delivery & Review",
+      "syllabus": "docs/syllabus/week-08.md",
+      "content": "docs/modules/week-08.md",
+      "lab": "docs/labs/lab-08-capstone-integration.md",
+      "quiz": false,
+      "deliverable": "Capstone package",
+      "capstone": "docs/capstone.md"
+    },
+    {
+      "week": 9,
+      "id": "mod-week-09",
+      "title": "ECS Fargate Large File Transfers (Stretch)",
+      "syllabus": "docs/syllabus/week-09.md",
+      "content": "docs/modules/week-09-ecs-fargate.md",
+      "lab": "docs/labs/lab-09-ecs-fargate-large-files.md",
+      "quiz": false,
+      "stretch": true,
+      "deliverable": "Fargate manifest + architecture note",
+      "terraform_scripts": ["scripts/build_ecs_worker.sh", "scripts/demo_ecs_large_file.sh"]
+    }
+  ],
+  "resources": {
+    "modules_index": "docs/modules/README.md",
+    "quizzes_index": "docs/quizzes/README.md",
+    "quizzes_full_bank": "docs/quizzes/full-bank-with-answers.md",
+    "technologies": "docs/technologies.md",
+    "career_outcomes": "docs/career-outcomes.md",
+    "assessment": "docs/assessment.md",
+    "brochure": "marketing/brochure-one-pager.md",
+    "proposal": "marketing/enterprise-training-proposal.md",
+    "listing": "marketing/baylearn-academy-listing.md",
+    "pricing": "marketing/contact-and-pricing.md"
+  },
+  "import_hints": {
+    "format": "Markdown modules; map each file to LMS 'Page' or 'SCORM wrapper' as needed",
+    "submission_folders": [
+      "submissions/week-01",
+      "submissions/week-02",
+      "submissions/week-03",
+      "submissions/week-04",
+      "submissions/week-05",
+      "submissions/week-06",
+      "submissions/week-07",
+      "submissions/capstone",
+      "submissions/lab-09"
+    ]
+  }
+}

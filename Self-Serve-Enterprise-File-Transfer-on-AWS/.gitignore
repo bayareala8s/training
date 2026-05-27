@@ -1,0 +1,38 @@
+# Learner submissions (keep structure via .gitkeep)
+submissions/**/*
+!submissions/**/.gitkeep
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# AWS / Terraform
+infra/environments/lab/.build/
+.terraform/
+*.tfstate
+*.tfstate.*
+.demo/
+.lab/
+.venv/
+terraform.tfvars
+!terraform.tfvars.example
+!**/terraform.tfvars.example
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python / Node artifacts
+.pytest_cache/
+htmlcov/
+.coverage
+__pycache__/
+node_modules/
+dist/
+*.zip

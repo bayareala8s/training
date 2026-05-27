@@ -1,0 +1,66 @@
+{
+  "Comment": "BayLearn MFT Lab 4 workflow",
+  "StartAt": "ValidateFile",
+  "States": {
+    "ValidateFile": {
+      "Type": "Task",
+      "Resource": "${validate_lambda_arn}",
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.TooManyRequestsException", "Lambda.AWSLambdaException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "NotifyFailure"
+        }
+      ],
+      "Next": "CheckValid"
+    },
+    "CheckValid": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.valid",
+          "BooleanEquals": true,
+          "Next": "CopyToProcessing"
+        }
+      ],
+      "Default": "NotifyFailure"
+    },
+    "CopyToProcessing": {
+      "Type": "Task",
+      "Resource": "${copy_lambda_arn}",
+      "Next": "NotifySuccess"
+    },
+    "NotifySuccess": {
+      "Type": "Task",
+      "Resource": "${notify_success_lambda_arn}",
+      "Parameters": {
+        "valid": true,
+        "bucket.$": "$.bucket",
+        "key.$": "$.key",
+        "correlation_id.$": "$.correlation_id",
+        "dest_key.$": "$.dest_key"
+      },
+      "End": true
+    },
+    "NotifyFailure": {
+      "Type": "Task",
+      "Resource": "${notify_failure_lambda_arn}",
+      "Parameters": {
+        "valid": false,
+        "bucket.$": "$.bucket",
+        "key.$": "$.key",
+        "correlation_id.$": "$.correlation_id",
+        "error.$": "$.error"
+      },
+      "End": true
+    }
+  }
+}
