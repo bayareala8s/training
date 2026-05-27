@@ -2,7 +2,8 @@
 
 **Week 2 · Instructional module (full content)**  
 **Time:** 2.5–3 hours instruction + 3 hours lab  
-**Lab:** [Lab 2 — Security hardening](../labs/lab-02-security-hardening.md)
+**Lab:** [Lab 2 — Security hardening](../labs/lab-02-security-hardening.md)  
+**AWS stencil diagrams:** [Module 2 diagrams](../diagrams/week-02.md) · [draw.io](../diagrams/week-02-security-governance.drawio)
 
 ---
 

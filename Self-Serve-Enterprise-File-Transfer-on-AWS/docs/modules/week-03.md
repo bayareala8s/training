@@ -2,7 +2,8 @@
 
 **Week 3 · Instructional module (full content)**  
 **Time:** 2.5–3 hours instruction + 4 hours lab  
-**Lab:** [Lab 3 — S3 event processor](../labs/lab-03-s3-event-processor.md)
+**Lab:** [Lab 3 — S3 event processor](../labs/lab-03-s3-event-processor.md)  
+**AWS stencil diagrams:** [Module 3 diagrams](../diagrams/week-03.md) · [draw.io](../diagrams/week-03-event-driven.drawio)
 
 ---
 

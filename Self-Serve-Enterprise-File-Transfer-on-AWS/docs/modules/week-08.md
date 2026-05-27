@@ -3,7 +3,8 @@
 **Week 8 · Instructional module (full content)**  
 **Time:** 2 hours instruction + 8+ hours capstone + presentations  
 **Lab:** [Lab 8 — Capstone integration](../labs/lab-08-capstone-integration.md)  
-**Capstone brief:** [../capstone.md](../capstone.md)
+**Capstone brief:** [../capstone.md](../capstone.md)  
+**AWS stencil diagrams:** [Module 8 diagrams](../diagrams/week-08.md) · [draw.io](../diagrams/week-08-capstone-platform.drawio) · [full lab stack](../diagrams/lab-stack-reference.drawio)
 
 ---
 

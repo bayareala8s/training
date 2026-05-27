@@ -154,7 +154,9 @@
     "brochure": "marketing/brochure-one-pager.md",
     "proposal": "marketing/enterprise-training-proposal.md",
     "listing": "marketing/baylearn-academy-listing.md",
-    "pricing": "marketing/contact-and-pricing.md"
+    "pricing": "marketing/contact-and-pricing.md",
+    "diagrams_index": "docs/diagrams/README.md",
+    "lab_stack_diagram": "docs/diagrams/lab-stack-reference.drawio"
   },
   "import_hints": {
     "format": "Markdown modules; map each file to LMS 'Page' or 'SCORM wrapper' as needed",

@@ -2,7 +2,8 @@
 
 **Week 5 · Instructional module (full content)**  
 **Time:** 2.5–3 hours instruction + 4 hours lab  
-**Lab:** [Lab 5 — SFTP connector](../labs/lab-05-sftp-connector.md)
+**Lab:** [Lab 5 — SFTP connector](../labs/lab-05-sftp-connector.md)  
+**AWS stencil diagrams:** [Module 5 diagrams](../diagrams/week-05.md) · [draw.io](../diagrams/week-05-connectors.drawio)
 
 ---
 

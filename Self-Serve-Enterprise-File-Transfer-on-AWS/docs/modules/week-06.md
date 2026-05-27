@@ -2,7 +2,8 @@
 
 **Week 6 · Instructional module (full content)**  
 **Time:** 3 hours instruction + 5 hours lab  
-**Lab:** [Lab 6 — Self-serve API](../labs/lab-06-self-serve-api.md)
+**Lab:** [Lab 6 — Self-serve API](../labs/lab-06-self-serve-api.md)  
+**AWS stencil diagrams:** [Module 6 diagrams](../diagrams/week-06.md) · [draw.io](../diagrams/week-06-self-serve-api.drawio)
 
 ---
 

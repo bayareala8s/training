@@ -2,7 +2,8 @@
 
 **Week 1 · Instructional module (full content)**  
 **Time:** 2.5–3 hours instruction + 3 hours lab  
-**Lab:** [Lab 1 — Transfer Family SFTP](../labs/lab-01-transfer-family-sftp.md)
+**Lab:** [Lab 1 — Transfer Family SFTP](../labs/lab-01-transfer-family-sftp.md)  
+**AWS stencil diagrams:** [Module 1 diagrams](../diagrams/week-01.md) · [draw.io](../diagrams/week-01-transfer-edge.drawio)
 
 ---
 

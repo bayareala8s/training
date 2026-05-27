@@ -2,7 +2,8 @@
 
 **Week 4 · Instructional module (full content)**  
 **Time:** 2.5–3 hours instruction + 4 hours lab  
-**Lab:** [Lab 4 — Step Functions workflow](../labs/lab-04-step-functions-workflow.md)
+**Lab:** [Lab 4 — Step Functions workflow](../labs/lab-04-step-functions-workflow.md)  
+**AWS stencil diagrams:** [Module 4 diagrams](../diagrams/week-04.md) · [draw.io](../diagrams/week-04-step-functions.drawio)
 
 ---
 

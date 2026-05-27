@@ -2,7 +2,8 @@
 
 **Week 7 · Instructional module (full content)**  
 **Time:** 2.5 hours instruction + 3 hours lab  
-**Lab:** [Lab 7 — Observability](../labs/lab-07-observability.md)
+**Lab:** [Lab 7 — Observability](../labs/lab-07-observability.md)  
+**AWS stencil diagrams:** [Module 7 diagrams](../diagrams/week-07.md) · [draw.io](../diagrams/week-07-observability.drawio)
 
 ---
 

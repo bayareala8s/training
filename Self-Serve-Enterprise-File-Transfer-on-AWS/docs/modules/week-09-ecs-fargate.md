@@ -1,6 +1,7 @@
 # Module 9 — ECS Fargate for large file transfers
 
-**Stretch module · Lab 9 · 2–2.5 hours instruction**
+**Stretch module · Lab 9 · 2–2.5 hours instruction**  
+**AWS stencil diagrams:** [Module 9 diagrams](../diagrams/week-09.md) · [draw.io](../diagrams/week-09-ecs-fargate.drawio)
 
 ---
 
