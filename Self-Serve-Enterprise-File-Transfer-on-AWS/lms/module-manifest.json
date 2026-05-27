@@ -156,7 +156,9 @@
     "listing": "marketing/baylearn-academy-listing.md",
     "pricing": "marketing/contact-and-pricing.md",
     "diagrams_index": "docs/diagrams/README.md",
-    "lab_stack_diagram": "docs/diagrams/lab-stack-reference.drawio"
+    "diagrams_export": "docs/diagrams/export/README.md",
+    "lab_stack_diagram": "docs/diagrams/lab-stack-reference.drawio",
+    "lab_stack_diagram_png": "docs/diagrams/export/png/drawio/lab-stack-reference.png"
   },
   "import_hints": {
     "format": "Markdown modules; map each file to LMS 'Page' or 'SCORM wrapper' as needed",

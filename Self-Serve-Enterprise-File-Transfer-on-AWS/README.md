@@ -18,7 +18,7 @@
 |------|---------|
 | [`COURSE.md`](COURSE.md) | **Master curriculum** — overview, outcomes, use cases, full syllabus, assessments, career outcomes, tech stack, BayAreaLa8s positioning |
 | [`docs/modules/`](docs/modules/) | **Full instructional content** per week (lectures, diagrams, examples, case studies, knowledge checks) |
-| [`docs/diagrams/`](docs/diagrams/) | **AWS stencil diagrams** per module (Mermaid + draw.io) |
+| [`docs/diagrams/`](docs/diagrams/) | **AWS stencil diagrams** per module (Mermaid + draw.io + [PNG/SVG exports](docs/diagrams/export/)) |
 | [`docs/syllabus/`](docs/syllabus/) | Week-by-week syllabus index (links to modules + labs) |
 | [`docs/labs/`](docs/labs/) | Hands-on lab instructions and deliverables |
 | [`docs/quizzes/`](docs/quizzes/) | **72 quiz questions** (weeks 1–6) with answer keys |
