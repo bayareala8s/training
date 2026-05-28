@@ -1,5 +1,5 @@
-bucket         = "YOUR-STATE-BUCKET"
-key            = "environments/dev/terraform.tfstate"
+bucket         = "bayareala8s-terraform-state"
+key            = "terraform-enterprise/environments/dev/terraform.tfstate"
 region         = "us-west-2"
-dynamodb_table = "bayareala8s-tf-course-jdoe-locks"
+dynamodb_table = "terraform-locks"
 encrypt        = true

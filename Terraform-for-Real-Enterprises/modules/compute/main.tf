@@ -10,7 +10,7 @@ data "aws_ami" "amazon_linux" {
 
 resource "aws_security_group" "lab" {
   name        = "${var.name_prefix}-lab-sg"
-  description = "Lab compute SG — SSH from your IP in production"
+  description = "Lab compute security group for course environments"
   vpc_id      = data.aws_subnet.selected.vpc_id
 
   egress {

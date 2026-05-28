@@ -3,7 +3,7 @@
 # Usage: ./stop-lab.sh [--ec2-only|--rds-only|--all]
 # Requires: AWS CLI, credentials, resources tagged Course=terraform-enterprise
 
-set -euo pipefail
+set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=config.sh
 source "${SCRIPT_DIR}/config.sh"

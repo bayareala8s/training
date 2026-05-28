@@ -153,8 +153,8 @@ resource "aws_route_table" "private" {
   dynamic "route" {
     for_each = var.use_nat_instance && !var.enable_nat_gateway ? [1] : []
     content {
-      cidr_block  = "0.0.0.0/0"
-      instance_id = aws_instance.nat[0].id
+      cidr_block           = "0.0.0.0/0"
+      network_interface_id = aws_instance.nat[0].primary_network_interface_id
     }
   }
 

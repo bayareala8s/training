@@ -54,3 +54,11 @@ lab-stop:
 lab-status:
 	chmod +x $(AWS_SCRIPTS)/*.sh 2>/dev/null || true
 	$(AWS_SCRIPTS)/status-lab.sh
+
+lab-verify:
+	chmod +x $(AWS_SCRIPTS)/*.sh $(AWS_SCRIPTS)/verify-labs.sh 2>/dev/null || true
+	$(AWS_SCRIPTS)/verify-labs.sh validate
+
+lab-teardown:
+	chmod +x $(AWS_SCRIPTS)/*.sh $(AWS_SCRIPTS)/teardown-all.sh 2>/dev/null || true
+	$(AWS_SCRIPTS)/teardown-all.sh

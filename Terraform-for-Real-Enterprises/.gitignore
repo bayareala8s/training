@@ -15,6 +15,9 @@ terraform.rc
 # Secrets and local config
 *.tfvars
 !*.tfvars.example
+labs/shared/environments/*/backend.hcl
+labs/shared/environments/*/.terraform/
+labs/shared/environments/*/.terraform.lock.hcl
 .env
 .env.*
 *.pem

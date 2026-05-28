@@ -67,10 +67,28 @@ AWS_REGION=us-east-1 ./start-lab.sh
 
 For weekends, run `terraform destroy` in `labs/shared/environments/dev` or use `destroy-lab-sandbox.sh`.
 
+## Verify labs on AWS (instructors)
+
+```bash
+# Requires backend.hcl + terraform.tfvars in labs/shared/environments/dev
+export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc  # if registry fails: ./install-provider.sh
+./scripts/aws/verify-labs.sh all      # validate, apply, test start/stop, teardown
+./scripts/aws/teardown-all.sh         # destroy dev + stop instances (minimize cost)
+```
+
 ## Makefile (repo root)
 
 ```bash
 make lab-start
 make lab-stop
 make lab-status
+make lab-verify
+make lab-teardown
+```
+
+## Provider install (if terraform init cannot reach registry)
+
+```bash
+./scripts/aws/install-provider.sh 5.90.0
+export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc
 ```

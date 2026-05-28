@@ -24,7 +24,7 @@ ecs_scale_lab_services() {
         log INFO "ECS: scaling $cluster/$svc desiredCount=$desired"
         run_cmd aws ecs update-service --region "$AWS_REGION" \
           --cluster "$cluster" --service "$svc" --desired-count "$desired" \
-          --no-cli-pager >/dev/null
+          --no-cli-pager >/dev/null 2>&1 || log INFO "ECS: update skipped for $svc"
       fi
     done
   done

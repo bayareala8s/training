@@ -2,7 +2,7 @@
 # Start lab AWS resources before a session.
 # Usage: ./start-lab.sh [--ec2-only|--rds-only|--all]
 
-set -euo pipefail
+set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/config.sh"
 
