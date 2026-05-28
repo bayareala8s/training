@@ -1,5 +1,7 @@
 # Week 1 – Enterprise Infrastructure as Code Foundations
 
+> **Full module:** [course-modules/week-01](../../course-modules/week-01/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Learning Objectives
 
 - Explain why enterprises adopt Terraform and how it differs from CloudFormation

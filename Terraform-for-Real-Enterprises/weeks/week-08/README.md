@@ -1,5 +1,7 @@
 # Week 8 – Capstone Preparation & Presentation
 
+> **Full module:** [course-modules/week-08](../../course-modules/week-08/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Focus
 
 Finalize capstone selection, integrate weeks 1–7 artifacts, and prepare demo.

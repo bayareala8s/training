@@ -78,11 +78,20 @@ Monitoring / Audit / Security
 
 ---
 
+## Course modules (full curriculum)
+
+**Complete professional modules** — detailed lectures, case studies, assignments, quizzes, and instructor notes for all 8 weeks:
+
+**[course-modules/](course-modules/README.md)** ← start here for full module content
+
+Each week includes: learning objectives · 2,500+ word lecture · enterprise scenarios · detailed labs · graded assignment · knowledge check · glossary
+
 ## Repository Layout
 
 ```text
 .
 ├── README.md
+├── course-modules/           # Complete 8-week module content (lectures, assignments, quizzes)
 ├── Makefile                  # bootstrap, plan, apply, lab-start/stop
 ├── labs/
 │   ├── README.md             # Lab index

@@ -1,5 +1,7 @@
 # Week 7 – Security, Compliance & Governance as Code
 
+> **Full module:** [course-modules/week-07](../../course-modules/week-07/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Learning Objectives
 
 - Apply IAM least privilege for Terraform runners and created resources

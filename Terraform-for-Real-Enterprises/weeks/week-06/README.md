@@ -1,5 +1,7 @@
 # Week 6 – Rollback, Recovery & Disaster Recovery
 
+> **Full module:** [course-modules/week-06](../../course-modules/week-06/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Learning Objectives
 
 - Recover from failed applies and corrupted or divergent state

@@ -1,5 +1,7 @@
 # Week 4 – CI/CD Pipelines for Terraform
 
+> **Full module:** [course-modules/week-04](../../course-modules/week-04/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Learning Objectives
 
 - Implement GitOps-style plan on PR, apply on merge (with approval gates)

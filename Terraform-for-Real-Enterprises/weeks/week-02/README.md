@@ -1,5 +1,7 @@
 # Week 2 – AWS Multi-Account Architecture
 
+> **Full module:** [course-modules/week-02](../../course-modules/week-02/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Learning Objectives
 
 - Design dev/test/prod (or similar) account separation with Organizations

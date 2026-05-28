@@ -1,5 +1,7 @@
 # Week 3 – Terraform Modules (Enterprise Design)
 
+> **Full module:** [course-modules/week-03](../../course-modules/week-03/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Learning Objectives
 
 - Design modules with clear inputs, outputs, and contracts

@@ -26,7 +26,7 @@
 - Remote backend configuration
 - Baseline infrastructure deployment
 
-**Materials:** [weeks/week-01](../weeks/week-01)
+**Materials:** [course-modules/week-01](../course-modules/week-01/) · [weeks/week-01](../weeks/week-01)
 
 ---
 
@@ -50,7 +50,7 @@
 - Multi-account architecture design
 - Cross-account Terraform workflows
 
-**Materials:** [weeks/week-02](../weeks/week-02)
+**Materials:** [course-modules/week-02](../course-modules/week-02/) · [weeks/week-02](../weeks/week-02)
 
 ---
 
@@ -75,7 +75,7 @@
 - Production-grade Terraform modules
 - Module documentation
 
-**Materials:** [weeks/week-03](../weeks/week-03)
+**Materials:** [course-modules/week-03](../course-modules/week-03/) · [weeks/week-03](../weeks/week-03)
 
 ---
 
@@ -100,7 +100,7 @@
 - Terraform CI/CD pipeline
 - Automated deployment workflow
 
-**Materials:** [weeks/week-04](../weeks/week-04)
+**Materials:** [course-modules/week-04](../course-modules/week-04/) · [weeks/week-04](../weeks/week-04)
 
 ---
 
@@ -124,7 +124,7 @@
 - Environment promotion workflow
 - Drift remediation report
 
-**Materials:** [weeks/week-05](../weeks/week-05)
+**Materials:** [course-modules/week-05](../course-modules/week-05/) · [weeks/week-05](../weeks/week-05)
 
 ---
 
@@ -149,7 +149,7 @@
 - Rollback automation workflow
 - Recovery procedure documentation
 
-**Materials:** [weeks/week-06](../weeks/week-06)
+**Materials:** [course-modules/week-06](../course-modules/week-06/) · [weeks/week-06](../weeks/week-06)
 
 ---
 
@@ -174,7 +174,7 @@
 - Governance policies
 - Security validation report
 
-**Materials:** [weeks/week-07](../weeks/week-07)
+**Materials:** [course-modules/week-07](../course-modules/week-07/) · [weeks/week-07](../weeks/week-07)
 
 ---
 
@@ -196,7 +196,7 @@ Choose one track (details in [capstone](../capstone/README.md)):
 - Security review
 - Final presentation / demo
 
-**Materials:** [capstone](../capstone)
+**Materials:** [course-modules/week-08](../course-modules/week-08/) · [capstone](../capstone)
 
 ---
 

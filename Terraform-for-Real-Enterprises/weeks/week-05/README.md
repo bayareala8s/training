@@ -1,5 +1,7 @@
 # Week 5 – Environment Promotion & Drift Detection
 
+> **Full module:** [course-modules/week-05](../../course-modules/week-05/) — detailed lecture, assignment, quiz, instructor notes
+
 ## Learning Objectives
 
 - Promote the same module/config across dev → test → prod with environment-specific vars
