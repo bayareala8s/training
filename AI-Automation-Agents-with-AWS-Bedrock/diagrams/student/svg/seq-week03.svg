@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="900" viewBox="0 0 1700 900">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 3 — Request Sequence (Classify → Validate → Route)</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">Follow one request through the decision engine — time flows left to right</text>
+<rect x="40.0" y="176.0" width="1620.0" height="420.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="50.0" y="198.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">TIME →</text>
+<rect x="40.0" y="78.0" width="1520.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Trace a single ticket through classify, JSON validation, confidence gate, and routing — including what happens when validation fails.</text>
+<rect x="80.0" y="520.0" width="340.0" height="110.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="90.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Expected output:</text>
+<text x="90.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">{</text>
+<text x="90.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;label&amp;quot;: &amp;quot;billing&amp;quot;,</text>
+<text x="90.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;confidence&amp;quot;: 0.91,</text>
+<text x="90.0" y="598.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;route&amp;quot;: &amp;quot;team_billing&amp;quot;,</text>
+<text x="90.0" y="612.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;reason&amp;quot;: &amp;quot;invoice keyword&amp;quot;</text>
+<text x="90.0" y="626.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">}</text>
+<rect x="460.0" y="520.0" width="320.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="470.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="470.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Run: pytest tests/test_validation.py</text>
+<text x="470.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">before deploying.</text>
+<rect x="820.0" y="520.0" width="360.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="830.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="830.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Non-JSON or invalid schema → deterministic fallback, never crash.</text>
+<rect x="80.0" y="660.0" width="720.0" height="90.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="90.0" y="682.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">6 FAILURE MODES TO TEST</text>
+<text x="90.0" y="696.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">① Non-JSON text  ② Missing keys  ③ Wrong enum</text>
+<text x="90.0" y="710.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">④ confidence out of range  ⑤ reason too long  ⑥ Low confidence</text>
+<circle cx="274.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="274.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">1</text>
+<circle cx="474.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="474.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">2</text>
+<circle cx="674.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="674.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">3</text>
+<circle cx="874.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="874.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">4</text>
+<circle cx="1074.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="1074.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">5</text>
+<rect x="80.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="116.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">Request</text>
+<text x="116.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">{&amp;quot;text&amp;quot;:&amp;quot;...&amp;quot;}</text>
+<rect x="320.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="356.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">Classify</text>
+<text x="356.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">Bedrock invoke</text>
+<rect x="520.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="556.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">Bedrock</text>
+<text x="556.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">JSON output</text>
+<rect x="720.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="756.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">Validator</text>
+<text x="756.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">schema check</text>
+<rect x="920.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="956.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">Gate</text>
+<text x="956.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">confidence ≥ 0.7?</text>
+<rect x="1120.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="1156.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">Route</text>
+<text x="1156.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">team assignment</text>
+<rect x="1120.0" y="420.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="1156.0" y="506.0" text-anchor="middle" font-size="9" fill="#232F3E">Fallback</text>
+<text x="1156.0" y="518.0" text-anchor="middle" font-size="9" fill="#232F3E">human review</text>
+<line x1="116.0" y1="296.0" x2="356.0" y2="296.0" stroke="#232F3E" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="236.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">①</text>
+<line x1="356.0" y1="296.0" x2="556.0" y2="296.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="456.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">② invoke</text>
+<line x1="556.0" y1="296.0" x2="756.0" y2="296.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="656.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">③ raw JSON</text>
+<line x1="756.0" y1="296.0" x2="956.0" y2="296.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="856.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">④ if valid</text>
+<line x1="956.0" y1="296.0" x2="1156.0" y2="296.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="1056.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">⑤ high conf.</text>
+<line x1="756.0" y1="296.0" x2="1156.0" y2="456.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="956.0" y="368.0" text-anchor="middle" font-size="9" fill="#DD3522">invalid JSON</text>
+<line x1="956.0" y1="296.0" x2="1156.0" y2="456.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="1056.0" y="368.0" text-anchor="middle" font-size="9" fill="#DD3522">low conf.</text>
+<text x="40" y="884" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

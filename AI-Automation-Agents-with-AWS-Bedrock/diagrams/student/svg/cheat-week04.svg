@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 4 — Step Functions Cheat Sheet</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">States, retry config, and catch patterns for your state machine</text>
+<rect x="40.0" y="78.0" width="1420.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Use while editing workflow.asl.json and running failure injection.</text>
+<rect x="40.0" y="160.0" width="440.0" height="160.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="50.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">STATE ORDER</text>
+<text x="50.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">1. ClassifyTask     (Lambda invoke)</text>
+<text x="50.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">2. ValidateTask     (Lambda invoke)</text>
+<text x="50.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">3. PersistTask       (Lambda invoke)</text>
+<text x="50.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">4. Success           (Succeed)</text>
+<text x="50.0" y="252.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="50.0" y="266.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Catch branches → FallbackTask → NeedsReview</text>
+<rect x="520.0" y="160.0" width="460.0" height="150.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="530.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">RETRY BLOCK (transient)</text>
+<text x="530.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">&amp;quot;ErrorEquals&amp;quot;: [&amp;quot;Lambda.TooManyRequestsException&amp;quot;,</text>
+<text x="530.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">                 &amp;quot;States.Timeout&amp;quot;, &amp;quot;Sandbox.Timedout&amp;quot;],</text>
+<text x="530.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">&amp;quot;IntervalSeconds&amp;quot;: 2,</text>
+<text x="530.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">&amp;quot;MaxAttempts&amp;quot;: 3,</text>
+<text x="530.0" y="252.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">&amp;quot;BackoffRate&amp;quot;: 2.0</text>
+<rect x="1020.0" y="160.0" width="440.0" height="120.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="1030.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">CATCH BLOCK (permanent)</text>
+<text x="1030.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">&amp;quot;ErrorEquals&amp;quot;: [&amp;quot;ValidationError&amp;quot;],</text>
+<text x="1030.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">&amp;quot;Next&amp;quot;: &amp;quot;FallbackTask&amp;quot;</text>
+<text x="1030.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF"></text>
+<text x="1030.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">ResultPath: $.error — preserve context</text>
+<rect x="40.0" y="360.0" width="440.0" height="100.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="50.0" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">IDEMPOTENCY</text>
+<text x="50.0" y="396.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Key = correlation_id from input</text>
+<text x="50.0" y="410.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• PutItem with condition OR overwrite same key</text>
+<text x="50.0" y="424.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Safe to replay failed executions</text>
+<rect x="520.0" y="360.0" width="460.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="530.0" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="530.0" y="396.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Run execution → copy ARN → share in assignment.</text>
+<text x="530.0" y="410.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Screenshot failure injection run.</text>
+<rect x="1020.0" y="360.0" width="440.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="1030.0" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="1030.0" y="396.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Test unhappy paths — graders want failure evidence.</text>
+<text x="40" y="884" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

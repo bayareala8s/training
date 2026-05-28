@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="cheat-week06" name="Week 6 — Logging &amp; Audit Cheat Sheet" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1500" pageHeight="900">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 6 — Logging &amp;amp; Audit Cheat Sheet" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1420" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="What to log, what to redact, and how to query audit records" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="focus" value="YOUR GOAL&amp;#10;Governance reference for audit pipeline and CloudWatch queries." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1420" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="log_yes" value="ALWAYS LOG&amp;#10;• correlation_id&amp;#10;• timestamp (ISO 8601)&amp;#10;• action / endpoint name&amp;#10;• model_id&amp;#10;• latency_ms&amp;#10;• outcome (success|validation_fail|error)&amp;#10;• route / label (non-PII)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="440" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="log_no" value="NEVER LOG&amp;#10;• Full prompt with PII&amp;#10;• API keys / tokens&amp;#10;• Passwords / SSN / account numbers&amp;#10;• Raw user text (use hash or truncate)&amp;#10;• Bedrock credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="160" width="440" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="query" value="QUERY AUDIT&amp;#10;python week06/query_audit.py &amp;lt;correlation_id&amp;gt;&amp;#10;&amp;#10;CloudWatch Logs Insights:&amp;#10;fields @timestamp, correlation_id, outcome&amp;#10;| filter correlation_id = 'req-001'" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="160" width="460" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="alarm" value="ALARMS TO WATCH&amp;#10;• Error rate &amp;gt; threshold&amp;#10;• Validation failure spike&amp;#10;• Bedrock throttling events" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="440" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="do_520_360" value="DO THIS&amp;#10;Find your correlation_id in verify.sh output.&amp;#10;Run query_audit.py before Week 6 assignment." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="360" width="440" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rem_1000_360" value="REMEMBER&amp;#10;Audit rows enable compliance — design them like a database schema." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="360" width="460" height="72" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

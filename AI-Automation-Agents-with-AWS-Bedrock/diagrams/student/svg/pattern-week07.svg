@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="800" viewBox="0 0 1500 800">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 7 — Anti-Pattern vs Production Pattern</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">Unlimited agent vs tool policy + memory bounds</text>
+<rect x="40.0" y="176.0" width="680.0" height="420.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="50.0" y="198.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">ANTI-PATTERN — Autonomous Agent</text>
+<rect x="780.0" y="176.0" width="680.0" height="420.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="790.0" y="198.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">PRODUCTION — Governed Agent</text>
+<rect x="40.0" y="78.0" width="1420.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Agents need boundaries — same as any production API.</text>
+<rect x="60.0" y="220.0" width="640.0" height="130.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="70.0" y="242.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Agent can call any URL, run any code, no memory limit</text>
+<text x="70.0" y="256.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="70.0" y="270.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Risks:</text>
+<text x="70.0" y="284.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Prompt injection → data exfil</text>
+<text x="70.0" y="298.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Runaway tool loops</text>
+<text x="70.0" y="312.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Unbounded DynamoDB growth</text>
+<text x="70.0" y="326.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• No audit of tool calls</text>
+<rect x="800.0" y="220.0" width="640.0" height="130.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="810.0" y="242.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Router + allowlisted tools + TTL memory + audit per turn</text>
+<text x="810.0" y="256.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="810.0" y="270.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Controls:</text>
+<text x="810.0" y="284.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• classify / route / summarize only</text>
+<text x="810.0" y="298.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Deny unknown tools</text>
+<text x="810.0" y="312.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Memory expires (TTL)</text>
+<text x="810.0" y="326.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• correlation_id per turn</text>
+<rect x="800.0" y="380.0" width="640.0" height="50.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="810.0" y="402.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Tool policy = IAM mindset for agents</text>
+<rect x="60.0" y="620.0" width="640.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="70.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="70.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">An agent is a router, not magic. Policy first.</text>
+<rect x="800.0" y="620.0" width="640.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="810.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="810.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">List allowed tools in README. Test denied tool request.</text>
+<text x="40" y="784" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

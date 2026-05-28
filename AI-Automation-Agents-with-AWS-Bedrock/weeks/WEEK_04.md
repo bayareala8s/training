@@ -49,6 +49,11 @@ By the end of Week 4, students can:
 
 Pair with the Step Functions execution graph during the failure-injection lab.
 
+### Student diagrams
+
+- **Sequence:** [seq-week04](../diagrams/student/png/seq-week04.png) — retry vs catch on one execution
+- **Cheat sheet:** [cheat-week04](../diagrams/student/png/cheat-week04.png) — states, retry/catch, idempotency
+
 ### Hands-on labs (students)
 
 Complete:

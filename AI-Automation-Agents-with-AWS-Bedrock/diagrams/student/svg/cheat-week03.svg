@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 3 — Student Cheat Sheet</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">Schema, validation rules, and confidence gate decision tree</text>
+<rect x="40.0" y="78.0" width="1420.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Quick reference while building Lab 3.1 and 3.2.</text>
+<rect x="40.0" y="160.0" width="420.0" height="130.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="50.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">REQUIRED SCHEMA</text>
+<text x="50.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">label     → enum (billing|incident|general)</text>
+<text x="50.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">confidence → float 0.0–1.0</text>
+<text x="50.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">route     → enum (team_billing|team_ops|team_general)</text>
+<text x="50.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">reason    → string, max 120 chars</text>
+<rect x="500.0" y="160.0" width="400.0" height="150.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="510.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">VALIDATOR CHECKS</text>
+<text x="510.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">☐ Valid JSON (strict parse)</text>
+<text x="510.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">☐ All required keys present</text>
+<text x="510.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">☐ Types match (str, float)</text>
+<text x="510.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">☐ Enums in allowed set</text>
+<text x="510.0" y="252.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">☐ confidence in [0, 1]</text>
+<text x="510.0" y="266.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">☐ reason length ≤ max</text>
+<rect x="940.0" y="160.0" width="520.0" height="150.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="950.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">CONFIDENCE GATE</text>
+<text x="950.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="950.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">        ┌─ confidence ≥ 0.7 ─→ auto-route</text>
+<text x="950.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">output ─┤</text>
+<text x="950.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">        ├─ 0.4 ≤ conf &lt; 0.7 ─→ route + flag review</text>
+<text x="950.0" y="252.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">        └─ confidence &lt; 0.4 ─→ deterministic fallback</text>
+<rect x="40.0" y="340.0" width="420.0" height="80.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="50.0" y="362.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DETERMINISTIC FALLBACK</text>
+<text x="50.0" y="376.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">label=general, route=team_general,</text>
+<text x="50.0" y="390.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">confidence=0.0, reason=validation_failed</text>
+<rect x="500.0" y="340.0" width="400.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="510.0" y="362.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="510.0" y="376.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Copy schema into your prompt.</text>
+<text x="510.0" y="390.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Write tests for all 6 failure modes first.</text>
+<rect x="940.0" y="340.0" width="520.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="950.0" y="362.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="950.0" y="376.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Validate AFTER Bedrock — never trust raw model output.</text>
+<text x="40" y="884" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

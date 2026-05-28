@@ -82,5 +82,10 @@ Rubric:
 
 Contrast the diagram's **tool policy** box with hype about "fully autonomous agents."
 
+### Student diagrams
+
+- **Sequence:** [seq-week07](../diagrams/student/png/seq-week07.png) — one agent turn with policy and memory
+- **Anti-pattern:** [pattern-week07](../diagrams/student/png/pattern-week07.png) — unlimited agent vs governed agent
+
 ### Expected artifacts (portfolio-ready)
 

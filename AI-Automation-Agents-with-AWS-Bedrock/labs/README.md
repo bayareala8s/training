@@ -67,6 +67,11 @@ PROJECT_PREFIX=ba-la8s-ai-yourname ./scripts/cycle.sh
 
 Stack outputs appear after deploy (`ApiEndpoint`, `StateMachineArn`, table names).
 
+### Student lab diagrams
+
+- **Deploy cycle:** [lab-deploy-cycle](../diagrams/student/png/lab-deploy-cycle.png) — what `cycle.sh` does
+- **Console checkpoints:** [lab-console-checkpoints](../diagrams/student/png/lab-console-checkpoints.png) — where to look after deploy
+
 ## Lab index
 
 | Week | Folder | Type |

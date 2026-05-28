@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="950" viewBox="0 0 1700 950">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 4 — Step Functions Execution Timeline</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">One workflow run: retries, catches, and idempotent persist</text>
+<rect x="40.0" y="176.0" width="780.0" height="380.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="50.0" y="198.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">HAPPY PATH</text>
+<rect x="860.0" y="176.0" width="800.0" height="380.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="870.0" y="198.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">FAILURE PATHS</text>
+<rect x="40.0" y="78.0" width="1520.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Understand when Step Functions retries vs catches, and why persist must be idempotent.</text>
+<rect x="80.0" y="580.0" width="360.0" height="110.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="90.0" y="602.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">RETRY when:</text>
+<text x="90.0" y="616.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Bedrock throttling</text>
+<text x="90.0" y="630.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Lambda timeout</text>
+<text x="90.0" y="644.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Transient network error</text>
+<text x="90.0" y="658.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="90.0" y="672.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Use exponential backoff, max 3 attempts</text>
+<rect x="480.0" y="580.0" width="360.0" height="110.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="490.0" y="602.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">CATCH when:</text>
+<text x="490.0" y="616.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Validation permanent fail</text>
+<text x="490.0" y="630.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Invalid enum / schema</text>
+<text x="490.0" y="644.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Business rule violation</text>
+<text x="490.0" y="658.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="490.0" y="672.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">→ deterministic fallback state</text>
+<rect x="880.0" y="580.0" width="400.0" height="90.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="890.0" y="602.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">IDEMPOTENCY KEY</text>
+<text x="890.0" y="616.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Use correlation_id as DynamoDB key.</text>
+<text x="890.0" y="630.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Replay safe — same input → same row, no duplicates.</text>
+<rect x="80.0" y="720.0" width="400.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="90.0" y="742.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="90.0" y="756.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Open Step Functions console → Executions.</text>
+<text x="90.0" y="770.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Inject failure in lab, screenshot run graph.</text>
+<rect x="520.0" y="720.0" width="420.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="530.0" y="742.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="530.0" y="756.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Retries ≠ catches. Retries fix transient; catches handle permanent failures.</text>
+<rect x="80.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="116.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Start</text>
+<rect x="240.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="276.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Classify</text>
+<rect x="400.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="436.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Validate</text>
+<rect x="560.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="596.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Persist</text>
+<rect x="720.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="756.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Success</text>
+<rect x="900.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="936.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Retry</text>
+<text x="936.0" y="338.0" text-anchor="middle" font-size="9" fill="#232F3E">backoff</text>
+<rect x="900.0" y="360.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="936.0" y="446.0" text-anchor="middle" font-size="9" fill="#232F3E">Catch</text>
+<text x="936.0" y="458.0" text-anchor="middle" font-size="9" fill="#232F3E">fallback</text>
+<rect x="1100.0" y="360.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="1136.0" y="446.0" text-anchor="middle" font-size="9" fill="#232F3E">Fallback</text>
+<rect x="1300.0" y="360.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="1336.0" y="446.0" text-anchor="middle" font-size="9" fill="#232F3E">Needs Review</text>
+<line x1="116.0" y1="276.0" x2="276.0" y2="276.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="196.0" y="268.0" text-anchor="middle" font-size="9" fill="#232F3E">①</text>
+<line x1="276.0" y1="276.0" x2="436.0" y2="276.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="356.0" y="268.0" text-anchor="middle" font-size="9" fill="#232F3E">②</text>
+<line x1="436.0" y1="276.0" x2="596.0" y2="276.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="516.0" y="268.0" text-anchor="middle" font-size="9" fill="#232F3E">③ valid</text>
+<line x1="596.0" y1="276.0" x2="756.0" y2="276.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="676.0" y="268.0" text-anchor="middle" font-size="9" fill="#232F3E">④</text>
+<line x1="276.0" y1="276.0" x2="936.0" y2="276.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="606.0" y="268.0" text-anchor="middle" font-size="9" fill="#DD3522">throttle/timeout</text>
+<line x1="936.0" y1="276.0" x2="276.0" y2="276.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="606.0" y="268.0" text-anchor="middle" font-size="9" fill="#232F3E">retry</text>
+<line x1="436.0" y1="276.0" x2="936.0" y2="396.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="686.0" y="328.0" text-anchor="middle" font-size="9" fill="#DD3522">schema fail</text>
+<line x1="936.0" y1="396.0" x2="1136.0" y2="396.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="1036.0" y="388.0" text-anchor="middle" font-size="9" fill="#232F3E">⑤</text>
+<line x1="1136.0" y1="396.0" x2="1336.0" y2="396.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="40" y="934" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

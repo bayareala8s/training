@@ -83,6 +83,12 @@ Rubric:
 
 Walk through all **6 failure modes** on the diagram before students start the validation lab.
 
+### Student diagrams
+
+- **Sequence:** [seq-week03](../diagrams/student/png/seq-week03.png) — one request through classify → validate → route
+- **Cheat sheet:** [cheat-week03](../diagrams/student/png/cheat-week03.png) — schema, validator, confidence gate
+- **Anti-pattern:** [pattern-week03](../diagrams/student/png/pattern-week03.png) — raw LLM vs production pattern
+
 ### Expected artifacts (portfolio-ready)
 - Documented fallback and confidence policy
 

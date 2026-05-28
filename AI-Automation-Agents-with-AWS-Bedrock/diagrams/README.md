@@ -62,6 +62,37 @@ Requires Python 3.10+ and `cairosvg` for PNG (`pip install cairosvg`).
 - **Week 4**: Use `05-week04` alongside the Step Functions console execution graph.
 - **Week 8**: Project `09-week08` during capstone kickoff; students pick one quadrant.
 
+---
+
+## Student diagrams (`student/`)
+
+Simpler, action-oriented views for learners — sequence flows, cheat sheets, lab guides, and anti-pattern comparisons. Pair with instructor diagrams above; do not replace them.
+
+| File | Type | Week | What it teaches |
+|------|------|------|-----------------|
+| `seq-week03` | Sequence | 3 | Classify → validate → route on one request |
+| `seq-week04` | Sequence | 4 | Step Functions timeline: retry vs catch |
+| `seq-week05` | Sequence | 5 | API request flow and HTTP status codes |
+| `seq-week07` | Sequence | 7 | Agent turn: router → policy → memory |
+| `cheat-week03` | Cheat sheet | 3 | Schema, validator checks, confidence gate |
+| `cheat-week04` | Cheat sheet | 4 | State order, retry/catch blocks, idempotency |
+| `cheat-week06` | Cheat sheet | 6 | Must log / never log / query audit |
+| `cheat-week08` | Cheat sheet | 8 | Capstone checklist + 5-min demo script |
+| `lab-deploy-cycle` | Lab guide | Labs | `cycle.sh` test → deploy → verify → teardown |
+| `lab-console-checkpoints` | Lab guide | Labs | 3 AWS console places after deploy |
+| `pattern-week03` | Anti-pattern | 3 | Raw LLM output vs validated automation |
+| `pattern-week06` | Anti-pattern | 6 | Log everything vs redacted audit |
+| `pattern-week07` | Anti-pattern | 7 | Unlimited agent vs tool policy |
+
+Student assets live in `student/drawio/`, `student/png/`, and `student/svg/`. See [`student/README.md`](student/README.md) for LMS handout links.
+
+Regenerate instructor + student formats:
+
+```bash
+cd diagrams
+./tools/export_all.sh
+```
+
 ## Licensing
 
 Course materials © BayAreaLa8s. AWS icons per [AWS Architecture Icons guidelines](https://aws.amazon.com/architecture/icons/).

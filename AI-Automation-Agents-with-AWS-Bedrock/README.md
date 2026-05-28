@@ -107,3 +107,5 @@ Runnable lab code and deployment instructions: [`labs/README.md`](labs/README.md
 
 AWS stencil diagrams (Draw.io, PNG, SVG) for all weeks: [`diagrams/README.md`](diagrams/README.md).
 
+Student-focused sequence flows, cheat sheets, and lab guides: [`diagrams/student/README.md`](diagrams/student/README.md).
+

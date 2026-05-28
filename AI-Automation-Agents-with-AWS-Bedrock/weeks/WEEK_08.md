@@ -64,6 +64,10 @@ Submit:
 
 Project during capstone kickoff — students pick one option and map to the **minimum bar**.
 
+### Student diagrams
+
+- **Cheat sheet:** [cheat-week08](../diagrams/student/png/cheat-week08.png) — minimum bar, deliverables, demo script
+
 ### Grading
 
 - See `CAPSTONE_HANDBOOK.md` → **Capstone grading rubric (30 points)**

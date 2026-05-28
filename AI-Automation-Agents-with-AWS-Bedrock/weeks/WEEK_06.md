@@ -82,5 +82,10 @@ Rubric:
 
 Review the **governance checklist** and **never log** boxes before the audit lab.
 
+### Student diagrams
+
+- **Cheat sheet:** [cheat-week06](../diagrams/student/png/cheat-week06.png) — must log / never log / query audit
+- **Anti-pattern:** [pattern-week06](../diagrams/student/png/pattern-week06.png) — log everything vs structured audit
+
 ### Expected artifacts (portfolio-ready)
 

@@ -87,5 +87,9 @@ Rubric:
 
 Use during live curl demos for `/classify`, `/summarize`, `/route`.
 
+### Student diagrams
+
+- **Sequence:** [seq-week05](../diagrams/student/png/seq-week05.png) — POST /classify request flow and status codes
+
 ### Expected artifacts (portfolio-ready)
 

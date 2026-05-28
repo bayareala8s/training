@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 6 — Logging &amp; Audit Cheat Sheet</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">What to log, what to redact, and how to query audit records</text>
+<rect x="40.0" y="78.0" width="1420.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Governance reference for audit pipeline and CloudWatch queries.</text>
+<rect x="40.0" y="160.0" width="440.0" height="150.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="50.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">ALWAYS LOG</text>
+<text x="50.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• correlation_id</text>
+<text x="50.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• timestamp (ISO 8601)</text>
+<text x="50.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• action / endpoint name</text>
+<text x="50.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• model_id</text>
+<text x="50.0" y="252.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• latency_ms</text>
+<text x="50.0" y="266.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• outcome (success|validation_fail|error)</text>
+<text x="50.0" y="280.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• route / label (non-PII)</text>
+<rect x="520.0" y="160.0" width="440.0" height="150.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="530.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">NEVER LOG</text>
+<text x="530.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Full prompt with PII</text>
+<text x="530.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• API keys / tokens</text>
+<text x="530.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Passwords / SSN / account numbers</text>
+<text x="530.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Raw user text (use hash or truncate)</text>
+<text x="530.0" y="252.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Bedrock credentials</text>
+<rect x="1000.0" y="160.0" width="460.0" height="130.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="1010.0" y="182.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">QUERY AUDIT</text>
+<text x="1010.0" y="196.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">python week06/query_audit.py &lt;correlation_id&gt;</text>
+<text x="1010.0" y="210.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF"></text>
+<text x="1010.0" y="224.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">CloudWatch Logs Insights:</text>
+<text x="1010.0" y="238.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">fields @timestamp, correlation_id, outcome</text>
+<text x="1010.0" y="252.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">| filter correlation_id = 'req-001'</text>
+<rect x="40.0" y="360.0" width="440.0" height="90.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="50.0" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">ALARMS TO WATCH</text>
+<text x="50.0" y="396.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Error rate &gt; threshold</text>
+<text x="50.0" y="410.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Validation failure spike</text>
+<text x="50.0" y="424.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Bedrock throttling events</text>
+<rect x="520.0" y="360.0" width="440.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="530.0" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="530.0" y="396.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Find your correlation_id in verify.sh output.</text>
+<text x="530.0" y="410.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Run query_audit.py before Week 6 assignment.</text>
+<rect x="1000.0" y="360.0" width="460.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="1010.0" y="382.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="1010.0" y="396.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Audit rows enable compliance — design them like a database schema.</text>
+<text x="40" y="884" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

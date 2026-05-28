@@ -10,9 +10,12 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DRAWIO = ROOT / "drawio"
-SVG_DIR = ROOT / "svg"
-PNG_DIR = ROOT / "png"
+
+# (drawio source dir, svg output dir, png output dir)
+EXPORT_DIRS = [
+    (ROOT / "drawio", ROOT / "svg", ROOT / "png"),
+    (ROOT / "student" / "drawio", ROOT / "student" / "svg", ROOT / "student" / "png"),
+]
 
 AWS_COLORS = {
     "lambda": "#D86613", "api_gateway": "#8C4FFF", "step_functions": "#E7157B",
@@ -247,23 +250,37 @@ def svg_to_png(svg_path: Path, png_path: Path) -> bool:
         return False
 
 
-def main() -> int:
-    SVG_DIR.mkdir(parents=True, exist_ok=True)
-    PNG_DIR.mkdir(parents=True, exist_ok=True)
-    files = sorted(DRAWIO.glob("*.drawio"))
-    if not files:
-        print("No drawio files — run generate_all_diagrams.py first")
-        return 1
+def export_directory(drawio_dir: Path, svg_dir: Path, png_dir: Path) -> tuple[int, int]:
+    svg_dir.mkdir(parents=True, exist_ok=True)
+    png_dir.mkdir(parents=True, exist_ok=True)
+    files = sorted(drawio_dir.glob("*.drawio"))
     png_ok = 0
     for f in files:
         data = parse_drawio(f)
-        svg_path = SVG_DIR / f"{f.stem}.svg"
-        png_path = PNG_DIR / f"{f.stem}.png"
+        svg_path = svg_dir / f"{f.stem}.svg"
+        png_path = png_dir / f"{f.stem}.png"
         svg_path.write_text(render_svg(data), encoding="utf-8")
         if svg_to_png(svg_path, png_path):
             png_ok += 1
         print(f"  {f.stem}: svg + {'png' if png_path.exists() else 'png skipped'}")
-    print(f"\nExported {len(files)} SVG, {png_ok} PNG")
+    return len(files), png_ok
+
+
+def main() -> int:
+    total_files = 0
+    total_png = 0
+    for drawio_dir, svg_dir, png_dir in EXPORT_DIRS:
+        if not drawio_dir.exists():
+            continue
+        rel = drawio_dir.relative_to(ROOT)
+        print(f"\nExporting {rel}/")
+        count, png_ok = export_directory(drawio_dir, svg_dir, png_dir)
+        total_files += count
+        total_png += png_ok
+    if total_files == 0:
+        print("No drawio files — run generate_all_diagrams.py and generate_student_diagrams.py first")
+        return 1
+    print(f"\nExported {total_files} SVG, {total_png} PNG")
     return 0
 
 
