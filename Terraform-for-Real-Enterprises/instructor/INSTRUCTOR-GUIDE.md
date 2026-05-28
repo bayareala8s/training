@@ -111,6 +111,40 @@ Estimated monthly cost per active student (dev only, NAT instance mode): **$15�
 
 ---
 
+## Instructor smoke test (one command)
+
+Run this before a cohort to confirm labs still work end-to-end (apply → start/stop → teardown) and finish with **no running resources**.
+
+### Prerequisites
+
+- AWS CLI authenticated to the intended lab account
+- `labs/shared/environments/dev/backend.hcl` and `terraform.tfvars` created from the examples
+
+### Command
+
+```bash
+./scripts/aws/verify-labs.sh all
+```
+
+### Expected result
+
+- Script exits **0**
+- You see:
+  - `Apply complete!` for the dev stack
+  - stop/start status showing instances transition `running → stopped → running`
+  - `Destroy complete!` at the end
+- Final `./scripts/aws/status-lab.sh` shows **no running** instances for `Course=terraform-enterprise`
+
+### If `terraform init` fails (provider registry)
+
+```bash
+./scripts/aws/install-provider.sh 5.90.0
+export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc
+./scripts/aws/verify-labs.sh all
+```
+
+---
+
 ## Support escalation
 
 | Issue | Action |
