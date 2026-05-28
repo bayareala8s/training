@@ -1,0 +1,6 @@
+flowchart TD
+  A[terraform apply starts] --> B[Resource 1 created]
+  B --> C[Resource 2 created]
+  C --> D[Resource 3 fails API call]
+  D --> E[Apply exits non-zero]
+  E --> F[State has 1+2; AWS has 1+2; 3 missing or half-done]

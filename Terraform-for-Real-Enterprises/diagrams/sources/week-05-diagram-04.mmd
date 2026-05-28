@@ -1,0 +1,6 @@
+flowchart TD
+  A[Refactor HCL] --> B{Plan shows destroy?}
+  B -->|Yes| C[Add moved / state mv]
+  B -->|No| D[Apply in dev]
+  C --> D
+  D --> E[Promote via checklist]

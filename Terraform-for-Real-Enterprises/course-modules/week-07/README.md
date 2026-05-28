@@ -30,6 +30,11 @@ Week 7 connects Terraform to **enterprise security and compliance**: IAM least p
 | Lab 7.3 compliance CI | 90 min | `04-hands-on-labs.md` |
 | Q&A & assignment briefing | 30 min | `05-assignment.md` |
 
+
+## Diagrams (PNG & SVG)
+
+Download all Week 7 figures: [diagrams/by-week/week-07](../../diagrams/by-week/week-07/README.md) · [Full catalog](../../diagrams/README.md)
+
 ## Files
 
 - [01-learning-objectives.md](01-learning-objectives.md)

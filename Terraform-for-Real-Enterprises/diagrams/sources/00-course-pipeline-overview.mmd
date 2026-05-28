@@ -1,0 +1,8 @@
+flowchart TB
+  GH[GitHub Repository] --> PR[Pull Request Workflow]
+  PR --> PLAN[Terraform Plan CI]
+  PLAN --> GATE[Approval Gate]
+  GATE --> APPLY[Terraform Apply]
+  APPLY --> ACC[AWS Accounts Dev Test Prod]
+  ACC --> STATE[S3 Remote State + DynamoDB Lock]
+  STATE --> OPS[Monitoring Audit Security]

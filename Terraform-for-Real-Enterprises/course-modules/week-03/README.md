@@ -31,6 +31,11 @@ Week 3 shifts from “Terraform that works” to **Terraform that scales across 
 | Lab 3.3 publish | 90 min | `04-hands-on-labs.md` |
 | Q&A & assignment | 30 min | `05-assignment.md` |
 
+
+## Diagrams (PNG & SVG)
+
+Download all Week 3 figures: [diagrams/by-week/week-03](../../diagrams/by-week/week-03/README.md) · [Full catalog](../../diagrams/README.md)
+
 ## Files
 
 - [01-learning-objectives.md](01-learning-objectives.md)

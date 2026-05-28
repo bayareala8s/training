@@ -33,6 +33,11 @@ Week 4 operationalizes Terraform through **GitOps**: pull-request plans, protect
 | Lab 4.3 validation | 120 min | `04-hands-on-labs.md` |
 | Q&A & assignment | 30 min | `05-assignment.md` |
 
+
+## Diagrams (PNG & SVG)
+
+Download all Week 4 figures: [diagrams/by-week/week-04](../../diagrams/by-week/week-04/README.md) · [Full catalog](../../diagrams/README.md)
+
 ## Files
 
 - [01-learning-objectives.md](01-learning-objectives.md)

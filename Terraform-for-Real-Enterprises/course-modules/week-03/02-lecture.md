@@ -132,6 +132,9 @@ flowchart LR
   MOD_VPC -->|vpc_id| MOD_CMP
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-03-diagram-01.png) · [SVG](../../diagrams/svg/week-03-diagram-01.svg)
+
+
 ---
 
 ## 3. Composition patterns
@@ -229,6 +232,9 @@ flowchart LR
   D --> E[Notify consumers]
   E --> F[Consumer PR bumps ref]
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-03-diagram-02.png) · [SVG](../../diagrams/svg/week-03-diagram-02.svg)
+
 
 ### 4.4 Deprecation policy
 

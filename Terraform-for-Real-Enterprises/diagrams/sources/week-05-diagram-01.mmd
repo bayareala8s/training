@@ -1,0 +1,16 @@
+flowchart TB
+  subgraph dev["Dev"]
+    D1[Feature branch PR]
+    D2[Plan + apply dev]
+  end
+  subgraph test["Test"]
+    T1[Merge to main]
+    T2[Plan + apply test]
+    T3[Smoke / integration tests]
+  end
+  subgraph prod["Prod"]
+    P1[Change advisory approval]
+    P2[Plan prod - read-only review]
+    P3[Apply in window]
+  end
+  D1 --> D2 --> T1 --> T2 --> T3 --> P1 --> P2 --> P3

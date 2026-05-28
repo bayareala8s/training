@@ -87,6 +87,9 @@ flowchart LR
   E --> F[State updated]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-01-diagram-01.png) · [SVG](../../diagrams/svg/week-01-diagram-01.svg)
+
+
 **`terraform init`**
 
 - Downloads provider plugins

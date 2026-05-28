@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant Dev as Developer
+  participant GH as GitHub Actions
+  participant AWS as AWS Account (test)
+  participant S3 as State S3
+  Dev->>GH: PR opened
+  GH->>GH: terraform plan ENV=test
+  GH->>Dev: Plan output in PR
+  Dev->>GH: Merge after approval
+  GH->>AWS: terraform apply (gated)
+  GH->>S3: State updated

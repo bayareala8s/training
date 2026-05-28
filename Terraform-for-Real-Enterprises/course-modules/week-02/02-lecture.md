@@ -81,6 +81,9 @@ flowchart TB
   WL --> PROD[Prod]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-02-diagram-01.png) · [SVG](../../diagrams/svg/week-02-diagram-01.svg)
+
+
 ### 2.3 Consolidated billing
 
 Organizations can consolidate charges to the management account. Finance teams gain:
@@ -129,6 +132,9 @@ flowchart TD
   ALLOW -->|SCP allows + IAM allows| OK[API succeeds]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-02-diagram-02.png) · [SVG](../../diagrams/svg/week-02-diagram-02.svg)
+
+
 ---
 
 ## 4. Landing zones and account vending
@@ -161,6 +167,9 @@ sequenceDiagram
   TF->>TF: Bootstrap state backend (if per-account)
   TF->>Team: Deliver VPC / baseline via modules
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-02-diagram-03.png) · [SVG](../../diagrams/svg/week-02-diagram-03.svg)
+
 
 ### 4.3 What Terraform should (and should not) own
 
@@ -210,6 +219,9 @@ flowchart LR
   NAT --> IGW[Internet]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-02-diagram-04.png) · [SVG](../../diagrams/svg/week-02-diagram-04.svg)
+
+
 Terraform in each spoke account manages spoke VPC resources; **attachments** to TGW may require roles that can modify shared account resources—or a pipeline that runs in the shared account with peer approvals.
 
 ### 5.3 State backend placement
@@ -242,6 +254,9 @@ sequenceDiagram
   STS->>WR: Temporary credentials
   WR->>WR: terraform plan/apply
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-02-diagram-05.png) · [SVG](../../diagrams/svg/week-02-diagram-05.svg)
+
 
 ### 6.2 Trust policy essentials
 
@@ -411,6 +426,9 @@ flowchart TB
   RUNNER --> RES[EC2 VPC RDS APIs]
   DEVROLE --> RES
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-02-diagram-06.png) · [SVG](../../diagrams/svg/week-02-diagram-06.svg)
+
 
 **Teaching point:** Students often conflate “my SSO login” with “CI role.” Week 2 lab uses `sts assume-role` to **simulate** what CI does in Week 4 without mixing human audit trails.
 

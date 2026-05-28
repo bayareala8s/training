@@ -35,6 +35,9 @@ flowchart TD
   E --> F[State has 1+2; AWS has 1+2; 3 missing or half-done]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-06-diagram-01.png) · [SVG](../../diagrams/svg/week-06-diagram-01.svg)
+
+
 **Your first action:** do not panic-apply again. Run `terraform plan` and read carefully.
 
 ### 1.3 Tainted resources
@@ -89,6 +92,9 @@ sequenceDiagram
   TF->>AWS: Update/delete per old config
   Note over TF,AWS: May fail if state doesn't match expectations
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-06-diagram-02.png) · [SVG](../../diagrams/svg/week-06-diagram-02.svg)
+
 
 ### 2.3 State rollback
 
@@ -248,6 +254,9 @@ flowchart TB
   DNS -. failover .-> RB
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-06-diagram-03.png) · [SVG](../../diagrams/svg/week-06-diagram-03.svg)
+
+
 ---
 
 ## 6. Runbooks and observability
@@ -338,6 +347,9 @@ flowchart LR
   C -->|Yes| D[Job 2 proceeds]
   C -->|Timeout| E[Alert + cancel Job 2]
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-06-diagram-04.png) · [SVG](../../diagrams/svg/week-06-diagram-04.svg)
+
 
 ---
 

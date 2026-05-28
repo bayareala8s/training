@@ -1,0 +1,11 @@
+sequenceDiagram
+  participant PR as Pull Request
+  participant GHA as GitHub Actions
+  participant OIDC as github-terraform role
+  participant RUN as bal8s-terraform-runner
+  participant AWS as Workload APIs
+
+  PR->>GHA: trigger plan
+  GHA->>OIDC: OIDC token
+  OIDC->>RUN: AssumeRole chain (optional)
+  RUN->>AWS: terraform plan

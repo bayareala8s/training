@@ -1,0 +1,19 @@
+flowchart TB
+  subgraph governance["Governance layer"]
+    SCP[SCPs]
+    PAC[Policy-as-code]
+    CI[CI security gates]
+  end
+  subgraph terraform["Terraform platform"]
+    MOD[Approved modules]
+    STATE[Remote state]
+    ROLES[CI OIDC roles]
+  end
+  subgraph workloads["Workload accounts"]
+    APP[Team stacks]
+  end
+  SCP --> terraform
+  PAC --> CI
+  CI --> MOD
+  MOD --> APP
+  ROLES --> APP

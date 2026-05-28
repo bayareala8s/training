@@ -1,0 +1,7 @@
+flowchart LR
+  subgraph root [Environment Root Module]
+    MOD_VPC[module.vpc]
+    MOD_CMP[module.compute]
+  end
+  MOD_VPC -->|private_subnet_ids| MOD_CMP
+  MOD_VPC -->|vpc_id| MOD_CMP

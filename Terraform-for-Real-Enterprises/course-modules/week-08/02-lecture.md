@@ -79,6 +79,9 @@ quadrantChart
   Custom TFE install: [0.95, 0.3]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-08-diagram-01.png) · [SVG](../../diagrams/svg/week-08-diagram-01.svg)
+
+
 Ship a **narrow, excellent** story over a broad, broken demo.
 
 ---
@@ -112,6 +115,9 @@ flowchart LR
   REV --> MERGE[Merge]
   MERGE --> APPLY[Gated apply]
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-08-diagram-02.png) · [SVG](../../diagrams/svg/week-08-diagram-02.svg)
+
 
 Document what is **automated** vs **manual approval** (prod).
 

@@ -37,6 +37,9 @@ flowchart LR
   AWS --> STATE[S3 state update]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-04-diagram-01.png) · [SVG](../../diagrams/svg/week-04-diagram-01.svg)
+
+
 ### 1.3 Course repository wiring
 
 **BayAreaLa8s — Terraform for Real Enterprises**
@@ -113,6 +116,9 @@ flowchart TB
   P --> A[apply job - gated]
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-04-diagram-02.png) · [SVG](../../diagrams/svg/week-04-diagram-02.svg)
+
+
 | Job | Purpose |
 |-----|---------|
 | `validate` | fmt, init (no backend), validate |
@@ -184,6 +190,9 @@ sequenceDiagram
   STS->>GHA: Temporary credentials (15min–1hr)
   GHA->>GHA: terraform plan
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-04-diagram-03.png) · [SVG](../../diagrams/svg/week-04-diagram-03.svg)
+
 
 ### 4.3 IAM OIDC provider
 
@@ -521,6 +530,9 @@ sequenceDiagram
   OIDC->>RUN: AssumeRole chain (optional)
   RUN->>AWS: terraform plan
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-04-diagram-04.png) · [SVG](../../diagrams/svg/week-04-diagram-04.svg)
+
 
 Some orgs use **one** OIDC role with direct permissions; others chain to per-account runners from Week 2. Document which pattern your assignment uses.
 

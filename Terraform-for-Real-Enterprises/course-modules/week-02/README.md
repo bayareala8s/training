@@ -30,6 +30,11 @@ Week 2 connects Terraform to **enterprise AWS account structure**: Organizations
 | Lab 2.2–2.3 IAM & apply | 150 min | `04-hands-on-labs.md` |
 | Q&A & assignment briefing | 30 min | `05-assignment.md` |
 
+
+## Diagrams (PNG & SVG)
+
+Download all Week 2 figures: [diagrams/by-week/week-02](../../diagrams/by-week/week-02/README.md) · [Full catalog](../../diagrams/README.md)
+
 ## Files
 
 - [01-learning-objectives.md](01-learning-objectives.md)

@@ -58,25 +58,17 @@ By the end of this course, you will be able to:
 
 ## Architecture You Will Build
 
-```text
-GitHub Repository
-        |
-Pull Request Workflow
-        |
-Terraform Plan (CI Pipeline)
-        |
-Approval Gate
-        |
-Terraform Apply
-        |
-AWS Accounts (Dev/Test/Prod)
-        |
-S3 Remote State + DynamoDB Locking
-        |
-Monitoring / Audit / Security
-```
+![Enterprise pipeline overview](diagrams/png/00-course-pipeline-overview.png)
+
+Download: [SVG](diagrams/svg/00-course-pipeline-overview.svg) · [PNG](diagrams/png/00-course-pipeline-overview.png) · [All diagrams](diagrams/README.md)
 
 ---
+
+## Diagrams (PNG & SVG)
+
+**30 architecture diagrams** for lectures, assignments, and slides:
+
+**[diagrams/README.md](diagrams/README.md)** — full catalog with download links for every week.
 
 ## Course modules (full curriculum)
 

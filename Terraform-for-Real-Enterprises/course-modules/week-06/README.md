@@ -30,6 +30,11 @@ Week 6 prepares students for **when Terraform fails**: partial applies, corrupte
 | Lab 6.3 rollback workflow | 90 min | `04-hands-on-labs.md` |
 | Q&A & assignment briefing | 30 min | `05-assignment.md` |
 
+
+## Diagrams (PNG & SVG)
+
+Download all Week 6 figures: [diagrams/by-week/week-06](../../diagrams/by-week/week-06/README.md) · [Full catalog](../../diagrams/README.md)
+
 ## Files
 
 - [01-learning-objectives.md](01-learning-objectives.md)

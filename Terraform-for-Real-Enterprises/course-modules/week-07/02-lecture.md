@@ -52,6 +52,9 @@ flowchart TB
   ROLES --> APP
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-07-diagram-01.png) · [SVG](../../diagrams/svg/week-07-diagram-01.svg)
+
+
 ---
 
 ## 2. IAM least privilege for automation
@@ -217,6 +220,9 @@ flowchart LR
   PLAN --> REV[Human review]
   REV --> APPLY[terraform apply]
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-07-diagram-02.png) · [SVG](../../diagrams/svg/week-07-diagram-02.svg)
+
 
 ---
 
@@ -387,6 +393,9 @@ flowchart TB
   EX --> EV
   EV --> AU
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-07-diagram-03.png) · [SVG](../../diagrams/svg/week-07-diagram-03.svg)
+
 
 ### 7.8 Week 7 synthesis
 

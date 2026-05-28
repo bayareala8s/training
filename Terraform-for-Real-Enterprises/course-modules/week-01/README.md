@@ -29,6 +29,11 @@ Week 1 establishes why enterprises adopt Terraform, how it differs from ad-hoc s
 | Lab 1.3 bootstrap | 120 min | `04-hands-on-labs.md` |
 | Q&A & assignment briefing | 30 min | `05-assignment.md` |
 
+
+## Diagrams (PNG & SVG)
+
+Download all Week 1 figures: [diagrams/by-week/week-01](../../diagrams/by-week/week-01/README.md) · [Full catalog](../../diagrams/README.md)
+
 ## Files
 
 - [01-learning-objectives.md](01-learning-objectives.md)

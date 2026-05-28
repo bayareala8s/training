@@ -1,0 +1,15 @@
+flowchart LR
+  subgraph shared [Shared Services Account]
+    TGW[Transit Gateway]
+    NAT[Central NAT / Firewall]
+  end
+  subgraph dev [Dev Account]
+    VPC1[VPC]
+  end
+  subgraph prod [Prod Account]
+    VPC2[VPC]
+  end
+  VPC1 --> TGW
+  VPC2 --> TGW
+  TGW --> NAT
+  NAT --> IGW[Internet]

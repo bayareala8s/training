@@ -52,6 +52,9 @@ flowchart TB
   D1 --> D2 --> T1 --> T2 --> T3 --> P1 --> P2 --> P3
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-05-diagram-01.png) · [SVG](../../diagrams/svg/week-05-diagram-01.svg)
+
+
 ### 1.3 What must differ per environment
 
 | Dimension | dev | test | prod |
@@ -139,6 +142,9 @@ sequenceDiagram
   GH->>S3: State updated
 ```
 
+> **Figure (download):** [PNG](../../diagrams/png/week-05-diagram-02.png) · [SVG](../../diagrams/svg/week-05-diagram-02.svg)
+
+
 ---
 
 ## 3. Configuration management vs promotion
@@ -222,6 +228,9 @@ flowchart LR
   G --> B
   H[.tf desired state] --> B
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-05-diagram-03.png) · [SVG](../../diagrams/svg/week-05-diagram-03.svg)
+
 
 Exit code `2` from `terraform plan -detailed-exitcode` means **changes pending**—useful for automation (handle carefully in CI; read-only credentials).
 
@@ -326,6 +335,9 @@ flowchart TD
   C --> D
   D --> E[Promote via checklist]
 ```
+
+> **Figure (download):** [PNG](../../diagrams/png/week-05-diagram-04.png) · [SVG](../../diagrams/svg/week-05-diagram-04.svg)
+
 
 ---
 

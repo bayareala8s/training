@@ -1,0 +1,18 @@
+flowchart TB
+  subgraph detect["Detect"]
+    CH[Checkov]
+    TL[tflint]
+  end
+  subgraph decide["Decide"]
+    EX[Exception process]
+    FIX[Fix in module]
+  end
+  subgraph prove["Prove"]
+    EV[Evidence in report]
+    AU[Audit sample]
+  end
+  CH --> FIX
+  CH --> EX
+  FIX --> EV
+  EX --> EV
+  EV --> AU

@@ -1,0 +1,11 @@
+flowchart TB
+  MGMT[Management Account]
+  MGMT --> SEC[Security OU]
+  MGMT --> INF[Infrastructure OU]
+  MGMT --> WL[Workloads OU]
+  SEC --> LOG[Log Archive]
+  SEC --> AUD[Audit]
+  INF --> SS[Shared Services]
+  WL --> DEV[Dev]
+  WL --> TEST[Test]
+  WL --> PROD[Prod]

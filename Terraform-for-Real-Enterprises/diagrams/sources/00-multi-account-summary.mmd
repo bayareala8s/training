@@ -1,0 +1,10 @@
+flowchart TB
+  ROOT[Organization Root]
+  ROOT --> SEC[Security OU]
+  ROOT --> INF[Infrastructure OU]
+  ROOT --> WL[Workloads OU]
+  SEC --> AUD[Audit Log Archive]
+  INF --> SS[Shared Services CI Networking]
+  WL --> DEV[Dev Account]
+  WL --> TEST[Test Account]
+  WL --> PROD[Prod Account]

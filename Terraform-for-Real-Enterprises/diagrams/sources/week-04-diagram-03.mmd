@@ -1,0 +1,12 @@
+sequenceDiagram
+  participant GHA as GitHub Actions
+  participant GH as GitHub OIDC Issuer
+  participant STS as AWS STS
+  participant IAM as IAM Role github-terraform
+
+  GHA->>GH: Request OIDC token (JWT)
+  GH->>GHA: Signed JWT (sub, aud, ref)
+  GHA->>STS: AssumeRoleWithWebIdentity
+  STS->>IAM: Validate trust policy conditions
+  STS->>GHA: Temporary credentials (15min–1hr)
+  GHA->>GHA: terraform plan

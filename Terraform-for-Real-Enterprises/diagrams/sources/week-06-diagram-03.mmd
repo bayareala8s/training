@@ -1,0 +1,13 @@
+flowchart TB
+  subgraph primary["Region A (primary)"]
+    SA[State key: prod/a]
+    RA[Resources]
+  end
+  subgraph secondary["Region B (DR)"]
+    SB[State key: prod/b]
+    RB[Standby resources]
+  end
+  SA --> RA
+  SB --> RB
+  DNS[Route 53 / Global accelerator] --> RA
+  DNS -. failover .-> RB

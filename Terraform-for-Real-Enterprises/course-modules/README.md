@@ -39,6 +39,17 @@ This directory contains the **complete professional module content** for each we
 | `07-knowledge-check.md` | Quiz questions with answers (instructor section) |
 | `glossary.md` | Key terms for the week |
 
+## Diagrams
+
+Each week’s lecture diagrams are available as **PNG** and **SVG**:
+
+| Week | Diagrams |
+|------|----------|
+| Overview | [diagrams/by-week/overview](../diagrams/by-week/overview/README.md) |
+| 1–8 | See [diagrams/README.md](../diagrams/README.md) (filter by week) |
+
+Use in assignments, slide decks, and architecture reviews.
+
 ## Related repositories paths
 
 - Executable Terraform: [`modules/`](../modules/), [`labs/shared/environments/`](../labs/shared/environments/)

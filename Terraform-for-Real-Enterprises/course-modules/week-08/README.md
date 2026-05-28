@@ -36,6 +36,11 @@ Week 8 is the **integration capstone** for BayAreaLa8s Terraform for Real Enterp
 | 3 | Multi-Region DR | Active-passive, failover runbook |
 | 4 | Internal Terraform Platform | Module library, golden path, CI template |
 
+
+## Diagrams (PNG & SVG)
+
+Download all Week 8 figures: [diagrams/by-week/week-08](../../diagrams/by-week/week-08/README.md) · [Full catalog](../../diagrams/README.md)
+
 ## Files
 
 - [01-learning-objectives.md](01-learning-objectives.md)

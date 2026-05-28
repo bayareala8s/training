@@ -1,0 +1,30 @@
+week-01-diagram-01: Week 1 lecture diagram 1
+week-02-diagram-01: Week 2 lecture diagram 1
+week-02-diagram-02: Week 2 lecture diagram 2
+week-02-diagram-03: Week 2 lecture diagram 3
+week-02-diagram-04: Week 2 lecture diagram 4
+week-02-diagram-05: Week 2 lecture diagram 5
+week-02-diagram-06: Week 2 lecture diagram 6
+week-03-diagram-01: Week 3 lecture diagram 1
+week-03-diagram-02: Week 3 lecture diagram 2
+week-04-diagram-01: Week 4 lecture diagram 1
+week-04-diagram-02: Week 4 lecture diagram 2
+week-04-diagram-03: Week 4 lecture diagram 3
+week-04-diagram-04: Week 4 lecture diagram 4
+week-05-diagram-01: Week 5 lecture diagram 1
+week-05-diagram-02: Week 5 lecture diagram 2
+week-05-diagram-03: Week 5 lecture diagram 3
+week-05-diagram-04: Week 5 lecture diagram 4
+week-06-diagram-01: Week 6 lecture diagram 1
+week-06-diagram-02: Week 6 lecture diagram 2
+week-06-diagram-03: Week 6 lecture diagram 3
+week-06-diagram-04: Week 6 lecture diagram 4
+week-07-diagram-01: Week 7 lecture diagram 1
+week-07-diagram-02: Week 7 lecture diagram 2
+week-07-diagram-03: Week 7 lecture diagram 3
+week-08-diagram-01: Week 8 lecture diagram 1
+week-08-diagram-02: Week 8 lecture diagram 2
+00-course-pipeline-overview: Course overview diagram
+00-remote-state-architecture: Course overview diagram
+00-lab-vpc-architecture: Course overview diagram
+00-multi-account-summary: Course overview diagram

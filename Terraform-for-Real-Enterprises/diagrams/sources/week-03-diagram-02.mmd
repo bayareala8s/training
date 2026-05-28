@@ -1,0 +1,6 @@
+flowchart LR
+  A[PR + CI plan] --> B[Merge to main]
+  B --> C[Tag v1.1.0]
+  C --> D[CHANGELOG entry]
+  D --> E[Notify consumers]
+  E --> F[Consumer PR bumps ref]
