@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1150" viewBox="0 0 1700 1150">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 1 — Enterprise AI Landscape</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">When to use rules, ML, or LLMs — and what this course builds</text>
+<rect x="40.0" y="186.0" width="500.0" height="340.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="50.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">RULES ENGINE</text>
+<rect x="580.0" y="186.0" width="500.0" height="340.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="590.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">TRADITIONAL ML</text>
+<rect x="1120.0" y="186.0" width="540.0" height="340.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="1130.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">LARGE LANGUAGE MODELS</text>
+<rect x="40.0" y="556.0" width="1620.0" height="280.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="50.0" y="578.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">THIS COURSE — Production AI Automation Platform</text>
+<rect x="40.0" y="78.0" width="1520.0" height="70.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">LEARNING FOCUS</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">Compare rules engines, traditional ML, and LLMs. Identify risks (hallucination, cost, data leakage) and map them to architectural controls.</text>
+<rect x="60.0" y="220.0" width="220.0" height="160.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="70.0" y="242.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Best for:</text>
+<text x="70.0" y="256.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Fixed policy logic</text>
+<text x="70.0" y="270.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Compliance checks</text>
+<text x="70.0" y="284.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Known patterns</text>
+<text x="70.0" y="298.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="70.0" y="312.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Limitations:</text>
+<text x="70.0" y="326.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Breaks on free text</text>
+<text x="70.0" y="340.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Hard to maintain huge rule sets</text>
+<rect x="300.0" y="220.0" width="220.0" height="100.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="310.0" y="242.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Example:</text>
+<text x="310.0" y="256.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">IF keyword IN ('invoice','billing')</text>
+<text x="310.0" y="270.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  THEN route = 'billing'</text>
+<rect x="600.0" y="220.0" width="220.0" height="160.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="610.0" y="242.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Best for:</text>
+<text x="610.0" y="256.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Classification with labels</text>
+<text x="610.0" y="270.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Forecasting</text>
+<text x="610.0" y="284.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Vision / tabular data</text>
+<text x="610.0" y="298.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="610.0" y="312.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Limitations:</text>
+<text x="610.0" y="326.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Needs training data</text>
+<text x="610.0" y="340.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Drift when data changes</text>
+<rect x="1140.0" y="220.0" width="240.0" height="160.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="1150.0" y="242.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Best for:</text>
+<text x="1150.0" y="256.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Language understanding</text>
+<text x="1150.0" y="270.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Summarization</text>
+<text x="1150.0" y="284.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Flexible reasoning</text>
+<text x="1150.0" y="298.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E"></text>
+<text x="1150.0" y="312.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Limitations:</text>
+<text x="1150.0" y="326.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Non-deterministic</text>
+<text x="1150.0" y="340.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Can hallucinate</text>
+<text x="1150.0" y="354.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Token cost</text>
+<rect x="40.0" y="860.0" width="500.0" height="120.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="50.0" y="882.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">ENTERPRISE RISKS</text>
+<text x="50.0" y="896.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">① Hallucination → validation + human review</text>
+<text x="50.0" y="910.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">② Cost spikes → throttling + limits</text>
+<text x="50.0" y="924.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">③ Data leakage → redaction + IAM</text>
+<text x="50.0" y="938.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">④ No audit trail → correlation ID + logging</text>
+<rect x="580.0" y="860.0" width="480.0" height="90.0" rx="6" fill="#FFF8E6" stroke="#FFB800" />
+<text x="590.0" y="882.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">INSTRUCTOR TALKING POINT</text>
+<text x="590.0" y="896.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Use the decision matrix in class: deterministic? → rules. Labeled data + stability? → ML. Language + flexibility? → LLM + guardrails.</text>
+<rect x="1100.0" y="860.0" width="400.0" height="80.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="1110.0" y="882.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">STUDENT TAKEAWAY</text>
+<text x="1110.0" y="896.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">AI in production = workflow + model + validation + ops — not chatbot-only prompt engineering.</text>
+<rect x="120.0" y="600.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="156.0" y="686.0" text-anchor="middle" font-size="9" fill="#232F3E">Step Functions</text>
+<text x="156.0" y="698.0" text-anchor="middle" font-size="9" fill="#232F3E">orchestration</text>
+<rect x="360.0" y="600.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="396.0" y="686.0" text-anchor="middle" font-size="9" fill="#232F3E">Bedrock</text>
+<text x="396.0" y="698.0" text-anchor="middle" font-size="9" fill="#232F3E">foundation model</text>
+<rect x="600.0" y="600.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="636.0" y="686.0" text-anchor="middle" font-size="9" fill="#232F3E">Lambda Validator</text>
+<text x="636.0" y="698.0" text-anchor="middle" font-size="9" fill="#232F3E">JSON schema</text>
+<rect x="840.0" y="600.0" width="72.0" height="72.0" rx="4" fill="#8C4FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="876.0" y="686.0" text-anchor="middle" font-size="9" fill="#232F3E">API Gateway</text>
+<text x="876.0" y="698.0" text-anchor="middle" font-size="9" fill="#232F3E">platform APIs</text>
+<rect x="1080.0" y="600.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="1116.0" y="686.0" text-anchor="middle" font-size="9" fill="#232F3E">CloudWatch</text>
+<text x="1116.0" y="698.0" text-anchor="middle" font-size="9" fill="#232F3E">ops</text>
+<rect x="1320.0" y="600.0" width="72.0" height="72.0" rx="4" fill="#527FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="1356.0" y="686.0" text-anchor="middle" font-size="9" fill="#232F3E">DynamoDB Audit</text>
+<text x="1356.0" y="698.0" text-anchor="middle" font-size="9" fill="#232F3E">governance</text>
+<line x1="156.0" y1="636.0" x2="396.0" y2="636.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="276.0" y="628.0" text-anchor="middle" font-size="9" fill="#232F3E">invoke</text>
+<line x1="396.0" y1="636.0" x2="636.0" y2="636.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="516.0" y="628.0" text-anchor="middle" font-size="9" fill="#232F3E">validate</text>
+<line x1="636.0" y1="636.0" x2="876.0" y2="636.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="756.0" y="628.0" text-anchor="middle" font-size="9" fill="#232F3E">expose</text>
+<line x1="636.0" y1="636.0" x2="1116.0" y2="636.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="876.0" y="628.0" text-anchor="middle" font-size="9" fill="#232F3E">observe</text>
+<line x1="636.0" y1="636.0" x2="1356.0" y2="636.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="996.0" y="628.0" text-anchor="middle" font-size="9" fill="#232F3E">audit</text>
+<text x="40" y="1134" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

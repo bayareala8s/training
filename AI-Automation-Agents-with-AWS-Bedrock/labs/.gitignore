@@ -1,0 +1,11 @@
+.venv/
+.stack.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.aws-sam/
+samconfig.toml
+packaged.yaml
+/tmp/
+*.json
+!week02/golden_set.json

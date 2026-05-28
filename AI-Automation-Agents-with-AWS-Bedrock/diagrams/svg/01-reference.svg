@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1200" viewBox="0 0 1700 1200">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Course Reference Architecture</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">End-to-end production AI automation on AWS — every week builds toward this pattern</text>
+<rect x="40.0" y="186.0" width="380.0" height="520.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="50.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">① INGRESS — How work enters the platform</text>
+<rect x="440.0" y="186.0" width="420.0" height="520.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="450.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">② ORCHESTRATION — Reliable multi-step AI workflows</text>
+<rect x="880.0" y="186.0" width="380.0" height="520.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="890.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">③ AI + GUARDRAILS — Model + deterministic validation</text>
+<rect x="1280.0" y="186.0" width="380.0" height="520.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="1290.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">④ DATA + OPS — Persist, audit, alert, govern</text>
+<rect x="40.0" y="78.0" width="1520.0" height="70.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">LEARNING FOCUS</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">Understand how events and APIs enter the system, how Bedrock is invoked inside orchestrated workflows, and where validation, persistence, audit, and human oversight fit.</text>
+<rect x="60.0" y="620.0" width="300.0" height="90.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="70.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Example input:</text>
+<text x="70.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">{ &amp;quot;text&amp;quot;: &amp;quot;invoice charged twice&amp;quot;,</text>
+<text x="70.0" y="670.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;correlation_id&amp;quot;: &amp;quot;abc-123&amp;quot; }</text>
+<rect x="900.0" y="620.0" width="320.0" height="90.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="910.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Validated output:</text>
+<text x="910.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">{ &amp;quot;label&amp;quot;: &amp;quot;billing&amp;quot;, &amp;quot;confidence&amp;quot;: 0.91,</text>
+<text x="910.0" y="670.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;route&amp;quot;: &amp;quot;team_billing&amp;quot; }</text>
+<rect x="40.0" y="720.0" width="280.0" height="94.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="50.0" y="742.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">LEGEND</text>
+<text x="50.0" y="756.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">• Solid arrow = happy path</text>
+<text x="50.0" y="770.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">• Dashed red = fallback / human</text>
+<text x="50.0" y="784.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">• correlation_id in every log + audit row</text>
+<rect x="1280.0" y="720.0" width="380.0" height="100.0" rx="6" fill="#FFF8E6" stroke="#FFB800" />
+<text x="1290.0" y="742.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">INSTRUCTOR TALKING POINT</text>
+<text x="1290.0" y="756.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Stress: Bedrock is probabilistic — orchestration + validation make automation safe. Never let the model call external systems without policy checks.</text>
+<rect x="1280.0" y="840.0" width="380.0" height="80.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="1290.0" y="862.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">STUDENT TAKEAWAY</text>
+<text x="1290.0" y="876.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Every production path needs: structured output, validator, fallback, audit trail.</text>
+<rect x="92.0" y="204.0" width="200.0" height="24.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="102.0" y="226.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Ingress</text>
+<rect x="492.0" y="204.0" width="200.0" height="24.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="502.0" y="226.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Orchestrate</text>
+<rect x="932.0" y="204.0" width="200.0" height="24.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="942.0" y="226.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">AI + validate</text>
+<rect x="1332.0" y="204.0" width="200.0" height="24.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="1342.0" y="226.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Store + observe</text>
+<circle cx="74.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="74.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">1</text>
+<circle cx="474.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="474.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">2</text>
+<circle cx="914.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="914.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">3</text>
+<circle cx="1314.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="1314.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">4</text>
+<rect x="80.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="116.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Users</text>
+<text x="116.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">Operators / apps</text>
+<rect x="220.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#8C4FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="256.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">API Gateway</text>
+<text x="256.0" y="338.0" text-anchor="middle" font-size="9" fill="#232F3E">REST / HTTP</text>
+<rect x="220.0" y="400.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="256.0" y="486.0" text-anchor="middle" font-size="9" fill="#232F3E">EventBridge</text>
+<text x="256.0" y="498.0" text-anchor="middle" font-size="9" fill="#232F3E">async events</text>
+<rect x="500.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="536.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">Step Functions</text>
+<text x="536.0" y="418.0" text-anchor="middle" font-size="9" fill="#232F3E">state machine</text>
+<rect x="700.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="736.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Lambda</text>
+<text x="736.0" y="338.0" text-anchor="middle" font-size="9" fill="#232F3E">validate JSON</text>
+<rect x="960.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="996.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Amazon Bedrock</text>
+<text x="996.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">Nova / Claude</text>
+<rect x="700.0" y="420.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="736.0" y="506.0" text-anchor="middle" font-size="9" fill="#232F3E">Lambda</text>
+<text x="736.0" y="518.0" text-anchor="middle" font-size="9" fill="#232F3E">actions</text>
+<rect x="1340.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#527FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="1376.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">DynamoDB</text>
+<text x="1376.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">audit + results</text>
+<rect x="1340.0" y="420.0" width="72.0" height="72.0" rx="4" fill="#3F8624" stroke="#ffffff" stroke-width="2"/>
+<text x="1376.0" y="506.0" text-anchor="middle" font-size="9" fill="#232F3E">S3</text>
+<text x="1376.0" y="518.0" text-anchor="middle" font-size="9" fill="#232F3E">documents</text>
+<rect x="1100.0" y="520.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="1136.0" y="606.0" text-anchor="middle" font-size="9" fill="#232F3E">CloudWatch</text>
+<text x="1136.0" y="618.0" text-anchor="middle" font-size="9" fill="#232F3E">metrics + alarms</text>
+<rect x="960.0" y="480.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="996.0" y="566.0" text-anchor="middle" font-size="9" fill="#232F3E">Human Review</text>
+<text x="996.0" y="578.0" text-anchor="middle" font-size="9" fill="#232F3E">low confidence</text>
+<line x1="116.0" y1="316.0" x2="256.0" y2="276.0" stroke="#232F3E" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="186.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">① sync request</text>
+<line x1="116.0" y1="316.0" x2="256.0" y2="436.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="186.0" y="368.0" text-anchor="middle" font-size="9" fill="#232F3E">② async event</text>
+<line x1="256.0" y1="276.0" x2="536.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="396.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">③ start workflow</text>
+<line x1="256.0" y1="436.0" x2="536.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="536.0" y1="356.0" x2="996.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="766.0" y="328.0" text-anchor="middle" font-size="9" fill="#232F3E">④ invoke model</text>
+<line x1="536.0" y1="356.0" x2="736.0" y2="276.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="636.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">⑤ validate output</text>
+<line x1="736.0" y1="276.0" x2="736.0" y2="456.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="736.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">⑥ if valid</text>
+<line x1="736.0" y1="276.0" x2="996.0" y2="516.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="866.0" y="388.0" text-anchor="middle" font-size="9" fill="#DD3522">invalid / low conf.</text>
+<line x1="736.0" y1="456.0" x2="1376.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="1056.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">⑦ persist</text>
+<line x1="736.0" y1="456.0" x2="1376.0" y2="456.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="536.0" y1="356.0" x2="1136.0" y2="556.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="836.0" y="448.0" text-anchor="middle" font-size="9" fill="#232F3E">logs</text>
+<line x1="736.0" y1="456.0" x2="1136.0" y2="556.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="40" y="1184" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

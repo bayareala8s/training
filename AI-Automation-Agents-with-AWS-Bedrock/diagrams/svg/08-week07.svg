@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1200" viewBox="0 0 1700 1200">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 7 — Enterprise AI Agent System</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">Router, tool policy, memory with TTL, event-driven chaining</text>
+<rect x="40.0" y="78.0" width="1520.0" height="70.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">LEARNING FOCUS</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">Build an agent-like router that outputs a structured plan, enforces tool allow-lists, stores session memory safely, and chains workflows via events.</text>
+<rect x="60.0" y="520.0" width="360.0" height="110.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="70.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">PLAN JSON (example)</text>
+<text x="70.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">{</text>
+<text x="70.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;tool&amp;quot;: &amp;quot;classify_route&amp;quot;,</text>
+<text x="70.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;requires_approval&amp;quot;: false,</text>
+<text x="70.0" y="598.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;reason&amp;quot;: &amp;quot;billing keywords&amp;quot;</text>
+<text x="70.0" y="612.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">}</text>
+<rect x="440.0" y="520.0" width="400.0" height="110.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="450.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">TOOL POLICY</text>
+<text x="450.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">ALLOWED: summarize, classify_route, action_stub</text>
+<text x="450.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DENY: delete_prod, exfiltrate_data</text>
+<text x="450.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">APPROVAL: action_stub, security keywords</text>
+<rect x="900.0" y="600.0" width="380.0" height="100.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="910.0" y="622.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">MEMORY RULES</text>
+<text x="910.0" y="636.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">STORE: short context summary, last route</text>
+<text x="910.0" y="650.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">NEVER: secrets, full ticket bodies, PCI data</text>
+<text x="910.0" y="664.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">TTL: 7 days (DynamoDB)</text>
+<rect x="60.0" y="680.0" width="550.0" height="100.0" rx="6" fill="#FFF8E6" stroke="#FFB800" />
+<text x="70.0" y="702.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">INSTRUCTOR TALKING POINT</text>
+<text x="70.0" y="716.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Contrast 'autonomous agent' hype vs enterprise agent = router + policy + audit. Demo risky prompt requiring approval.</text>
+<rect x="60.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="96.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">EventBridge</text>
+<rect x="300.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="336.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">Agent Router</text>
+<text x="336.0" y="418.0" text-anchor="middle" font-size="9" fill="#232F3E">plan JSON</text>
+<rect x="300.0" y="520.0" width="72.0" height="72.0" rx="4" fill="#DD3522" stroke="#ffffff" stroke-width="2"/>
+<text x="336.0" y="606.0" text-anchor="middle" font-size="9" fill="#232F3E">Tool Policy</text>
+<rect x="600.0" y="200.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="636.0" y="286.0" text-anchor="middle" font-size="9" fill="#232F3E">Summarize WF</text>
+<rect x="600.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="636.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">Classify+Route</text>
+<rect x="600.0" y="440.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="636.0" y="526.0" text-anchor="middle" font-size="9" fill="#232F3E">Action Stub</text>
+<rect x="900.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#527FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="936.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">Memory</text>
+<text x="936.0" y="418.0" text-anchor="middle" font-size="9" fill="#232F3E">TTL 7d</text>
+<rect x="900.0" y="480.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="936.0" y="566.0" text-anchor="middle" font-size="9" fill="#232F3E">Audit</text>
+<rect x="600.0" y="600.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="636.0" y="686.0" text-anchor="middle" font-size="9" fill="#232F3E">Approval</text>
+<line x1="96.0" y1="356.0" x2="336.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="216.0" y="348.0" text-anchor="middle" font-size="9" fill="#232F3E">trigger</text>
+<line x1="336.0" y1="356.0" x2="336.0" y2="556.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="336.0" y="448.0" text-anchor="middle" font-size="9" fill="#232F3E">check allow-list</text>
+<line x1="336.0" y1="356.0" x2="636.0" y2="236.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="486.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">tool=summarize</text>
+<line x1="336.0" y1="356.0" x2="636.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="486.0" y="348.0" text-anchor="middle" font-size="9" fill="#232F3E">tool=classify_route</text>
+<line x1="336.0" y1="356.0" x2="636.0" y2="476.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="486.0" y="408.0" text-anchor="middle" font-size="9" fill="#DD3522">requires_approval</text>
+<line x1="636.0" y1="476.0" x2="636.0" y2="636.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="336.0" y1="356.0" x2="936.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="636.0" y="348.0" text-anchor="middle" font-size="9" fill="#232F3E">session summary</text>
+<line x1="336.0" y1="356.0" x2="936.0" y2="516.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="40" y="1184" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

@@ -1,0 +1,8 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "ba-la8s-ai-course-labs"
+resolve_s3 = true
+capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+region = "us-east-1"
+parameter_overrides = "ProjectPrefix=ba-la8s-ai BedrockModelId=amazon.nova-lite-v1:0"

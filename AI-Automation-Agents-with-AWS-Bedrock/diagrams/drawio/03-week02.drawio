@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="03-week02" name="Week 2 — Secure Bedrock Integration" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1150">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 2 — Secure Bedrock Integration" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="IAM least privilege, model access, prompt versioning, and safe logging" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="z_id" value="IDENTITY &amp;amp; ACCESS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="186" width="520" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="z_run" value="RUNTIME (Lambda)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="186" width="520" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="z_br" value="BEDROCK" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F0FF;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="186" width="540" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="z_log" value="OBSERVABILITY (safe)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="616" width="1080" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" value="LEARNING FOCUS&amp;#10;Design IAM so only the runtime role can invoke specific foundation models. Enable model access, version prompts, and log metadata — not secrets." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="pol" value="IAM POLICY (example)&amp;#10;Allow: bedrock:Converse&amp;#10;Resource: arn:aws:bedrock:*::foundation-model/amazon.nova-lite-v1:0&amp;#10;Deny: * on all other models" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="480" width="500" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="nog" value="NEVER LOG&amp;#10;• Full prompts with PII&amp;#10;• API keys / tokens&amp;#10;• Credit card numbers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="480" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="oklog" value="SAFE TO LOG&amp;#10;• correlation_id&amp;#10;• model_id&amp;#10;• input/output SIZE&amp;#10;• latency_ms&amp;#10;• validation_status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="820" width="500" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="inst_40_820" value="INSTRUCTOR TALKING POINT&amp;#10;Walk through Bedrock model access in console. Show one denied call when model not enabled — students remember IAM + access gate." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#FFB800;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="820" width="480" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="103" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="180" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="104" value="Who deploys?" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="92" y="184" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="105" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="600" y="180" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="106" value="Who invokes AI?" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="632" y="184" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="107" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="180" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="108" value="Model gate" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="1152" y="184" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="109" value="4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="600" y="580" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="110" value="What we log" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="632" y="584" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="dev" value="Developer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="80" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ci" value="CI/CD Pipeline" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.client;" vertex="1" parent="1">
+          <mxGeometry x="80" y="380" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="iam_deploy" value="Deploy Role&amp;#10;CloudFormation" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.identity_and_access_management;" vertex="1" parent="1">
+          <mxGeometry x="300" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="iam_run" value="Lambda Role&amp;#10;execution only" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.identity_and_access_management;" vertex="1" parent="1">
+          <mxGeometry x="700" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="lam" value="Lambda" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="700" y="380" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="br" value="Bedrock" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#232F3E;shape=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="300" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="cw" value="CloudWatch" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="640" y="660" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" value="Audit Table" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#527FFF;shape=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="960" y="660" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="sm" value="Secrets Mgr&amp;#10;optional" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.secrets_manager;" vertex="1" parent="1">
+          <mxGeometry x="300" y="480" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="deploy stack" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="dev" target="iam_deploy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="ci" target="iam_deploy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="attached" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="iam_run" target="lam">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="bedrock:Converse&amp;#10;on specific model ARN" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;strokeWidth=2;" edge="1" parent="1" source="lam" target="br">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="latency, status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="lam" target="cw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" value="audit event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="lam" target="ddb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" value="API keys only&amp;#10;if needed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#879196;fontColor=#879196;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="sm" target="lam">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
