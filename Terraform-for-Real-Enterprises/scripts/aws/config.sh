@@ -2,7 +2,10 @@
 # Shared configuration for BayAreaLa8s Terraform course lab cost controls.
 # Source this file from other scripts: source "$(dirname "$0")/config.sh"
 
-set -euo pipefail
+# NOTE: This file is sourced by multiple scripts. Do not enable `set -e` here,
+# otherwise any non-critical AWS CLI error (e.g. "no tagged resources found")
+# can abort the caller unexpectedly.
+set -uo pipefail
 
 # AWS region (override: export AWS_REGION=us-east-1)
 export AWS_REGION="${AWS_REGION:-us-west-2}"

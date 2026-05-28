@@ -7,7 +7,8 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      # Pin a known-good version used by this course to reduce CI/lab drift.
+      version = "5.90.0"
     }
   }
 }
