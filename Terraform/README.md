@@ -1,3 +1,10 @@
+### Terraform Training (BayAreaLa8s)
+
+> **New — Enterprise course (labs, modules, AWS start/stop scripts):**  
+> [Terraform for Real Enterprises (Not Toy Projects)](../Terraform-for-Real-Enterprises/README.md) — 8 weeks, 64–72 hours, production IaC workflows.
+
+---
+
 ### Terraform Training (72 Hours)
 
 #### **Module 1: Introduction to Infrastructure as Code and Terraform (6 Hours)**

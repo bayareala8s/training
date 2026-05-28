@@ -1,0 +1,3 @@
+student_id        = "jdoe"
+state_bucket_name = "bal8s-tf-state-jdoe-UNIQUE-SUFFIX"
+aws_region        = "us-west-2"

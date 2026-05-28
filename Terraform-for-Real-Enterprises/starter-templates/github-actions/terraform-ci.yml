@@ -1,0 +1,97 @@
+# Example GitHub Actions workflow for Terraform (Week 4+)
+# Copy to: .github/workflows/terraform-ci.yml in your lab repo
+#
+# Prerequisites:
+# - Configure AWS OIDC or repository secrets per your org policy
+# - Set WORKING_DIRECTORY to your environment path
+
+name: Terraform CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "environments/**"
+      - "modules/**"
+      - ".github/workflows/terraform-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "environments/**"
+      - "modules/**"
+
+env:
+  TF_VERSION: "1.7.5"
+  AWS_REGION: us-west-2
+  WORKING_DIRECTORY: environments/dev
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive ../..
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+  plan:
+    name: Plan
+    needs: validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      # Uncomment when OIDC is configured:
+      # - uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::ACCOUNT_ID:role/github-terraform
+      #     aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: false
+
+      # Optional: post plan output to PR
+      # - uses: actions/github-script@v7
+      #   if: github.event_name == 'pull_request'
+      #   with:
+      #     script: |
+      #       // attach plan output as PR comment
+
+  # apply:
+  #   name: Apply
+  #   needs: plan
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   environment: dev
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - ... terraform apply -auto-approve (with approval gate on environment)

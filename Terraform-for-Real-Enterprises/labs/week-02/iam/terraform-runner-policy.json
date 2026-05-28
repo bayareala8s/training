@@ -1,0 +1,44 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "TerraformLabVPC",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:*",
+        "logs:*",
+        "iam:GetRole",
+        "iam:CreateRole",
+        "iam:PutRolePolicy",
+        "iam:PassRole",
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    },
+    {
+      "Sid": "TerraformStateReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListBucket",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:DeleteItem"
+      ],
+      "Resource": [
+        "arn:aws:s3:::YOUR-STATE-BUCKET",
+        "arn:aws:s3:::YOUR-STATE-BUCKET/*",
+        "arn:aws:dynamodb:us-west-2:ACCOUNT_ID:table/bayareala8s-tf-course-*"
+      ]
+    }
+  ]
+}
