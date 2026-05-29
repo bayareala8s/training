@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Product Service API
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+  /products:
+    get:
+      summary: List products
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductCreate"
+      responses:
+        "201":
+          description: Created
+  /products/{product_id}:
+    get:
+      summary: Get product
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+components:
+  schemas:
+    ProductCreate:
+      type: object
+      required: [name, price, sku]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        sku:
+          type: string
+        stock:
+          type: integer
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        sku:
+          type: string
+        stock:
+          type: integer

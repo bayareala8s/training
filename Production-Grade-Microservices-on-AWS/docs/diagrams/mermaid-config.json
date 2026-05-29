@@ -1,0 +1,21 @@
+{
+  "theme": "neutral",
+  "themeVariables": {
+    "fontFamily": "Helvetica, Arial, sans-serif",
+    "fontSize": "16px",
+    "primaryColor": "#e8f4fc",
+    "primaryTextColor": "#1a1a1a",
+    "primaryBorderColor": "#4a90a4",
+    "lineColor": "#333333",
+    "secondaryColor": "#d4edda",
+    "tertiaryColor": "#fff3cd"
+  },
+  "flowchart": {
+    "htmlLabels": true,
+    "curve": "basis"
+  },
+  "sequence": {
+    "diagramMarginX": 40,
+    "diagramMarginY": 20
+  }
+}

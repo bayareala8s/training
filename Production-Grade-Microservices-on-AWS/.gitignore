@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+target/
+.gradle/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.pem
+secrets/
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# AWS / local
+.aws-sam/
+cdk.out/
+dist/
+
+# Logs & coverage
+*.log
+coverage/
+htmlcov/
+.pytest_cache/
+
+# OS
+Thumbs.db
+
+# Diagram build temp (committed exports live in png/ and svg/)
+docs/diagrams/.build/
+.venv-diagrams/

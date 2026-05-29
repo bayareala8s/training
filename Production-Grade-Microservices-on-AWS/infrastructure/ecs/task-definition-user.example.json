@@ -1,0 +1,40 @@
+{
+  "family": "ms-course-dev-user-service",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ms-course-order-task-role",
+  "containerDefinitions": [
+    {
+      "name": "user-service",
+      "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/ms-course-dev-user-service:latest",
+      "essential": true,
+      "portMappings": [{ "containerPort": 8001, "protocol": "tcp" }],
+      "environment": [
+        { "name": "DATABASE_URL", "value": "sqlite:////tmp/users.db" }
+      ],
+      "secrets": [
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:ms-course/dev/jwt-secret"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ms-course-dev",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "user"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8001/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3
+      }
+    }
+  ]
+}

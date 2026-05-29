@@ -1,0 +1,36 @@
+# Example CI workflow — adapt SERVICE_PATH and language steps per track
+name: CI Service
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+env:
+  SERVICE_PATH: starters/python/user-service
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: ${{ env.SERVICE_PATH }}
+        run: |
+          pip install -r requirements.txt
+          pip install pytest httpx
+
+      - name: Run tests
+        working-directory: ${{ env.SERVICE_PATH }}
+        run: pytest -q || echo "Add tests in your service directory"
+
+      - name: Build Docker image
+        run: |
+          docker build -t user-service:${{ github.sha }} ${{ env.SERVICE_PATH }}

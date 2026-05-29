@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OrderPlaced",
+  "description": "Emitted when an order is successfully placed",
+  "type": "object",
+  "required": ["order_id", "user_id", "total", "items"],
+  "properties": {
+    "order_id": { "type": "string", "format": "uuid" },
+    "user_id": { "type": "string" },
+    "total": { "type": "number", "minimum": 0 },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["product_id", "product_name", "quantity"],
+        "properties": {
+          "product_id": { "type": "string" },
+          "product_name": { "type": "string" },
+          "quantity": { "type": "integer", "minimum": 1 }
+        }
+      }
+    }
+  }
+}
