@@ -15,7 +15,7 @@
 | Start here | [INSTRUCTOR_GUIDE.md](INSTRUCTOR_GUIDE.md) |
 | Setup | [TEACHING_GUIDE.md](TEACHING_GUIDE.md) |
 | 10-week schedule | [schedule/10-week-schedule.md](schedule/10-week-schedule.md) |
-| Lecture notes | [../lectures/](../lectures/) |
+| Lecture notes (detailed, 90 min each) | [../lectures/README.md](../lectures/README.md) |
 | Lab facilitation | [../instructor/](../instructor/) |
 | Assignments & rubrics | [../assignments/](../assignments/) |
 | Quizzes | [../assessments/quizzes/](../assessments/quizzes/) |
