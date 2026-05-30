@@ -1,0 +1,32 @@
+{
+  "dataset": "retail/orders",
+  "version": "1.0",
+  "created_at": "2026-05-30T03:41:33.017928+00:00",
+  "source": {
+    "filename": "orders_2024-01-15.csv",
+    "format": "csv",
+    "size_bytes": 91649,
+    "checksum_sha256": "273e35aff04a4e96ec51fc5d13548f561bc722ee57348c36f0ad27ca144610f3",
+    "record_count_estimate": 1000
+  },
+  "destination": {
+    "bucket": "cnde-dev-datalake-277374794397",
+    "zone": "raw",
+    "format": "csv"
+  },
+  "schema": {
+    "order_id": "string",
+    "customer_id": "string",
+    "product_category": "string",
+    "quantity": "integer",
+    "unit_price": "decimal",
+    "total_amount": "decimal",
+    "order_status": "string",
+    "order_timestamp": "timestamp",
+    "region": "string"
+  },
+  "lineage": {
+    "source_system": "lab-generator",
+    "ingestion_method": "manual-upload"
+  }
+}

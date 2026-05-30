@@ -1,0 +1,43 @@
+# AWS
+.aws/
+*.pem
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
+infrastructure/modules/*/build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.egg-info/
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Data (do not commit sample datasets with PII)
+data/raw/
+data/processed/
+*.parquet
+*.csv
+!**/sample-data/*.csv
+
+# Logs
+*.log
+logs/
+
+# Test reports (generated locally)
+scripts/test-modules-*-report.txt

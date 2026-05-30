@@ -1,0 +1,31 @@
+{
+  "report_timestamp": "2026-05-29T16:29:32.752501+00:00",
+  "dataset": "retail/orders",
+  "rules_version": "1.0",
+  "batch_id": "43f083c5-4dd6-4f8f-ad1a-7970b2f757cf",
+  "summary": {
+    "total_records": 10,
+    "passed": 7,
+    "quarantined": 3,
+    "pass_rate_pct": 70.0
+  },
+  "top_violations": [
+    {
+      "rule": "amount_in_range",
+      "count": 1
+    },
+    {
+      "rule": "status_valid",
+      "count": 1
+    },
+    {
+      "rule": "order_id_not_null",
+      "count": 1
+    }
+  ],
+  "slo_status": {
+    "completeness_target_pct": 99.9,
+    "completeness_actual_pct": 70.0,
+    "within_slo": false
+  }
+}

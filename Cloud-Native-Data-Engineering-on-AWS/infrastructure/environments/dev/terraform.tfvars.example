@@ -1,0 +1,10 @@
+# Development environment variables
+# Copy to terraform.tfvars and fill in your values
+
+aws_region  = "us-east-1"
+environment = "dev"
+project     = "cloud-native-data-engineering"
+student     = "your-name"
+
+# Optional: S3 bucket for Terraform state
+# tf_state_bucket = "your-tf-state-bucket"

@@ -1,0 +1,273 @@
+{
+  "widgets": [
+    {
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 24,
+      "height": 1,
+      "properties": {
+        "markdown": "# CNDE ETL Pipeline Dashboard\n**Module 8 Lab 8.1** — Glue jobs, Lambda ingestion, and data quality metrics"
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 1,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/Glue",
+            "glue.driver.aggregate.numFailedTasks",
+            "JobName",
+            "cnde-orders-etl",
+            "Type",
+            "gauge",
+            { "stat": "Sum", "label": "Orders ETL Failures" }
+          ],
+          [
+            "...",
+            "cnde-inventory-etl",
+            ".",
+            ".",
+            { "stat": "Sum", "label": "Inventory ETL Failures" }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Glue Job Failures",
+        "period": 300,
+        "stat": "Sum",
+        "yAxis": {
+          "left": { "min": 0 }
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 1,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/Glue",
+            "glue.driver.ExecutorRunTime",
+            "JobName",
+            "cnde-orders-etl",
+            "Type",
+            "gauge",
+            { "stat": "Average", "label": "Orders Avg Duration" }
+          ],
+          [
+            "...",
+            "cnde-inventory-etl",
+            ".",
+            ".",
+            { "stat": "Average", "label": "Inventory Avg Duration" }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Glue Job Duration (ms)",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 7,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/Lambda",
+            "Invocations",
+            "FunctionName",
+            "cnde-dev-ingestion",
+            { "stat": "Sum", "label": "Invocations" }
+          ],
+          [
+            ".",
+            "Errors",
+            ".",
+            ".",
+            { "stat": "Sum", "label": "Errors", "color": "#d62728" }
+          ],
+          [
+            ".",
+            "Duration",
+            ".",
+            ".",
+            { "stat": "p95", "label": "Duration P95", "yAxis": "right" }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Ingestion Lambda Health",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 8,
+      "y": 7,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "CNDE/DataQuality",
+            "ValidationPassRate",
+            "Dataset",
+            "retail/orders",
+            "Environment",
+            "dev",
+            { "stat": "Average", "label": "Orders Pass Rate %" }
+          ],
+          [
+            "...",
+            "retail/inventory",
+            ".",
+            ".",
+            { "stat": "Average", "label": "Inventory Pass Rate %" }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Data Quality Pass Rate",
+        "period": 300,
+        "yAxis": {
+          "left": { "min": 95, "max": 100 }
+        },
+        "annotations": {
+          "horizontal": [
+            {
+              "label": "SLO Threshold (99%)",
+              "value": 99
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "x": 16,
+      "y": 7,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "CNDE/DataQuality",
+            "QuarantinedRecords",
+            "Dataset",
+            "retail/orders",
+            "Environment",
+            "dev",
+            { "stat": "Sum", "label": "Orders Quarantined" }
+          ],
+          [
+            "CNDE/Pipeline",
+            "RecordsProcessed",
+            "Dataset",
+            "retail/orders",
+            "Environment",
+            "dev",
+            { "stat": "Sum", "label": "Orders Processed" }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Pipeline Throughput & Quarantine",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 0,
+      "y": 13,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/States",
+            "ExecutionsFailed",
+            "StateMachineArn",
+            "arn:aws:states:us-east-1:ACCOUNT_ID:stateMachine:cnde-dev-orders-pipeline",
+            { "stat": "Sum", "label": "Failed Executions" }
+          ],
+          [
+            ".",
+            "ExecutionsSucceeded",
+            ".",
+            ".",
+            { "stat": "Sum", "label": "Succeeded Executions" }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Step Functions – Orders Pipeline",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "x": 12,
+      "y": 13,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          [
+            "AWS/S3",
+            "BucketSizeBytes",
+            "BucketName",
+            "cnde-dev-datalake-ACCOUNT_ID",
+            "StorageType",
+            "StandardStorage",
+            { "stat": "Average", "label": "Standard Storage" }
+          ],
+          [
+            ".",
+            "NumberOfObjects",
+            ".",
+            ".",
+            ".",
+            ".",
+            { "stat": "Average", "label": "Object Count", "yAxis": "right" }
+          ]
+        ],
+        "view": "timeSeries",
+        "stacked": false,
+        "region": "us-east-1",
+        "title": "Data Lake Storage Growth",
+        "period": 86400
+      }
+    },
+    {
+      "type": "log",
+      "x": 0,
+      "y": 19,
+      "width": 24,
+      "height": 6,
+      "properties": {
+        "query": "SOURCE '/aws-glue/jobs/output'\n| fields @timestamp, @message\n| filter @message like /ERROR/\n| sort @timestamp desc\n| limit 20",
+        "region": "us-east-1",
+        "title": "Recent Glue Job Errors (Logs Insights)",
+        "view": "table"
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+[
+  {
+    "order_id": "ORD-001",
+    "customer_email": "alice@example.com",
+    "order_amount": 129.99,
+    "status": "shipped",
+    "currency": "USD"
+  },
+  {
+    "order_id": "ORD-002",
+    "customer_email": "bob@retailco.com",
+    "order_amount": 45.5,
+    "status": "delivered",
+    "currency": "USD"
+  },
+  {
+    "order_id": "ORD-004",
+    "customer_email": "dave@example.com",
+    "order_amount": 999.0,
+    "status": "cancelled",
+    "currency": "EUR"
+  },
+  {
+    "order_id": "ORD-005",
+    "customer_email": "not-an-email",
+    "order_amount": 22.0,
+    "status": "pending",
+    "currency": "USD",
+    "_quality_flags": [
+      {
+        "rule": "email_format",
+        "field": "customer_email",
+        "message": "customer_email must be a valid email address",
+        "severity": "warning",
+        "actual_value": "not-an-email"
+      }
+    ]
+  },
+  {
+    "order_id": "ORD-006",
+    "customer_email": "frank@example.com",
+    "order_amount": 15000.0,
+    "status": "shipped",
+    "currency": "GBP"
+  },
+  {
+    "order_id": "ORD-008",
+    "customer_email": "henry@example.com",
+    "order_amount": 0.01,
+    "status": "pending",
+    "currency": "USD"
+  },
+  {
+    "order_id": "ORD-010",
+    "customer_email": "jane.doe+shop@example.co.uk",
+    "order_amount": 320.75,
+    "status": "delivered",
+    "currency": "USD"
+  }
+]

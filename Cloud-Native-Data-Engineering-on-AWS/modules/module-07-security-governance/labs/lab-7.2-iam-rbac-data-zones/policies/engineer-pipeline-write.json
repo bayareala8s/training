@@ -1,0 +1,57 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListDataLakeZones",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+      "Resource": "arn:aws:s3:::BUCKET_NAME"
+    },
+    {
+      "Sid": "ReadRawCleaned",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject"],
+      "Resource": [
+        "arn:aws:s3:::BUCKET_NAME/raw/*",
+        "arn:aws:s3:::BUCKET_NAME/cleaned/*",
+        "arn:aws:s3:::BUCKET_NAME/metadata/*",
+        "arn:aws:s3:::BUCKET_NAME/glue/*"
+      ]
+    },
+    {
+      "Sid": "WritePipelineZones",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:DeleteObject"],
+      "Resource": [
+        "arn:aws:s3:::BUCKET_NAME/raw/*",
+        "arn:aws:s3:::BUCKET_NAME/cleaned/*",
+        "arn:aws:s3:::BUCKET_NAME/curated/*",
+        "arn:aws:s3:::BUCKET_NAME/quarantine/*",
+        "arn:aws:s3:::BUCKET_NAME/metadata/*",
+        "arn:aws:s3:::BUCKET_NAME/glue/*"
+      ]
+    },
+    {
+      "Sid": "DenyCuratedDeleteWithoutTag",
+      "Effect": "Deny",
+      "Action": ["s3:DeleteObject"],
+      "Resource": "arn:aws:s3:::BUCKET_NAME/curated/*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:ExistingObjectTag/allow-delete": "true"
+        }
+      }
+    },
+    {
+      "Sid": "GlueAndLambdaDeploy",
+      "Effect": "Allow",
+      "Action": [
+        "glue:*",
+        "lambda:InvokeFunction",
+        "states:StartExecution",
+        "states:DescribeExecution"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
