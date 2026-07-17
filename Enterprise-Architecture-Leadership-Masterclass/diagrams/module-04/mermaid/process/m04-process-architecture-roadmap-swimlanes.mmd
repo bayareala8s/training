@@ -1,0 +1,28 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart TB
+  subgraph Business
+    B1["Onboarding KPI"]
+  end
+  subgraph Platform
+    P1["Landing Zone"]
+    P2["Integration Hub"]
+  end
+  subgraph Security
+    S1["Identity"]
+    S2["DR"]
+  end
+  B1 --- P2
+  P1 --> P2
+  S1 --> P1

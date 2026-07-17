@@ -1,0 +1,31 @@
+# Git ignore for course repository
+
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+*.pem
+*.key
+node_modules/
+.venv/
+__pycache__/
+dist/
+build/
+*.zip
+!baylearn-seed/**/*.json
+
+# Local packaging output
+packages/
+*.pptx
+*.docx
+~$*
+**/.terraform/
+terraform.tfvars
+infrastructure/terraform/modules/**/lambda/*.zip

@@ -1,0 +1,9 @@
+flowchart TB
+  Client --> APIGW --> AcctLambda --> DDB
+  AcctLambda --> Bus
+  PayEvent --> Bus --> SQS --> PayLambda --> DDB
+  SQS --> DLQ
+  Partner --> S3 --> FileLambda --> Bus
+  Ops --> SFN --> Analytics
+  SFN --> SNS
+  Bus --> SNS

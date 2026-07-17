@@ -1,0 +1,25 @@
+flowchart TB
+  subgraph Sync["Synchronous"]
+    C[Clients] --> APIGW[API Gateway]
+    APIGW --> AL[Account Lambda]
+    AL --> DDB[(Accounts DynamoDB)]
+  end
+  subgraph Async["Events and queues"]
+    AL -->|AccountCreated| BUS[EventBridge bus]
+    PAY[PaymentSubmitted] --> BUS
+    BUS --> SQS[SQS payments]
+    SQS --> PL[Payment Lambda]
+    SQS --> DLQ[DLQ]
+    PL --> DDB
+  end
+  subgraph Files["Partner files"]
+    P[Partner upload sim] --> S3[(S3 incoming/)]
+    S3 --> FL[Partner file Lambda]
+    FL --> BUS
+  end
+  subgraph Batch["Regulatory batch"]
+    OPS[Operator] --> SFN[Step Functions]
+    SFN --> AN[Analytics Lambda]
+    SFN --> SNS[SNS notify]
+  end
+  BUS --> SNS

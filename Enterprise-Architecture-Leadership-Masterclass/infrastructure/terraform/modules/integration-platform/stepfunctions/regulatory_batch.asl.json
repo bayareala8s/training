@@ -1,0 +1,46 @@
+{
+  "Comment": "NorthStar regulatory batch → analytics → notify (fictional BayLearn lab)",
+  "StartAt": "RunAnalytics",
+  "States": {
+    "RunAnalytics": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${analytics_lambda_arn}",
+        "Payload": {
+          "batch_id.$": "$.batch_id",
+          "source.$": "$.source"
+        }
+      },
+      "ResultSelector": {
+        "analytics.$": "$.Payload"
+      },
+      "ResultPath": "$.analytics_result",
+      "Next": "PrepareNotification"
+    },
+    "PrepareNotification": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${notification_lambda_arn}",
+        "Payload.$": "$"
+      },
+      "ResultSelector": {
+        "subject.$": "$.Payload.subject",
+        "message.$": "$.Payload.message"
+      },
+      "ResultPath": "$.notify",
+      "Next": "PublishSNS"
+    },
+    "PublishSNS": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "${sns_topic_arn}",
+        "Subject.$": "$.notify.subject",
+        "Message.$": "$.notify.message"
+      },
+      "End": true
+    }
+  }
+}

@@ -1,0 +1,23 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart TB
+  Clients["Clients / Partners"] --> APIGW["Amazon API Gateway"]
+  APIGW --> Lapi["AWS Lambda — API"]
+  Lapi --> EB["Amazon EventBridge"]
+  EB --> SQS["Amazon SQS"]
+  SQS --> Lproc["AWS Lambda — Processors"]
+  Lproc --> DDB["Amazon DynamoDB"]
+  S3["Amazon S3 Batches"] --> SF["AWS Step Functions"]
+  SF --> Lval["Validate / Route"]
+  Lproc --> SNS["Amazon SNS Notify"]

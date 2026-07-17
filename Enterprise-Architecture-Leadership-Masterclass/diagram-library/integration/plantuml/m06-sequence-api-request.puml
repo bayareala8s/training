@@ -1,0 +1,17 @@
+@startuml m06-sequence-api-request
+title REST API Request Flow — NorthStar (fictional)
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowColor #545B64
+actor Client
+participant "Amazon API Gateway" as APIGW
+participant "AWS Lambda" as L
+database "Amazon DynamoDB" as DDB
+
+Client -> APIGW: HTTPS request
+APIGW -> L: Invoke
+L -> DDB: Get/Put item
+DDB --> L: Result
+L --> APIGW: JSON response
+APIGW --> Client: 200 OK
+note right of APIGW: Use official AWS icons in Draw.io masters
+@enduml

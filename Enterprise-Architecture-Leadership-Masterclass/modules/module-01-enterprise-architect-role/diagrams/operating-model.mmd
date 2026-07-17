@@ -1,0 +1,61 @@
+%% NorthStar Financial Services (fictional) — Architecture Operating Model (Module 01)
+%% Brand note: render on dark navy backgrounds with white nodes and gold accent on enterprise path
+
+flowchart TB
+  subgraph Exec["Executive layer"]
+    CEO[CEO / Executive Committee]
+    CIO[CIO / CTO]
+    CISO[CISO / Risk and Compliance]
+  end
+
+  subgraph EntEA["Enterprise Architecture Office"]
+    LEA[Lead Enterprise Architect]
+    ARB[Architecture Review Board\nmaterial decisions and exceptions]
+    PRIN[Principles and decision rights]
+    RISK[Portfolio tech-risk visibility]
+  end
+
+  subgraph Shared["Shared platform partners"]
+    PLAT[Platform / Cloud / SRE]
+    DATA[Data Architecture]
+    SEC[Security Architecture]
+  end
+
+  subgraph BUs["Federated business units"]
+    RET[Retail Banking\nDomain / Solution Architects]
+    PAY[Payments\nDomain / Solution Architects]
+    PAR[Partner Channels\nDomain / Solution Architects]
+    WEA[Wealth\nDomain / Solution Architects]
+  end
+
+  subgraph Delivery["Delivery teams"]
+    ENG[Engineering and Product teams]
+  end
+
+  CEO --> CIO
+  CEO --> CISO
+  CIO --> LEA
+  LEA --> PRIN
+  LEA --> RISK
+  LEA --> ARB
+  CISO -.->|Consulted on material risk| ARB
+  LEA --> PLAT
+  LEA --> DATA
+  LEA --> SEC
+  CIO --> RET
+  CIO --> PAY
+  CIO --> PAR
+  CIO --> WEA
+  RET --> ENG
+  PAY --> ENG
+  PAR --> ENG
+  WEA --> ENG
+  PLAT -.->|Golden paths and guardrails| ENG
+  SEC -.->|Controls and evidence| ENG
+  RET -.->|Escalate cross-domain / exceptions| ARB
+  PAY -.->|Escalate cross-domain / exceptions| ARB
+  PAR -.->|Escalate cross-domain / exceptions| ARB
+  WEA -.->|Escalate cross-domain / exceptions| ARB
+
+  classDef gold stroke:#C9A227,stroke-width:2px
+  class LEA,ARB,PRIN gold

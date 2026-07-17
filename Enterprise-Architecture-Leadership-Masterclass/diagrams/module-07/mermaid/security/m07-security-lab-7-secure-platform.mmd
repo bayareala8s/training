@@ -1,0 +1,20 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart TB
+  subgraph Lab7
+    IAM --> App
+    App --> KMS
+    App --> S3v["S3 Versioned"]
+    CW["CloudWatch Alarms"]
+  end

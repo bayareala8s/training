@@ -1,0 +1,29 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart TB
+  subgraph Center["Enterprise Architecture Center"]
+    EA["Lead EA"]
+    Std["Standards · ADRs · ARB"]
+  end
+  subgraph BUs["Business Units"]
+    DA1["Domain Arch — Payments"]
+    DA2["Domain Arch — Retail"]
+    DA3["Domain Arch — Partners"]
+  end
+  subgraph Plat["Platform"]
+    PA["Platform Architect"]
+    GP["Golden Paths"]
+  end
+  Center --> BUs & Plat
+  BUs --> SA["Solution Architects"]

@@ -1,0 +1,47 @@
+# Fiction notice: NorthStar Financial Services and all applications below are fictional for BayLearn instructional use only.
+Application ID,Name,Business capability,Business owner,Technology stack,Hosting model,Annual cost,Criticality,Technical health,Security risk,Integration count,Data classification,End-of-life date,Recommended disposition
+NS-APP-001,NorthStar Core Banking Suite,Payment Processing,Maya Chen - Payments LOB,"COBOL, CICS, DB2",On-premises data center,4200000,Mission Critical,Poor,High,48,Restricted,2028-12-31,Migrate
+NS-APP-002,Orbit Card Processor,Payment Processing,Maya Chen - Payments LOB,"Java EE, Oracle",On-premises data center,2100000,Mission Critical,Fair,High,36,Restricted,2027-06-30,Migrate
+NS-APP-003,Pulse Authorization Gateway,Payment Processing,Diego Alvarez - Payments Tech,"Java, Kafka, PostgreSQL",Private cloud,890000,Mission Critical,Good,Medium,22,Restricted,2030-01-01,Invest
+NS-APP-004,LedgerOne Reconciliation,Payment Processing,Priya Nair - Finance Ops,"Python, Pandas, SQL Server",On-premises VM,310000,High,Fair,Medium,14,Confidential,2026-12-31,Migrate
+NS-APP-005,FraudSentinel Batch,Payment Processing,Kenji Watanabe - Risk Ops,"SAS, Oracle",On-premises data center,540000,High,Poor,High,11,Restricted,2026-09-30,Eliminate
+NS-APP-006,FraudGuard Realtime,Payment Processing,Kenji Watanabe - Risk Ops,"Python, Redis, AWS Lambda",Public cloud AWS,720000,High,Good,Medium,18,Restricted,2031-01-01,Invest
+NS-APP-007,Retail Onboarding Portal,Customer Onboarding,Aisha Rahman - Retail Banking,"React, Node.js, MongoDB",Public cloud AWS,410000,High,Fair,Medium,19,Confidential,2029-06-30,Invest
+NS-APP-008,Legacy Branch Capture,Customer Onboarding,Aisha Rahman - Retail Banking,"ASP.NET, SQL Server",On-premises VM,280000,Medium,Poor,High,9,Confidential,2026-03-31,Eliminate
+NS-APP-009,KYC Partner Hub,Customer Onboarding,Sofia Berg - Compliance,"Java Spring, PostgreSQL",Private cloud,365000,High,Fair,High,16,Restricted,2028-01-01,Migrate
+NS-APP-010,Customer360 Hub,Customer Management,Luis Ortega - CDO Office,"Java, Neo4j, Kafka",Public cloud AWS,980000,Mission Critical,Fair,High,41,Restricted,2029-12-31,Invest
+NS-APP-011,Cards Customer Master,Customer Management,Helen Park - Cards LOB,"Oracle Forms, Oracle DB",On-premises data center,620000,High,Poor,High,27,Restricted,2027-01-31,Migrate
+NS-APP-012,Retail Customer Master,Customer Management,Aisha Rahman - Retail Banking,"Java, MySQL",On-premises VM,450000,High,Poor,High,24,Restricted,2027-01-31,Migrate
+NS-APP-013,Mobile Banking App,Channel Experience Delivery,Jordan Lee - Digital Experience,"Swift/Kotlin, Node.js",Public cloud AWS,760000,Mission Critical,Good,Medium,28,Confidential,2031-06-30,Invest
+NS-APP-014,Web Banking Classic,Channel Experience Delivery,Jordan Lee - Digital Experience,"JSP, Java EE, Oracle",On-premises VM,390000,High,Poor,High,21,Confidential,2026-12-31,Eliminate
+NS-APP-015,Contact Center Desktop,Channel Experience Delivery,Nora Schmidt - Service Ops,"C#, .NET Framework, SQL Server",On-premises VDI,520000,High,Fair,Medium,17,Confidential,2027-09-30,Migrate
+NS-APP-016,Partner Portal Galaxy,Partner Management,Chris Okonkwo - Partnerships,"React, Java Spring, PostgreSQL",Public cloud Azure,430000,High,Good,Medium,20,Confidential,2030-03-31,Invest
+NS-APP-017,Partner File Gateway A,Partner Management,Chris Okonkwo - Partnerships,"IBM Sterling, SFTP",On-premises data center,610000,High,Poor,High,33,Restricted,2026-06-30,Eliminate
+NS-APP-018,Partner File Gateway B,Partner Management,Helen Park - Cards LOB,"Axway, SFTP",On-premises VM,480000,High,Poor,High,29,Restricted,2026-06-30,Eliminate
+NS-APP-019,Partner Onboarding Workflow,Partner Management,Chris Okonkwo - Partnerships,"ServiceNow, IntegrationHub",SaaS,190000,Medium,Good,Low,8,Internal,2032-01-01,Tolerate
+NS-APP-020,API Management Edge,Integration Platform Management,Ravi Menon - Platform Engineering,"Kong, Redis, PostgreSQL",Public cloud AWS,340000,High,Good,Medium,55,Internal,2031-01-01,Invest
+NS-APP-021,Enterprise ESB Classic,Integration Platform Management,Ravi Menon - Platform Engineering,"Mule ESB 3.x, Java",On-premises VM,870000,High,Poor,High,62,Confidential,2026-12-31,Migrate
+NS-APP-022,Batch Integration Scheduler,Integration Platform Management,Ravi Menon - Platform Engineering,"Control-M, Scripts",On-premises data center,260000,Medium,Fair,Medium,40,Internal,2027-12-31,Tolerate
+NS-APP-023,Event Backbone,Integration Platform Management,Ravi Menon - Platform Engineering,"Apache Kafka, ZooKeeper",Private cloud,510000,High,Good,Medium,35,Internal,2031-06-30,Invest
+NS-APP-024,IAM Enterprise Directory,Identity & Access Management,Fatima Al-Hassan - CISO Office,"Active Directory, LDAP",On-premises data center,390000,Mission Critical,Fair,High,44,Restricted,2028-06-30,Invest
+NS-APP-025,Customer IAM Gateway,Identity & Access Management,Fatima Al-Hassan - CISO Office,"ForgeRock, Java",Private cloud,470000,Mission Critical,Fair,High,26,Restricted,2028-06-30,Migrate
+NS-APP-026,Workforce SSO,Identity & Access Management,Fatima Al-Hassan - CISO Office,Okta,SaaS,220000,High,Good,Low,15,Internal,2032-01-01,Invest
+NS-APP-027,Privileged Access Manager,Identity & Access Management,Fatima Al-Hassan - CISO Office,CyberArk,Hybrid,380000,High,Good,Medium,12,Restricted,2030-12-31,Invest
+NS-APP-028,GRC Control Repository,Risk & Compliance Management,Sofia Berg - Compliance,RSA Archer,SaaS,310000,High,Fair,Medium,10,Confidential,2029-01-01,Tolerate
+NS-APP-029,Transaction Monitoring Case,Risk & Compliance Management,Sofia Berg - Compliance,"Java, Oracle",On-premises VM,690000,Mission Critical,Fair,High,18,Restricted,2027-12-31,Migrate
+NS-APP-030,Policy Document Library,Risk & Compliance Management,Sofia Berg - Compliance,SharePoint Online,SaaS,90000,Low,Good,Low,3,Internal,2032-01-01,Tolerate
+NS-APP-031,Enterprise Data Warehouse,Enterprise Data Management,Luis Ortega - CDO Office,"Teradata, SQL",On-premises data center,1500000,High,Poor,Medium,38,Confidential,2027-03-31,Migrate
+NS-APP-032,Analytics Lakehouse,Enterprise Data Management,Luis Ortega - CDO Office,"Spark, Delta Lake, S3",Public cloud AWS,820000,High,Good,Medium,25,Confidential,2031-01-01,Invest
+NS-APP-033,MDM Attempt v1,Enterprise Data Management,Luis Ortega - CDO Office,"Informatica MDM, Oracle",On-premises VM,740000,High,Poor,High,16,Restricted,2026-12-31,Eliminate
+NS-APP-034,Product Catalog Manager,Product Lifecycle Management,Elena Rossi - Product,"Java Spring, PostgreSQL",Public cloud AWS,280000,High,Good,Low,14,Internal,2030-06-30,Invest
+NS-APP-035,Legacy Product Configurator,Product Lifecycle Management,Helen Park - Cards LOB,"VB6, SQL Server",On-premises workstation farm,210000,Medium,Poor,High,7,Internal,2026-06-30,Eliminate
+NS-APP-036,CI CD Enterprise,Product Delivery,Sam Okada - Engineering Effectiveness,"GitLab, Terraform, Helm",Public cloud AWS,190000,High,Good,Low,9,Internal,2031-01-01,Invest
+NS-APP-037,Release Calendar Spreadsheet Hub,Product Delivery,Sam Okada - Engineering Effectiveness,Microsoft 365 Excel/SharePoint,SaaS,25000,Low,Fair,Low,2,Internal,2026-12-31,Eliminate
+NS-APP-038,ITSM Service Desk,Incident & Service Management,Quinn Murphy - CIO Ops,ServiceNow ITSM,SaaS,560000,High,Good,Low,30,Internal,2032-01-01,Invest
+NS-APP-039,Observability Stack,Incident & Service Management,Quinn Murphy - CIO Ops,"Prometheus, Grafana, OpenTelemetry",Public cloud AWS,240000,High,Good,Low,20,Internal,2031-06-30,Invest
+NS-APP-040,Legacy NOC Console,Incident & Service Management,Quinn Murphy - CIO Ops,"Perl, Nagios",On-premises VM,150000,Medium,Poor,Medium,11,Internal,2026-09-30,Eliminate
+NS-APP-041,Cloud Landing Zone Mgmt,Cloud & Infrastructure Platforms,Priya Kapoor - Cloud Center,"AWS Control Tower, Terraform",Public cloud AWS,320000,High,Fair,Medium,6,Internal,2031-01-01,Invest
+NS-APP-042,On-Prem Virtualization Suite,Cloud & Infrastructure Platforms,Priya Kapoor - Cloud Center,VMware vSphere,On-premises data center,1100000,High,Fair,Medium,8,Internal,2028-12-31,Tolerate
+NS-APP-043,Shadow SaaS Marketing Suite,Channel Experience Delivery,Jordan Lee - Digital Experience,Multiple SaaS (unregistered),SaaS,180000,Medium,Poor,High,5,Confidential,2026-03-31,Eliminate
+NS-APP-044,HR Workday,Workforce Management,Amelia Brooks - CHRO,Workday,SaaS,640000,Medium,Good,Low,7,Confidential,2032-01-01,Tolerate
+NS-APP-045,ERP Finance Core,Financial Controllership,Victor Lind - CFO Office,SAP S/4HANA,Private cloud,1900000,Mission Critical,Good,Medium,22,Restricted,2031-12-31,Tolerate

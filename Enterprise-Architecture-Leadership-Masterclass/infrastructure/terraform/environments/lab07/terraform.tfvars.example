@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars and customize.
+# Cost warning: leave enable_replication = false unless you will destroy the same day.
+
+student_id         = "jsmith"
+aws_region         = "us-east-1"
+replica_region     = "us-west-2"
+enable_replication = false
+alert_email        = "" # optional; SNS will email-confirm if set
+expiration_date    = "2026-07-16"

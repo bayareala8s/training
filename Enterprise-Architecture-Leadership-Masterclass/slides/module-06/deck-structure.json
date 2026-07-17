@@ -1,0 +1,36 @@
+{
+  "module": "06",
+  "title": "Integration, Application, and Data Architecture",
+  "aspectRatio": "16:9",
+  "brand": "BayLearn",
+  "slideCount": 20,
+  "colors": {
+    "navy": "#0B1F3A",
+    "white": "#FFFFFF",
+    "gold": "#C6A75E"
+  },
+  "slides": [
+    { "id": 1, "title": "Module title", "section": "open" },
+    { "id": 2, "title": "Lead EA role", "section": "open" },
+    { "id": 3, "title": "Business scenario", "section": "open" },
+    { "id": 4, "title": "Learning objectives", "section": "open" },
+    { "id": 5, "title": "Interaction styles collide", "section": "concept" },
+    { "id": 6, "title": "Pattern families", "section": "concept" },
+    { "id": 7, "title": "Multi-criteria selection", "section": "concept" },
+    { "id": 8, "title": "NorthStar interface table", "section": "concept" },
+    { "id": 9, "title": "Failure modes", "section": "concept" },
+    { "id": 10, "title": "Domains vs platform", "section": "concept" },
+    { "id": 11, "title": "Application boundaries", "section": "concept" },
+    { "id": 12, "title": "Shared database trap", "section": "concept" },
+    { "id": 13, "title": "Data products and masters", "section": "concept" },
+    { "id": 14, "title": "Events as contracts", "section": "concept" },
+    { "id": 15, "title": "Instructor demo agenda", "section": "demo" },
+    { "id": 16, "title": "Cost warning", "section": "demo" },
+    { "id": 17, "title": "Lab launch", "section": "lab" },
+    { "id": 18, "title": "Architecture review prompts", "section": "review" },
+    { "id": 19, "title": "Assignment", "section": "close" },
+    { "id": 20, "title": "Close / next module", "section": "close" }
+  ],
+  "outlinePath": "slides/module-06/slide-outline.md",
+  "terraformLab": "infrastructure/terraform/environments/lab06/"
+}

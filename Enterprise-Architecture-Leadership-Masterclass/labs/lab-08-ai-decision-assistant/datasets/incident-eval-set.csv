@@ -1,0 +1,21 @@
+incident_id,incident_text,expected_category,expected_severity,expected_routing_team,expected_hitl,expected_business_impact
+INC-001,"Payment authorization API p95 latency above 2s for 15 minutes in us-east-1",availability,high,payments-sre,true,Customer checkout delays; revenue at risk
+INC-002,"Partner SFTP landing bucket missing expected daily settlement file from Partner Orion",data_quality,medium,partner-integrations,false,Settlement reconciliation may slip same day
+INC-003,"Suspected credential stuffing against retail login; elevated 401 rate",security,high,security-ir,true,Account takeover risk; customer trust
+INC-004,"Nightly batch job for marketing email segments failed; non-production",batch_failure,low,data-platform,false,Marketing campaign delay; no funds impact
+INC-005,"DynamoDB throttling on session table during flash sale",availability,critical,platform-sre,true,Checkout sessions failing; major revenue impact
+INC-006,"CloudWatch alarm flapping on low-priority canary; auto-recovered",noise,low,platform-sre,false,Minimal customer impact
+INC-007,"Incorrect FX rate published to internal pricing cache for EUR",data_integrity,critical,payments-risk,true,Incorrect customer pricing; financial misstatement risk
+INC-008,"Employee reports phishing email claiming payroll portal reset",security,medium,security-ir,true,Potential credential harvest; limited confirmed impact
+INC-009,"CI pipeline broken for mobile app; blocking releases",delivery,low,mobile-platform,false,Feature delivery delay only
+INC-010,"S3 version delete burst on settlements prefix by automation role",security,critical,security-ir,true,Potential destructive change to Restricted data
+INC-011,"OpenAPI schema mismatch causing 400s on partner quote API",integration,medium,partner-integrations,false,Partner onboarding friction
+INC-012,"GPU notebook left running in sandbox account (FinOps alert)",cost,low,cloud-finops,false,Cost overrun risk in sandbox
+INC-013,"Partial outage of notification SMS provider; email fallback working",availability,medium,customer-ops,true,OTP delays for some customers
+INC-014,"Model assistant suggested closing a Critical payments incident as noise",ai_governance,high,architecture-gov,true,Unsafe automation behavior; process risk
+INC-015,"Certificate expiry in 10 days for public marketing site",compliance,medium,platform-sre,false,Future outage if untreated
+INC-016,"Wire transfer channel degraded; queues backing up",availability,critical,payments-sre,true,Time-critical payments delayed
+INC-017,"Duplicate customer golden-record merges creating wrong statements",data_integrity,high,data-governance,true,Customer statement errors; complaint surge
+INC-018,"Read-only analytics dashboard blank due to expired QuickSight user",noise,low,bi-support,false,Internal reporting inconvenience
+INC-019,"WAF blocked legitimate partner IP range after rule change",security,high,security-eng,true,Partner API failures; revenue/ops impact
+INC-020,"Step Functions execution timeout in onboarding workflow",integration,medium,digital-onboarding,false,Onboarding SLA breach risk

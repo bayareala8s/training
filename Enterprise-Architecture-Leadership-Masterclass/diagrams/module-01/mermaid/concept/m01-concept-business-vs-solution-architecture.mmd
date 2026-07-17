@@ -1,0 +1,26 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart LR
+  subgraph EA["Enterprise Architect"]
+    E1["Strategy → Priorities"]
+    E2["Cross-domain trade-offs"]
+    E3["Standards & governance"]
+  end
+  subgraph SA["Solution Architect"]
+    S1["Product / project scope"]
+    S2["Design within guardrails"]
+    S3["Delivery enablement"]
+  end
+  EA -->|"Guardrails & ADRs"| SA
+  SA -->|"Patterns & feedback"| EA

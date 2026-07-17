@@ -1,0 +1,14 @@
+# Copy to terraform.tfvars and customize.
+# DEFAULT: mock mode — works without Bedrock model access.
+
+student_id         = "jsmith"
+aws_region         = "us-east-1"
+expiration_date    = "2026-07-16"
+use_mock_bedrock   = true
+bedrock_model_id   = "amazon.nova-micro-v1:0"
+enable_guardrails  = false
+
+# To use live Bedrock:
+# 1) Enable model access in Bedrock console for bedrock_model_id
+# 2) use_mock_bedrock = false
+# 3) terraform apply

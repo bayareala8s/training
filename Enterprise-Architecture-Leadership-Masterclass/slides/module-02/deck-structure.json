@@ -1,0 +1,96 @@
+{
+  "module": "02",
+  "title": "Business Architecture and Capability Mapping",
+  "aspectRatio": "16:9",
+  "brand": "BayLearn",
+  "colors": {
+    "navy": "#0A1628",
+    "white": "#FFFFFF",
+    "gold": "#C9A227"
+  },
+  "minSlides": 15,
+  "maxSlides": 25,
+  "slideCount": 20,
+  "slides": [
+    {
+      "id": 1,
+      "title": "Module title"
+    },
+    {
+      "id": 2,
+      "title": "Lead EA role"
+    },
+    {
+      "id": 3,
+      "title": "Business scenario"
+    },
+    {
+      "id": 4,
+      "title": "Learning objectives"
+    },
+    {
+      "id": 5,
+      "title": "Strategy bridge"
+    },
+    {
+      "id": 6,
+      "title": "Themes to questions"
+    },
+    {
+      "id": 7,
+      "title": "Capability definition"
+    },
+    {
+      "id": 8,
+      "title": "Bad labels clinic"
+    },
+    {
+      "id": 9,
+      "title": "L1 map shape"
+    },
+    {
+      "id": 10,
+      "title": "Core Supporting Commodity"
+    },
+    {
+      "id": 11,
+      "title": "Ownership"
+    },
+    {
+      "id": 12,
+      "title": "Instructor demo"
+    },
+    {
+      "id": 13,
+      "title": "Value streams"
+    },
+    {
+      "id": 14,
+      "title": "Onboarding stages"
+    },
+    {
+      "id": 15,
+      "title": "Friction taxonomy"
+    },
+    {
+      "id": 16,
+      "title": "Outcome traceability"
+    },
+    {
+      "id": 17,
+      "title": "Heatmap rules"
+    },
+    {
+      "id": 18,
+      "title": "Lab overview"
+    },
+    {
+      "id": 19,
+      "title": "Assignment and rubric"
+    },
+    {
+      "id": 20,
+      "title": "Takeaways and next"
+    }
+  ]
+}

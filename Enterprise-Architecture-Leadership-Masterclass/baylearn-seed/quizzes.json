@@ -1,0 +1,112 @@
+[
+  {
+    "id": "quiz-01",
+    "moduleId": "module-01",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 01 Quiz — The Enterprise Architect's Role",
+    "order": 1,
+    "formative": true,
+    "path": "assessments/quizzes/module-01-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-01-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-02",
+    "moduleId": "module-02",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 02 Quiz — Business Architecture and Capability Mapping",
+    "order": 2,
+    "formative": true,
+    "path": "assessments/quizzes/module-02-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-02-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-03",
+    "moduleId": "module-03",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 03 Quiz — Current-State Architecture Assessment",
+    "order": 3,
+    "formative": true,
+    "path": "assessments/quizzes/module-03-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-03-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-04",
+    "moduleId": "module-04",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 04 Quiz — Target-State Architecture and Roadmaps",
+    "order": 4,
+    "formative": true,
+    "path": "assessments/quizzes/module-04-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-04-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-05",
+    "moduleId": "module-05",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 05 Quiz — Cloud and Platform Strategy",
+    "order": 5,
+    "formative": true,
+    "path": "assessments/quizzes/module-05-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-05-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-06",
+    "moduleId": "module-06",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 06 Quiz — Integration, Application, and Data Architecture",
+    "order": 6,
+    "formative": true,
+    "path": "assessments/quizzes/module-06-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-06-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-07",
+    "moduleId": "module-07",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 07 Quiz — Security, Risk, Compliance, and Resilience",
+    "order": 7,
+    "formative": true,
+    "path": "assessments/quizzes/module-07-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-07-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-08",
+    "moduleId": "module-08",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 08 Quiz — AI Strategy and Intelligent EA",
+    "order": 8,
+    "formative": true,
+    "path": "assessments/quizzes/module-08-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-08-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-09",
+    "moduleId": "module-09",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 09 Quiz — Architecture Governance and Executive Communication",
+    "order": 9,
+    "formative": true,
+    "path": "assessments/quizzes/module-09-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-09-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  },
+  {
+    "id": "quiz-10",
+    "moduleId": "module-10",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Module 10 Quiz — Capstone and Architecture Leadership",
+    "order": 10,
+    "formative": true,
+    "path": "assessments/quizzes/module-10-quiz.md",
+    "answerKeyPath": "assessments/answer-keys/module-10-answer-key.md",
+    "questionCounts": {"multipleChoice": 10, "scenario": 3, "discussion": 2}
+  }
+]

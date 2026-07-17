@@ -1,0 +1,53 @@
+{
+  "module": "04",
+  "slug": "module-04-target-state",
+  "title": "Target-State Architecture and Transformation Roadmaps",
+  "aspectRatio": "16:9",
+  "brand": "BayLearn",
+  "owner": "BayAreaLa8s",
+  "caseStudy": "NorthStar Financial Services (fictional)",
+  "minSlides": 15,
+  "maxSlides": 25,
+  "slideCount": 25,
+  "colors": {
+    "primary": "dark navy",
+    "secondary": "white",
+    "accent": "restrained gold"
+  },
+  "slides": [
+    { "id": 1, "title": "Module title", "section": "open" },
+    { "id": 2, "title": "You are the Lead EA", "section": "open" },
+    { "id": 3, "title": "Business scenario", "section": "open" },
+    { "id": 4, "title": "Learning objectives", "section": "open" },
+    { "id": 5, "title": "What target state is", "section": "target" },
+    { "id": 6, "title": "Target-State Canvas", "section": "target" },
+    { "id": 7, "title": "NorthStar target headlines", "section": "target" },
+    { "id": 8, "title": "Principles that constrain", "section": "target" },
+    { "id": 9, "title": "Trade-off greenfield vs pattern", "section": "target" },
+    { "id": 10, "title": "Seven modernization strategies", "section": "strategies" },
+    { "id": 11, "title": "Strategy selection tree", "section": "strategies" },
+    { "id": 12, "title": "NorthStar disposition examples", "section": "strategies" },
+    { "id": 13, "title": "Consolidate vs replace", "section": "strategies" },
+    { "id": 14, "title": "Transition architecture defined", "section": "transitions" },
+    { "id": 15, "title": "Three NorthStar transitions", "section": "transitions" },
+    { "id": 16, "title": "Coexistence toolbox", "section": "transitions" },
+    { "id": 17, "title": "Exit criteria litmus test", "section": "transitions" },
+    { "id": 18, "title": "Roadmap vs project plan", "section": "roadmap" },
+    { "id": 19, "title": "24-month waves", "section": "roadmap" },
+    { "id": 20, "title": "Value vs risk", "section": "roadmap" },
+    { "id": 21, "title": "Common mistakes", "section": "roadmap" },
+    { "id": 22, "title": "Instructor demo agenda", "section": "demo" },
+    { "id": 23, "title": "Lab overview", "section": "lab" },
+    { "id": 24, "title": "Assignment and rubric", "section": "close" },
+    { "id": 25, "title": "Takeaways and next module", "section": "close" }
+  ],
+  "diagrams": [
+    "modules/module-04-target-state/diagrams/01-current-to-target-journey.md",
+    "modules/module-04-target-state/diagrams/02-modernization-strategy-tree.md",
+    "modules/module-04-target-state/diagrams/03-transition-coexistence.md",
+    "modules/module-04-target-state/diagrams/04-roadmap-waves.md",
+    "modules/module-04-target-state/diagrams/05-value-vs-risk.md"
+  ],
+  "speakerNotesRequired": true,
+  "outlinePath": "slides/module-04/slide-outline.md"
+}

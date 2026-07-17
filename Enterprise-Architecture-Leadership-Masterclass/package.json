@@ -1,0 +1,15 @@
+{
+  "name": "course-enterprise-architecture-leadership-masterclass",
+  "version": "1.0.0",
+  "description": "**Tagline:** From Senior Engineer to Enterprise Architecture Leader",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.4.2"
+  }
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "id": "assignment-01",
+    "moduleId": "module-01",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Establish NorthStar Architecture Operating Model",
+    "order": 1,
+    "dueOffsetDays": 7,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-01-assignment.md",
+    "labId": "lab-01"
+  },
+  {
+    "id": "assignment-02",
+    "moduleId": "module-02",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Build NorthStar Capability Map and Heatmap",
+    "order": 2,
+    "dueOffsetDays": 14,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-02-assignment.md",
+    "labId": "lab-02"
+  },
+  {
+    "id": "assignment-03",
+    "moduleId": "module-03",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Assess NorthStar Current Technology Estate",
+    "order": 3,
+    "dueOffsetDays": 21,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-03-assignment.md",
+    "labId": "lab-03"
+  },
+  {
+    "id": "assignment-04",
+    "moduleId": "module-04",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Create NorthStar Target-State Roadmap",
+    "order": 4,
+    "dueOffsetDays": 28,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-04-assignment.md",
+    "labId": "lab-04"
+  },
+  {
+    "id": "assignment-05",
+    "moduleId": "module-05",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Design Cloud and Platform Foundation",
+    "order": 5,
+    "dueOffsetDays": 35,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-05-assignment.md",
+    "labId": "lab-05"
+  },
+  {
+    "id": "assignment-06",
+    "moduleId": "module-06",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Build Integration Reference Architecture",
+    "order": 6,
+    "dueOffsetDays": 42,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-06-assignment.md",
+    "labId": "lab-06"
+  },
+  {
+    "id": "assignment-07",
+    "moduleId": "module-07",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Secure and Resilient Digital Platform",
+    "order": 7,
+    "dueOffsetDays": 49,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-07-assignment.md",
+    "labId": "lab-07"
+  },
+  {
+    "id": "assignment-08",
+    "moduleId": "module-08",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Governed AI Decision Assistant Strategy",
+    "order": 8,
+    "dueOffsetDays": 56,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-08-assignment.md",
+    "labId": "lab-08"
+  },
+  {
+    "id": "assignment-09",
+    "moduleId": "module-09",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "Architecture Review Board Simulation Pack",
+    "order": 9,
+    "dueOffsetDays": 63,
+    "rubricId": "rubric-standard-architecture",
+    "path": "assessments/assignments/module-09-assignment.md",
+    "labId": "lab-09"
+  },
+  {
+    "id": "assignment-10",
+    "moduleId": "module-10",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "title": "NorthStar Enterprise Transformation Capstone",
+    "order": 10,
+    "dueOffsetDays": 70,
+    "rubricId": "rubric-capstone",
+    "path": "assessments/assignments/module-10-assignment.md",
+    "labId": "lab-10",
+    "presentationRequired": true,
+    "presentationMinutes": 15,
+    "qaMinutes": 10,
+    "maxSlides": 15
+  }
+]
