@@ -115,16 +115,6 @@ resource "aws_security_group" "ecs_tasks" {
     self      = true
   }
 
-  dynamic "ingress" {
-    for_each = local.enable_alb ? [1] : []
-    content {
-      from_port       = 0
-      to_port         = 65535
-      protocol        = "tcp"
-      security_groups = [aws_security_group.alb[0].id]
-    }
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -133,4 +123,16 @@ resource "aws_security_group" "ecs_tasks" {
   }
 
   tags = local.common_tags
+}
+
+# Separate rule so Terraform revokes ALB ingress before destroying the ALB security group.
+resource "aws_security_group_rule" "ecs_tasks_from_alb" {
+  count                    = local.enable_alb ? 1 : 0
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 65535
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.ecs_tasks.id
+  source_security_group_id = aws_security_group.alb[0].id
+  description              = "ALB to ECS tasks"
 }

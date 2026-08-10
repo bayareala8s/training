@@ -21,3 +21,10 @@ Week 10: [capstone/README.md](../capstone/README.md)
 ```bash
 docker compose up --build
 ```
+
+**Verify labs:**
+
+```bash
+./scripts/verify-all-labs.sh    # local labs + AWS 04/08 if platform active
+./scripts/verify-aws-labs.sh    # AWS labs 04–08 (requires ./scripts/aws-start.sh)
+```

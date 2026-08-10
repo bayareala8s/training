@@ -28,6 +28,9 @@ demo:
 verify-labs:
 	./scripts/verify-all-labs.sh
 
+verify-aws-labs:
+	./scripts/verify-aws-labs.sh
+
 verify-all: test verify-labs
 
 aws-start:
