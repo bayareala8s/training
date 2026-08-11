@@ -30,10 +30,15 @@ OIDC_THUMBPRINT="$THUMBPRINT" ./scripts/github/setup-oidc.sh
 
 Copy the printed `AWS_ROLE_ARN`.
 
-**GitHub secret:**
+**Detailed secret steps:** [GITHUB-SECRET-AWS_ROLE_ARN.md](GITHUB-SECRET-AWS_ROLE_ARN.md)
 
-1. Open https://github.com/bayareala8s/training/settings/secrets/actions
-2. New repository secret: `AWS_ROLE_ARN` = `arn:aws:iam::ACCOUNT:role/github-terraform`
+**GitHub secret (quick):**
+
+| Name | Value |
+|------|--------|
+| `AWS_ROLE_ARN` | `arn:aws:iam::277374794397:role/github-terraform` |
+
+Settings: https://github.com/bayareala8s/training/settings/secrets/actions
 
 ---
 
