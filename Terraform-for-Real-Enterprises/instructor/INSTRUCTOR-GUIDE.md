@@ -111,6 +111,10 @@ Estimated monthly cost per active student (dev only, NAT instance mode): **$15�
 
 ---
 
+## Lab demo & run guide (all 22 labs)
+
+Step-by-step instructions for demoing and running every lab: [docs/LAB-DEMO-GUIDE.md](../docs/LAB-DEMO-GUIDE.md)
+
 ## Instructor smoke test (one command)
 
 Run this before a cohort to confirm labs still work end-to-end (apply → start/stop → teardown) and finish with **no running resources**.

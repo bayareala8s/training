@@ -1,13 +1,38 @@
+# Terraform CI — BayAreaLa8s Terraform for Real Enterprises
+#
+# Monorepo: lives at training/Terraform-for-Real-Enterprises/.github/workflows/
+# Set TF_COURSE_ROOT to "" if this course is the repository root.
+
 name: Terraform CI
 
 on:
   pull_request:
     branches: [main, master]
+    paths:
+      - "Terraform-for-Real-Enterprises/modules/**"
+      - "Terraform-for-Real-Enterprises/labs/**"
+      - "Terraform-for-Real-Enterprises/.github/workflows/**"
+      - "modules/**"
+      - "labs/**"
+      - ".github/workflows/terraform-ci.yml"
   push:
     branches: [main, master]
+    paths:
+      - "Terraform-for-Real-Enterprises/modules/**"
+      - "Terraform-for-Real-Enterprises/labs/**"
+      - "modules/**"
+      - "labs/**"
 
 env:
   TF_VERSION: "1.7.5"
+  AWS_REGION: us-west-2
+  # Monorepo path prefix (empty string if course is repo root)
+  TF_COURSE_ROOT: Terraform-for-Real-Enterprises
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
 
 jobs:
   validate:
@@ -17,25 +42,81 @@ jobs:
         env: [dev, test, prod]
     defaults:
       run:
-        working-directory: labs/shared/environments/${{ matrix.env }}
+        working-directory: ${{ env.TF_COURSE_ROOT }}/labs/shared/environments/${{ matrix.env }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
       - name: Format check
-        run: terraform fmt -check -recursive ../../../..
+        run: terraform fmt -check -recursive ${{ env.TF_COURSE_ROOT }}
       - name: Init
         run: terraform init -backend=false
       - name: Validate
         run: terraform validate
 
-  checkov:
+  security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: bridgecrewio/checkov-action@master
         with:
-          directory: modules/
+          directory: ${{ env.TF_COURSE_ROOT }}/modules/
           framework: terraform
           soft_fail: true
+
+  plan-dev:
+    needs: validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_COURSE_ROOT }}/labs/shared/environments/dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      # Uncomment after running scripts/github/setup-oidc.sh and adding AWS_ROLE_ARN secret:
+      # - uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+      #     aws-region: ${{ env.AWS_REGION }}
+      - name: Terraform Init
+        run: terraform init -backend=false
+      - name: Terraform Plan (mock vars — no AWS creds required)
+        run: terraform plan -input=false
+        env:
+          TF_VAR_environment: dev
+          TF_VAR_owner: ci
+          TF_VAR_project_name: bal8s-tf
+          TF_VAR_aws_region: us-west-2
+          TF_VAR_vpc_cidr: "10.10.0.0/16"
+          TF_VAR_availability_zones: '["us-west-2a","us-west-2b"]'
+          TF_VAR_public_subnet_cidrs: '["10.10.1.0/24","10.10.2.0/24"]'
+          TF_VAR_private_subnet_cidrs: '["10.10.11.0/24","10.10.12.0/24"]'
+          TF_VAR_enable_nat_gateway: false
+          TF_VAR_use_nat_instance: true
+          TF_VAR_enable_lab_compute: false
+          TF_VAR_instance_type: t3.micro
+
+  # apply-dev:
+  #   needs: plan-dev
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   environment: dev
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ${{ env.TF_COURSE_ROOT }}/labs/shared/environments/dev
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: hashicorp/setup-terraform@v3
+  #       with:
+  #         terraform_version: ${{ env.TF_VERSION }}
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+  #         aws-region: ${{ env.AWS_REGION }}
+  #     - run: terraform init -backend-config=backend.hcl.example
+  #     - run: terraform apply -auto-approve -input=false
+  #       env:
+  #         TF_VAR_owner: ci

@@ -2,6 +2,8 @@
 
 Complete lab instructions for **Terraform for Real Enterprises**. Work in order; each week builds on the last.
 
+**Instructors:** see the full step-by-step demo and run guide → [docs/LAB-DEMO-GUIDE.md](../docs/LAB-DEMO-GUIDE.md)
+
 ## Before you start
 
 1. AWS account with admin lab access (or scoped lab OU)
