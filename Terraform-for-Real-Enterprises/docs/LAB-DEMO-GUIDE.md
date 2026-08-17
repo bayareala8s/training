@@ -6,18 +6,87 @@ This guide is for **instructors** demoing live and **students** running labs ind
 
 ---
 
-## Verification status (last run)
+## Current lab status
+
+Run before each cohort to refresh this section:
+
+```bash
+make lab-status
+aws ec2 describe-vpcs --region us-west-2 \
+  --filters Name=tag:Course,Values=terraform-enterprise \
+  --query 'Vpcs[].[Tags[?Key==`Environment`].Value|[0],VpcId,CidrBlock]' --output table
+```
+
+| Environment | Default CIDR | NAT pattern |
+|-------------|--------------|-------------|
+| dev | `10.10.0.0/16` | NAT instance (stoppable) |
+| test | `10.20.0.0/16` | NAT instance (stoppable) |
+| prod | `10.30.0.0/16` | NAT Gateway (destroy on `make lab-pause`) |
+
+| Check | How to verify |
+|-------|----------------|
+| Terraform validate | `make validate` |
+| Cost pause | `make lab-pause` / `make lab-resume` |
+| GitHub CI | https://github.com/bayareala8s/training/actions |
+| OIDC secret | [GITHUB-SECRET-AWS_ROLE_ARN.md](GITHUB-SECRET-AWS_ROLE_ARN.md) |
+
+### Pre-demo (start of every session)
+
+```bash
+# Monorepo: cd training/Terraform-for-Real-Enterprises
+# Standalone: cd into course repo root
+export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc   # if registry blocked
+make lab-resume && make lab-status
+```
+
+### End of session (save cost)
+
+```bash
+make lab-pause
+```
+
+---
+
+## All 22 labs — at-a-glance
+
+| Lab | Week | Type | Infrastructure needed | Ready? |
+|-----|------|------|----------------------|--------|
+| 1.1 Install | 1 | Local | None | ✅ |
+| 1.2 Provider | 1 | Local | Optional S3 bucket | ✅ |
+| 1.3 Backend | 1 | AWS | dev stack | ✅ deployed |
+| 2.1 Organizations | 2 | Design | Docs only | ✅ |
+| 2.2 Cross-account IAM | 2 | IAM | Role create or document | ✅ |
+| 2.3 Cross-account apply | 2 | AWS | dev plan | ✅ |
+| 3.1 VPC module | 3 | Code | dev plan | ✅ |
+| 3.2 Compose modules | 3 | Code | validate all envs | ✅ |
+| 3.3 Publish module | 3 | Git | tag + CHANGELOG | ✅ |
+| 4.1 GitHub Actions | 4 | GitHub | workflow on `training` | ✅ workflow live |
+| 4.2 Approval gates | 4 | GitHub | Environments + secret | ⚠️ add `AWS_ROLE_ARN` secret |
+| 4.3 Validation | 4 | Local/CI | tflint + checkov | ✅ |
+| 5.1 Promotion | 5 | AWS | dev + test + prod | ✅ all three deployed |
+| 5.2 Drift | 5 | AWS | dev running | ✅ |
+| 5.3 Remediate | 5 | AWS | dev apply | ✅ |
+| 6.1 Failed deploy | 6 | AWS | dev (break/fix) | ✅ |
+| 6.2 State recovery | 6 | State | S3 state versions | ✅ |
+| 6.3 Rollback | 6 | Git | rollback-plan.sh | ✅ |
+| 7.1 IAM least privilege | 7 | IAM | policy JSON | ✅ |
+| 7.2 Tagging | 7 | AWS | tagged instances | ✅ |
+| 7.3 Compliance | 7 | Checkov | modules + labs | ✅ |
+| 8 Capstone | 8 | Full | student project | ✅ rubric ready |
+
+---
+
+## Verification status (automated smoke test)
 
 | Check | Result | Notes |
 |-------|--------|-------|
 | `terraform validate` (dev, test, prod) | **Pass** | All three environment configs valid |
-| Dev `apply` (20 resources) | **Pass** | VPC, NAT instance, lab EC2, flow logs |
+| Dev / test / prod `apply` | **Pass** | 23 resources each in remote state |
 | `start-lab.sh` / `stop-lab.sh` | **Pass** | EC2 stop → start cycle verified |
-| Test / prod `apply` | **Not auto-run** | Configs validate; apply manually for promotion demo |
-| Week 4 GitHub Actions | **Manual** | Requires GitHub repo + optional OIDC |
-| Week 2 multi-account | **Design lab** | Single-account mode documented in repo |
+| Week 4 GitHub Actions | **Live** | OIDC role created; secret required for plan job |
+| Week 2 multi-account | **Design lab** | Single-account mode with isolated state keys |
 
-**Account used for verification:** `277374794397` · Region: `us-west-2`
+**Account:** `277374794397` · **Region:** `us-west-2`
 
 ---
 
@@ -381,7 +450,9 @@ aws sts assume-role \
 
 ## Week 4 — CI/CD
 
-**Workflow template:** `labs/week-04/workflows/terraform-ci.yml` · **OIDC:** `labs/week-04/docs/oidc-setup.md`
+**Workflow (live):** `Terraform-for-Real-Enterprises/.github/workflows/terraform-ci.yml` on `bayareala8s/training`  
+**OIDC role:** `arn:aws:iam::277374794397:role/github-terraform`  
+**Secret setup:** [GITHUB-SECRET-AWS_ROLE_ARN.md](GITHUB-SECRET-AWS_ROLE_ARN.md)
 
 ### Lab 4.1 — GitHub Actions Terraform CI
 
@@ -391,20 +462,26 @@ aws sts assume-role \
 | **Duration** | 3 hours |
 | **Guide** | [labs/week-04/LAB-01-github-actions.md](../labs/week-04/LAB-01-github-actions.md) |
 
+**One-time setup (instructor):**
+
+1. OIDC already created via `scripts/github/setup-oidc.sh`
+2. Add GitHub secret `AWS_ROLE_ARN` = `arn:aws:iam::277374794397:role/github-terraform`
+3. Workflow already on `main` — jobs: `validate` (matrix), `security`, `plan-dev`
+
 **Student steps:**
 
-1. Copy workflow to `.github/workflows/terraform-ci.yml` (or use course template).
-2. Fork repo or use student fork of `training`.
-3. Optional OIDC setup per `oidc-setup.md`.
-4. Branch `week-04-ci`, small commit, open PR.
+1. Fork `bayareala8s/training` or work in monorepo path `Terraform-for-Real-Enterprises/`
+2. Branch `week-04-ci`, edit e.g. `modules/vpc/README.md`, open PR
+3. Watch Actions tab — all jobs should pass after secret is set
 
 **Instructor demo (20 min):**
 
-1. Open PR on screen — show `validate` job (fmt, init -backend=false, validate).
-2. Show `security` job (Checkov soft-fail).
-3. Explain `paths:` filter — only runs when Terraform changes.
+1. Open https://github.com/bayareala8s/training/actions — show **Terraform CI** workflow
+2. Walk through `validate` matrix (dev, test, prod)
+3. Show `security` (Checkov) and `plan-dev` (live plan vs dev remote state)
+4. Explain `paths:` filter and `TF_COURSE_ROOT` for monorepo layout
 
-**Without OIDC:** Plan job uses env vars (mock); apply stays commented.
+**Without secret:** `plan-dev` fails on OIDC step — add secret first.
 
 ---
 
@@ -455,42 +532,40 @@ Create `docs/security/week-04-ci-findings.md` with remediation table.
 
 ## Week 5 — Promotion & drift
 
-**Requires dev stack running.** Test stack for promotion lab.
+**Requires dev stack running.** Test and prod stacks already deployed for promotion demos.
 
 ### Lab 5.1 — Environment Promotion
 
 | | |
 |---|---|
-| **Type** | **AWS** (test env) |
+| **Type** | **AWS** (test + prod) |
 | **Duration** | 2–3 hours |
 | **Guide** | [labs/week-05/LAB-01-promotion.md](../labs/week-05/LAB-01-promotion.md) |
 
-**Student steps:**
+**Already deployed (instructor demo — no apply needed):**
+
+| Env | VPC | CIDR | NAT |
+|-----|-----|------|-----|
+| dev | `vpc-06c28fd07c8a86c16` | `10.10.0.0/16` | NAT instance |
+| test | `vpc-03181c22f1a945073` | `10.20.0.0/16` | NAT instance |
+| prod | `vpc-008d013a3d5cfd084` | `10.30.0.0/16` | NAT Gateway |
+
+**Student steps (if starting fresh):**
 
 ```bash
-cd labs/shared/environments/test
-cp backend.hcl.example backend.hcl
-cp terraform.tfvars.example terraform.tfvars
-# backend key: terraform-enterprise/environments/test/terraform.tfstate
-
-cd ../../../..   # repo root
-make init ENV=test
-make plan ENV=test
-make apply ENV=test
+# Repeat for test and prod with respective backend.hcl + terraform.tfvars
+make init ENV=test && make apply ENV=test
+make init ENV=prod && make apply ENV=prod
 ```
 
 **Promotion checklist** in `docs/runbooks/environment-promotion.md`.
 
-| Variable | dev | test | prod |
-|----------|-----|------|------|
-| vpc_cidr | 10.10.0.0/16 | 10.20.0.0/16 | 10.30.0.0/16 |
-| NAT | instance | instance | gateway (optional) |
-
 **Instructor demo (20 min):**
 
-1. Console: two VPCs side by side (10.10 vs 10.20).
-2. Same modules, different tfvars — enterprise promotion pattern.
-3. Walk promotion runbook steps 1–5.
+1. AWS Console → VPC → filter tag `Course=terraform-enterprise` — show **three VPCs**
+2. Compare `labs/shared/environments/{dev,test,prod}/terraform.tfvars.example`
+3. `make plan ENV=test` — show no changes (stable promotion target)
+4. Walk promotion runbook: PR → plan test → apply test → plan prod → change window → apply prod
 
 ---
 
@@ -778,7 +853,7 @@ make lab-teardown
 | 0:55 | Cost control | `make lab-stop` / `make lab-start` |
 | 1:05 | Drift | Console SG change → `make plan ENV=dev` |
 | 1:20 | CI | GitHub PR with workflow green |
-| 1:35 | Promotion | Show test tfvars vs dev (or two VPCs in console) |
+| 1:35 | Promotion | Console: 3 VPCs (10.10 / 10.20 / 10.30) + prod NAT GW |
 | 1:50 | Q&A | `docs/LAB-DEMO-GUIDE.md` |
 
 ---
@@ -786,6 +861,8 @@ make lab-teardown
 ## Related docs
 
 - [labs/README.md](../labs/README.md) — lab index
+- [GITHUB-SECRET-AWS_ROLE_ARN.md](GITHUB-SECRET-AWS_ROLE_ARN.md) — Week 4 OIDC secret
+- [WEEK-04-GITHUB-SETUP.md](WEEK-04-GITHUB-SETUP.md) — full CI setup
 - [scripts/aws/README.md](../scripts/aws/README.md) — start/stop scripts
 - [instructor/INSTRUCTOR-GUIDE.md](../instructor/INSTRUCTOR-GUIDE.md) — cohort operations
 - [TRAINING-MONOREPO.md](../TRAINING-MONOREPO.md) — monorepo layout

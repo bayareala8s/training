@@ -1,0 +1,31 @@
+name: Capstone Option 3 — Multi-Region DR CI
+
+on:
+  pull_request:
+    paths:
+      - "capstone/option-03-multi-region-dr/**"
+      - "modules/**"
+  push:
+    branches: [main, master]
+    paths:
+      - "capstone/option-03-multi-region-dr/**"
+
+env:
+  TF_VERSION: "1.7.5"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env: [primary, secondary]
+    defaults:
+      run:
+        working-directory: capstone/option-03-multi-region-dr/terraform/environments/${{ matrix.env }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - run: terraform init -backend=false
+      - run: terraform validate

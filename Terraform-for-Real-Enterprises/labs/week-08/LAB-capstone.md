@@ -4,14 +4,16 @@
 
 ## Choose one track
 
-See [capstone/README.md](../../capstone/README.md) for full rubric.
+See [capstone/README.md](../../capstone/README.md) for full rubric and **ready reference implementations**.
 
-| Option | Focus |
-|--------|--------|
-| 1 | Enterprise landing zone |
-| 2 | Shared services platform |
-| 3 | Multi-region DR |
-| 4 | Internal Terraform platform |
+| Option | Focus | Reference folder |
+|--------|--------|------------------|
+| 1 | Enterprise landing zone | [option-01-landing-zone](../../capstone/option-01-landing-zone/) |
+| 2 | Shared services platform | [option-02-shared-services](../../capstone/option-02-shared-services/) |
+| 3 | Multi-region DR | [option-03-multi-region-dr](../../capstone/option-03-multi-region-dr/) |
+| 4 | Internal Terraform platform | [option-04-terraform-platform](../../capstone/option-04-terraform-platform/) |
+
+You may extend a reference implementation or build from scratch. Graded work must include your own security/cost writeups and presentation.
 
 ## Required integration
 

@@ -1,0 +1,28 @@
+name: Capstone Option 4 — Platform CI
+
+on:
+  pull_request:
+    paths:
+      - "capstone/option-04-terraform-platform/**"
+      - "modules/**"
+  push:
+    branches: [main, master]
+    paths:
+      - "capstone/option-04-terraform-platform/**"
+
+env:
+  TF_VERSION: "1.7.5"
+
+jobs:
+  validate-example:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: capstone/option-04-terraform-platform/examples/service-team-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - run: terraform init -backend=false
+      - run: terraform validate

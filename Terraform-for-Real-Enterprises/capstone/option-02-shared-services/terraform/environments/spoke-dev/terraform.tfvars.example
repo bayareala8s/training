@@ -1,0 +1,11 @@
+aws_region   = "us-west-2"
+owner        = "capstone-student"
+project_name = "bal8s-ss"
+
+vpc_cidr             = "10.51.0.0/16"
+availability_zones   = ["us-west-2a", "us-west-2b"]
+public_subnet_cidrs  = ["10.51.1.0/24", "10.51.2.0/24"]
+private_subnet_cidrs = ["10.51.11.0/24", "10.51.12.0/24"]
+
+hub_state_bucket = "bayareala8s-terraform-state"
+hub_state_key    = "capstone/option-02/hub/terraform.tfstate"

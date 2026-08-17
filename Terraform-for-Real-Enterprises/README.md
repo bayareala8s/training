@@ -70,11 +70,24 @@ Download: [SVG](diagrams/svg/00-course-pipeline-overview.svg) · [PNG](diagrams/
 
 **[diagrams/README.md](diagrams/README.md)** — full catalog with download links for every week.
 
+**Marketing creatives** (BayServe brand style):
+
+- [docs/course-terraform-for-real-enterprises-marketing.png](docs/course-terraform-for-real-enterprises-marketing.png) — 1920×1080 course overview
+- [docs/course-terraform-for-real-enterprises-marketing-square.png](docs/course-terraform-for-real-enterprises-marketing-square.png) — 1080×1080 (LinkedIn)
+- [docs/course-terraform-for-real-enterprises-personas.png](docs/course-terraform-for-real-enterprises-personas.png) — personas / career outcomes (wide)
+- [docs/course-terraform-for-real-enterprises-personas-square.png](docs/course-terraform-for-real-enterprises-personas-square.png) — personas (square)
+
+Regenerate: `python3 scripts/generate-course-marketing.py` or `python3 scripts/generate-course-personas-marketing.py` (requires Pillow).
+
+Career outcomes detail: [docs/career-outcomes.md](docs/career-outcomes.md)
+
 ## Course modules (full curriculum)
 
 **Complete professional modules** — detailed lectures, case studies, assignments, quizzes, and instructor notes for all 8 weeks:
 
 **[course-modules/](course-modules/README.md)** ← start here for full module content
+
+**New students:** [docs/STUDENT-ONBOARDING.md](docs/STUDENT-ONBOARDING.md) — tools, AWS, cost control, first deploy
 
 Each week includes: learning objectives · 2,500+ word lecture · enterprise scenarios · detailed labs · graded assignment · knowledge check · glossary
 
@@ -102,11 +115,23 @@ Each week includes: learning objectives · 2,500+ word lecture · enterprise sce
 
 ## Quick start (students)
 
-```bash
-# 1. Clone and configure AWS
-aws sts get-caller-identity
+See **[docs/STUDENT-ONBOARDING.md](docs/STUDENT-ONBOARDING.md)** for the full checklist.
 
-# 2. Week 1 — bootstrap remote state
+```bash
+# Monorepo
+git clone https://github.com/bayareala8s/training.git
+cd training/Terraform-for-Real-Enterprises
+
+# Or standalone: cd into course root after clone
+
+aws sts get-caller-identity
+make lab-resume    # before session
+make lab-pause     # after session (near-zero cost)
+```
+
+Legacy step-by-step deploy:
+
+```bash
 cd labs/week-01/bootstrap
 cp terraform.tfvars.example terraform.tfvars   # edit bucket name
 terraform init && terraform apply
@@ -119,10 +144,12 @@ make -C ../../../.. init ENV=dev
 make -C ../../../.. apply ENV=dev
 
 # 4. End of session — save money
-make -C ../../../.. lab-stop
+make -C ../../../.. lab-pause
 ```
 
 See [labs/README.md](labs/README.md) for the full lab map.
+
+**Also published in:** [bayareala8s/training](https://github.com/bayareala8s/training/tree/main/Terraform-for-Real-Enterprises) monorepo — use `cd training/Terraform-for-Real-Enterprises` after clone.
 
 ---
 

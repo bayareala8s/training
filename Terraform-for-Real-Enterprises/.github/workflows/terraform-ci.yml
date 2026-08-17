@@ -1,7 +1,5 @@
 # Terraform CI — BayAreaLa8s Terraform for Real Enterprises
-#
-# Monorepo: lives at training/Terraform-for-Real-Enterprises/.github/workflows/
-# Set TF_COURSE_ROOT to "" if this course is the repository root.
+# Works in standalone repo OR bayareala8s/training monorepo subdirectory.
 
 name: Terraform CI
 
@@ -9,25 +7,20 @@ on:
   pull_request:
     branches: [main, master]
     paths:
-      - "Terraform-for-Real-Enterprises/modules/**"
-      - "Terraform-for-Real-Enterprises/labs/**"
-      - "Terraform-for-Real-Enterprises/.github/workflows/**"
+      - "Terraform-for-Real-Enterprises/**"
       - "modules/**"
       - "labs/**"
       - ".github/workflows/terraform-ci.yml"
   push:
     branches: [main, master]
     paths:
-      - "Terraform-for-Real-Enterprises/modules/**"
-      - "Terraform-for-Real-Enterprises/labs/**"
+      - "Terraform-for-Real-Enterprises/**"
       - "modules/**"
       - "labs/**"
 
 env:
   TF_VERSION: "1.7.5"
   AWS_REGION: us-west-2
-  # Monorepo path prefix (empty string if course is repo root)
-  TF_COURSE_ROOT: Terraform-for-Real-Enterprises
 
 permissions:
   contents: read
@@ -35,42 +28,76 @@ permissions:
   id-token: write
 
 jobs:
+  detect-root:
+    runs-on: ubuntu-latest
+    outputs:
+      course_root: ${{ steps.root.outputs.course_root }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: root
+        name: Detect course root path
+        run: |
+          if [ -d "Terraform-for-Real-Enterprises/labs" ]; then
+            echo "course_root=Terraform-for-Real-Enterprises/" >> "$GITHUB_OUTPUT"
+          else
+            echo "course_root=" >> "$GITHUB_OUTPUT"
+          fi
+
   validate:
+    needs: detect-root
     runs-on: ubuntu-latest
     strategy:
       matrix:
         env: [dev, test, prod]
     defaults:
       run:
-        working-directory: ${{ env.TF_COURSE_ROOT }}/labs/shared/environments/${{ matrix.env }}
+        working-directory: ${{ needs.detect-root.outputs.course_root }}labs/shared/environments/${{ matrix.env }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
       - name: Format check
-        run: terraform fmt -check -recursive ${{ env.TF_COURSE_ROOT }}
+        run: |
+          ROOT="${{ needs.detect-root.outputs.course_root }}"
+          terraform fmt -check -recursive "${ROOT}modules" "${ROOT}labs"
       - name: Init
         run: terraform init -backend=false
       - name: Validate
         run: terraform validate
 
+  validate-bootstrap:
+    needs: detect-root
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ needs.detect-root.outputs.course_root }}labs/week-01/bootstrap
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - run: terraform init -backend=false
+      - run: terraform validate
+
   security:
+    needs: detect-root
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: bridgecrewio/checkov-action@master
+      - uses: bridgecrewio/checkov-action@v12
         with:
-          directory: ${{ env.TF_COURSE_ROOT }}/modules/
+          directory: ${{ needs.detect-root.outputs.course_root }}modules/,${{ needs.detect-root.outputs.course_root }}labs/shared/
           framework: terraform
           soft_fail: true
 
   plan-dev:
-    needs: validate
+    needs: [detect-root, validate]
+    if: ${{ secrets.AWS_ROLE_ARN != '' }}
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.TF_COURSE_ROOT }}/labs/shared/environments/dev
+        working-directory: ${{ needs.detect-root.outputs.course_root }}labs/shared/environments/dev
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -84,25 +111,3 @@ jobs:
         run: terraform init -backend-config=backend.hcl.example -input=false
       - name: Terraform Plan (live dev state)
         run: terraform plan -var-file=terraform.tfvars.example -input=false -no-color
-
-  # apply-dev:
-  #   needs: plan-dev
-  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #   environment: dev
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ${{ env.TF_COURSE_ROOT }}/labs/shared/environments/dev
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: hashicorp/setup-terraform@v3
-  #       with:
-  #         terraform_version: ${{ env.TF_VERSION }}
-  #     - uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-  #         aws-region: ${{ env.AWS_REGION }}
-  #     - run: terraform init -backend-config=backend.hcl.example
-  #     - run: terraform apply -auto-approve -input=false
-  #       env:
-  #         TF_VAR_owner: ci

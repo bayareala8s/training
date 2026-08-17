@@ -10,4 +10,4 @@ docs/assignments/week-02-yourname.md
 
 Or submit via cohort LMS / pull request as directed by your instructor.
 
-Rubrics are embedded in each [course-modules/week-XX/05-assignment.md](../course-modules/week-01/05-assignment.md).
+Rubrics: [course-modules/week-01/05-assignment.md](../course-modules/week-01/05-assignment.md) through [week-08](../course-modules/week-08/05-assignment.md).

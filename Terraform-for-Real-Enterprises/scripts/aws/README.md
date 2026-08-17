@@ -1,94 +1,109 @@
 # AWS Lab Start / Stop Scripts
 
-Cost-control scripts for **BayAreaLa8s – Terraform for Real Enterprises**. They start and stop (or scale to zero) AWS resources tagged for the course.
+Cost-control scripts for **BayAreaLa8s – Terraform for Real Enterprises**.
 
-## Required tags
+## Recommended: pause / resume (near-zero cost)
 
-All lab Terraform in this course applies:
+When you are **not** in a lab session, pause everything billable:
 
-```hcl
-tags = {
-  Course    = "terraform-enterprise"
-  Project   = "bayareala8s-tf-course"
-  ManagedBy = "terraform"
-  Environment = var.environment
-}
+```bash
+# End of day / weekend — stops EC2 and destroys NAT Gateways
+make lab-pause
+
+# Before next session — recreates prod NAT GW (~2 min) and starts EC2
+make lab-resume
+
+# Check what is still billing
+make lab-status
 ```
 
-Only resources with `Course = terraform-enterprise` are affected.
+| Command | EC2 | NAT instance (dev/test) | NAT Gateway (prod) | Typical hourly cost |
+|---------|-----|-------------------------|--------------------|---------------------|
+| **Running labs** | running | running | available | ~$0.05–0.09/hr |
+| `make lab-stop` | stopped | stopped | **still bills** | ~$0.045/hr (NAT GW) |
+| **`make lab-pause`** | stopped | stopped | **destroyed** | ~$0 (state/S3 only) |
+| **`make lab-resume`** | running | running | recreated | back to lab rates |
 
-## Prerequisites
+Test the full cycle:
 
-- [AWS CLI v2](https://aws.amazon.com/cli/) configured (`aws sts get-caller-identity`)
-- IAM permissions: `ec2:*`, `rds:*`, `ecs:UpdateService`, `autoscaling:UpdateAutoScalingGroup`, `resourcegroupstaggingapi:GetResources`
+```bash
+make lab-cycle    # pause → wait → resume
+```
 
-## Quick start
+## Quick start (legacy stop/start)
 
 ```bash
 cd scripts/aws
 chmod +x *.sh lib/*.sh
 
-# Before lab session
-./start-lab.sh
-
-# After lab session (save money)
-./stop-lab.sh
-
-# Check state
+./start-lab.sh      # before session (compute only)
+./stop-lab.sh       # after session (compute only — NAT GW still bills)
 ./status-lab.sh
 ```
 
-## Options
+## Scripts
 
 | Script | Purpose |
 |--------|---------|
-| `start-lab.sh` | Start EC2, RDS, scale ASG/ECS up |
-| `stop-lab.sh` | Stop EC2/RDS, scale ASG/ECS to 0 |
-| `status-lab.sh` | Show EC2/RDS status |
-| `destroy-lab-sandbox.sh` | `terraform destroy` for dev (interactive) |
+| **`pause-labs.sh`** | Stop EC2/RDS/ECS/ASG + destroy prod NAT Gateway via Terraform |
+| **`resume-labs.sh`** | Terraform apply prod (if NAT missing) + start all compute |
+| **`cycle-labs.sh`** | Smoke test: pause → resume |
+| `start-lab.sh` | Start EC2, RDS, NAT instances, ASG, ECS |
+| `stop-lab.sh` | Stop EC2, NAT instances, RDS; scale ECS/ASG to 0 |
+| `status-lab.sh` | EC2, NAT GW, RDS status + cost warnings |
+| `teardown-all.sh` | Stop + destroy dev stack (heavy teardown) |
+| `verify-labs.sh` | Instructor validate/apply/test/teardown |
 
 ### Flags
 
 ```bash
-./stop-lab.sh --ec2-only
-./stop-lab.sh --rds-only
-./start-lab.sh --all
-DRY_RUN=1 ./stop-lab.sh    # preview only
-AWS_REGION=us-east-1 ./start-lab.sh
+./pause-labs.sh --skip-terraform   # stop compute only; NAT GW keeps billing
+./resume-labs.sh --skip-terraform  # start EC2 only
+DRY_RUN=1 ./pause-labs.sh          # preview
 ```
 
-## What is NOT stopped
+## Required tags
 
-| Resource | Reason |
+```hcl
+tags = {
+  Course      = "terraform-enterprise"
+  Project     = "bayareala8s-tf-course"
+  ManagedBy   = "terraform"
+  Environment = var.environment
+}
+```
+
+## Prerequisites
+
+- AWS CLI v2 configured (`aws sts get-caller-identity`)
+- For pause/resume NAT Gateway: Terraform + `backend.hcl` / `terraform.tfvars` (or `.example` files) in each environment
+- If `terraform init` fails: `./install-provider.sh` and `export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc`
+
+## What does NOT bill when paused
+
+| Resource | Notes |
 |----------|--------|
-| **NAT Gateway** | AWS does not support stop; destroy with Terraform |
-| **S3 / DynamoDB state** | Must remain for Terraform |
-| **VPC, subnets, IGW** | No hourly charge for empty VPC (NAT/EIP cost remains) |
-
-For weekends, run `terraform destroy` in `labs/shared/environments/dev` or use `destroy-lab-sandbox.sh`.
-
-## Verify labs on AWS (instructors)
-
-```bash
-# Requires backend.hcl + terraform.tfvars in labs/shared/environments/dev
-export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc  # if registry fails: ./install-provider.sh
-./scripts/aws/verify-labs.sh all      # validate, apply, test start/stop, teardown
-./scripts/aws/teardown-all.sh         # destroy dev + stop instances (minimize cost)
-```
+| Stopped EC2 | No compute charge |
+| Destroyed NAT Gateway | Recreated on `resume-labs.sh` |
+| VPC, subnets, IGW | No hourly charge |
+| S3 state + DynamoDB | Pennies |
 
 ## Makefile (repo root)
 
 ```bash
+make lab-pause
+make lab-resume
+make lab-cycle
 make lab-start
 make lab-stop
 make lab-status
-make lab-verify
 make lab-teardown
 ```
 
-## Provider install (if terraform init cannot reach registry)
+## Verify labs on AWS (instructors)
 
 ```bash
-./scripts/aws/install-provider.sh 5.90.0
-export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc
+export TF_CLI_CONFIG_FILE=/tmp/terraform-lab.rc  # if registry fails
+./scripts/aws/verify-labs.sh all
+./scripts/aws/cycle-labs.sh   # test pause/resume
 ```

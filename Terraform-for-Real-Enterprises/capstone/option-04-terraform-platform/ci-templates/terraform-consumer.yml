@@ -1,0 +1,45 @@
+# Reusable CI template for teams consuming platform modules
+# Copy to: .github/workflows/terraform-ci.yml
+
+name: Terraform Consumer CI
+
+on:
+  pull_request:
+    paths:
+      - "**/*.tf"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+
+env:
+  TF_VERSION: "1.7.5"
+  WORKING_DIRECTORY: .   # change to your environment path
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+  # Uncomment when AWS OIDC is configured:
+  # plan:
+  #   needs: validate
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+  #         aws-region: us-west-2
+  #     - uses: hashicorp/setup-terraform@v3
+  #     - run: terraform init -backend-config=backend.hcl
+  #     - run: terraform plan -var-file=terraform.tfvars.example

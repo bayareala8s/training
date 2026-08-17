@@ -2,7 +2,6 @@
 .terraform/
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
 crash.log
 crash.*.log
 override.tf
@@ -17,11 +16,12 @@ terraform.rc
 !*.tfvars.example
 labs/shared/environments/*/backend.hcl
 labs/shared/environments/*/.terraform/
-labs/shared/environments/*/.terraform.lock.hcl
 .env
 .env.*
 *.pem
 credentials
+
+# Commit .terraform.lock.hcl for reproducible provider versions (do not ignore)
 
 # OS / IDE
 .DS_Store
@@ -29,6 +29,7 @@ credentials
 .vscode/
 *.swp
 *.swo
+.venv-marketing/
 
 # Plans
 *.plan

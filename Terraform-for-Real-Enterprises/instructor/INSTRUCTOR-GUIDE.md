@@ -9,14 +9,27 @@
 
 | Path | Purpose |
 |------|---------|
+| `course-modules/` | Full 8-week curriculum (lectures, assignments, quizzes, instructor notes) |
+| `course-modules/STUDENT-WORKBOOK.md` | Student weekly checklist |
 | `labs/week-XX/` | Step-by-step lab guides (LAB-*.md) |
 | `labs/shared/environments/` | dev / test / prod Terraform stacks |
-| `modules/` | VPC, compute modules for teaching |
-| `scripts/aws/` | start-lab.sh, stop-lab.sh (cost control) |
-| `docs/` | Syllabus, assessment, runbooks |
+| `modules/` | VPC, compute modules |
+| `scripts/aws/` | pause/resume, start/stop, verify-labs |
+| `docs/` | Syllabus, onboarding, demo guides, runbooks |
 | `capstone/` | Capstone options and rubric |
 
----
+## Teaching materials (demo & run)
+
+| Document | Purpose |
+|----------|---------|
+| [docs/INSTRUCTOR-DEMO-SCRIPT.md](../docs/INSTRUCTOR-DEMO-SCRIPT.md) | Numbered demo steps per lab |
+| [docs/LAB-DEMO-GUIDE.md](../docs/LAB-DEMO-GUIDE.md) | Full run + student steps |
+| [docs/STUDENT-ONBOARDING.md](../docs/STUDENT-ONBOARDING.md) | Send to students pre-cohort |
+| `course-modules/week-XX/06-instructor-notes.md` | Per-week teaching notes |
+
+## Lab demo & run guide (all 22 labs)
+
+Step-by-step instructions: [docs/LAB-DEMO-GUIDE.md](../docs/LAB-DEMO-GUIDE.md)
 
 ## Pre-cohort setup (1–2 days)
 
@@ -32,11 +45,10 @@
 
 3. **Student onboarding email**
 
-   Send:
-   - Link to repo
+   Send link to [docs/STUDENT-ONBOARDING.md](../docs/STUDENT-ONBOARDING.md) with:
    - Required tools: Terraform 1.5+, AWS CLI, Git
-   - `make lab-stop` reminder after each session
-   - Warning: NAT Gateway ~$32/mo if left running in prod lab
+   - `make lab-pause` after each session
+   - Monorepo path: `training/Terraform-for-Real-Enterprises`
 
 ---
 
@@ -96,7 +108,13 @@ Collect weekly PRs tagged `week-01` … `week-08`.
 Instruct students to run after every session:
 
 ```bash
-make lab-stop
+make lab-pause
+```
+
+Resume before next session:
+
+```bash
+make lab-resume
 ```
 
 Weekend full teardown:

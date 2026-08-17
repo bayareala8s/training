@@ -8,7 +8,7 @@ This directory contains the **complete professional module content** for each we
 
 | Audience | Start here |
 |----------|------------|
-| **Students** | Each week's `README.md` → follow lectures, then `labs/` |
+| **Students** | [docs/STUDENT-ONBOARDING.md](../docs/STUDENT-ONBOARDING.md) then each week's `README.md` |
 | **Instructors** | `06-instructor-notes.md` + [instructor/INSTRUCTOR-GUIDE.md](../instructor/INSTRUCTOR-GUIDE.md) |
 | **Self-paced** | Work sequentially week 1 → 8; submit assignments per rubric |
 

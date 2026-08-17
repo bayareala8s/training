@@ -1,0 +1,5 @@
+bucket         = "bayareala8s-terraform-state"
+key            = "capstone/option-04/service-team-app/terraform.tfstate"
+region         = "us-west-2"
+dynamodb_table = "terraform-locks"
+encrypt        = true
