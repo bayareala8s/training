@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="pattern-week07" name="Week 7 — Anti-Pattern vs Production Pattern" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1500" pageHeight="800">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 7 — Anti-Pattern vs Production Pattern" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1420" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Unlimited agent vs tool policy + memory bounds" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="z_bad" value="ANTI-PATTERN — Autonomous Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="176" width="680" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="z_good" value="PRODUCTION — Governed Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="780" y="176" width="680" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="focus" value="YOUR GOAL&amp;#10;Agents need boundaries — same as any production API." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1420" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bad1" value="Agent can call any URL, run any code, no memory limit&amp;#10;&amp;#10;Risks:&amp;#10;• Prompt injection → data exfil&amp;#10;• Runaway tool loops&amp;#10;• Unbounded DynamoDB growth&amp;#10;• No audit of tool calls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="220" width="640" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="good1" value="Router + allowlisted tools + TTL memory + audit per turn&amp;#10;&amp;#10;Controls:&amp;#10;• classify / route / summarize only&amp;#10;• Deny unknown tools&amp;#10;• Memory expires (TTL)&amp;#10;• correlation_id per turn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="800" y="220" width="640" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="good2" value="Tool policy = IAM mindset for agents" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="800" y="380" width="640" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="rem_60_620" value="REMEMBER&amp;#10;An agent is a router, not magic. Policy first." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="620" width="640" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="do_800_620" value="DO THIS&amp;#10;List allowed tools in README. Test denied tool request." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="800" y="620" width="640" height="72" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

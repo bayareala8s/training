@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="cheat-week08" name="Week 8 — Capstone Checklist &amp; Demo Script" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1500" pageHeight="950">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 8 — Capstone Checklist &amp;amp; Demo Script" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1420" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Minimum bar, deliverables, and 5-minute demo flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="focus" value="YOUR GOAL&amp;#10;Use during capstone build and final presentation prep." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1420" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="minbar" value="MINIMUM BAR&amp;#10;☐ Working deploy (start.sh or SAM deploy)&amp;#10;☐ At least 1 API endpoint live&amp;#10;☐ Structured output + validation&amp;#10;☐ Step Functions OR agent routing&amp;#10;☐ Audit log with correlation_id&amp;#10;☐ README with architecture + run steps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="460" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="deliver" value="SUBMIT&amp;#10;• Git repo link&amp;#10;• Architecture diagram (yours or course template)&amp;#10;• 5-min demo video OR live demo&amp;#10;• Reliability evidence (1 failure test)&amp;#10;• Cost note (teardown confirmed)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="540" y="160" width="440" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="demo" value="5-MIN DEMO SCRIPT&amp;#10;0:00 — Problem statement (30s)&amp;#10;0:30 — Architecture walkthrough (1m)&amp;#10;1:30 — Happy path live call (1.5m)&amp;#10;3:00 — Show validation failure + recovery (1m)&amp;#10;4:00 — Audit trail + governance (1m)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="160" width="440" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="options" value="CAPSTONE OPTIONS&amp;#10;A — Incident triage platform&amp;#10;B — Document classification API&amp;#10;C — Multi-step approval workflow&amp;#10;D — Enterprise agent with tool policy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="460" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="do_540_360" value="DO THIS&amp;#10;Run ./scripts/cycle.sh before recording demo.&amp;#10;Confirm stop.sh ran (no surprise bills)." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="540" y="360" width="440" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rem_1020_360" value="REMEMBER&amp;#10;Graders score production thinking — not prompt cleverness." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="360" width="440" height="72" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

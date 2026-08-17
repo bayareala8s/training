@@ -1,0 +1,12 @@
+[
+  {"id": "1", "text": "I was charged twice on my invoice for March.", "expected_label": "billing"},
+  {"id": "2", "text": "API returns 503 after the last deployment.", "expected_label": "technical"},
+  {"id": "3", "text": "We detected suspicious login attempts from unknown IPs.", "expected_label": "security"},
+  {"id": "4", "text": "How do I reset my password?", "expected_label": "general"},
+  {"id": "5", "text": "Refund request for subscription cancelled last week.", "expected_label": "billing"},
+  {"id": "6", "text": "Kubernetes pod crash loop after node upgrade.", "expected_label": "technical"},
+  {"id": "7", "text": "Need SOC2 audit log export for Q1.", "expected_label": "security"},
+  {"id": "8", "text": "What are your business hours?", "expected_label": "general"},
+  {"id": "9", "text": "Payment method update failed with error code 402.", "expected_label": "billing"},
+  {"id": "10", "text": "Latency spike on us-east-1 load balancer.", "expected_label": "technical"}
+]

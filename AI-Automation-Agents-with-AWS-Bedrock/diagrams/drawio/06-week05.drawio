@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="06-week05" name="Week 5 — AI Automation API Platform" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1200">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 5 — AI Automation API Platform" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="API Gateway + Lambda + Bedrock — contracts, auth, throttling, cost controls" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" value="LEARNING FOCUS&amp;#10;Build three governed endpoints (/classify, /summarize, /route) with request validation, structured errors, correlation IDs, and rate limits." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ep" value="ENDPOINTS (Lab 5)&amp;#10;POST /classify — JSON label + confidence&amp;#10;POST /summarize — short summary&amp;#10;POST /route — team routing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="520" width="360" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="req" value="REQUEST (example)&amp;#10;Headers: X-Correlation-Id&amp;#10;Body: { &amp;quot;text&amp;quot;: &amp;quot;...&amp;quot;, &amp;quot;label&amp;quot;: &amp;quot;billing&amp;quot; }&amp;#10;Max size: 8000 chars" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="440" y="520" width="340" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="err" value="ERROR RESPONSE&amp;#10;{ &amp;quot;correlation_id&amp;quot;: &amp;quot;...&amp;quot;,&amp;#10;  &amp;quot;error&amp;quot;: &amp;quot;input_too_large&amp;quot;,&amp;#10;  &amp;quot;max_chars&amp;quot;: 8000 }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="800" y="520" width="340" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="cost" value="COST CONTROLS&amp;#10;• max input/output length&amp;#10;• temperature default 0.2&amp;#10;• usage plan / burst limits&amp;#10;• fail fast on abuse" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="520" width="300" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="inst_60_680" value="INSTRUCTOR TALKING POINT&amp;#10;Live demo: call each endpoint with curl. Show 400 on oversized payload and X-Correlation-Id in response." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#FFB800;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="680" width="600" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="clients" value="Internal Apps" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.client;" vertex="1" parent="1">
+          <mxGeometry x="60" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="apigw" value="API Gateway&amp;#10;HTTP API" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#8C4FFF;shape=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="280" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="waf" value="Usage Plan&amp;#10;10 rps limit" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.waf;" vertex="1" parent="1">
+          <mxGeometry x="280" y="500" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="lam" value="Lambda" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="520" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="br" value="Bedrock" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#232F3E;shape=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="760" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="val" value="Validator" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="760" y="400" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="cw" value="CloudWatch" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" value="Audit" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#527FFF;shape=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="480" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="clients" target="apigw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="throttle" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="apigw" target="waf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="route" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="apigw" target="lam">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="lam" target="br">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="lam" target="val">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="lam" target="cw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="lam" target="ddb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,4 @@
+# Optional dev / deploy dependencies (install after requirements.txt)
+-r requirements.txt
+aws-sam-cli>=1.100.0
+cairosvg>=2.7.0

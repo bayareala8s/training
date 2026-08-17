@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="07-week06" name="Week 6 — Observability, Governance &amp; AI Safety" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1200">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 6 — Observability, Governance &amp;amp; AI Safety" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Audit trails, dashboards, alerts, redaction policy, human-in-the-loop" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" value="LEARNING FOCUS&amp;#10;Implement metadata-only audit logging, CloudWatch dashboards, cost alarms, and human approval branches for high-risk decisions." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="audit_rec" value="AUDIT RECORD (metadata only)&amp;#10;correlation_id | timestamp | model_id&amp;#10;input_size | output_size | validation_status&amp;#10;route_or_action | latency_ms" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="520" width="420" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="dash_m" value="DASHBOARD WIDGETS&amp;#10;• Request count&amp;#10;• Error rate&amp;#10;• p95 latency&amp;#10;• Validation failures&amp;#10;• Retry count" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="860" y="480" width="380" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="gov_l" value="GOVERNANCE CHECKLIST&amp;#10;☐ Prompt version controlled&amp;#10;☐ Model access reviewed&amp;#10;☐ Log redaction policy&amp;#10;☐ Budget alert configured&amp;#10;☐ HITL for risky actions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="400" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="nog" value="NEVER STORE IN LOGS&amp;#10;Raw customer PII, passwords, full card numbers, unredacted prompts in regulated industries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="720" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="inst_960_720" value="INSTRUCTOR TALKING POINT&amp;#10;Query audit by correlation_id live. Trigger alarm with bad requests. Connect governance to real incident response." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#FFB800;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="960" y="720" width="400" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="wf" value="AI Workflow" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.step_functions;" vertex="1" parent="1">
+          <mxGeometry x="80" y="300" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="API Lambda" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="80" y="440" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="emit" value="Audit Emitter" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="360" y="360" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" value="DynamoDB&amp;#10;Audit Store" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#527FFF;shape=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="600" y="360" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="cw_dash" value="Dashboard" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="860" y="300" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="alarm" value="SNS Alarm" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.sns;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="300" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="hitl" value="Human Approval" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="600" y="560" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="gov" value="Governance&amp;#10;Checklist" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.document;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="o1" value="AI event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="wf" target="emit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="api" target="emit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o3" value="pk=CORR#id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="emit" target="ddb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o4" value="metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="emit" target="cw_dash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o5" value="error rate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="cw_dash" target="alarm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o6" value="high risk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="wf" target="hitl">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

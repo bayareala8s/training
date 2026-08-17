@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="04-week03" name="Week 3 — AI Decision Engine" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1200">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 3 — AI Decision Engine" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Structured JSON outputs, schema validation, confidence gates, hybrid rules + AI" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" value="LEARNING FOCUS&amp;#10;Treat the LLM as a probabilistic component. Enforce JSON schema, reject bad outputs, and route low-confidence results to human review." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="schema" value="REQUIRED JSON SCHEMA&amp;#10;{&amp;#10;  &amp;quot;label&amp;quot;: &amp;quot;billing|technical|security|general|unknown&amp;quot;,&amp;#10;  &amp;quot;confidence&amp;quot;: 0.0-1.0,&amp;#10;  &amp;quot;reason&amp;quot;: &amp;quot;max 200 chars&amp;quot;&amp;#10;}" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="520" width="340" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="fail" value="FAILURE MODES (discuss in class)&amp;#10;• Non-JSON text&amp;#10;• Missing keys&amp;#10;• Invalid enum value&amp;#10;• confidence out of range&amp;#10;• reason too long" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="440" y="520" width="320" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="hybrid" value="HYBRID PATTERN&amp;#10;Rules handle 30-40% obvious cases → cheaper, faster, auditable.&amp;#10;LLM handles ambiguous language only." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="800" y="520" width="380" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="inst_60_680" value="INSTRUCTOR TALKING POINT&amp;#10;Demo: show valid JSON pass, then malformed output hitting fallback. Students must explain WHY validation is not optional." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#FFB800;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="680" width="520" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="stu_600_680" value="STUDENT TAKEAWAY&amp;#10;Downstream automation only consumes validated objects — never raw model text." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="600" y="680" width="400" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="103" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="104" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="260" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="105" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="480" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="106" value="4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="680" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="107" value="5" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="880" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="108" value="6" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="in" value="Ticket Text&amp;#10;input" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.client;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rules" value="Rules Engine&amp;#10;keywords" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="280" y="180" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="br" value="Bedrock&amp;#10;JSON-only prompt" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#232F3E;shape=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="280" y="380" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="parse" value="JSON Parser&amp;#10;strict parse" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="500" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="val" value="Schema Validator&amp;#10;enums + bounds" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="700" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="conf" value="Confidence Gate&amp;#10;threshold 0.65" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#8C4FFF;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="900" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="auto" value="Auto Route" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#8C4FFF;shape=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="200" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="human" value="Human Review" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#879196;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="380" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="unk" value="Fallback: unknown" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#879196;shape=mxgraph.aws4.document;" vertex="1" parent="1">
+          <mxGeometry x="900" y="480" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" value="① obvious?" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;strokeWidth=2;" edge="1" parent="1" source="in" target="rules">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" value="② else LLM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="in" target="br">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" value="high conf." style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#248814;fontColor=#248814;fontSize=10;" edge="1" parent="1" source="rules" target="auto">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="br" target="parse">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d5" value="③ valid JSON?" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="parse" target="val">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d6" value="④ schema OK" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="val" target="conf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d7" value="⑤ conf &amp;gt;= 0.65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="conf" target="auto">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d8" value="⑥ conf &amp;lt; 0.65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="conf" target="human">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d9" value="invalid JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="parse" target="unk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d10" value="bad enum" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="val" target="unk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

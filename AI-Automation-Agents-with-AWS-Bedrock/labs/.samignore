@@ -1,0 +1,11 @@
+week01/
+tests/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+*.md
+!README.md
+prompt_eval_results.json
+comparison_results.json

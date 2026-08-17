@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="seq-week03" name="Week 3 — Request Sequence (Classify → Validate → Route)" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="900">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 3 — Request Sequence (Classify → Validate → Route)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Follow one request through the decision engine — time flows left to right" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="z_time" value="TIME →" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8F8;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="176" width="1620" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="focus" value="YOUR GOAL&amp;#10;Trace a single ticket through classify, JSON validation, confidence gate, and routing — including what happens when validation fails." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="code" value="Expected output:&amp;#10;{&amp;#10;  &amp;quot;label&amp;quot;: &amp;quot;billing&amp;quot;,&amp;#10;  &amp;quot;confidence&amp;quot;: 0.91,&amp;#10;  &amp;quot;route&amp;quot;: &amp;quot;team_billing&amp;quot;,&amp;#10;  &amp;quot;reason&amp;quot;: &amp;quot;invoice keyword&amp;quot;&amp;#10;}" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="520" width="340" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="do_460_520" value="DO THIS&amp;#10;Run: pytest tests/test_validation.py&amp;#10;before deploying." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="460" y="520" width="320" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rem_820_520" value="REMEMBER&amp;#10;Non-JSON or invalid schema → deterministic fallback, never crash." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="820" y="520" width="360" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="fail" value="6 FAILURE MODES TO TEST&amp;#10;① Non-JSON text  ② Missing keys  ③ Wrong enum&amp;#10;④ confidence out of range  ⑤ reason too long  ⑥ Low confidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="720" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="103" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="260" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="104" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="460" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="105" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="660" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="106" value="4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="860" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="107" value="5" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" value="Request&amp;#10;{&amp;quot;text&amp;quot;:&amp;quot;...&amp;quot;}" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.client;" vertex="1" parent="1">
+          <mxGeometry x="80" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="Classify&amp;#10;Bedrock invoke" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="320" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="Bedrock&amp;#10;JSON output" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#232F3E;shape=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="520" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="Validator&amp;#10;schema check" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="720" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="Gate&amp;#10;confidence ≥ 0.7?" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="920" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="Route&amp;#10;team assignment" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="Fallback&amp;#10;human review" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#879196;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="420" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="①" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;strokeWidth=2;" edge="1" parent="1" source="n1" target="n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="② invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="n2" target="n3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="③ raw JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="n3" target="n4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="④ if valid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="n4" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="⑤ high conf." style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="n5" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="invalid JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="n4" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="low conf." style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="n5" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

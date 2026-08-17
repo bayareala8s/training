@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1200" viewBox="0 0 1700 1200">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 3 — AI Decision Engine</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">Structured JSON outputs, schema validation, confidence gates, hybrid rules + AI</text>
+<rect x="40.0" y="78.0" width="1520.0" height="70.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">LEARNING FOCUS</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">Treat the LLM as a probabilistic component. Enforce JSON schema, reject bad outputs, and route low-confidence results to human review.</text>
+<rect x="60.0" y="520.0" width="340.0" height="120.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="70.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">REQUIRED JSON SCHEMA</text>
+<text x="70.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">{</text>
+<text x="70.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;label&amp;quot;: &amp;quot;billing|technical|security|general|unknown&amp;quot;,</text>
+<text x="70.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;confidence&amp;quot;: 0.0-1.0,</text>
+<text x="70.0" y="598.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;reason&amp;quot;: &amp;quot;max 200 chars&amp;quot;</text>
+<text x="70.0" y="612.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">}</text>
+<rect x="440.0" y="520.0" width="320.0" height="130.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="450.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">FAILURE MODES (discuss in class)</text>
+<text x="450.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Non-JSON text</text>
+<text x="450.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Missing keys</text>
+<text x="450.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• Invalid enum value</text>
+<text x="450.0" y="598.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• confidence out of range</text>
+<text x="450.0" y="612.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• reason too long</text>
+<rect x="800.0" y="520.0" width="380.0" height="90.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="810.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">HYBRID PATTERN</text>
+<text x="810.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Rules handle 30-40% obvious cases → cheaper, faster, auditable.</text>
+<text x="810.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">LLM handles ambiguous language only.</text>
+<rect x="60.0" y="680.0" width="520.0" height="90.0" rx="6" fill="#FFF8E6" stroke="#FFB800" />
+<text x="70.0" y="702.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">INSTRUCTOR TALKING POINT</text>
+<text x="70.0" y="716.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Demo: show valid JSON pass, then malformed output hitting fallback. Students must explain WHY validation is not optional.</text>
+<rect x="600.0" y="680.0" width="400.0" height="80.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="610.0" y="702.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">STUDENT TAKEAWAY</text>
+<text x="610.0" y="716.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Downstream automation only consumes validated objects — never raw model text.</text>
+<circle cx="74.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="74.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">1</text>
+<circle cx="274.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="274.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">2</text>
+<circle cx="494.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="494.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">3</text>
+<circle cx="694.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="694.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">4</text>
+<circle cx="894.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="894.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">5</text>
+<circle cx="1114.0" cy="214.0" r="14" fill="#232F3E"/>
+<text x="1114.0" y="219.0" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">6</text>
+<rect x="60.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="96.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Ticket Text</text>
+<text x="96.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">input</text>
+<rect x="280.0" y="180.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="316.0" y="266.0" text-anchor="middle" font-size="9" fill="#232F3E">Rules Engine</text>
+<text x="316.0" y="278.0" text-anchor="middle" font-size="9" fill="#232F3E">keywords</text>
+<rect x="280.0" y="380.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="316.0" y="466.0" text-anchor="middle" font-size="9" fill="#232F3E">Bedrock</text>
+<text x="316.0" y="478.0" text-anchor="middle" font-size="9" fill="#232F3E">JSON-only prompt</text>
+<rect x="500.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="536.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">JSON Parser</text>
+<text x="536.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">strict parse</text>
+<rect x="700.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="736.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Schema Validator</text>
+<text x="736.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">enums + bounds</text>
+<rect x="900.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="936.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Confidence Gate</text>
+<text x="936.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">threshold 0.65</text>
+<rect x="1120.0" y="200.0" width="72.0" height="72.0" rx="4" fill="#8C4FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="1156.0" y="286.0" text-anchor="middle" font-size="9" fill="#232F3E">Auto Route</text>
+<rect x="1120.0" y="380.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="1156.0" y="466.0" text-anchor="middle" font-size="9" fill="#232F3E">Human Review</text>
+<rect x="900.0" y="480.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="936.0" y="566.0" text-anchor="middle" font-size="9" fill="#232F3E">Fallback: unknown</text>
+<line x1="96.0" y1="316.0" x2="316.0" y2="216.0" stroke="#232F3E" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="206.0" y="258.0" text-anchor="middle" font-size="9" fill="#232F3E">① obvious?</text>
+<line x1="96.0" y1="316.0" x2="316.0" y2="416.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="206.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">② else LLM</text>
+<line x1="316.0" y1="216.0" x2="1156.0" y2="236.0" stroke="#248814" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="736.0" y="218.0" text-anchor="middle" font-size="9" fill="#248814">high conf.</text>
+<line x1="316.0" y1="416.0" x2="536.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="536.0" y1="316.0" x2="736.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="636.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">③ valid JSON?</text>
+<line x1="736.0" y1="316.0" x2="936.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="836.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">④ schema OK</text>
+<line x1="936.0" y1="316.0" x2="1156.0" y2="236.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="1046.0" y="268.0" text-anchor="middle" font-size="9" fill="#232F3E">⑤ conf &gt;= 0.65</text>
+<line x1="936.0" y1="316.0" x2="1156.0" y2="416.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="1046.0" y="358.0" text-anchor="middle" font-size="9" fill="#DD3522">⑥ conf &lt; 0.65</text>
+<line x1="536.0" y1="316.0" x2="936.0" y2="516.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="736.0" y="408.0" text-anchor="middle" font-size="9" fill="#DD3522">invalid JSON</text>
+<line x1="736.0" y1="316.0" x2="936.0" y2="516.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="836.0" y="408.0" text-anchor="middle" font-size="9" fill="#DD3522">bad enum</text>
+<text x="40" y="1184" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

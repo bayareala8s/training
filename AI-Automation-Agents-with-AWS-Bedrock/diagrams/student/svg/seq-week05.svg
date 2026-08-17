@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="900" viewBox="0 0 1700 900">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 5 — API Request Flow</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">What happens when a client calls POST /classify</text>
+<rect x="40.0" y="78.0" width="1520.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Follow an HTTP request from client to response — including throttling and error codes.</text>
+<rect x="80.0" y="480.0" width="380.0" height="120.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="90.0" y="502.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">HTTP STATUS CODES</text>
+<text x="90.0" y="516.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">200 — valid classified result</text>
+<text x="90.0" y="530.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">400 — bad input / validation fail</text>
+<text x="90.0" y="544.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">429 — throttled (retry with backoff)</text>
+<text x="90.0" y="558.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">500 — unexpected server error</text>
+<rect x="500.0" y="480.0" width="300.0" height="90.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="510.0" y="502.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Request body:</text>
+<text x="510.0" y="516.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">{</text>
+<text x="510.0" y="530.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;text&amp;quot;: &amp;quot;server down in prod&amp;quot;,</text>
+<text x="510.0" y="544.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;correlation_id&amp;quot;: &amp;quot;req-001&amp;quot;</text>
+<text x="510.0" y="558.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">}</text>
+<rect x="840.0" y="480.0" width="300.0" height="90.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="850.0" y="502.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Success response:</text>
+<text x="850.0" y="516.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">{</text>
+<text x="850.0" y="530.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;label&amp;quot;: &amp;quot;incident&amp;quot;,</text>
+<text x="850.0" y="544.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;confidence&amp;quot;: 0.88,</text>
+<text x="850.0" y="558.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  &amp;quot;route&amp;quot;: &amp;quot;team_ops&amp;quot;</text>
+<text x="850.0" y="572.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">}</text>
+<rect x="80.0" y="660.0" width="400.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="90.0" y="682.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="90.0" y="696.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Test with curl against ApiEndpoint output.</text>
+<text x="90.0" y="710.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Try missing correlation_id → expect 400.</text>
+<rect x="520.0" y="660.0" width="420.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="530.0" y="682.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="530.0" y="696.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Every request needs correlation_id for tracing in CloudWatch + audit.</text>
+<rect x="80.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="116.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Client</text>
+<rect x="280.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#8C4FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="316.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">API Gateway</text>
+<rect x="480.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="516.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Lambda</text>
+<text x="516.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">handler</text>
+<rect x="680.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="716.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Bedrock</text>
+<rect x="880.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#527FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="916.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Audit</text>
+<text x="916.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">async log</text>
+<rect x="1080.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="1116.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Response</text>
+<line x1="116.0" y1="316.0" x2="316.0" y2="316.0" stroke="#232F3E" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="216.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">POST /classify</text>
+<line x1="316.0" y1="316.0" x2="516.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="416.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">② invoke</text>
+<line x1="516.0" y1="316.0" x2="716.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="616.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">③ model call</text>
+<line x1="716.0" y1="316.0" x2="516.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="616.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">④ JSON</text>
+<line x1="516.0" y1="316.0" x2="916.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="716.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">⑤ audit</text>
+<line x1="516.0" y1="316.0" x2="1116.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="816.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">⑥ return</text>
+<line x1="1116.0" y1="316.0" x2="116.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="616.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">200 / 400 / 429 / 500</text>
+<text x="40" y="884" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

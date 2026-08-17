@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="09-week08" name="Week 8 — Capstone Architecture Options" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1250">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 8 — Capstone Architecture Options" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Four portfolio-ready systems — all must meet the production minimum bar" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="o1" value="OPTION 1 — AI Operations Assistant" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF5FC;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="186" width="380" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="o2" value="OPTION 2 — File Automation Platform" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="186" width="380" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="o3" value="OPTION 3 — Workflow Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F0FF;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="186" width="380" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="o4" value="OPTION 4 — Internal AI API Platform" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1240" y="186" width="400" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="bar" value="MINIMUM BAR (all options)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="536" width="1600" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" value="LEARNING FOCUS&amp;#10;Deliver one capstone with orchestration, Bedrock, validation, audit, dashboard, and cost analysis. Choose the option closest to your target role." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="Flow:&amp;#10;Incident → classify severity&amp;#10;→ route to team → ticket stub&amp;#10;→ human approval if critical" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="220" width="340" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="Flow:&amp;#10;S3 upload → extract metadata&amp;#10;→ classify doc → route queue&amp;#10;→ needs-review if low confidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="460" y="220" width="340" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="Flow:&amp;#10;API defines workflow type&amp;#10;→ Step Functions template&amp;#10;→ validate + branch + persist" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="860" y="220" width="340" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="Flow:&amp;#10;/classify /summarize /route&amp;#10;→ shared governance layer&amp;#10;→ per-team usage limits" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="220" width="360" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="min" value="REQUIRED: Step Functions or equivalent | Bedrock | JSON validation | DynamoDB/S3 audit | CloudWatch dashboard + alarm | Cost/risk write-up | 12-min demo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="560" width="1560" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="demo" value="DEMO SCRIPT (12 min)&amp;#10;① Problem + metrics (3m) ② Happy path (5m) ③ Failure + recovery (2m) ④ Cost/governance (2m)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="680" width="500" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="inst_580_680" value="INSTRUCTOR TALKING POINT&amp;#10;Use capstone reviews to test architecture thinking — not just 'does it run'. Ask about failure modes and cost drivers." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#FFB800;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="680" width="500" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="br" value="Bedrock" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#232F3E;shape=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="720" y="860" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="gov" value="Governance" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="860" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="sfn" value="Orchestration" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.step_functions;" vertex="1" parent="1">
+          <mxGeometry x="480" y="860" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="x1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="sfn" target="br">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="x2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="br" target="gov">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

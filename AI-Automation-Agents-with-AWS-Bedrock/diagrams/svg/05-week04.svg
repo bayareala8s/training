@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1150" viewBox="0 0 1700 1150">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 4 — Step Functions Orchestration</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">Classify → validate → act with retries, catch, idempotency, and failure simulation</text>
+<rect x="40.0" y="186.0" width="1200.0" height="380.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="50.0" y="208.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">STATE MACHINE (Week 4 Lab)</text>
+<rect x="40.0" y="596.0" width="700.0" height="280.0" rx="6" fill="#F7F8F8" stroke="#879196" stroke-dasharray="6,4"/>
+<text x="50.0" y="618.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">RELIABILITY PATTERNS</text>
+<rect x="760.0" y="596.0" width="820.0" height="280.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="770.0" y="618.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">FAILURE INJECTION (Lab 4.2)</text>
+<rect x="40.0" y="78.0" width="1520.0" height="70.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">LEARNING FOCUS</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">Model multi-step AI workflows as state machines. Use retries for transient errors, Catch for validation failures, and idempotency keys for safe replays.</text>
+<rect x="60.0" y="620.0" width="320.0" height="110.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="70.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">RETRY CONFIG</text>
+<text x="70.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">• IntervalSeconds: 2</text>
+<text x="70.0" y="670.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">• MaxAttempts: 3</text>
+<text x="70.0" y="684.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">• BackoffRate: 2.0</text>
+<text x="70.0" y="698.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">• On: Lambda.ServiceException, Throttling</text>
+<rect x="400.0" y="620.0" width="320.0" height="100.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="410.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">IDEMPOTENCY</text>
+<text x="410.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Key: correlation_id</text>
+<text x="410.0" y="670.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Store: DynamoDB</text>
+<text x="410.0" y="684.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Replay safe: yes — no duplicate tickets</text>
+<rect x="780.0" y="620.0" width="480.0" height="110.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="790.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">LAB 4.2 — Simulate:</text>
+<text x="790.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">1) Bedrock throttling → retry</text>
+<text x="790.0" y="670.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">2) Invalid JSON → fallback path</text>
+<text x="790.0" y="684.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">3) Downstream timeout → Catch → DLQ</text>
+<rect x="60.0" y="860.0" width="700.0" height="90.0" rx="6" fill="#FFF8E6" stroke="#FFB800" />
+<text x="70.0" y="882.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">INSTRUCTOR TALKING POINT</text>
+<text x="70.0" y="896.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Draw the execution graph in Step Functions console during demo. Show one failed execution and read the Cause field together.</text>
+<rect x="80.0" y="300.0" width="56.0" height="56.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="108.0" y="370.0" text-anchor="middle" font-size="9" fill="#232F3E">Start</text>
+<rect x="200.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="236.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Task: Classify</text>
+<text x="236.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">Bedrock invoke</text>
+<rect x="400.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="436.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Task: Validate</text>
+<rect x="600.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="636.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Choice</text>
+<text x="636.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">valid?</text>
+<rect x="800.0" y="200.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="836.0" y="286.0" text-anchor="middle" font-size="9" fill="#232F3E">Task: Persist</text>
+<text x="836.0" y="298.0" text-anchor="middle" font-size="9" fill="#232F3E">DynamoDB</text>
+<rect x="800.0" y="380.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="836.0" y="466.0" text-anchor="middle" font-size="9" fill="#232F3E">Task: Fallback</text>
+<text x="836.0" y="478.0" text-anchor="middle" font-size="9" fill="#232F3E">unknown label</text>
+<rect x="1000.0" y="280.0" width="56.0" height="56.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="1028.0" y="350.0" text-anchor="middle" font-size="9" fill="#232F3E">End</text>
+<rect x="200.0" y="450.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="236.0" y="536.0" text-anchor="middle" font-size="9" fill="#232F3E">Retry</text>
+<text x="236.0" y="548.0" text-anchor="middle" font-size="9" fill="#232F3E">backoff 2s</text>
+<rect x="1000.0" y="450.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="1036.0" y="536.0" text-anchor="middle" font-size="9" fill="#232F3E">DLQ / Alert</text>
+<line x1="108.0" y1="328.0" x2="236.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="236.0" y1="316.0" x2="436.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="436.0" y1="316.0" x2="636.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="636.0" y1="316.0" x2="836.0" y2="236.0" stroke="#248814" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="736.0" y="268.0" text-anchor="middle" font-size="9" fill="#248814">valid=true</text>
+<line x1="636.0" y1="316.0" x2="836.0" y2="416.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="736.0" y="358.0" text-anchor="middle" font-size="9" fill="#DD3522">valid=false</text>
+<line x1="836.0" y1="236.0" x2="1028.0" y2="308.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="836.0" y1="416.0" x2="1028.0" y2="308.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="236.0" y1="316.0" x2="236.0" y2="486.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="236.0" y="393.0" text-anchor="middle" font-size="9" fill="#232F3E">throttle</text>
+<line x1="236.0" y1="486.0" x2="236.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="836.0" y1="416.0" x2="1036.0" y2="486.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="936.0" y="443.0" text-anchor="middle" font-size="9" fill="#DD3522">permanent fail</text>
+<text x="40" y="1134" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="lab-console-checkpoints" name="Labs — After Deploy: 3 Console Checkpoints" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1500" pageHeight="850">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Labs — After Deploy: 3 Console Checkpoints" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1420" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Where to look when verify.sh passes but you want to explore" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="focus" value="YOUR GOAL&amp;#10;Navigate AWS console confidently after start.sh deploys your stack." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1420" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="CHECKPOINT 1 — CloudFormation&amp;#10;Stack: {PROJECT_PREFIX}-labs&amp;#10;Status: CREATE_COMPLETE&amp;#10;Copy outputs: ApiEndpoint, StateMachineArn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="440" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="CHECKPOINT 2 — Step Functions&amp;#10;Start execution with sample input&amp;#10;View graph: classify → validate → persist&amp;#10;Find correlation_id in execution input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="460" width="440" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="CHECKPOINT 3 — API Gateway&amp;#10;curl -X POST $ApiEndpoint/classify \&amp;#10;  -H 'Content-Type: application/json' \&amp;#10;  -d '{&amp;quot;text&amp;quot;:&amp;quot;...&amp;quot;,&amp;quot;correlation_id&amp;quot;:&amp;quot;demo-1&amp;quot;}'" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="460" width="460" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="do_40_620" value="DO THIS&amp;#10;Use status.sh to see if stack is up before opening console." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="440" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rem_520_620" value="REMEMBER&amp;#10;Console exploration is optional — verify.sh is your source of truth." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="620" width="440" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="cf" value="CloudFormation&amp;#10;stack status" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#879196;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.generic;" vertex="1" parent="1">
+          <mxGeometry x="80" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="lam" value="Lambda&amp;#10;functions" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="380" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="sfn" value="Step Functions&amp;#10;executions" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.step_functions;" vertex="1" parent="1">
+          <mxGeometry x="680" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="API Gateway&amp;#10;invoke URL" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#8C4FFF;shape=mxgraph.aws4.api_gateway;" vertex="1" parent="1">
+          <mxGeometry x="980" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="① outputs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="cf" target="lam">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="② test invoke" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="lam" target="sfn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="③ live HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="sfn" target="api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

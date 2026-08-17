@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="850" viewBox="0 0 1500 850">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Labs — After Deploy: 3 Console Checkpoints</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">Where to look when verify.sh passes but you want to explore</text>
+<rect x="40.0" y="78.0" width="1420.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Navigate AWS console confidently after start.sh deploys your stack.</text>
+<rect x="40.0" y="460.0" width="440.0" height="110.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="50.0" y="482.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">CHECKPOINT 1 — CloudFormation</text>
+<text x="50.0" y="496.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Stack: {PROJECT_PREFIX}-labs</text>
+<text x="50.0" y="510.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Status: CREATE_COMPLETE</text>
+<text x="50.0" y="524.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Copy outputs: ApiEndpoint, StateMachineArn</text>
+<rect x="520.0" y="460.0" width="440.0" height="110.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="530.0" y="482.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">CHECKPOINT 2 — Step Functions</text>
+<text x="530.0" y="496.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Start execution with sample input</text>
+<text x="530.0" y="510.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">View graph: classify → validate → persist</text>
+<text x="530.0" y="524.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Find correlation_id in execution input</text>
+<rect x="1000.0" y="460.0" width="460.0" height="110.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="1010.0" y="482.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">CHECKPOINT 3 — API Gateway</text>
+<text x="1010.0" y="496.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">curl -X POST $ApiEndpoint/classify \</text>
+<text x="1010.0" y="510.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  -H 'Content-Type: application/json' \</text>
+<text x="1010.0" y="524.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">  -d '{&amp;quot;text&amp;quot;:&amp;quot;...&amp;quot;,&amp;quot;correlation_id&amp;quot;:&amp;quot;demo-1&amp;quot;}'</text>
+<rect x="40.0" y="620.0" width="440.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="50.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="50.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Use status.sh to see if stack is up before opening console.</text>
+<rect x="520.0" y="620.0" width="440.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="530.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="530.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Console exploration is optional — verify.sh is your source of truth.</text>
+<rect x="80.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="116.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">CloudFormation</text>
+<text x="116.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">stack status</text>
+<rect x="380.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="416.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Lambda</text>
+<text x="416.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">functions</text>
+<rect x="680.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="716.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">Step Functions</text>
+<text x="716.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">executions</text>
+<rect x="980.0" y="280.0" width="72.0" height="72.0" rx="4" fill="#8C4FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="1016.0" y="366.0" text-anchor="middle" font-size="9" fill="#232F3E">API Gateway</text>
+<text x="1016.0" y="378.0" text-anchor="middle" font-size="9" fill="#232F3E">invoke URL</text>
+<line x1="116.0" y1="316.0" x2="416.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="266.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">① outputs</text>
+<line x1="416.0" y1="316.0" x2="716.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="566.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">② test invoke</text>
+<line x1="716.0" y1="316.0" x2="1016.0" y2="316.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="866.0" y="308.0" text-anchor="middle" font-size="9" fill="#232F3E">③ live HTTP</text>
+<text x="40" y="834" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

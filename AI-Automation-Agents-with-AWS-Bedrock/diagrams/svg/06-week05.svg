@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1200" viewBox="0 0 1700 1200">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Week 5 — AI Automation API Platform</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">API Gateway + Lambda + Bedrock — contracts, auth, throttling, cost controls</text>
+<rect x="40.0" y="78.0" width="1520.0" height="70.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">LEARNING FOCUS</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="bold" fill="#232F3E">Build three governed endpoints (/classify, /summarize, /route) with request validation, structured errors, correlation IDs, and rate limits.</text>
+<rect x="60.0" y="520.0" width="360.0" height="100.0" rx="6" fill="#F2F3F3" stroke="#879196" />
+<text x="70.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">ENDPOINTS (Lab 5)</text>
+<text x="70.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">POST /classify — JSON label + confidence</text>
+<text x="70.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">POST /summarize — short summary</text>
+<text x="70.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">POST /route — team routing</text>
+<rect x="440.0" y="520.0" width="340.0" height="110.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="450.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">REQUEST (example)</text>
+<text x="450.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Headers: X-Correlation-Id</text>
+<text x="450.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Body: { &amp;quot;text&amp;quot;: &amp;quot;...&amp;quot;, &amp;quot;label&amp;quot;: &amp;quot;billing&amp;quot; }</text>
+<text x="450.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Max size: 8000 chars</text>
+<rect x="800.0" y="520.0" width="340.0" height="100.0" rx="6" fill="#FADBD8" stroke="#DD3522" />
+<text x="810.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">ERROR RESPONSE</text>
+<text x="810.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">{ &amp;quot;correlation_id&amp;quot;: &amp;quot;...&amp;quot;,</text>
+<text x="810.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">  &amp;quot;error&amp;quot;: &amp;quot;input_too_large&amp;quot;,</text>
+<text x="810.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">  &amp;quot;max_chars&amp;quot;: 8000 }</text>
+<rect x="1160.0" y="520.0" width="300.0" height="110.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="1170.0" y="542.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">COST CONTROLS</text>
+<text x="1170.0" y="556.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• max input/output length</text>
+<text x="1170.0" y="570.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• temperature default 0.2</text>
+<text x="1170.0" y="584.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• usage plan / burst limits</text>
+<text x="1170.0" y="598.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">• fail fast on abuse</text>
+<rect x="60.0" y="680.0" width="600.0" height="90.0" rx="6" fill="#FFF8E6" stroke="#FFB800" />
+<text x="70.0" y="702.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">INSTRUCTOR TALKING POINT</text>
+<text x="70.0" y="716.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Live demo: call each endpoint with curl. Show 400 on oversized payload and X-Correlation-Id in response.</text>
+<rect x="60.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="96.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">Internal Apps</text>
+<rect x="280.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#8C4FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="316.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">API Gateway</text>
+<text x="316.0" y="418.0" text-anchor="middle" font-size="9" fill="#232F3E">HTTP API</text>
+<rect x="280.0" y="500.0" width="72.0" height="72.0" rx="4" fill="#DD3522" stroke="#ffffff" stroke-width="2"/>
+<text x="316.0" y="586.0" text-anchor="middle" font-size="9" fill="#232F3E">Usage Plan</text>
+<text x="316.0" y="598.0" text-anchor="middle" font-size="9" fill="#232F3E">10 rps limit</text>
+<rect x="520.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="556.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">Lambda</text>
+<rect x="760.0" y="240.0" width="72.0" height="72.0" rx="4" fill="#232F3E" stroke="#ffffff" stroke-width="2"/>
+<text x="796.0" y="326.0" text-anchor="middle" font-size="9" fill="#232F3E">Bedrock</text>
+<rect x="760.0" y="400.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="796.0" y="486.0" text-anchor="middle" font-size="9" fill="#232F3E">Validator</text>
+<rect x="1000.0" y="320.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="1036.0" y="406.0" text-anchor="middle" font-size="9" fill="#232F3E">CloudWatch</text>
+<rect x="1000.0" y="480.0" width="72.0" height="72.0" rx="4" fill="#527FFF" stroke="#ffffff" stroke-width="2"/>
+<text x="1036.0" y="566.0" text-anchor="middle" font-size="9" fill="#232F3E">Audit</text>
+<line x1="96.0" y1="356.0" x2="316.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="206.0" y="348.0" text-anchor="middle" font-size="9" fill="#232F3E">HTTPS</text>
+<line x1="316.0" y1="356.0" x2="316.0" y2="536.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="316.0" y="438.0" text-anchor="middle" font-size="9" fill="#232F3E">throttle</text>
+<line x1="316.0" y1="356.0" x2="556.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="436.0" y="348.0" text-anchor="middle" font-size="9" fill="#232F3E">route</text>
+<line x1="556.0" y1="356.0" x2="796.0" y2="276.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="556.0" y1="356.0" x2="796.0" y2="436.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="556.0" y1="356.0" x2="1036.0" y2="356.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<line x1="556.0" y1="356.0" x2="1036.0" y2="516.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="40" y="1184" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

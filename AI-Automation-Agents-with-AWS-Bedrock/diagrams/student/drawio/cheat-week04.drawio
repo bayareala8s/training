@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="cheat-week04" name="Week 4 — Step Functions Cheat Sheet" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1500" pageHeight="900">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 4 — Step Functions Cheat Sheet" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1420" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="States, retry config, and catch patterns for your state machine" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1420" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="focus" value="YOUR GOAL&amp;#10;Use while editing workflow.asl.json and running failure injection." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1420" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="states" value="STATE ORDER&amp;#10;1. ClassifyTask     (Lambda invoke)&amp;#10;2. ValidateTask     (Lambda invoke)&amp;#10;3. PersistTask       (Lambda invoke)&amp;#10;4. Success           (Succeed)&amp;#10;&amp;#10;Catch branches → FallbackTask → NeedsReview" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="440" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="retry" value="RETRY BLOCK (transient)&amp;#10;&amp;quot;ErrorEquals&amp;quot;: [&amp;quot;Lambda.TooManyRequestsException&amp;quot;,&amp;#10;                 &amp;quot;States.Timeout&amp;quot;, &amp;quot;Sandbox.Timedout&amp;quot;],&amp;#10;&amp;quot;IntervalSeconds&amp;quot;: 2,&amp;#10;&amp;quot;MaxAttempts&amp;quot;: 3,&amp;#10;&amp;quot;BackoffRate&amp;quot;: 2.0" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="520" y="160" width="460" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="catch" value="CATCH BLOCK (permanent)&amp;#10;&amp;quot;ErrorEquals&amp;quot;: [&amp;quot;ValidationError&amp;quot;],&amp;#10;&amp;quot;Next&amp;quot;: &amp;quot;FallbackTask&amp;quot;&amp;#10;&amp;#10;ResultPath: $.error — preserve context" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="160" width="440" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="idemp" value="IDEMPOTENCY&amp;#10;• Key = correlation_id from input&amp;#10;• PutItem with condition OR overwrite same key&amp;#10;• Safe to replay failed executions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="440" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="do_520_360" value="DO THIS&amp;#10;Run execution → copy ARN → share in assignment.&amp;#10;Screenshot failure injection run." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="360" width="460" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rem_1020_360" value="REMEMBER&amp;#10;Test unhappy paths — graders want failure evidence." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="360" width="440" height="72" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

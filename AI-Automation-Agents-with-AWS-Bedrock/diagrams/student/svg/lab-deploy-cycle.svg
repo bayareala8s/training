@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="850" viewBox="0 0 1500 850">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#232F3E"/></marker></defs>
+<text x="40.0" y="36.0" font-family="Helvetica,Arial,sans-serif" font-size="20" font-weight="bold" fill="#232F3E">Labs — Deploy Cycle (cycle.sh)</text>
+<text x="40.0" y="60.0" font-family="Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#565656">One command: test → deploy → verify → teardown</text>
+<rect x="40.0" y="78.0" width="1420.0" height="60.0" rx="6" fill="#E8F4FD" stroke="#527FFF" />
+<text x="50.0" y="100.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">YOUR GOAL</text>
+<text x="50.0" y="114.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Understand the full lab lifecycle before your first AWS deploy.</text>
+<rect x="80.0" y="460.0" width="440.0" height="100.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="90.0" y="482.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">ONE COMMAND</text>
+<text x="90.0" y="496.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">cd labs</text>
+<text x="90.0" y="510.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">PROJECT_PREFIX=ba-la8s-ai-yourname ./scripts/cycle.sh</text>
+<text x="90.0" y="524.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF"></text>
+<text x="90.0" y="538.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">Keep stack: ./scripts/cycle.sh --keep-stack</text>
+<rect x="560.0" y="460.0" width="440.0" height="100.0" rx="0" fill="#232F3E" stroke="#232F3E" />
+<text x="570.0" y="482.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">SET BEFORE DEPLOY</text>
+<text x="570.0" y="496.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">export AWS_REGION=us-east-1</text>
+<text x="570.0" y="510.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">export PROJECT_PREFIX=ba-la8s-ai-yourname</text>
+<text x="570.0" y="524.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#FFFFFF">export BEDROCK_MODEL_ID=amazon.nova-lite-v1:0</text>
+<rect x="80.0" y="620.0" width="440.0" height="72.0" rx="6" fill="#E9F7EF" stroke="#248814" />
+<text x="90.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">DO THIS</text>
+<text x="90.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">Always run cycle.sh first — catches errors before you debug in console.</text>
+<rect x="560.0" y="620.0" width="440.0" height="72.0" rx="6" fill="#F3E8FF" stroke="#8C4FFF" />
+<text x="570.0" y="642.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">REMEMBER</text>
+<text x="570.0" y="656.0" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="normal" fill="#232F3E">stop.sh / teardown.sh = delete stack = stop most charges.</text>
+<rect x="80.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="116.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">run-tests.sh</text>
+<text x="116.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">pytest (free)</text>
+<rect x="320.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#D86613" stroke="#ffffff" stroke-width="2"/>
+<text x="356.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">start.sh</text>
+<text x="356.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">sam deploy</text>
+<rect x="560.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="596.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">verify.sh</text>
+<text x="596.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">integration</text>
+<rect x="800.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#E7157B" stroke="#ffffff" stroke-width="2"/>
+<text x="836.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">teardown.sh</text>
+<text x="836.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">delete stack</text>
+<rect x="1040.0" y="260.0" width="72.0" height="72.0" rx="4" fill="#879196" stroke="#ffffff" stroke-width="2"/>
+<text x="1076.0" y="346.0" text-anchor="middle" font-size="9" fill="#232F3E">Done</text>
+<text x="1076.0" y="358.0" text-anchor="middle" font-size="9" fill="#232F3E">no ongoing cost</text>
+<line x1="116.0" y1="296.0" x2="356.0" y2="296.0" stroke="#232F3E" stroke-width="2.5" marker-end="url(#arrow)" />
+<text x="236.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">pass</text>
+<line x1="356.0" y1="296.0" x2="596.0" y2="296.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="476.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">stack ready</text>
+<line x1="596.0" y1="296.0" x2="836.0" y2="296.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<text x="716.0" y="288.0" text-anchor="middle" font-size="9" fill="#232F3E">pass</text>
+<line x1="836.0" y1="296.0" x2="1076.0" y2="296.0" stroke="#232F3E" stroke-width="1.5" marker-end="url(#arrow)" />
+<line x1="116.0" y1="296.0" x2="1076.0" y2="296.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="596.0" y="288.0" text-anchor="middle" font-size="9" fill="#DD3522">fail fast</text>
+<line x1="596.0" y1="296.0" x2="1076.0" y2="296.0" stroke="#DD3522" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="8,4"/>
+<text x="836.0" y="288.0" text-anchor="middle" font-size="9" fill="#DD3522">fail</text>
+<text x="40" y="834" font-size="9" fill="#879196">BayAreaLa8s — AI Automation &amp; Agents with AWS Bedrock | AWS Architecture Icons (aws4)</text>
+</svg>

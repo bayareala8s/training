@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="seq-week04" name="Week 4 — Step Functions Execution Timeline" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="950">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 4 — Step Functions Execution Timeline" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="One workflow run: retries, catches, and idempotent persist" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="z_happy" value="HAPPY PATH" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="176" width="780" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="z_fail" value="FAILURE PATHS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="176" width="800" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="focus" value="YOUR GOAL&amp;#10;Understand when Step Functions retries vs catches, and why persist must be idempotent." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="retry_rule" value="RETRY when:&amp;#10;• Bedrock throttling&amp;#10;• Lambda timeout&amp;#10;• Transient network error&amp;#10;&amp;#10;Use exponential backoff, max 3 attempts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="580" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="catch_rule" value="CATCH when:&amp;#10;• Validation permanent fail&amp;#10;• Invalid enum / schema&amp;#10;• Business rule violation&amp;#10;&amp;#10;→ deterministic fallback state" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F3F3;strokeColor=#879196;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="480" y="580" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="idempotent" value="IDEMPOTENCY KEY&amp;#10;Use correlation_id as DynamoDB key.&amp;#10;Replay safe — same input → same row, no duplicates." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="880" y="580" width="400" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="do_80_720" value="DO THIS&amp;#10;Open Step Functions console → Executions.&amp;#10;Inject failure in lab, screenshot run graph." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="400" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rem_520_720" value="REMEMBER&amp;#10;Retries ≠ catches. Retries fix transient; catches handle permanent failures." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E8FF;strokeColor=#8C4FFF;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="720" width="420" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="start" value="Start" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.step_functions;" vertex="1" parent="1">
+          <mxGeometry x="80" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="cls" value="Classify" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="240" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="val" value="Validate" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="400" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="per" value="Persist" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="560" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="done" value="Success" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.document;" vertex="1" parent="1">
+          <mxGeometry x="720" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="retry" value="Retry&amp;#10;backoff" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.step_functions;" vertex="1" parent="1">
+          <mxGeometry x="900" y="240" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="catch" value="Catch&amp;#10;fallback" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#248814;shape=mxgraph.aws4.step_functions;" vertex="1" parent="1">
+          <mxGeometry x="900" y="360" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="fb" value="Fallback" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="360" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="rev" value="Needs Review" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#879196;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="360" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="①" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="start" target="cls">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="②" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="cls" target="val">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="③ valid" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="val" target="per">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="④" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="per" target="done">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="throttle/timeout" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="cls" target="retry">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="retry" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="retry" target="cls">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="schema fail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="val" target="catch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="⑤" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="catch" target="fb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="fb" target="rev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

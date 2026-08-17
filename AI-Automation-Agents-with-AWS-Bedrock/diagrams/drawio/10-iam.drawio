@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="10-iam" name="IAM &amp; Security Boundaries" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="IAM &amp;amp; Security Boundaries" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1520" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Separate deploy roles, runtime roles, and API caller identity" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1520" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="humans" value="HUMAN &amp;amp; MACHINE IDENTITIES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF5FC;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="186" width="480" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="roles" value="IAM ROLES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="186" width="500" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="resources" value="PROTECTED RESOURCES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#879196;verticalAlign=top;fontSize=12;fontStyle=1;fontColor=#232F3E;align=left;spacingLeft=12;spacingTop=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="186" width="500" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" value="LEARNING FOCUS&amp;#10;Understand who can deploy infrastructure vs who can invoke AI vs who can call APIs." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="inst_40_660" value="INSTRUCTOR TALKING POINT&amp;#10;Blast radius: compromise of runtime role ≠ full admin. Use separate accounts per student." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#FFB800;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="660" width="700" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="Admin / Instructor" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="80" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="dev" value="Developer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="80" y="380" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="caller" value="API Client" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.cognito;" vertex="1" parent="1">
+          <mxGeometry x="80" y="500" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="deploy" value="Deploy Role" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.identity_and_access_management;" vertex="1" parent="1">
+          <mxGeometry x="600" y="260" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="runtime" value="Lambda Role" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.identity_and_access_management;" vertex="1" parent="1">
+          <mxGeometry x="600" y="380" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="br" value="Bedrock Models" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#232F3E;shape=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="280" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="data" value="DynamoDB / S3" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#527FFF;shape=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="420" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="logs" value="CloudWatch Logs" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="1320" y="350" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="i1" value="CloudFormation/SAM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="admin" target="deploy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i2" value="scoped" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="dev" target="deploy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i3" value="creates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="deploy" target="runtime">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i4" value="Converse only" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="runtime" target="br">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i5" value="table ARNs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="runtime" target="data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i6" value="PutLogEvents" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="runtime" target="logs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i7" value="invoke via API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="caller" target="runtime">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

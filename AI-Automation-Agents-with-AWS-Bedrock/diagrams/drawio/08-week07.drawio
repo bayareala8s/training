@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="BayAreaLa8s-Detailed-Diagrams" version="24.7.0" type="device">
+  <diagram id="08-week07" name="Week 7 — Enterprise AI Agent System" compressed="false">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" page="1" pageScale="1" pageWidth="1700" pageHeight="1200">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="101" value="Week 7 — Enterprise AI Agent System" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="1620" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="102" value="Router, tool policy, memory with TTL, event-driven chaining" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#565656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="48" width="1620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" value="LEARNING FOCUS&amp;#10;Build an agent-like router that outputs a structured plan, enforces tool allow-lists, stores session memory safely, and chains workflows via events." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F4FD;strokeColor=#527FFF;align=left;verticalAlign=top;fontSize=11;fontStyle=1;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="78" width="1520" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="plan" value="PLAN JSON (example)&amp;#10;{&amp;#10;  &amp;quot;tool&amp;quot;: &amp;quot;classify_route&amp;quot;,&amp;#10;  &amp;quot;requires_approval&amp;quot;: false,&amp;#10;  &amp;quot;reason&amp;quot;: &amp;quot;billing keywords&amp;quot;&amp;#10;}" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#232F3E;fontColor=#FFFFFF;strokeColor=#232F3E;align=left;verticalAlign=top;fontSize=9;fontFamily=Courier New;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="520" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="pol_t" value="TOOL POLICY&amp;#10;ALLOWED: summarize, classify_route, action_stub&amp;#10;DENY: delete_prod, exfiltrate_data&amp;#10;APPROVAL: action_stub, security keywords" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FADBD8;strokeColor=#DD3522;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="440" y="520" width="400" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="mem_r" value="MEMORY RULES&amp;#10;STORE: short context summary, last route&amp;#10;NEVER: secrets, full ticket bodies, PCI data&amp;#10;TTL: 7 days (DynamoDB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F7EF;strokeColor=#248814;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="900" y="600" width="380" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="inst_60_680" value="INSTRUCTOR TALKING POINT&amp;#10;Contrast 'autonomous agent' hype vs enterprise agent = router + policy + audit. Demo risky prompt requiring approval." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E6;strokeColor=#FFB800;align=left;verticalAlign=top;fontSize=10;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="60" y="680" width="550" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="evt" value="EventBridge" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.eventbridge;" vertex="1" parent="1">
+          <mxGeometry x="60" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="agent" value="Agent Router&amp;#10;plan JSON" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#8C4FFF;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="300" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="pol" value="Tool Policy" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.identity_and_access_management;" vertex="1" parent="1">
+          <mxGeometry x="300" y="520" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="sum" value="Summarize WF" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="600" y="200" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="cls" value="Classify+Route" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="600" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="act" value="Action Stub" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="600" y="440" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="mem" value="Memory&amp;#10;TTL 7d" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#527FFF;shape=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="900" y="320" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="audit" value="Audit" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#DD3522;shape=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="900" y="480" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="appr" value="Approval" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=10;fontStyle=0;aspect=fixed;pointerEvents=1;fillColor=#D86613;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="600" y="600" width="72" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="g1" value="trigger" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="evt" target="agent">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g2" value="check allow-list" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="agent" target="pol">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g3" value="tool=summarize" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="agent" target="sum">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g4" value="tool=classify_route" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="agent" target="cls">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g5" value="requires_approval" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DD3522;fontColor=#DD3522;fontSize=10;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="agent" target="act">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="act" target="appr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g7" value="session summary" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="agent" target="mem">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="g8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontColor=#232F3E;fontSize=10;" edge="1" parent="1" source="agent" target="audit">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
