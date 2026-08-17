@@ -1,0 +1,149 @@
+{
+  "transfer_id": "customerA-sftp-to-s3-001",
+  "source": {
+    "type": "sftp",
+    "host": "sftp.customer-a.com",
+    "port": 22,
+    "username": "fileuser",
+    "auth_method": "password",
+    "password": "secure-password-or-reference-to-secrets-manager",
+    "remote_path": "/outgoing/reports/",
+    "file_pattern": "*.csv",
+    "retry_attempts": 3,
+    "timeout_seconds": 600
+  },
+  "destination": {
+    "type": "s3",
+    "bucket": "enterprise-ingestion-bucket",
+    "key_prefix": "customer-a/reports/",
+    "add_timestamp_prefix": true,
+    "overwrite_existing": false,
+    "storage_class": "STANDARD"
+  },
+  "file_attributes": {
+    "min_size_bytes": 1024,
+    "max_size_bytes": 524288000,
+    "modified_after": "2025-07-01T00:00:00Z",
+    "required_extension": ".csv",
+    "max_file_age_days": 7,
+    "checksum_provided": false,
+    "filename_prefix": "report_",
+    "filename_suffix": "_final",
+    "rename_on_upload": {
+      "enabled": true,
+      "format": "report_{YYYYMMDD_HHmmss}.csv"
+    }
+  },
+  "schedule": {
+    "type": "cron",
+    "expression": "cron(0 1 * * ? *)",
+    "timezone": "UTC"
+  },
+  "validation": {
+    "checksum": "md5",
+    "validate_before_upload": true,
+    "delete_source_after_success": true
+  },
+  "notification": {
+    "on_success": {
+      "email": [
+        "ops@customer-a.com",
+        "it-admin@company.com"
+      ],
+      "sns_topic": "arn:aws:sns:us-west-2:123456789012:file-transfer-success"
+    },
+    "on_failure": {
+      "email": [
+        "it-admin@company.com"
+      ],
+      "sns_topic": "arn:aws:sns:us-west-2:123456789012:file-transfer-failure"
+    }
+  },
+  "logging": {
+    "enabled": true,
+    "log_group": "/aws/filetransfer/customer-a",
+    "log_level": "INFO",
+    "track_per_file": true
+  },
+  "meta": {
+    "customer_id": "customer-a",
+    "project_code": "finops",
+    "env": "prod",
+    "onboarded_by": "team-transferops",
+    "created_at": "2025-07-16T00:00:00Z"
+  },
+  "s3_bucket_policy": {
+    "attach_policy": true,
+    "policy_document": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "AllowPutObjectFromTrustedRole",
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "arn:aws:iam::123456789012:role/FileTransferExecutionRole"
+          },
+          "Action": "s3:PutObject",
+          "Resource": "arn:aws:s3:::enterprise-ingestion-bucket/customer-a/reports/*",
+          "Condition": {
+            "StringEquals": {
+              "s3:x-amz-acl": "bucket-owner-full-control"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "security": {
+    "encryption": {
+      "s3_encryption": "SSE-KMS",
+      "kms_key_arn": "arn:aws:kms:us-west-2:123456789012:key/your-kms-key-id"
+    },
+    "ip_whitelist": [
+      "1.2.3.4",
+      "5.6.7.8"
+    ],
+    "network_restrictions": {
+      "vpc_id": "vpc-12345678",
+      "subnet_ids": [
+        "subnet-aaa",
+        "subnet-bbb"
+      ],
+      "security_group_ids": [
+        "sg-xyz"
+      ]
+    }
+  },
+  "execution_control": {
+    "max_runtime_minutes": 30,
+    "backoff_strategy": "exponential",
+    "retry_delay_seconds": 60,
+    "max_retries": 5,
+    "on_timeout_action": "fail"
+  },
+  "post_processing": {
+    "actions": [
+      "tag_object",
+      "move_to_archive",
+      "trigger_lambda"
+    ],
+    "archive_prefix": "customer-a/archive/",
+    "lambda_arn": "arn:aws:lambda:us-west-2:123456789012:function:PostProcessFunction"
+  },
+  "tags": {
+    "department": "finance",
+    "confidentiality": "high",
+    "owner": "customer-a",
+    "transfer_type": "sftp-to-s3"
+  },
+  "monitoring": {
+    "metrics_namespace": "FileTransfer",
+    "enable_detailed_metrics": true,
+    "export_metrics_to_cloudwatch": true
+  },
+  "workflow": {
+    "step_function_arn": "arn:aws:states:us-west-2:123456789012:stateMachine:TransferFlow",
+    "priority": "high",
+    "batch_mode": false
+  }
+}

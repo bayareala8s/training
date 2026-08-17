@@ -1,0 +1,23 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart LR
+  subgraph Heat["Maturity Heatmap"]
+    R1["Onboarding — 2 Fragile"]
+    A1["Payments — 3 Adequate"]
+    G1["Ledger — 4 Good"]
+  end
+  R1 --> X["Invest / Migrate"]
+  style R1 fill:#FCE8E6,stroke:#D13212
+  style A1 fill:#FFF3E0,stroke:#ED7100
+  style G1 fill:#F0F7E6,stroke:#1D8102

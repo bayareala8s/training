@@ -1,0 +1,37 @@
+{
+  "module": "08",
+  "title": "AI Strategy and Intelligent Enterprise Architecture",
+  "aspectRatio": "16:9",
+  "brand": "BayLearn",
+  "slideCount": 20,
+  "colors": {
+    "navy": "#0B1F3A",
+    "white": "#FFFFFF",
+    "gold": "#C6A75E"
+  },
+  "slides": [
+    { "id": 1, "title": "Module title", "section": "open" },
+    { "id": 2, "title": "Lead EA role", "section": "open" },
+    { "id": 3, "title": "Business scenario", "section": "open" },
+    { "id": 4, "title": "Learning objectives", "section": "open" },
+    { "id": 5, "title": "Strategy vs tool chasing", "section": "concept" },
+    { "id": 6, "title": "Scorecard dimensions", "section": "concept" },
+    { "id": 7, "title": "Anchor use case", "section": "concept" },
+    { "id": 8, "title": "Go / Conditional / No-go", "section": "concept" },
+    { "id": 9, "title": "Governed reference path", "section": "concept" },
+    { "id": 10, "title": "Structured outputs", "section": "concept" },
+    { "id": 11, "title": "Model proposes; rules decide", "section": "concept" },
+    { "id": 12, "title": "Safe logging", "section": "concept" },
+    { "id": 13, "title": "HITL triggers", "section": "concept" },
+    { "id": 14, "title": "Evaluation is architecture", "section": "concept" },
+    { "id": 15, "title": "Cost and tokens as NFRs", "section": "concept" },
+    { "id": 16, "title": "Instructor demo", "section": "demo" },
+    { "id": 17, "title": "Lab launch", "section": "lab" },
+    { "id": 18, "title": "Review prompts", "section": "review" },
+    { "id": 19, "title": "Assignment", "section": "close" },
+    { "id": 20, "title": "Close / next module", "section": "close" }
+  ],
+  "outlinePath": "slides/module-08/slide-outline.md",
+  "dataset": "labs/lab-08-ai-decision-assistant/datasets/incident-eval-set.csv",
+  "mockDefault": true
+}

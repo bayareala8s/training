@@ -1,0 +1,46 @@
+%% INSTRUCTOR — NorthStar target-state reference (fictional)
+%% Do not distribute wholesale as a student answer key.
+flowchart TB
+  subgraph Actors["Actors"]
+    CUST[Customers / Merchants]
+    PART[Partners]
+    EMP[Employees]
+  end
+
+  subgraph Edge["Edge"]
+    CH[Digital channels]
+    API[Enterprise API gateway]
+  end
+
+  subgraph Domains["Business domains"]
+    ONB[Onboarding]
+    PAY[Payments]
+    PARTN[Partner integration]
+    OPS[Operations / Incident]
+  end
+
+  subgraph Platforms["Shared platforms"]
+    LZ[Cloud landing zone]
+    EV[Event backbone]
+    DATA[Data platforms / MDM]
+    ID[Enterprise IdP + PAM]
+    AI[Governed AI services]
+  end
+
+  CUST --> CH --> API
+  PART --> API
+  EMP --> ID
+  API --> ONB
+  API --> PAY
+  API --> PARTN
+  ONB --> LZ
+  PAY --> LZ
+  PARTN --> LZ
+  ONB --> EV
+  PAY --> EV
+  PARTN --> EV
+  ONB --> DATA
+  PAY --> DATA
+  OPS --> AI
+  AI --> EV
+  ID --> API

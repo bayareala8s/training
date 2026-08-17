@@ -1,0 +1,89 @@
+{
+  "feature_groups": [
+    {
+      "name": "customer_behavior",
+      "version": "1.0.0",
+      "entity_key": "customer_id",
+      "description": "Rolling customer purchase behavior features for recommendation and churn models",
+      "source_datasets": [
+        "curated/sales/fact_orders",
+        "curated/customers/dim_customer"
+      ],
+      "freshness_sla_hours": 24,
+      "owner": "data-engineering",
+      "features": [
+        {
+          "name": "order_count_30d",
+          "dtype": "int64",
+          "description": "Number of orders in trailing 30 days",
+          "computation": "count(order_id) WHERE order_date in (snapshot-30d, snapshot)",
+          "nullable": false
+        },
+        {
+          "name": "total_spend_30d",
+          "dtype": "float64",
+          "description": "Sum of order_amount in trailing 30 days",
+          "computation": "sum(order_amount)",
+          "nullable": false
+        },
+        {
+          "name": "avg_order_value_30d",
+          "dtype": "float64",
+          "description": "Average order amount in trailing 30 days",
+          "computation": "mean(order_amount)",
+          "nullable": false
+        },
+        {
+          "name": "days_since_last_order",
+          "dtype": "int64",
+          "description": "Days between last order and snapshot date",
+          "computation": "snapshot_date - max(order_date)",
+          "nullable": true
+        },
+        {
+          "name": "distinct_categories_30d",
+          "dtype": "int64",
+          "description": "Unique product categories purchased in window",
+          "computation": "count_distinct(product_category)",
+          "nullable": false
+        },
+        {
+          "name": "preferred_category",
+          "dtype": "string",
+          "description": "Most frequently purchased category in window",
+          "computation": "mode(product_category)",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "name": "product_catalog",
+      "version": "1.0.0",
+      "entity_key": "product_id",
+      "description": "Product attributes for content-based recommendation",
+      "source_datasets": ["curated/products/dim_product"],
+      "freshness_sla_hours": 168,
+      "owner": "data-engineering",
+      "features": [
+        {
+          "name": "category",
+          "dtype": "string",
+          "description": "Primary product category",
+          "nullable": false
+        },
+        {
+          "name": "price_tier",
+          "dtype": "string",
+          "description": "budget | mid | premium based on price percentiles",
+          "nullable": false
+        },
+        {
+          "name": "avg_rating",
+          "dtype": "float64",
+          "description": "Average customer rating",
+          "nullable": true
+        }
+      ]
+    }
+  ]
+}

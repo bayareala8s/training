@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph Sources
+    API[Account API]
+    EVT[Payment events]
+    FILE[Partner files]
+  end
+  subgraph Platform
+    BUS[Event bus]
+    Q[Queues]
+    ORCH[Workflows]
+  end
+  subgraph Data
+    ACC[(Account store)]
+    PAY[(Payment records)]
+    RAW[Raw file landing]
+    CUR[Curated analytics]
+  end
+  API --> ACC
+  API --> BUS
+  EVT --> BUS --> Q --> PAY
+  FILE --> RAW --> BUS
+  ORCH --> CUR
+  CUR --> NOTE[Notifications]

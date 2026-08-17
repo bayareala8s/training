@@ -1,0 +1,639 @@
+{
+  "manifestVersion": "1.0.0",
+  "courseId": "enterprise-architecture-leadership-masterclass",
+  "title": "Enterprise Architecture Leadership Masterclass",
+  "subtitle": "From Senior Engineer to Enterprise Architecture Leader",
+  "productOwner": "BayAreaLa8s",
+  "platform": "BayLearn",
+  "caseStudy": "NorthStar Financial Services (fictional)",
+  "generatedAt": "2026-07-15",
+  "lastUpdated": "2026-07-15",
+  "buildPhase": 7,
+  "buildStatus": "ready_to_teach",
+  "phases": {
+    "1_foundation": {
+      "status": "complete",
+      "description": "Repository structure, plan, manifest, course specs, templates"
+    },
+    "2_modules_1_to_4": {
+      "status": "complete",
+      "description": "Modules 1\u20134 lessons, labs, slides, assessments"
+    },
+    "3_modules_5_to_8": {
+      "status": "complete",
+      "description": "Modules 5\u20138 AWS labs, Terraform, AI lab",
+      "notes": "Modules 05\u201308 generated with Terraform; Lab 08 includes Bedrock mock fallback. Ready for Phase 3 AWS cost/security review checkpoint."
+    },
+    "4_modules_9_10_capstone": {
+      "status": "complete",
+      "description": "Governance, capstone, executive assets"
+    },
+    "5_baylearn_seed": {
+      "status": "complete",
+      "description": "Portal seed JSON, marketing, certificate, cohort"
+    },
+    "6_validation": {
+      "status": "complete",
+      "description": "Completeness, links, JSON, Terraform, branding"
+    },
+    "7_packaging": {
+      "status": "complete",
+      "description": "Student, instructor, AWS, capstone, seed ZIPs"
+    }
+  },
+  "courseMetadata": {
+    "category": "Enterprise Architecture",
+    "level": "Advanced",
+    "deliveryMode": "LIVE_COHORT",
+    "durationWeeks": 10,
+    "estimatedHours": 60,
+    "priceCents": 249900,
+    "certificateName": "Certificate in Enterprise Architecture Leadership",
+    "recommendedCohortSize": "8-15",
+    "corporateCohortSize": "10-25"
+  },
+  "foundationAssets": [
+    {
+      "id": "readme",
+      "path": "README.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "build-plan",
+      "path": "COURSE_BUILD_PLAN.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "manifest",
+      "path": "COURSE_MANIFEST.json",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "course-overview",
+      "path": "course-specification/course-overview.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "learning-outcomes",
+      "path": "course-specification/learning-outcomes.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "delivery-model",
+      "path": "course-specification/delivery-model.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "assessment-model",
+      "path": "course-specification/assessment-model.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "instructor-standards",
+      "path": "course-specification/instructor-standards.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "content-standards",
+      "path": "course-specification/content-standards.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "northstar-case-study",
+      "path": "course-specification/northstar-case-study.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "asset-inventory",
+      "path": "course-specification/asset-inventory.md",
+      "status": "generated",
+      "phase": 1
+    },
+    {
+      "id": "standard-rubric",
+      "path": "assessments/rubrics/standard-architecture-rubric.md",
+      "status": "generated",
+      "phase": 1
+    }
+  ],
+  "templates": [
+    {
+      "id": "tpl-module-readme",
+      "path": "templates/module/MODULE_README.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-lesson",
+      "path": "templates/module/LESSON.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-instructor-guide",
+      "path": "templates/module/INSTRUCTOR_GUIDE.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-speaking-script",
+      "path": "templates/module/SPEAKING_SCRIPT.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-slide-outline",
+      "path": "templates/module/SLIDE_OUTLINE.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-lab",
+      "path": "templates/lab/LAB.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-aws-lab",
+      "path": "templates/lab/AWS_LAB.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-quiz",
+      "path": "templates/assessment/QUIZ.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-assignment",
+      "path": "templates/assessment/ASSIGNMENT.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-qa-report",
+      "path": "templates/master/QA_REPORT.template.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-adr",
+      "path": "student/templates/01-architecture-decision-record.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-executive-memo",
+      "path": "student/templates/02-executive-decision-memo.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-architecture-principles",
+      "path": "student/templates/03-architecture-principles.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-stakeholder-matrix",
+      "path": "student/templates/04-stakeholder-matrix.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-raci",
+      "path": "student/templates/05-raci-matrix.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-capability-map",
+      "path": "student/templates/06-capability-map.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-time-assessment",
+      "path": "student/templates/07-time-assessment.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-technical-debt",
+      "path": "student/templates/08-technical-debt-register.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-roadmap",
+      "path": "student/templates/09-architecture-roadmap.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-threat-model",
+      "path": "student/templates/10-threat-model.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-rto-rpo",
+      "path": "student/templates/11-rto-rpo-worksheet.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-ai-scorecard",
+      "path": "student/templates/12-ai-use-case-scorecard.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-arb-checklist",
+      "path": "student/templates/13-architecture-review-checklist.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-portfolio-checklist",
+      "path": "student/templates/14-architecture-portfolio-checklist.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-personal-leadership",
+      "path": "student/templates/15-personal-leadership-plan.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-integration-pattern-matrix",
+      "path": "student/templates/16-integration-pattern-matrix.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-build-vs-buy",
+      "path": "student/templates/17-build-versus-buy.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-risk-control",
+      "path": "student/templates/18-risk-control-matrix.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-ai-governance",
+      "path": "student/templates/19-ai-governance-checklist.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-cloud-strategy",
+      "path": "student/templates/20-cloud-strategy.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-transition-state",
+      "path": "student/templates/23-transition-state-plan.md",
+      "status": "generated",
+      "title": "Transition-state plan"
+    },
+    {
+      "id": "tpl-target-state",
+      "path": "student/templates/24-target-state-architecture.md",
+      "status": "generated",
+      "title": "Target-state architecture"
+    },
+    {
+      "id": "tpl-value-stream",
+      "path": "student/templates/21-value-stream-map.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-capability-heatmap",
+      "path": "student/templates/22-capability-heatmap.md",
+      "status": "generated"
+    },
+    {
+      "id": "tpl-app-inventory-dataset",
+      "path": "student/datasets/northstar-application-inventory.csv",
+      "status": "generated"
+    }
+  ],
+  "modules": [
+    {
+      "id": "module-01",
+      "slug": "module-01-enterprise-architect-role",
+      "title": "The Enterprise Architect\u2019s Role",
+      "week": 1,
+      "labId": "lab-01",
+      "awsLab": false,
+      "status": "generated",
+      "assetChecklist": [
+        "module-overview",
+        "learning-objectives",
+        "prerequisites",
+        "lessons-3-to-5",
+        "instructor-guide",
+        "speaking-script",
+        "slide-outline",
+        "whiteboard-plan",
+        "diagrams-mermaid",
+        "lab",
+        "reference-solution",
+        "assignment",
+        "rubric",
+        "quiz-10-mcq",
+        "quiz-3-scenario",
+        "quiz-2-discussion",
+        "answer-key",
+        "workbook-section",
+        "templates",
+        "common-mistakes",
+        "debrief-questions",
+        "linkedin-promo",
+        "youtube-description",
+        "qa-report"
+      ]
+    },
+    {
+      "id": "module-02",
+      "slug": "module-02-business-architecture",
+      "title": "Business Architecture and Capability Mapping",
+      "week": 2,
+      "labId": "lab-02",
+      "awsLab": false,
+      "status": "generated",
+      "assetChecklist": "same-as-module-01",
+      "generatedAt": "2026-07-15"
+    },
+    {
+      "id": "module-03",
+      "slug": "module-03-current-state",
+      "title": "Current-State Architecture Assessment",
+      "week": 3,
+      "labId": "lab-03",
+      "awsLab": false,
+      "status": "generated",
+      "specialAssets": [
+        "application-inventory-csv-40plus"
+      ],
+      "assetChecklist": "same-as-module-01",
+      "generatedAt": "2026-07-15"
+    },
+    {
+      "id": "module-04",
+      "slug": "module-04-target-state",
+      "title": "Target-State Architecture and Transformation Roadmaps",
+      "week": 4,
+      "labId": "lab-04",
+      "awsLab": false,
+      "status": "generated",
+      "assetChecklist": "same-as-module-01",
+      "generatedAssets": [
+        "modules/module-04-target-state/",
+        "labs/lab-04-target-state-roadmap/",
+        "slides/module-04/",
+        "instructor/guides/module-04/",
+        "instructor/scripts/module-04/",
+        "instructor/reference-solutions/module-04/",
+        "instructor/grading/module-04-grading-guide.md",
+        "assessments/quizzes/module-04-quiz.md",
+        "assessments/answer-keys/module-04-answer-key.md",
+        "assessments/assignments/module-04-assignment.md",
+        "assessments/rubrics/module-04-rubric.md",
+        "student/templates/23-transition-state-plan.md",
+        "student/templates/24-target-state-architecture.md",
+        "qa/module-04-qa-report.md"
+      ]
+    },
+    {
+      "id": "module-05",
+      "slug": "module-05-cloud-platform",
+      "title": "Cloud and Platform Strategy",
+      "week": 5,
+      "labId": "lab-05",
+      "awsLab": true,
+      "status": "generated",
+      "specialAssets": [
+        "terraform",
+        "cleanup-script",
+        "cost-estimate"
+      ],
+      "assetChecklist": "same-as-module-01-plus-aws"
+    },
+    {
+      "id": "module-06",
+      "slug": "module-06-integration-data",
+      "title": "Integration, Application, and Data Architecture",
+      "week": 6,
+      "labId": "lab-06",
+      "awsLab": true,
+      "status": "generated",
+      "specialAssets": [
+        "terraform",
+        "cleanup-script",
+        "cost-estimate"
+      ],
+      "assetChecklist": "same-as-module-01-plus-aws"
+    },
+    {
+      "id": "module-07",
+      "slug": "module-07-security-resilience",
+      "title": "Security, Risk, Compliance, and Resilience",
+      "week": 7,
+      "labId": "lab-07",
+      "awsLab": true,
+      "status": "generated",
+      "specialAssets": [
+        "terraform",
+        "cleanup-script",
+        "cost-estimate"
+      ],
+      "assetChecklist": "same-as-module-01-plus-aws"
+    },
+    {
+      "id": "module-08",
+      "slug": "module-08-ai-strategy",
+      "title": "AI Strategy and Intelligent Enterprise Architecture",
+      "week": 8,
+      "labId": "lab-08",
+      "awsLab": true,
+      "status": "generated",
+      "specialAssets": [
+        "terraform",
+        "bedrock",
+        "cleanup-script",
+        "cost-estimate"
+      ],
+      "assetChecklist": "same-as-module-01-plus-aws"
+    },
+    {
+      "id": "module-09",
+      "slug": "module-09-governance",
+      "title": "Architecture Governance and Executive Communication",
+      "week": 9,
+      "labId": "lab-09",
+      "awsLab": false,
+      "status": "generated",
+      "specialAssets": [
+        "arb-simulation-pack"
+      ],
+      "assetChecklist": "same-as-module-01"
+    },
+    {
+      "id": "module-10",
+      "slug": "module-10-capstone",
+      "title": "Capstone and Architecture Leadership",
+      "week": 10,
+      "labId": "lab-10",
+      "awsLab": false,
+      "status": "generated",
+      "specialAssets": [
+        "capstone-integration"
+      ],
+      "assetChecklist": "same-as-module-01"
+    }
+  ],
+  "labs": [
+    {
+      "id": "lab-01",
+      "path": "labs/lab-01-architecture-operating-model",
+      "title": "Establish NorthStar\u2019s Architecture Function",
+      "status": "generated"
+    },
+    {
+      "id": "lab-02",
+      "path": "labs/lab-02-capability-mapping",
+      "title": "Build NorthStar\u2019s Business Capability Map",
+      "status": "generated"
+    },
+    {
+      "id": "lab-03",
+      "path": "labs/lab-03-portfolio-assessment",
+      "title": "Assess NorthStar\u2019s Current Technology Estate",
+      "status": "generated"
+    },
+    {
+      "id": "lab-04",
+      "path": "labs/lab-04-target-state-roadmap",
+      "title": "Create NorthStar\u2019s Target-State Roadmap",
+      "status": "generated"
+    },
+    {
+      "id": "lab-05",
+      "path": "labs/lab-05-cloud-platform-foundation",
+      "title": "Design and Deploy a Low-Cost Enterprise Platform Foundation",
+      "status": "generated",
+      "estimatedCostUsd": "<5 when cleaned up promptly"
+    },
+    {
+      "id": "lab-06",
+      "path": "labs/lab-06-integration-platform",
+      "title": "Build NorthStar\u2019s Integration Reference Architecture",
+      "status": "generated"
+    },
+    {
+      "id": "lab-07",
+      "path": "labs/lab-07-security-resilience",
+      "title": "Secure and Resilient NorthStar\u2019s Digital Platform",
+      "status": "generated",
+      "estimatedCostUsd": "<5 when cleaned up promptly; higher if CRR left running"
+    },
+    {
+      "id": "lab-08",
+      "path": "labs/lab-08-ai-decision-assistant",
+      "title": "Build NorthStar\u2019s Governed AI Decision Assistant",
+      "status": "generated",
+      "estimatedCostUsd": "<5 mock mode same-day; Bedrock tokens extra if live"
+    },
+    {
+      "id": "lab-09",
+      "path": "labs/lab-09-architecture-review-board",
+      "title": "Conduct an Architecture Review Board",
+      "status": "generated"
+    },
+    {
+      "id": "lab-10",
+      "path": "labs/lab-10-capstone",
+      "title": "NorthStar Enterprise Transformation Program",
+      "status": "generated"
+    }
+  ],
+  "capstone": {
+    "id": "capstone-northstar-transformation",
+    "title": "NorthStar Enterprise Transformation Program",
+    "status": "generated",
+    "requiredArtifactCount": 24,
+    "presentationMinutes": 15,
+    "qaMinutes": 10,
+    "maxSlides": 15,
+    "path": "capstone/"
+  },
+  "baylearnSeed": {
+    "status": "generated",
+    "files": [
+      "baylearn-seed/course.json",
+      "baylearn-seed/modules.json",
+      "baylearn-seed/lessons.json",
+      "baylearn-seed/assignments.json",
+      "baylearn-seed/rubrics.json",
+      "baylearn-seed/materials.json",
+      "baylearn-seed/quizzes.json",
+      "baylearn-seed/cohort.json"
+    ]
+  },
+  "packages": {
+    "studentZip": {
+      "status": "generated",
+      "path": "packages/student-course.zip"
+    },
+    "instructorZip": {
+      "status": "generated",
+      "path": "packages/instructor-course.zip"
+    },
+    "awsLabZip": {
+      "status": "generated",
+      "path": "packages/aws-labs.zip"
+    },
+    "capstoneZip": {
+      "status": "generated",
+      "path": "packages/capstone.zip"
+    },
+    "baylearnSeedZip": {
+      "status": "generated",
+      "path": "packages/baylearn-seed.zip"
+    }
+  },
+  "counts": {
+    "modulesPlanned": 10,
+    "modulesGenerated": 10,
+    "labsPlanned": 10,
+    "lessonsPlanned": "35-45",
+    "templatesGenerated": 25,
+    "foundationAssetsGenerated": 12,
+    "quizzesPlanned": 10,
+    "assignmentsPlanned": 10,
+    "lessonsInSeed": 40,
+    "labsGenerated": 10,
+    "lessonsGenerated": 40,
+    "quizzesGenerated": 10,
+    "assignmentsGenerated": 10
+  },
+  "nextAction": "Deliver live using INSTRUCTOR_START_HERE.md \u2014 diagrams SVG-ready",
+  "phase45Assets": [
+    "modules/module-09-governance/",
+    "modules/module-10-capstone/",
+    "labs/lab-09-architecture-review-board/",
+    "labs/lab-10-capstone/",
+    "capstone/",
+    "baylearn-seed/",
+    "course-specification/landing-page-copy.md",
+    "course-specification/certificate-configuration.md",
+    "course-specification/email-templates.md",
+    "automation/packaging/",
+    "automation/validation/validate-structure.sh",
+    "qa/module-09-qa-report.md",
+    "qa/module-10-qa-report.md",
+    "qa/course-final-qa.md",
+    "student/templates/25-executive-presentation-outline.md",
+    "student/portfolio/README.md",
+    "student/readings/README.md"
+  ],
+  "diagramFramework": {
+    "status": "svg_ready",
+    "sharedLibrary": "diagram-library/",
+    "courseDiagrams": "diagrams/",
+    "manifest": "diagrams/diagram-manifest.json",
+    "generator": "automation/diagrams/generate_diagram_library.py",
+    "exportScript": "automation/diagrams/export_mermaid.sh",
+    "approxCount": 320,
+    "svgExported": 320,
+    "lastSvgExport": "2026-07-15"
+  }
+}

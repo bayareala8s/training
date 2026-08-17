@@ -1,0 +1,93 @@
+{
+  "manifestVersion": "1.0.0",
+  "courseId": "enterprise-architecture-leadership-masterclass",
+  "generatedAt": "2026-07-15",
+  "packages": [
+    {
+      "id": "studentZip",
+      "fileName": "ealm-student-course.zip",
+      "audience": "STUDENT",
+      "include": [
+        "README.md",
+        "COURSE_MANIFEST.json",
+        "course-specification/",
+        "modules/",
+        "labs/",
+        "slides/",
+        "assessments/assignments/",
+        "assessments/quizzes/",
+        "assessments/rubrics/",
+        "student/",
+        "capstone/scenario/",
+        "capstone/student-brief/",
+        "capstone/datasets/",
+        "capstone/presentation-template/",
+        "capstone/rubric/"
+      ],
+      "exclude": [
+        "instructor/reference-solutions/",
+        "assessments/answer-keys/",
+        "capstone/reference-architecture/"
+      ]
+    },
+    {
+      "id": "instructorZip",
+      "fileName": "ealm-instructor-course.zip",
+      "audience": "INSTRUCTOR",
+      "include": [
+        "instructor/",
+        "assessments/answer-keys/",
+        "assessments/rubrics/",
+        "capstone/reference-architecture/",
+        "capstone/rubric/",
+        "qa/",
+        "automation/generation-prompts/",
+        "course-specification/instructor-standards.md"
+      ]
+    },
+    {
+      "id": "awsLabZip",
+      "fileName": "ealm-aws-labs.zip",
+      "audience": "SHARED",
+      "include": [
+        "labs/lab-05-cloud-platform-foundation/",
+        "labs/lab-06-integration-platform/",
+        "labs/lab-07-security-resilience/",
+        "labs/lab-08-ai-decision-assistant/",
+        "infrastructure/"
+      ]
+    },
+    {
+      "id": "capstoneZip",
+      "fileName": "ealm-capstone.zip",
+      "audience": "STUDENT",
+      "include": [
+        "capstone/scenario/",
+        "capstone/student-brief/",
+        "capstone/datasets/",
+        "capstone/presentation-template/",
+        "capstone/rubric/",
+        "labs/lab-10-capstone/",
+        "modules/module-10-capstone/",
+        "student/templates/25-executive-presentation-outline.md",
+        "student/templates/14-architecture-portfolio-checklist.md",
+        "student/templates/15-personal-leadership-plan.md",
+        "assessments/assignments/module-10-assignment.md"
+      ],
+      "exclude": [
+        "capstone/reference-architecture/"
+      ]
+    },
+    {
+      "id": "baylearnSeedZip",
+      "fileName": "ealm-baylearn-seed.zip",
+      "audience": "OPS",
+      "include": [
+        "baylearn-seed/",
+        "course-specification/landing-page-copy.md",
+        "course-specification/certificate-configuration.md",
+        "course-specification/email-templates.md"
+      ]
+    }
+  ]
+}

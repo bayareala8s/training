@@ -1,0 +1,55 @@
+{
+  "dataset": "ml/training/customer-churn/v1",
+  "version": "1.0",
+  "checks": {
+    "label_balance": {
+      "column": "will_purchase_again_30d",
+      "min_positive_rate": 0.05,
+      "max_positive_rate": 0.95,
+      "severity": "error"
+    },
+    "feature_null_rate": {
+      "max_null_rate": 0.05,
+      "exclude_columns": ["days_since_last_order", "preferred_category"],
+      "severity": "warning"
+    },
+    "feature_drift_psi": {
+      "reference_split": "train",
+      "target_split": "test",
+      "features": [
+        "order_count_30d",
+        "total_spend_30d",
+        "avg_order_value_30d"
+      ],
+      "psi_warning": 0.1,
+      "psi_error": 0.25,
+      "severity": "warning"
+    },
+    "leakage_correlation": {
+      "label_column": "will_purchase_again_30d",
+      "max_abs_correlation": 0.95,
+      "exclude_columns": ["snapshot_date", "customer_id"],
+      "severity": "error"
+    },
+    "duplicate_entities": {
+      "entity_column": "customer_id",
+      "snapshot_column": "snapshot_date",
+      "severity": "error"
+    },
+    "feature_range": {
+      "rules": [
+        {
+          "column": "order_count_30d",
+          "min": 0,
+          "max": 10000
+        },
+        {
+          "column": "total_spend_30d",
+          "min": 0,
+          "max": 1000000
+        }
+      ],
+      "severity": "error"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+<mxfile host="app.diagrams.net" modified="2026-05-28T00:00:00.000Z" agent="course-generator" version="22.1.0" type="device">
+  <diagram id="ef248192-57ab-4687-b556-e2a57e75c68b" name="09 EventBridge Flow (AWS Icons)">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0"style=""/>
+        <mxCell id="1"parent="0"style=""/>
+        <mxCell id="2" value="order-service\nPutEvents" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;strokeWidth=2;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_container_service_container;" vertex="1" parent="1"><mxGeometry x="80" y="280" width="78" height="78" as="geometry"/></mxCell>
+        <mxCell id="3" value="EventBridge\nCustom bus" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;strokeWidth=2;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" vertex="1" parent="1"><mxGeometry x="420" y="280" width="78" height="78" as="geometry"/></mxCell>
+        <mxCell id="4" value="notification-service\n/events consumer" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;strokeWidth=2;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elastic_container_service_container;" vertex="1" parent="1"><mxGeometry x="760" y="180" width="78" height="78" as="geometry"/></mxCell>
+        <mxCell id="5" value="CloudWatch Logs\naudit target" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;strokeColor=#ffffff;strokeWidth=2;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch_2;" vertex="1" parent="1"><mxGeometry x="760" y="400" width="78" height="78" as="geometry"/></mxCell>
+        <mxCell id="6" value="detail-type: OrderPlaced\ncontracts/events/order-placed.json" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontSize=11;" vertex="1" parent="1"><mxGeometry x="400" y="80" width="360" height="60" as="geometry"/></mxCell>
+        <mxCell id="7" value="PutEvents" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontSize=11;" edge="1" parent="1" source="2" target="3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="8" value="rule → HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontSize=11;" edge="1" parent="1" source="3" target="4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="9" value="rule → logs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#232F3E;fontSize=11;" edge="1" parent="1" source="3" target="5"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,14 @@
+{
+  "FunctionID": "lambda-1",
+  "FunctionName": "DynamicLambdaFunction1",
+  "Runtime": "python3.9",
+  "Handler": "lambda_function.lambda_handler",
+  "RoleARN": "arn:aws:iam::123456789012:role/lambda-execution-role",
+  "CodeBucket": "lambda-code-bucket",
+  "CodeKey": "lambda_function_1.zip",
+  "Environment": {
+    "TABLE_NAME": "ResourceDefinitions",
+    "ENV": "production"
+  },
+  "Status": "Pending"
+}

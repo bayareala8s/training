@@ -1,0 +1,3 @@
+project_name      = "bayareala8s-tf-course"
+state_bucket_name = "YOUR-GLOBALLY-UNIQUE-STATE-BUCKET-NAME"
+aws_region        = "us-west-2"

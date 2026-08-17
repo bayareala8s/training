@@ -1,0 +1,18 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart TB
+  E["Enterprise Decisions<br/>Standards · Multi-year · Material risk"] --> D["Domain Decisions"]
+  D --> L["Local Solution Decisions<br/>Within guardrails"]
+  E --> G["Automated Guardrails"]
+  G --> L

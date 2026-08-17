@@ -1,0 +1,6 @@
+flowchart LR
+  PR[Pull request] --> LINT[tflint + validate]
+  LINT --> SEC[Checkov]
+  SEC --> PLAN[terraform plan]
+  PLAN --> REV[Human review]
+  REV --> APPLY[terraform apply]

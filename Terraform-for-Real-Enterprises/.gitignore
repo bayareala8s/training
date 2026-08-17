@@ -1,0 +1,35 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Secrets and local config
+*.tfvars
+!*.tfvars.example
+labs/shared/environments/*/backend.hcl
+labs/shared/environments/*/.terraform/
+labs/shared/environments/*/.terraform.lock.hcl
+.env
+.env.*
+*.pem
+credentials
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Plans
+*.plan
+plan.out

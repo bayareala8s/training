@@ -1,0 +1,31 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ecommerce-app
+  template:
+    metadata:
+      labels:
+        app: ecommerce-app
+    spec:
+      containers:
+        - name: ecommerce-app
+          image: 277374794397.dkr.ecr.us-west-2.amazonaws.com/ecommerce-api:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: POSTGRES_HOST
+              value: ecommerce.c7myxlzkr5l7.us-west-2.rds.amazonaws.com
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: "youruser"
+            - name: POSTGRES_PASSWORD
+              value: "yourpassword"
+            - name: POSTGRES_DB
+              value: "postgres"

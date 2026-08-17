@@ -1,0 +1,26 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+flowchart TB
+  subgraph EA["Enterprise Architecture Domains — NorthStar (fictional)"]
+    B["Business Architecture"]
+    D["Data Architecture"]
+    A["Application Architecture"]
+    T["Technology Architecture"]
+    S["Security Architecture"]
+  end
+  Strat["Business Strategy"] --> B
+  B --> D & A
+  A --> T
+  B & D & A & T --> S
+  S --> Outcomes["Outcomes: Cost · Speed · Risk · Visibility"]

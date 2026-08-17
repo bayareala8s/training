@@ -1,0 +1,46 @@
+[
+  {
+    "id": "rubric-standard-architecture",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "name": "Standard Architecture Submission Rubric",
+    "scale": {"min": 1, "max": 4, "labels": ["Incomplete", "Developing", "Proficient", "Excellent"]},
+    "path": "assessments/rubrics/standard-architecture-rubric.md",
+    "criteria": [
+      {"id": "business-alignment", "name": "Business alignment", "weight": 0.20},
+      {"id": "architecture-quality", "name": "Architecture quality", "weight": 0.20},
+      {"id": "trade-off-analysis", "name": "Trade-off analysis", "weight": 0.20},
+      {"id": "security-resilience", "name": "Security and resilience", "weight": 0.15},
+      {"id": "feasibility-roadmap", "name": "Feasibility and roadmap", "weight": 0.15},
+      {"id": "communication-quality", "name": "Communication quality", "weight": 0.10}
+    ]
+  },
+  {
+    "id": "rubric-capstone",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "name": "Capstone Document and Presentation Rubric",
+    "inherits": "rubric-standard-architecture",
+    "path": "capstone/rubric/capstone-rubric.md",
+    "completenessArtifactCount": 24,
+    "incompleteCapPercent": 69,
+    "presentationCriteria": [
+      {"id": "narrative", "name": "Narrative and storyline", "weight": 0.25},
+      {"id": "decision-clarity", "name": "Decision clarity", "weight": 0.25},
+      {"id": "trade-off-defense", "name": "Trade-off defense", "weight": 0.20},
+      {"id": "visual-hierarchy", "name": "Visual hierarchy", "weight": 0.15},
+      {"id": "executive-language", "name": "Executive language", "weight": 0.15}
+    ]
+  },
+  {
+    "id": "rubric-course-weights",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "name": "Course Grade Weights",
+    "path": "course-specification/assessment-model.md",
+    "weights": [
+      {"id": "weekly-labs", "name": "Weekly labs", "weight": 0.35},
+      {"id": "architecture-artifacts", "name": "Architecture artifacts", "weight": 0.20},
+      {"id": "review-participation", "name": "Architecture review participation", "weight": 0.10},
+      {"id": "capstone-document", "name": "Capstone document", "weight": 0.20},
+      {"id": "final-presentation", "name": "Final presentation", "weight": 0.15}
+    ]
+  }
+]

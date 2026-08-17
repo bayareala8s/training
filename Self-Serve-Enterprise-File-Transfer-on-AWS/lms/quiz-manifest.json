@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "course_id": "baylearn-mft-aws-001",
+  "total_questions": 72,
+  "quizzes": [
+    {
+      "id": "quiz01",
+      "week": 1,
+      "title": "Quiz Week 1 — Enterprise MFT on AWS",
+      "question_count": 12,
+      "multiple_choice_count": 10,
+      "short_answer_count": 2,
+      "time_limit_minutes": 30,
+      "open_book": true,
+      "pass_percent": 70,
+      "learner_file": "docs/quizzes/week-01-quiz.md",
+      "answer_key_file": "docs/quizzes/week-01-answers.md",
+      "module_content": "docs/modules/week-01.md"
+    },
+    {
+      "id": "quiz02",
+      "week": 2,
+      "title": "Quiz Week 2 — Security & governance",
+      "question_count": 12,
+      "multiple_choice_count": 10,
+      "short_answer_count": 2,
+      "time_limit_minutes": 30,
+      "open_book": true,
+      "pass_percent": 70,
+      "learner_file": "docs/quizzes/week-02-quiz.md",
+      "answer_key_file": "docs/quizzes/week-02-answers.md",
+      "module_content": "docs/modules/week-02.md"
+    },
+    {
+      "id": "quiz03",
+      "week": 3,
+      "title": "Quiz Week 3 — Event-driven automation",
+      "question_count": 12,
+      "multiple_choice_count": 10,
+      "short_answer_count": 2,
+      "time_limit_minutes": 30,
+      "open_book": true,
+      "pass_percent": 70,
+      "learner_file": "docs/quizzes/week-03-quiz.md",
+      "answer_key_file": "docs/quizzes/week-03-answers.md",
+      "module_content": "docs/modules/week-03.md"
+    },
+    {
+      "id": "quiz04",
+      "week": 4,
+      "title": "Quiz Week 4 — Workflow orchestration",
+      "question_count": 12,
+      "multiple_choice_count": 10,
+      "short_answer_count": 2,
+      "time_limit_minutes": 30,
+      "open_book": true,
+      "pass_percent": 70,
+      "learner_file": "docs/quizzes/week-04-quiz.md",
+      "answer_key_file": "docs/quizzes/week-04-answers.md",
+      "module_content": "docs/modules/week-04.md"
+    },
+    {
+      "id": "quiz05",
+      "week": 5,
+      "title": "Quiz Week 5 — Connectors & partners",
+      "question_count": 12,
+      "multiple_choice_count": 10,
+      "short_answer_count": 2,
+      "time_limit_minutes": 30,
+      "open_book": true,
+      "pass_percent": 70,
+      "learner_file": "docs/quizzes/week-05-quiz.md",
+      "answer_key_file": "docs/quizzes/week-05-answers.md",
+      "module_content": "docs/modules/week-05.md"
+    },
+    {
+      "id": "quiz06",
+      "week": 6,
+      "title": "Quiz Week 6 — Self-serve platform",
+      "question_count": 12,
+      "multiple_choice_count": 10,
+      "short_answer_count": 2,
+      "time_limit_minutes": 30,
+      "open_book": true,
+      "pass_percent": 70,
+      "learner_file": "docs/quizzes/week-06-quiz.md",
+      "answer_key_file": "docs/quizzes/week-06-answers.md",
+      "module_content": "docs/modules/week-06.md"
+    }
+  ]
+}

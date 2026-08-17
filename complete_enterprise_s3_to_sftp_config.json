@@ -1,0 +1,116 @@
+{
+  "transfer_id": "customerA-s3-to-sftp-001",
+  "source": {
+    "type": "s3",
+    "bucket": "source-data-bucket",
+    "key_prefix": "exports/",
+    "filter_pattern": "*.csv",
+    "region": "us-west-2"
+  },
+  "destination": {
+    "type": "sftp",
+    "host": "sftp.target.com",
+    "port": 22,
+    "username": "targetuser",
+    "auth_method": "password",
+    "password": "target-password-or-reference",
+    "remote_path": "/incoming/",
+    "overwrite_existing": false
+  },
+  "file_attributes": {
+    "min_size_bytes": 1024,
+    "max_size_bytes": 524288000,
+    "modified_after": "2025-07-01T00:00:00Z",
+    "required_extension": ".csv",
+    "max_file_age_days": 7,
+    "checksum_provided": false,
+    "filename_prefix": "export_",
+    "filename_suffix": "_ready",
+    "rename_on_upload": {
+      "enabled": true,
+      "format": "export_{YYYYMMDD_HHmmss}.csv"
+    }
+  },
+  "schedule": {
+    "type": "cron",
+    "expression": "cron(0 2 * * ? *)",
+    "timezone": "UTC"
+  },
+  "validation": {
+    "checksum": "md5",
+    "validate_before_upload": true,
+    "delete_source_after_success": true
+  },
+  "notification": {
+    "on_success": {
+      "email": [
+        "ops@customer-a.com",
+        "data-eng@company.com"
+      ]
+    },
+    "on_failure": {
+      "email": [
+        "data-eng@company.com"
+      ]
+    }
+  },
+  "logging": {
+    "enabled": true,
+    "log_group": "/aws/filetransfer/s3-to-sftp",
+    "log_level": "INFO",
+    "track_per_file": true
+  },
+  "meta": {
+    "customer_id": "customer-a",
+    "project_code": "data-delivery",
+    "env": "prod",
+    "onboarded_by": "team-deliveryops",
+    "created_at": "2025-07-16T00:00:00Z"
+  },
+  "security": {
+    "ip_whitelist": [
+      "1.2.3.4",
+      "5.6.7.8"
+    ],
+    "network_restrictions": {
+      "vpc_id": "vpc-87654321",
+      "subnet_ids": [
+        "subnet-111",
+        "subnet-222"
+      ],
+      "security_group_ids": [
+        "sg-abc"
+      ]
+    }
+  },
+  "execution_control": {
+    "max_runtime_minutes": 30,
+    "backoff_strategy": "exponential",
+    "retry_delay_seconds": 60,
+    "max_retries": 5,
+    "on_timeout_action": "fail"
+  },
+  "post_processing": {
+    "actions": [
+      "tag_object",
+      "trigger_lambda"
+    ],
+    "lambda_arn": "arn:aws:lambda:us-west-2:123456789012:function:PostProcessS3ToSftp"
+  },
+  "tags": {
+    "department": "data-eng",
+    "confidentiality": "medium",
+    "owner": "customer-a",
+    "transfer_type": "s3-to-sftp"
+  },
+  "monitoring": {
+    "metrics_namespace": "FileTransfer",
+    "enable_detailed_metrics": true,
+    "export_metrics_to_cloudwatch": true
+  },
+  "workflow": {
+    "step_function_arn": "arn:aws:states:us-west-2:123456789012:stateMachine:S3ToSftpFlow",
+    "priority": "high",
+    "batch_mode": false
+  }
+}

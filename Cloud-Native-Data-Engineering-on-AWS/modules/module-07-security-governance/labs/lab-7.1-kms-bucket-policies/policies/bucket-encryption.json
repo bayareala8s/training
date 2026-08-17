@@ -1,0 +1,11 @@
+{
+  "Rules": [
+    {
+      "ApplyServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "aws:kms",
+        "KMSMasterKeyID": "alias/cnde-dev-datalake-key"
+      },
+      "BucketKeyEnabled": true
+    }
+  ]
+}

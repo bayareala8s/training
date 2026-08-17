@@ -1,0 +1,157 @@
+[
+  {
+    "file": "lab-1.1-build-s3-data-lake",
+    "title": "Lab 1.1 \u2014 Build S3 Data Lake",
+    "path": "docs/diagrams/drawio/lab-1.1-build-s3-data-lake.drawio"
+  },
+  {
+    "file": "lab-1.2-data-lake-zones",
+    "title": "Lab 1.2 \u2014 Data Lake Zones",
+    "path": "docs/diagrams/drawio/lab-1.2-data-lake-zones.drawio"
+  },
+  {
+    "file": "lab-2.1-lambda-ingestion",
+    "title": "Lab 2.1 \u2014 Lambda Ingestion",
+    "path": "docs/diagrams/drawio/lab-2.1-lambda-ingestion.drawio"
+  },
+  {
+    "file": "lab-2.2-eventbridge-automation",
+    "title": "Lab 2.2 \u2014 EventBridge Automation",
+    "path": "docs/diagrams/drawio/lab-2.2-eventbridge-automation.drawio"
+  },
+  {
+    "file": "lab-2.3-s3-event-processing",
+    "title": "Lab 2.3 \u2014 S3 Event Processing",
+    "path": "docs/diagrams/drawio/lab-2.3-s3-event-processing.drawio"
+  },
+  {
+    "file": "lab-3.1-etl-raw-to-cleaned",
+    "title": "Lab 3.1 \u2014 Glue ETL Raw \u2192 Cleaned",
+    "path": "docs/diagrams/drawio/lab-3.1-etl-raw-to-cleaned.drawio"
+  },
+  {
+    "file": "lab-3.2-glue-crawlers",
+    "title": "Lab 3.2 \u2014 Glue Crawlers & Catalog",
+    "path": "docs/diagrams/drawio/lab-3.2-glue-crawlers.drawio"
+  },
+  {
+    "file": "lab-3.3-etl-optimization",
+    "title": "Lab 3.3 \u2014 ETL Optimization",
+    "path": "docs/diagrams/drawio/lab-3.3-etl-optimization.drawio"
+  },
+  {
+    "file": "lab-4.1-quality-framework",
+    "title": "Lab 4.1 \u2014 Data Quality Framework",
+    "path": "docs/diagrams/drawio/lab-4.1-quality-framework.drawio"
+  },
+  {
+    "file": "lab-4.2-validation-automation",
+    "title": "Lab 4.2 \u2014 Validation Automation",
+    "path": "docs/diagrams/drawio/lab-4.2-validation-automation.drawio"
+  },
+  {
+    "file": "lab-4.3-quarantine-zone",
+    "title": "Lab 4.3 \u2014 Quarantine Zone",
+    "path": "docs/diagrams/drawio/lab-4.3-quarantine-zone.drawio"
+  },
+  {
+    "file": "lab-5.1-star-schema",
+    "title": "Lab 5.1 \u2014 Star Schema",
+    "path": "docs/diagrams/drawio/lab-5.1-star-schema.drawio"
+  },
+  {
+    "file": "lab-5.2-athena-optimization",
+    "title": "Lab 5.2 \u2014 Athena Optimization",
+    "path": "docs/diagrams/drawio/lab-5.2-athena-optimization.drawio"
+  },
+  {
+    "file": "lab-5.3-cost-efficient-queries",
+    "title": "Lab 5.3 \u2014 Cost-Efficient Queries",
+    "path": "docs/diagrams/drawio/lab-5.3-cost-efficient-queries.drawio"
+  },
+  {
+    "file": "lab-6.1-step-functions-etl",
+    "title": "Lab 6.1 \u2014 Step Functions ETL",
+    "path": "docs/diagrams/drawio/lab-6.1-step-functions-etl.drawio"
+  },
+  {
+    "file": "lab-6.2-retry-error-branching",
+    "title": "Lab 6.2 \u2014 Retry & Error Branching",
+    "path": "docs/diagrams/drawio/lab-6.2-retry-error-branching.drawio"
+  },
+  {
+    "file": "lab-6.3-sns-failure-handling",
+    "title": "Lab 6.3 \u2014 SNS Failure Handling",
+    "path": "docs/diagrams/drawio/lab-6.3-sns-failure-handling.drawio"
+  },
+  {
+    "file": "lab-7.1-kms-bucket-policies",
+    "title": "Lab 7.1 \u2014 KMS & Bucket Policies",
+    "path": "docs/diagrams/drawio/lab-7.1-kms-bucket-policies.drawio"
+  },
+  {
+    "file": "lab-7.2-iam-rbac-data-zones",
+    "title": "Lab 7.2 \u2014 IAM RBAC Data Zones",
+    "path": "docs/diagrams/drawio/lab-7.2-iam-rbac-data-zones.drawio"
+  },
+  {
+    "file": "lab-7.3-governance-audit",
+    "title": "Lab 7.3 \u2014 Governance Audit",
+    "path": "docs/diagrams/drawio/lab-7.3-governance-audit.drawio"
+  },
+  {
+    "file": "lab-8.1-cloudwatch-dashboards",
+    "title": "Lab 8.1 \u2014 CloudWatch Dashboards",
+    "path": "docs/diagrams/drawio/lab-8.1-cloudwatch-dashboards.drawio"
+  },
+  {
+    "file": "lab-8.2-sns-alerts",
+    "title": "Lab 8.2 \u2014 SNS Alerts",
+    "path": "docs/diagrams/drawio/lab-8.2-sns-alerts.drawio"
+  },
+  {
+    "file": "lab-8.3-cost-reporting",
+    "title": "Lab 8.3 \u2014 Cost Reporting",
+    "path": "docs/diagrams/drawio/lab-8.3-cost-reporting.drawio"
+  },
+  {
+    "file": "lab-9.1-ml-dataset-prep",
+    "title": "Lab 9.1 \u2014 ML Dataset Preparation",
+    "path": "docs/diagrams/drawio/lab-9.1-ml-dataset-prep.drawio"
+  },
+  {
+    "file": "lab-9.2-feature-store-pipeline",
+    "title": "Lab 9.2 \u2014 Feature Store Pipeline",
+    "path": "docs/diagrams/drawio/lab-9.2-feature-store-pipeline.drawio"
+  },
+  {
+    "file": "lab-9.3-ai-data-quality",
+    "title": "Lab 9.3 \u2014 AI Data Quality",
+    "path": "docs/diagrams/drawio/lab-9.3-ai-data-quality.drawio"
+  },
+  {
+    "file": "course-platform-overview",
+    "title": "CNDE Course \u2014 Platform Overview",
+    "path": "docs/diagrams/drawio/course-platform-overview.drawio"
+  },
+  {
+    "file": "capstone-banking",
+    "title": "Capstone \u2014 Banking Regulatory Platform",
+    "path": "docs/diagrams/drawio/capstone-banking.drawio"
+  },
+  {
+    "file": "capstone-healthcare",
+    "title": "Capstone \u2014 Healthcare Analytics",
+    "path": "docs/diagrams/drawio/capstone-healthcare.drawio"
+  },
+  {
+    "file": "capstone-ecommerce",
+    "title": "Capstone \u2014 E-Commerce Lakehouse",
+    "path": "docs/diagrams/drawio/capstone-ecommerce.drawio"
+  },
+  {
+    "file": "capstone-enterprise",
+    "title": "Capstone \u2014 Enterprise Data Platform",
+    "path": "docs/diagrams/drawio/capstone-enterprise.drawio"
+  }
+]

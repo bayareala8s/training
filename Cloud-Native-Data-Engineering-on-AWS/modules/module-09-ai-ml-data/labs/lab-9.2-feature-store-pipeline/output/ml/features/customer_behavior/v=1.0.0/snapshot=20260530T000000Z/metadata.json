@@ -1,0 +1,13 @@
+{
+  "feature_group": "customer_behavior",
+  "version": "1.0.0",
+  "snapshot": "2026-05-30T00:00:00+00:00",
+  "row_count": 0,
+  "path": "customer_behavior/v=1.0.0/snapshot=20260530T000000Z/features.parquet",
+  "columns": [
+    "customer_id",
+    "feature_snapshot_ts",
+    "feature_group",
+    "feature_version"
+  ]
+}

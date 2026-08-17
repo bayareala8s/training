@@ -1,0 +1,5 @@
+flowchart LR
+  A[Job 1 acquires lock] --> B[Job 2 waits]
+  B --> C{Job 1 completes?}
+  C -->|Yes| D[Job 2 proceeds]
+  C -->|Timeout| E[Alert + cancel Job 2]

@@ -1,0 +1,10 @@
+{
+  "module": "07",
+  "title": "Security, Risk, Compliance, and Resilience",
+  "aspectRatio": "16:9",
+  "brand": "BayLearn",
+  "minSlides": 15,
+  "maxSlides": 25,
+  "slideCount": 20,
+  "caseStudy": "NorthStar Financial Services (fictional)"
+}

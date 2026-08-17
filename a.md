@@ -1,0 +1,5 @@
+I currently work within the Federal Reserve System, leading architecture and modernization initiatives for enterprise file-transfer services. My work focuses on building secure, scalable and resilient solutions using AWS services such as Transfer Family, S3, Lambda, Step Functions, DynamoDB, EventBridge, API Gateway and infrastructure as code.
+
+Beyond solution design, I work across product, engineering, security, operations and leadership teams to define technical direction, establish reusable patterns and move complex initiatives from concept into production. Current examples include active-active disaster recovery, self-service onboarding, cloud modernization and AI-assisted operational capabilities.
+
+What interests me about this Treasury Enterprise Architect opportunity is the broader portfolio-level responsibility. It combines enterprise architecture, cloud strategy, security, modernization and stakeholder leadership in a highly regulated environment. That aligns strongly with the work I have been doing and with the direction in which I want to grow.

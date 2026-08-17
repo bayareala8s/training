@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review & Confirmation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      margin: 0;
+      padding: 40px;
+    }
+    .review-container {
+      background: #ffffff;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .section h3 {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+      color: #444;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .label {
+      font-weight: bold;
+      color: #555;
+    }
+    .value {
+      color: #333;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+    button {
+      padding: 14px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .back-btn {
+      background-color: #6c757d;
+      color: white;
+    }
+    .confirm-btn {
+      background-color: #28a745;
+      color: white;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="review-container">
+    <h2>Review & Confirm Your Transfer</h2>
+
+    <div class="section">
+      <h3>Customer Information</h3>
+      <div class="row"><div class="label">Customer ID:</div><div class="value">CUST001</div></div>
+      <div class="row"><div class="label">Customer Name:</div><div class="value">FSO</div></div>
+      <div class="row"><div class="label">Contact Email:</div><div class="value">user@example.com</div></div>
+    </div>
+
+    <div class="section">
+      <h3>Source Configuration</h3>
+      <div class="row"><div class="label">Source Type:</div><div class="value">SFTP</div></div>
+      <div class="row"><div class="label">Host / Bucket:</div><div class="value">sftp.source.com</div></div>
+      <div class="row"><div class="label">Source Path:</div><div class="value">/incoming/files/</div></div>
+    </div>
+
+    <div class="section">
+      <h3>Target Configuration</h3>
+      <div class="row"><div class="label">Target Type:</div><div class="value">Amazon S3</div></div>
+      <div class="row"><div class="label">Target Bucket:</div><div class="value">my-target-bucket</div></div>
+      <div class="row"><div class="label">Target Path:</div><div class="value">/processed/files/</div></div>
+    </div>
+
+    <div class="section">
+      <h3>Additional Notes</h3>
+      <div class="row"><div class="value">Please make sure to validate file checksum after each transfer.</div></div>
+    </div>
+
+    <div class="button-group">
+      <button class="back-btn">← Go Back</button>
+      <button class="confirm-btn">✅ Confirm & Submit</button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{
+  "Comment": "Lab 6.1 — Multi-stage ETL: validate → Glue → quality check",
+  "StartAt": "ValidateInput",
+  "States": {
+    "ValidateInput": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${VALIDATION_LAMBDA_ARN}",
+        "Payload": {
+          "action": "validate_input",
+          "processing_date.$": "$.processing_date",
+          "dataset.$": "$.dataset"
+        }
+      },
+      "ResultPath": "$.input_check",
+      "Next": "CheckInputValid"
+    },
+    "CheckInputValid": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.input_check.Payload.valid",
+          "BooleanEquals": true,
+          "Next": "StartGlueETL"
+        }
+      ],
+      "Default": "NotifyFailure"
+    },
+    "StartGlueETL": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "${GLUE_JOB_NAME}",
+        "Arguments": {
+          "--processing_date.$": "$.processing_date",
+          "--dataset_path.$": "$.dataset"
+        }
+      },
+      "ResultPath": "$.glue",
+      "Next": "RunQualityCheck"
+    },
+    "RunQualityCheck": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${VALIDATION_LAMBDA_ARN}",
+        "Payload": {
+          "action": "run_quality_check",
+          "processing_date.$": "$.processing_date",
+          "dataset.$": "$.dataset"
+        }
+      },
+      "ResultPath": "$.quality_result",
+      "Next": "EvaluateQuality"
+    },
+    "EvaluateQuality": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.quality_result.Payload.pass_rate",
+          "NumericGreaterThanEquals": 99.9,
+          "Next": "PipelineSucceeded"
+        }
+      ],
+      "Default": "NotifyFailure"
+    },
+    "PipelineSucceeded": {
+      "Type": "Succeed"
+    },
+    "NotifyFailure": {
+      "Type": "Fail",
+      "Error": "PipelineFailed",
+      "Cause": "Input validation or quality check failed"
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "module": "03",
+  "title": "Current-State Architecture Assessment",
+  "aspectRatio": "16:9",
+  "brand": "BayLearn",
+  "colors": {
+    "navy": "#0A1628",
+    "white": "#FFFFFF",
+    "gold": "#C9A227"
+  },
+  "minSlides": 15,
+  "maxSlides": 25,
+  "slideCount": 20,
+  "dataset": "student/datasets/northstar-application-inventory.csv",
+  "slides": [
+    {
+      "id": 1,
+      "title": "Module title"
+    },
+    {
+      "id": 2,
+      "title": "Business scenario"
+    },
+    {
+      "id": 3,
+      "title": "Learning objectives"
+    },
+    {
+      "id": 4,
+      "title": "Decision-driven discovery"
+    },
+    {
+      "id": 5,
+      "title": "Discovery modes"
+    },
+    {
+      "id": 6,
+      "title": "Fictional inventory"
+    },
+    {
+      "id": 7,
+      "title": "TIME defined"
+    },
+    {
+      "id": 8,
+      "title": "Scoring dimensions"
+    },
+    {
+      "id": 9,
+      "title": "Seed vs answer"
+    },
+    {
+      "id": 10,
+      "title": "Instructor demo"
+    },
+    {
+      "id": 11,
+      "title": "Duplicate clusters"
+    },
+    {
+      "id": 12,
+      "title": "Dependency hubs"
+    },
+    {
+      "id": 13,
+      "title": "Concentration risk"
+    },
+    {
+      "id": 14,
+      "title": "Technical debt as interest"
+    },
+    {
+      "id": 15,
+      "title": "Top-10 discipline"
+    },
+    {
+      "id": 16,
+      "title": "Coexistence reality"
+    },
+    {
+      "id": 17,
+      "title": "Lab overview"
+    },
+    {
+      "id": 18,
+      "title": "Common mistakes"
+    },
+    {
+      "id": 19,
+      "title": "Assignment and rubric"
+    },
+    {
+      "id": 20,
+      "title": "Takeaways and next"
+    }
+  ]
+}

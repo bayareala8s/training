@@ -1,0 +1,176 @@
+{
+  "module": "01",
+  "slug": "module-01-enterprise-architect-role",
+  "title": "The Enterprise Architect’s Role",
+  "subtitle": "Enterprise Architecture Leadership Masterclass",
+  "platform": "BayLearn",
+  "owner": "BayAreaLa8s",
+  "aspectRatio": "16:9",
+  "slideCount": 21,
+  "brand": {
+    "name": "BayLearn",
+    "colors": {
+      "navy": "#0B1F3A",
+      "white": "#FFFFFF",
+      "gold": "#C9A227"
+    },
+    "rules": [
+      "Minimal on-slide text; speaker notes carry detail",
+      "No cartoon icons or meme imagery",
+      "Restrained gold accents only",
+      "Avoid purple gradients and cream-serif tropes"
+    ]
+  },
+  "caseStudy": "NorthStar Financial Services (fictional)",
+  "slides": [
+    {
+      "id": 1,
+      "title": "Module title",
+      "section": "open",
+      "onSlide": ["Course title", "Module 01 title", "BayLearn | BayAreaLa8s"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 2,
+      "title": "Business scenario",
+      "section": "open",
+      "onSlide": ["NorthStar fictional notice", "BU architects / no governance", "CIO ask"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 3,
+      "title": "Learning objectives",
+      "section": "open",
+      "onSlide": ["LO1–LO4"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 4,
+      "title": "What EA really is",
+      "section": "concept",
+      "onSlide": ["Leadership system definition", "Not drawing service"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 5,
+      "title": "Role boundaries",
+      "section": "concept",
+      "onSlide": ["EA vs Domain vs SA vs Platform vs EM"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 6,
+      "title": "EA decision stack",
+      "section": "concept",
+      "onSlide": ["Outcomes to solutions stack"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 7,
+      "title": "Value executives fund",
+      "section": "concept",
+      "onSlide": ["Cost speed risk reuse indicators"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 8,
+      "title": "Operating model elements",
+      "section": "operating-model",
+      "onSlide": ["Mission rights RACI engagement"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 9,
+      "title": "Structural options",
+      "section": "operating-model",
+      "onSlide": ["Central Federated Hybrid trade-offs"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 10,
+      "title": "Engagement modes",
+      "section": "operating-model",
+      "onSlide": ["Consult Collaborate Govern", "Guardrails vs gates"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 11,
+      "title": "Decision classes",
+      "section": "operating-model",
+      "onSlide": ["Five decision classes"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 12,
+      "title": "NorthStar operating model diagram",
+      "section": "operating-model",
+      "onSlide": ["Hybrid model diagram"],
+      "hasSpeakerNotes": true,
+      "diagramRef": "modules/module-01-enterprise-architect-role/diagrams/operating-model.mmd"
+    },
+    {
+      "id": 13,
+      "title": "Principle anatomy",
+      "section": "principles",
+      "onSlide": ["Anatomy fields", "Bad vs good example"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 14,
+      "title": "Exception path",
+      "section": "principles",
+      "onSlide": ["Request Risk Decision Expiry"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 15,
+      "title": "Influence without authority",
+      "section": "leadership",
+      "onSlide": ["Influence sources", "Credibility before control"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 16,
+      "title": "Instructor demonstration",
+      "section": "demo",
+      "onSlide": ["Four demo steps"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 17,
+      "title": "Common mistakes",
+      "section": "demo",
+      "onSlide": ["Five mistakes"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 18,
+      "title": "Lab overview",
+      "section": "lab",
+      "onSlide": ["Deliverables list", "40-minute timer"],
+      "hasSpeakerNotes": true,
+      "labPath": "labs/lab-01-architecture-operating-model/"
+    },
+    {
+      "id": 19,
+      "title": "Assignment and rubric emphasis",
+      "section": "close",
+      "onSlide": ["Due date", "Rubric emphasis"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 20,
+      "title": "Key takeaways",
+      "section": "close",
+      "onSlide": ["Three takeaways"],
+      "hasSpeakerNotes": true
+    },
+    {
+      "id": 21,
+      "title": "Next module",
+      "section": "close",
+      "onSlide": ["Module 02 teaser", "Office hours"],
+      "hasSpeakerNotes": true
+    }
+  ]
+}

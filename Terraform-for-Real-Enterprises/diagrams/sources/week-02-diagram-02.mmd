@@ -1,0 +1,7 @@
+flowchart TD
+  ROOT[Root SCPs] --> OU1[OU SCPs]
+  OU1 --> ACCT[Account effective policy]
+  IAM[IAM policy on role] --> ALLOW{Allowed action?}
+  ACCT --> ALLOW
+  ALLOW -->|SCP denies| DENY[AccessDenied]
+  ALLOW -->|SCP allows + IAM allows| OK[API succeeds]

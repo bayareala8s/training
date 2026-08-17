@@ -1,0 +1,12 @@
+sequenceDiagram
+  participant Team
+  participant AFT as Account Factory / Control Tower
+  participant Org as AWS Organizations
+  participant TF as Terraform Platform
+
+  Team->>AFT: Request new workload account
+  AFT->>Org: Create account in Workloads OU
+  AFT->>Org: Attach baseline SCPs
+  TF->>Org: Assume role into new account
+  TF->>TF: Bootstrap state backend (if per-account)
+  TF->>Team: Deliver VPC / baseline via modules

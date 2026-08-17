@@ -1,0 +1,8 @@
+flowchart LR
+  User -->|GET /health| APIGW
+  APIGW --> Lambda
+  Lambda --> DDB[(DynamoDB)]
+  Lambda --> SSM
+  Lambda --> CWL[CloudWatch Logs]
+  CloudTrail --> S3[(Audit S3)]
+  Budgets --> User

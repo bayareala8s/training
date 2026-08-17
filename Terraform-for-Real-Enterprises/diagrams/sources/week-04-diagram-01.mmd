@@ -1,0 +1,8 @@
+flowchart LR
+  DEV[Developer branch] --> PR[Pull Request]
+  PR --> PLAN[CI: fmt validate plan]
+  PLAN --> REV[Human review]
+  REV --> MERGE[Merge to main]
+  MERGE --> APPLY[CI: apply with approval]
+  APPLY --> AWS[AWS APIs]
+  AWS --> STATE[S3 state update]

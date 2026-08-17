@@ -1,0 +1,16 @@
+flowchart TB
+  subgraph bootstrap[Bootstrap Once]
+    B1[S3 State Bucket]
+    B2[DynamoDB Lock Table]
+  end
+  subgraph workloads[Workload Stacks]
+    D[dev/terraform.tfstate]
+    T[test/terraform.tfstate]
+    P[prod/terraform.tfstate]
+  end
+  B1 --> D
+  B1 --> T
+  B1 --> P
+  B2 -.->|locking| D
+  B2 -.->|locking| T
+  B2 -.->|locking| P

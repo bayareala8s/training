@@ -1,0 +1,60 @@
+[
+  {
+    "order_id": "ORD-003",
+    "customer_email": "carol@example.com",
+    "order_amount": -15.99,
+    "status": "pending",
+    "currency": "USD",
+    "_violations": [
+      {
+        "rule": "amount_in_range",
+        "field": "order_amount",
+        "message": "order_amount must be between 0.01 and 50000",
+        "severity": "error",
+        "actual_value": -15.99
+      }
+    ],
+    "_quarantine_reason": "validation_failed"
+  },
+  {
+    "order_id": "ORD-007",
+    "customer_email": "grace@example.com",
+    "order_amount": 88.25,
+    "status": "returned",
+    "currency": "USD",
+    "_violations": [
+      {
+        "rule": "status_valid",
+        "field": "status",
+        "message": "value 'returned' not in ['pending', 'shipped', 'delivered', 'cancelled']",
+        "severity": "error",
+        "actual_value": "returned"
+      }
+    ],
+    "_quarantine_reason": "validation_failed"
+  },
+  {
+    "order_id": null,
+    "customer_email": "invalid@",
+    "order_amount": 55.0,
+    "status": "shipped",
+    "currency": "USD",
+    "_violations": [
+      {
+        "rule": "order_id_not_null",
+        "field": "order_id",
+        "message": "order_id is required",
+        "severity": "error",
+        "actual_value": null
+      },
+      {
+        "rule": "email_format",
+        "field": "customer_email",
+        "message": "customer_email must be a valid email address",
+        "severity": "warning",
+        "actual_value": "invalid@"
+      }
+    ],
+    "_quarantine_reason": "validation_failed"
+  }
+]

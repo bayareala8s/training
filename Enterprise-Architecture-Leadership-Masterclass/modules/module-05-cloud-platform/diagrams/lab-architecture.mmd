@@ -1,0 +1,8 @@
+flowchart LR
+  User[Student / operator] -->|GET /health| APIGW[API Gateway HTTP API]
+  APIGW --> L[Lambda health]
+  L --> DDB[(DynamoDB registry)]
+  L --> SSM[SSM Parameter Store]
+  L --> CWL[CloudWatch Logs]
+  CT[CloudTrail optional] --> S3[(S3 audit bucket)]
+  Bud[AWS Budgets] -->|email alert| User

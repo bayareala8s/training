@@ -1,0 +1,5 @@
+aws_region          = "us-east-1"
+student_id          = "student01"
+name_prefix         = "baylearn-lab06"
+notification_email  = "you@example.com"
+expiration_date     = "2026-07-16"

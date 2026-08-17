@@ -1,0 +1,57 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListCuratedPrefix",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::BUCKET_NAME",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": [
+            "curated/*",
+            "athena-results/*"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ReadCuratedObjects",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject"],
+      "Resource": [
+        "arn:aws:s3:::BUCKET_NAME/curated/*",
+        "arn:aws:s3:::BUCKET_NAME/athena-results/*"
+      ]
+    },
+    {
+      "Sid": "AthenaAndGlueCatalogRead",
+      "Effect": "Allow",
+      "Action": [
+        "athena:StartQueryExecution",
+        "athena:GetQueryExecution",
+        "athena:GetQueryResults",
+        "athena:StopQueryExecution",
+        "athena:GetWorkGroup",
+        "glue:GetDatabase",
+        "glue:GetDatabases",
+        "glue:GetTable",
+        "glue:GetTables",
+        "glue:GetPartition",
+        "glue:GetPartitions"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyRawAndCleanedRead",
+      "Effect": "Deny",
+      "Action": ["s3:GetObject", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::BUCKET_NAME",
+        "arn:aws:s3:::BUCKET_NAME/raw/*",
+        "arn:aws:s3:::BUCKET_NAME/cleaned/*",
+        "arn:aws:s3:::BUCKET_NAME/quarantine/*"
+      ]
+    }
+  ]
+}

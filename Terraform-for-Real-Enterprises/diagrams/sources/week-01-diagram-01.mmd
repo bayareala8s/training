@@ -1,0 +1,7 @@
+flowchart LR
+  A[Write HCL] --> B[terraform init]
+  B --> C[terraform plan]
+  C --> D{Review OK?}
+  D -->|No| A
+  D -->|Yes| E[terraform apply]
+  E --> F[State updated]

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "module-01",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-01-enterprise-architect-role",
+    "title": "The Enterprise Architect's Role",
+    "week": 1,
+    "order": 1,
+    "labId": "lab-01",
+    "awsLab": false,
+    "path": "modules/module-01-enterprise-architect-role"
+  },
+  {
+    "id": "module-02",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-02-business-architecture",
+    "title": "Business Architecture and Capability Mapping",
+    "week": 2,
+    "order": 2,
+    "labId": "lab-02",
+    "awsLab": false,
+    "path": "modules/module-02-business-architecture"
+  },
+  {
+    "id": "module-03",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-03-current-state",
+    "title": "Current-State Architecture Assessment",
+    "week": 3,
+    "order": 3,
+    "labId": "lab-03",
+    "awsLab": false,
+    "path": "modules/module-03-current-state"
+  },
+  {
+    "id": "module-04",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-04-target-state",
+    "title": "Target-State Architecture and Transformation Roadmaps",
+    "week": 4,
+    "order": 4,
+    "labId": "lab-04",
+    "awsLab": false,
+    "path": "modules/module-04-target-state"
+  },
+  {
+    "id": "module-05",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-05-cloud-platform",
+    "title": "Cloud and Platform Strategy",
+    "week": 5,
+    "order": 5,
+    "labId": "lab-05",
+    "awsLab": true,
+    "path": "modules/module-05-cloud-platform"
+  },
+  {
+    "id": "module-06",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-06-integration-data",
+    "title": "Integration, Application, and Data Architecture",
+    "week": 6,
+    "order": 6,
+    "labId": "lab-06",
+    "awsLab": true,
+    "path": "modules/module-06-integration-data"
+  },
+  {
+    "id": "module-07",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-07-security-resilience",
+    "title": "Security, Risk, Compliance, and Resilience",
+    "week": 7,
+    "order": 7,
+    "labId": "lab-07",
+    "awsLab": true,
+    "path": "modules/module-07-security-resilience"
+  },
+  {
+    "id": "module-08",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-08-ai-strategy",
+    "title": "AI Strategy and Intelligent Enterprise Architecture",
+    "week": 8,
+    "order": 8,
+    "labId": "lab-08",
+    "awsLab": true,
+    "path": "modules/module-08-ai-strategy"
+  },
+  {
+    "id": "module-09",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-09-governance",
+    "title": "Architecture Governance and Executive Communication",
+    "week": 9,
+    "order": 9,
+    "labId": "lab-09",
+    "awsLab": false,
+    "path": "modules/module-09-governance"
+  },
+  {
+    "id": "module-10",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "slug": "module-10-capstone",
+    "title": "Capstone and Architecture Leadership",
+    "week": 10,
+    "order": 10,
+    "labId": "lab-10",
+    "awsLab": false,
+    "path": "modules/module-10-capstone"
+  }
+]

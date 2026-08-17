@@ -1,0 +1,8 @@
+flowchart LR
+  A[Scheduled CI job] --> B[terraform plan -detailed-exitcode]
+  B --> C{Exit code 2?}
+  C -->|Yes changes| D[Alert Slack/PagerDuty]
+  C -->|No| E[Log OK]
+  F[Console change] -.-> G[AWS API reality]
+  G --> B
+  H[.tf desired state] --> B

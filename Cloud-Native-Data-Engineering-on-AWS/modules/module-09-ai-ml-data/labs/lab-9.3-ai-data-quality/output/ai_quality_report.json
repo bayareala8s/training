@@ -1,0 +1,69 @@
+{
+  "dataset": "ml/training/customer-churn/v1",
+  "version": "1.0",
+  "validated_at": "2026-05-30T03:42:20.940085+00:00",
+  "overall_passed": true,
+  "error_count": 0,
+  "warning_count": 0,
+  "checks": [
+    {
+      "check": "label_balance",
+      "passed": true,
+      "positive_rate": 0.5344,
+      "severity": "error",
+      "message": "Label balance OK"
+    },
+    {
+      "check": "feature_null_rate",
+      "passed": true,
+      "violations": [],
+      "severity": "warning",
+      "message": "Null rates OK"
+    },
+    {
+      "check": "feature_drift_psi",
+      "passed": true,
+      "results": [
+        {
+          "feature": "order_count_30d",
+          "psi": 0.0249,
+          "level": "ok"
+        },
+        {
+          "feature": "total_spend_30d",
+          "psi": 0.055,
+          "level": "ok"
+        },
+        {
+          "feature": "avg_order_value_30d",
+          "psi": 0.1549,
+          "level": "warning"
+        }
+      ],
+      "warnings": 1,
+      "severity": "warning",
+      "message": "PSI errors: 0, warnings: 1"
+    },
+    {
+      "check": "leakage_correlation",
+      "passed": true,
+      "suspicious": [],
+      "severity": "error",
+      "message": "No leakage detected"
+    },
+    {
+      "check": "duplicate_entities",
+      "passed": true,
+      "duplicate_count": 0,
+      "severity": "error",
+      "message": "No duplicate entities"
+    },
+    {
+      "check": "feature_range",
+      "passed": true,
+      "violations": [],
+      "severity": "error",
+      "message": "Feature ranges OK"
+    }
+  ]
+}

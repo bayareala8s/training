@@ -1,0 +1,4 @@
+partner_id,partner_name,direction,protocol,schedule_utc,credential_store,landing_prefix,notes
+P001,Example Vendor Corp,INBOUND,SFTP,0 6 * * *,Secrets Manager,partners/p001/inbound,
+P002,Example Bank,OUTBOUND,SFTP_CONNECTOR,0 2 * * 1-5,Secrets Manager,partners/p002/outbound,
+P003,Internal Analytics,HUB,S3_INTERNAL,on_upload,N/A,processing/p003,

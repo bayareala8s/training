@@ -1,0 +1,17 @@
+flowchart TB
+  subgraph NorthStar["NorthStar conceptual landing zone (fictional)"]
+    direction TB
+    MGMT[Management / billing]
+    SEC[Security and audit accounts]
+    SHARED[Shared platform services]
+    PROD[Production workloads]
+    NP[Non-production workloads]
+    SB[Sandboxes with budgets]
+  end
+  MGMT --> SEC
+  MGMT --> SHARED
+  SHARED --> PROD
+  SHARED --> NP
+  SHARED --> SB
+  PROD -->|central logs| SEC
+  NP -->|central logs| SEC

@@ -1,0 +1,11 @@
+# Optional remote state. Copy to backend.tf for shared cohorts.
+#
+# terraform {
+#   backend "s3" {
+#     bucket         = "YOUR-TFSTATE-BUCKET"
+#     key            = "baylearn/lab06/STUDENT_ID/terraform.tfstate"
+#     region         = "us-east-1"
+#     dynamodb_table = "YOUR-TFSTATE-LOCK-TABLE"
+#     encrypt        = true
+#   }
+# }

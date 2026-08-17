@@ -1,0 +1,15 @@
+flowchart TB
+  subgraph vpc[VPC 10.10.0.0/16]
+    IGW[Internet Gateway]
+    subgraph public[Public Subnets]
+      NAT[NAT Instance stoppable]
+    end
+    subgraph private[Private Subnets]
+      LAB[Lab EC2 Instance]
+    end
+    FL[VPC Flow Logs]
+  end
+  IGW --> public
+  NAT --> private
+  LAB --> NAT
+  FL --> CW[CloudWatch Logs]

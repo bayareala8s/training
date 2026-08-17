@@ -1,0 +1,126 @@
+{
+  "Comment": "Lab 6.2 — Retry automation and error branching",
+  "StartAt": "StartGlueETL",
+  "States": {
+    "StartGlueETL": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "${GLUE_JOB_NAME}",
+        "Arguments": {
+          "--processing_date.$": "$.processing_date",
+          "--dataset_path.$": "$.dataset"
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.TaskFailed",
+            "Glue.ThrottlingException",
+            "Glue.ConcurrentRunsExceededException"
+          ],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "ClassifyError"
+        }
+      ],
+      "ResultPath": "$.glue",
+      "Next": "RunQualityCheck"
+    },
+    "RunQualityCheck": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${VALIDATION_LAMBDA_ARN}",
+        "Payload": {
+          "action": "run_quality_check",
+          "processing_date.$": "$.processing_date",
+          "dataset.$": "$.dataset"
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 2,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "ClassifyError"
+        }
+      ],
+      "ResultPath": "$.quality_result",
+      "Next": "EvaluateQuality"
+    },
+    "EvaluateQuality": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.quality_result.Payload.pass_rate",
+          "NumericGreaterThanEquals": 99.9,
+          "Next": "PipelineSucceeded"
+        },
+        {
+          "Variable": "$.quality_result.Payload.pass_rate",
+          "NumericGreaterThanEquals": 99.0,
+          "Next": "QuarantineReview"
+        }
+      ],
+      "Default": "NotifyFailure"
+    },
+    "QuarantineReview": {
+      "Type": "Pass",
+      "Comment": "Warning path — SLO degraded but pipeline may continue with steward review",
+      "Result": {
+        "status": "WARNING",
+        "message": "Pass rate between 99.0% and 99.9% — quarantine review required"
+      },
+      "ResultPath": "$.warning",
+      "Next": "PipelineSucceededWithWarning"
+    },
+    "PipelineSucceeded": {
+      "Type": "Succeed"
+    },
+    "PipelineSucceededWithWarning": {
+      "Type": "Succeed"
+    },
+    "ClassifyError": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.error.Error",
+          "StringMatches": "*AccessDenied*",
+          "Next": "FailNoRetry"
+        },
+        {
+          "Variable": "$.error.Error",
+          "StringMatches": "*ValidationException*",
+          "Next": "FailNoRetry"
+        }
+      ],
+      "Default": "NotifyFailure"
+    },
+    "FailNoRetry": {
+      "Type": "Fail",
+      "Error": "NonRetriableError",
+      "Cause": "Configuration or data error — fix before re-running"
+    },
+    "NotifyFailure": {
+      "Type": "Fail",
+      "Error": "PipelineFailed",
+      "Cause": "Retries exhausted or quality below 99.0%"
+    }
+  }
+}

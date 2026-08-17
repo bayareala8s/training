@@ -1,0 +1,9 @@
+sequenceDiagram
+  participant Git as Git (main)
+  participant CI as CI/CD
+  participant TF as Terraform
+  participant AWS as AWS
+  Git->>CI: revert commit pushed
+  CI->>TF: plan + apply
+  TF->>AWS: Update/delete per old config
+  Note over TF,AWS: May fail if state doesn't match expectations

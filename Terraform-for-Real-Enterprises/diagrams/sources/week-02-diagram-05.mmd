@@ -1,0 +1,8 @@
+sequenceDiagram
+  participant CI as CI OIDC Role (shared)
+  participant STS as AWS STS
+  participant WR as bal8s-terraform-runner (dev)
+
+  CI->>STS: AssumeRole
+  STS->>WR: Temporary credentials
+  WR->>WR: terraform plan/apply

@@ -1,0 +1,15 @@
+{
+  "environment": "dev",
+  "source_bucket": "source-bucket-name",
+  "target_bucket": "target-bucket-name",
+  "lambda_function": {
+    "name": "S3FileCopyFunction",
+    "runtime": "python3.11",
+    "timeout": 300,
+    "memory_size": 512
+  },
+  "cloudwatch_logs": {
+    "log_group": "/aws/lambda/S3FileCopyFunction",
+    "retention_days": 30
+  }
+}

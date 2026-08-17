@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Onboarding - Transfer Configuration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6f8;
+      padding: 40px;
+      margin: 0;
+    }
+    .config-container {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: auto;
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h3 {
+      margin-bottom: 20px;
+      color: #333333;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 6px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #444;
+    }
+    input[type="text"], input[type="email"], input[type="url"], select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="config-container">
+    <form>
+      <!-- Customer Section -->
+      <div class="section">
+        <h3>Customer Information</h3>
+        <div class="form-group">
+          <label for="customer-id">Customer ID</label>
+          <input type="text" id="customer-id" placeholder="e.g., CUST001">
+        </div>
+        <div class="form-group">
+          <label for="customer-name">Customer Name</label>
+          <input type="text" id="customer-name" placeholder="e.g., FSO">
+        </div>
+        <div class="form-group">
+          <label for="contact-email">Contact Email</label>
+          <input type="email" id="contact-email" placeholder="e.g., user@example.com">
+        </div>
+      </div>
+
+      <!-- Source Section -->
+      <div class="section">
+        <h3>Source Configuration</h3>
+        <div class="form-group">
+          <label for="source-type">Source Type</label>
+          <select id="source-type">
+            <option value="">Select Source</option>
+            <option value="sftp">SFTP Server</option>
+            <option value="s3">Amazon S3 Bucket</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="source-location">Source Location (Bucket Name or SFTP Host)</label>
+          <input type="text" id="source-location" placeholder="e.g., my-bucket-name or sftp.example.com">
+        </div>
+        <div class="form-group">
+          <label for="source-path">Source Path</label>
+          <input type="text" id="source-path" placeholder="e.g., /incoming/files/">
+        </div>
+      </div>
+
+      <!-- Target Section -->
+      <div class="section">
+        <h3>Target Configuration</h3>
+        <div class="form-group">
+          <label for="target-type">Target Type</label>
+          <select id="target-type">
+            <option value="">Select Target</option>
+            <option value="sftp">SFTP Server</option>
+            <option value="s3">Amazon S3 Bucket</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="target-location">Target Location (Bucket Name or SFTP Host)</label>
+          <input type="text" id="target-location" placeholder="e.g., target-bucket or sftp.target.com">
+        </div>
+        <div class="form-group">
+          <label for="target-path">Target Path</label>
+          <input type="text" id="target-path" placeholder="e.g., /processed/files/">
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label for="additional-notes">Additional Notes</label>
+        <textarea id="additional-notes" rows="4" placeholder="Any special instructions or configurations..."></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit">Submit Transfer Configuration</button>
+    </form>
+  </div>
+</body>
+</html>

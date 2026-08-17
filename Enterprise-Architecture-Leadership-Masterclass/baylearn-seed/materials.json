@@ -1,0 +1,119 @@
+[
+  {
+    "id": "mat-templates",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "templates",
+    "title": "Student architecture templates",
+    "path": "student/templates/",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-dataset-inventory",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "dataset",
+    "title": "NorthStar application inventory CSV",
+    "path": "student/datasets/northstar-application-inventory.csv",
+    "moduleId": "module-03",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-workbook",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "workbook",
+    "title": "Student workbook",
+    "path": "student/workbook/",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-slides-index",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "slides",
+    "title": "Module slide outlines",
+    "path": "slides/",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-capstone-brief",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "capstone",
+    "title": "Capstone student brief",
+    "path": "capstone/student-brief/capstone-brief.md",
+    "moduleId": "module-10",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-capstone-outline",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "capstone",
+    "title": "Executive presentation outline (15 slides)",
+    "path": "student/templates/25-executive-presentation-outline.md",
+    "moduleId": "module-10",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-capstone-rubric",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "rubric",
+    "title": "Capstone rubric",
+    "path": "capstone/rubric/capstone-rubric.md",
+    "moduleId": "module-10",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-terraform",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "infrastructure",
+    "title": "AWS lab Terraform modules",
+    "path": "infrastructure/terraform/",
+    "visibility": "student",
+    "modules": ["module-05", "module-06", "module-07", "module-08"]
+  },
+  {
+    "id": "mat-instructor-guides",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "instructor",
+    "title": "Instructor guides and scripts",
+    "path": "instructor/",
+    "visibility": "instructor"
+  },
+  {
+    "id": "mat-answer-keys",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "instructor",
+    "title": "Quiz answer keys",
+    "path": "assessments/answer-keys/",
+    "visibility": "instructor"
+  },
+  {
+    "id": "mat-reference-solutions",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "instructor",
+    "title": "Lab reference solutions",
+    "path": "instructor/reference-solutions/",
+    "visibility": "instructor"
+  },
+  {
+    "id": "mat-capstone-reference",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "instructor",
+    "title": "Capstone reference architecture (INSTRUCTOR)",
+    "path": "capstone/reference-architecture/",
+    "visibility": "instructor"
+  },
+  {
+    "id": "mat-case-study",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "case-study",
+    "title": "NorthStar case study baseline",
+    "path": "course-specification/northstar-case-study.md",
+    "visibility": "student"
+  },
+  {
+    "id": "mat-start-here",
+    "courseId": "enterprise-architecture-leadership-masterclass",
+    "type": "onboarding",
+    "title": "Student start here",
+    "path": "STUDENT_START_HERE.md",
+    "visibility": "student"
+  }
+]

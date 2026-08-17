@@ -1,0 +1,6 @@
+flowchart LR
+  PR[PR opened] --> VAL[fmt validate tflint checkov]
+  VAL --> PLAN[terraform plan]
+  PLAN --> REV[Review]
+  REV --> MERGE[Merge]
+  MERGE --> APPLY[Gated apply]

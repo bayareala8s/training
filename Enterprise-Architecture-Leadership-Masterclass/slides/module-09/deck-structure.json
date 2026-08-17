@@ -1,0 +1,93 @@
+{
+  "module": "09",
+  "slug": "module-09-governance",
+  "title": "Architecture Governance and Executive Communication",
+  "aspectRatio": "16:9",
+  "brand": "BayLearn",
+  "slides": [
+    {
+      "number": 1,
+      "title": "Module title"
+    },
+    {
+      "number": 2,
+      "title": "Business scenario"
+    },
+    {
+      "number": 3,
+      "title": "Learning objectives"
+    },
+    {
+      "number": 4,
+      "title": "Governance is a product"
+    },
+    {
+      "number": 5,
+      "title": "Governance stack"
+    },
+    {
+      "number": 6,
+      "title": "Risk tiers"
+    },
+    {
+      "number": 7,
+      "title": "ARB purpose"
+    },
+    {
+      "number": 8,
+      "title": "ARB roles"
+    },
+    {
+      "number": 9,
+      "title": "Disposition vocabulary"
+    },
+    {
+      "number": 10,
+      "title": "Four decision requests"
+    },
+    {
+      "number": 11,
+      "title": "Trade-off lens"
+    },
+    {
+      "number": 12,
+      "title": "ADR quality bar"
+    },
+    {
+      "number": 13,
+      "title": "ADR anti-patterns"
+    },
+    {
+      "number": 14,
+      "title": "Executive memo spine"
+    },
+    {
+      "number": 15,
+      "title": "Language swaps"
+    },
+    {
+      "number": 16,
+      "title": "Instructor demo"
+    },
+    {
+      "number": 17,
+      "title": "Lab overview"
+    },
+    {
+      "number": 18,
+      "title": "Lab timer / mid-check"
+    },
+    {
+      "number": 19,
+      "title": "Assignment & capstone"
+    },
+    {
+      "number": 20,
+      "title": "Key takeaways"
+    },
+    {
+      "number": 21,
+      "title": "Next module"
+    }
+  ]
+}

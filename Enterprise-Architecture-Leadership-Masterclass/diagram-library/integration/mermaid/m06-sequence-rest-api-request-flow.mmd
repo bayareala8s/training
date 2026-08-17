@@ -1,0 +1,24 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#E6F2FF",
+    "primaryTextColor": "#232F3E",
+    "primaryBorderColor": "#146EB4",
+    "lineColor": "#545B64",
+    "secondaryColor": "#F0F7E6",
+    "tertiaryColor": "#FFF3E0",
+    "background": "#FFFFFF",
+    "fontFamily": "Amazon Ember, Helvetica, Arial, sans-serif"
+  }
+}}%%
+sequenceDiagram
+  participant C as Client
+  participant A as API Gateway
+  participant L as Lambda
+  participant D as DynamoDB
+  C->>A: HTTPS request
+  A->>L: Invoke
+  L->>D: Get/Put item
+  D-->>L: Result
+  L-->>A: JSON response
+  A-->>C: 200 OK

@@ -1,0 +1,14 @@
+flowchart TB
+  subgraph humans [Human access]
+    SSO[IAM Identity Center]
+    PS[Permission Set PlatformEng]
+    SSO --> PS
+    PS --> DEVROLE[Admin in dev account]
+  end
+  subgraph automation [Automation access]
+    GHA[GitHub OIDC Role]
+    RUNNER[bal8s-terraform-runner]
+    GHA --> RUNNER
+  end
+  RUNNER --> RES[EC2 VPC RDS APIs]
+  DEVROLE --> RES
