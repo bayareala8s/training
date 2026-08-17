@@ -1,0 +1,7 @@
+stateDiagram-v2
+    [*] --> Follower
+    Follower --> Candidate: election timeout
+    Candidate --> Leader: majority votes
+    Candidate --> Follower: discover higher term
+    Leader --> Follower: step down
+    Leader --> Leader: heartbeat / replicate

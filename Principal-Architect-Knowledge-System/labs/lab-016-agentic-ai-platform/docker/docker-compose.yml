@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8106:8106"
+    networks:
+      - agent-net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6383:6379"
+    networks:
+      - agent-net
+    profiles:
+      - full
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: agent
+      POSTGRES_PASSWORD: agent
+      POSTGRES_DB: agent
+    ports:
+      - "5436:5432"
+    networks:
+      - agent-net
+    profiles:
+      - full
+
+networks:
+  agent-net:
+    driver: bridge

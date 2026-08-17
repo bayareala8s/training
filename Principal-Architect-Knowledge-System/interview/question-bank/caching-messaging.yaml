@@ -1,0 +1,852 @@
+version: 1
+domain: caching-messaging
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 30
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: cm-001
+  domain: caching-messaging
+  topic: cache-aside-pattern
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Cache-aside for product catalog: read path, write path, and failure modes.
+  expected_signals:
+    - "Read: cache miss load DB"
+    - "Write: update DB invalidate cache"
+    - Cache stampede mitigation
+    - TTL even with invalidation
+  red_flags:
+    - Write-through cache only no DB
+    - Invalidate forget on write
+    - No TTL safety
+  follow_ups:
+    - Cache aside vs read through?
+    - Local cache + Redis tier?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-002
+  domain: caching-messaging
+  topic: read-through-write-through
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Read-through and write-through vs cache-aside for inventory counts.
+  expected_signals:
+    - "Read-through: cache loads on miss"
+    - "Write-through: sync write cache and DB"
+    - Latency on write path
+    - Complexity in cache layer
+  red_flags:
+    - Write-through for all high write
+    - Read-through without loader timeout
+    - Ignore cache DB inconsistency window
+  follow_ups:
+    - Write-behind for inventory?
+    - Cache as SPOF?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-003
+  domain: caching-messaging
+  topic: write-behind
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Write-behind (write-back) caching risks for financial balances.
+  expected_signals:
+    - Async flush to DB data loss risk
+    - Durability requirements may forbid
+    - Queue for writes with replay
+    - Recovery after cache crash
+  red_flags:
+    - Write-behind for money default
+    - No flush policy
+    - Cache loss acceptable silent
+  follow_ups:
+    - AOF Redis persistence?
+    - Write coalescing batching?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-004
+  domain: caching-messaging
+  topic: cache-coherence
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Cache coherence across app servers and Redis for session data.
+  expected_signals:
+    - Single Redis authority
+    - Local cache short TTL coherence
+    - Pub/sub invalidation
+    - Version stamps on entries
+  red_flags:
+    - Local cache long TTL no invalidation
+    - Multiple Redis no sync
+    - Sticky session only no shared cache
+  follow_ups:
+    - Hazelcast coherence?
+    - Session migration across pods?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-005
+  domain: caching-messaging
+  topic: redis-cluster-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Redis Cluster for 10M keys with HA and resharding plan.
+  expected_signals:
+    - 16384 slots and replica per master
+    - Hash tag for multi-key ops
+    - Resharding live with monitoring
+    - Client cluster-aware driver
+  red_flags:
+    - Single Redis node prod
+    - Cross-slot multi-key transactions
+    - No replica failover test
+  follow_ups:
+    - Redis Enterprise vs OSS cluster?
+    - Cluster bus partition?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-006
+  domain: caching-messaging
+  topic: redis-sentinel-ha
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Redis Sentinel vs Cluster for HA primary-replica setup.
+  expected_signals:
+    - "Sentinel: simpler failover single shard"
+    - "Cluster: sharding built-in"
+    - Split brain mitigation
+    - App connection handling failover
+  red_flags:
+    - Sentinel for huge data one node
+    - No quorum sentinels
+    - Manual failover only
+  follow_ups:
+    - Sentinel + multiple shards?
+    - K8s operator Redis?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-007
+  domain: caching-messaging
+  topic: memcached-vs-redis
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Memcached vs Redis for pure LRU object cache layer.
+  expected_signals:
+    - "Memcached: simple multithreaded LRU"
+    - "Redis: data structures persistence"
+    - Memory efficiency per use case
+    - Cluster models differ
+  red_flags:
+    - Redis always supersedes memcached
+    - Memcached persistence needed
+    - Wrong tool for pub/sub need
+  follow_ups:
+    - Proxy twemproxy?
+    - Elasticache cluster mode?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-008
+  domain: caching-messaging
+  topic: ttl-strategies
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    TTL strategy combining event invalidation and proactive expiration.
+  expected_signals:
+    - TTL as safety net not primary
+    - Jitter TTL prevent synchronized expiry
+    - Per-key TTL by volatility
+    - Monitor hit rate and staleness
+  red_flags:
+    - Infinite TTL event only
+    - Same TTL all keys
+    - No staleness metric
+  follow_ups:
+    - TTL on negative cache?
+    - Active vs passive expiration?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-009
+  domain: caching-messaging
+  topic: cache-warming
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Cache warming before major traffic event (product launch).
+  expected_signals:
+    - Preload hot keys from DB
+    - Warm from canary traffic copy
+    - Avoid thundering herd on cold start
+    - Measure warm completeness
+  red_flags:
+    - No warm launch day
+    - Warm blocks prod traffic
+    - Warm wrong key set
+  follow_ups:
+    - Predictive warming ML?
+    - CDN vs app cache warm?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-010
+  domain: caching-messaging
+  topic: thundering-herd-cache
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Thundering herd on cache expiry for hot key. Mitigations?
+  expected_signals:
+    - Singleflight request coalescing
+    - Probabilistic early expiration
+    - Mutex per key in cache layer
+    - Stale-while-revalidate
+  red_flags:
+    - Lower TTL more herds
+    - All clients hit DB on expiry
+    - No locking on miss
+  follow_ups:
+    - Redis SETNX lock pattern?
+    - Application layer coalescing?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-011
+  domain: caching-messaging
+  topic: kafka-partitioning
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Kafka partitioning strategy for order events with global ordering per customer.
+  expected_signals:
+    - Key = customer_id partition
+    - Partition count vs parallelism
+    - Hot key rebalancing
+    - Ordering scope per partition only
+  red_flags:
+    - One partition all orders
+    - Random key loses order
+    - Too few partitions cap throughput
+  follow_ups:
+    - Custom partitioner?
+    - Sticky partitioner producer?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-012
+  domain: caching-messaging
+  topic: kafka-consumer-groups
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Consumer group rebalance causes duplicate processing storm. Architecture fixes.
+  expected_signals:
+    - Static membership cooperative rebalance
+    - Max poll interval tuning
+    - Idempotent consumer handlers
+    - Monitor rebalance rate
+  red_flags:
+    - Huge max poll records
+    - Long processing no idempotency
+    - Ignore rebalance logs
+  follow_ups:
+    - KIP-848 next gen consumer?
+    - Separate consumer groups per scale?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-013
+  domain: caching-messaging
+  topic: kafka-exactly-once
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Kafka exactly-once semantics end-to-end to external database.
+  expected_signals:
+    - Idempotent producer + transactions
+    - Read-process-write in transaction
+    - Consumer isolation level
+    - Sink must support idempotency
+  red_flags:
+    - EOS without idempotent sink
+    - Transactions across unrelated topics abuse
+    - Ignore zombie fencing
+  follow_ups:
+    - Outbox vs Kafka txn?
+    - EOS latency cost?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-014
+  domain: caching-messaging
+  topic: rabbitmq-patterns
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    RabbitMQ patterns: work queues, pub/sub, routing for task dispatch.
+  expected_signals:
+    - Quorum queues for HA
+    - Prefetch and ack semantics
+    - DLX for failed messages
+    - Clustering not WAN HA
+  red_flags:
+    - Classic mirrored queues legacy
+    - Unbounded queue no DLX
+    - No prefetch tuning
+  follow_ups:
+    - RabbitMQ vs Kafka when?
+    - Stream plugin Rabbit?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-015
+  domain: caching-messaging
+  topic: sqs-vs-kafka
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    SQS vs Kafka for event backbone decision framework.
+  expected_signals:
+    - "SQS: managed simple, per-message cost"
+    - "Kafka: log replay, ordering partitions"
+    - Operational burden tradeoff
+    - Throughput and retention needs
+  red_flags:
+    - SQS for log replay need
+    - Kafka for 100 msg/day
+    - Ignore ops team size
+  follow_ups:
+    - SQS FIFO limits?
+    - Kinesis middle ground?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-016
+  domain: caching-messaging
+  topic: pub-sub-patterns
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Pub/sub fan-out architecture for 1M subscribers notification event.
+  expected_signals:
+    - Topic per event type not per user
+    - Fan-out workers per channel
+    - Backpressure on slow channels
+    - Idempotent delivery tracking
+  red_flags:
+    - Single message queue all users
+    - No DLQ per channel
+    - Sync send to SMS in request
+  follow_ups:
+    - WebSocket fan-out service?
+    - Geo-distributed pub/sub?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-017
+  domain: caching-messaging
+  topic: event-ordering
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Guarantee event ordering across services without global sequencer.
+  expected_signals:
+    - Order per aggregate key in partition
+    - Version numbers on events
+    - Consumer detects out-of-order
+    - Avoid cross-key ordering requirement
+  red_flags:
+    - Global order all events
+    - No version on event
+    - Reorder in consumer silently wrong
+  follow_ups:
+    - Total order partition cost?
+    - Causal ordering metadata?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-018
+  domain: caching-messaging
+  topic: dead-letter-queues
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    DLQ design: retention, replay, and alerting.
+  expected_signals:
+    - DLQ per source queue
+    - Poison message metadata preserved
+    - Replay tooling with rate limit
+    - Alert on DLQ depth threshold
+  red_flags:
+    - DLQ messages deleted auto
+    - No replay procedure
+    - Single DLQ all systems
+  follow_ups:
+    - DLQ as event store?
+    - Automated replay rules?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-019
+  domain: caching-messaging
+  topic: poison-message-handling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Poison message crashes consumer loop. Detection and quarantine.
+  expected_signals:
+    - Delivery count header tracking
+    - Move to DLQ after N tries
+    - Separate quarantine analysis env
+    - Alert with message fingerprint
+  red_flags:
+    - Infinite retry same message
+    - Skip message silently lose
+    - No DLQ
+  follow_ups:
+    - Circuit breaker on handler?
+    - Schema validation before handler?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-020
+  domain: caching-messaging
+  topic: message-schema-registry
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Schema registry governance for 500 event types.
+  expected_signals:
+    - Compatibility CI checks
+    - Ownership per schema subject
+    - Deprecation workflow
+    - Global vs per-tenant schemas
+  red_flags:
+    - Schemas in producer code only
+    - Breaking change no version
+    - No ownership
+  follow_ups:
+    - Apicurio vs Confluent?
+    - JSON schema in registry?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-021
+  domain: caching-messaging
+  topic: stream-reprocessing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Reprocess 30 days Kafka topic after bug fix without double side effects.
+  expected_signals:
+    - New consumer group offset reset
+    - Idempotent sinks required
+    - Parallel reprocess cluster
+    - Compare output canary
+  red_flags:
+    - Replay to same consumer offsets
+    - Non-idempotent sink replay
+    - Reprocess on prod consumers live
+  follow_ups:
+    - Compacted topic reprocess?
+    - Time-bound reprocess window?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-022
+  domain: caching-messaging
+  topic: log-compaction-kafka
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Kafka log compaction for changelog topic. Design and pitfalls.
+  expected_signals:
+    - Key-based retention keeps latest
+    - Tombstones for delete
+    - Compaction lag monitoring
+    - Not for infinite unique keys
+  red_flags:
+    - Compaction for metrics stream
+    - No tombstone delete propagation
+    - Ignore dirty ratio
+  follow_ups:
+    - Compaction vs retention ms?
+    - Compacted topic sizing?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-023
+  domain: caching-messaging
+  topic: tiered-storage-kafka
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Kafka tiered storage for 1-year retention at lower cost.
+  expected_signals:
+    - Hot local disks warm object storage
+    - Fetch latency tier awareness
+    - Consumer lag on old segments
+    - Cost vs replay speed
+  red_flags:
+    - Infinite local retention
+    - Tiered without latency SLO
+    - No monitor remote fetch
+  follow_ups:
+    - Confluent tiered vs DIY?
+    - Rebalance with tiered?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-024
+  domain: caching-messaging
+  topic: pulsar-vs-kafka
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Pulsar vs Kafka for multi-tenant messaging platform.
+  expected_signals:
+    - "Pulsar: separated compute storage"
+    - BookKeeper vs Kafka log
+    - Geo-replication built-in
+    - Ecosystem maturity tradeoff
+  red_flags:
+    - Pick without workload fit
+    - Ignore BookKeeper ops
+    - Kafka cannot multi-tenant
+  follow_ups:
+    - Pulsar functions?
+    - Migration Kafka to Pulsar?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-025
+  domain: caching-messaging
+  topic: mqtt-iot
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    MQTT broker architecture for 5M IoT devices intermittent connectivity.
+  expected_signals:
+    - QoS levels tradeoffs
+    - Session persistence clean start
+    - Topic hierarchy design
+    - Bridge to Kafka for analytics
+  red_flags:
+    - QoS 2 everywhere cost
+    - No offline message queue
+    - Flat topic per device million
+  follow_ups:
+    - EMQX vs HiveMQ?
+    - MQTT over TLS scale?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-026
+  domain: caching-messaging
+  topic: websocket-scaling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Scale WebSocket connections to 2M concurrent across regions.
+  expected_signals:
+    - Regional connection registries
+    - Pub/sub backplane Redis/Kafka
+    - Sticky routing to instance
+    - Graceful connection drain deploy
+  red_flags:
+    - Single node all connections
+    - No backplane cross instances
+    - Broadcast O(n) all nodes always
+  follow_ups:
+    - Socket.IO vs raw WS?
+    - Connection auth refresh?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-027
+  domain: caching-messaging
+  topic: sse-vs-websocket
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    SSE vs WebSocket for live dashboard updates.
+  expected_signals:
+    - "SSE: HTTP simple one-way"
+    - "WebSocket: bidirectional lower overhead"
+    - SSE through proxies easier
+    - Reconnect semantics differ
+  red_flags:
+    - WebSocket for one-way only always
+    - SSE for binary data
+    - No reconnect id handling SSE
+  follow_ups:
+    - HTTP/2 multiplexing impact?
+    - Fan-out SSE scalability?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-028
+  domain: caching-messaging
+  topic: notification-queue-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Priority queues for notifications: critical alerts vs marketing.
+  expected_signals:
+    - Separate queues per priority
+    - Worker pool allocation weighted
+    - Marketing paused during incidents
+    - SLA per queue monitored
+  red_flags:
+    - Single FIFO all notifications
+    - Marketing can starve alerts
+    - No priority consumer
+  follow_ups:
+    - Weighted fair queueing?
+    - Delay queue marketing hours?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-029
+  domain: caching-messaging
+  topic: priority-queues
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Implement distributed priority queue without single bottleneck.
+  expected_signals:
+    - Multiple physical queues by priority
+    - Redis sorted sets limits
+    - Central scheduler fair
+    - Head-of-line blocking avoided
+  red_flags:
+    - One priority field SQL scan
+    - Strict priority starves low forever
+    - No max wait for low priority
+  follow_ups:
+    - RabbitMQ priority queue limits?
+    - Kafka priority tiers?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cm-030
+  domain: caching-messaging
+  topic: backpressure-messaging
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kafka', 'redis', 'aws']
+  estimated_minutes: 15
+  question: |
+    Backpressure when consumers slower than producers for 7 days.
+  expected_signals:
+    - Consumer lag alerting
+    - Scale consumers partitions
+    - Producer throttle on lag
+    - Retention vs consumer SLA
+  red_flags:
+    - Retention infinite wait consumer
+    - Drop messages silently
+    - Only scale producers
+  follow_ups:
+    - Pause consumption API?
+    - Tiered retention drop policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

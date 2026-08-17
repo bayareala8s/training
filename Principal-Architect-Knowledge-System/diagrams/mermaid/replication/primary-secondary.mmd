@@ -1,0 +1,5 @@
+flowchart LR
+    Primary[Primary] -->|replicate| R1[Replica 1]
+    Primary -->|replicate| R2[Replica 2]
+    ClientW[Client Write] --> Primary
+    ClientR[Client Read] --> R1

@@ -1,0 +1,76 @@
+plans:
+  - id: 12-week-sprint
+    name: 12-Week Interview Sprint
+    description: Best for active applications
+    duration_weeks: 12
+    weeks:
+      - week: 1
+        topics:
+          - distributed-systems-fundamentals
+          - networking-basics
+          - time-and-ordering
+      - week: 2
+        topics:
+          - cap-theorem
+          - pacelc
+          - consistency-models
+      - week: 3
+        topics:
+          - replication
+          - quorums
+      - week: 4
+        topics:
+          - raft
+          - paxos
+          - distributed-locks
+          - leader-election
+      - week: 5
+        topics:
+          - storage-engines
+          - b-trees
+          - lsm-trees
+      - week: 6
+        topics:
+          - dynamodb
+          - cassandra
+          - spanner
+          - transactions
+      - week: 7
+        topics:
+          - kafka
+          - streaming
+          - caching
+      - week: 8
+        topics:
+          - microservices
+          - reliability
+          - observability
+      - week: 9
+        topics:
+          - system-design-exercises
+          - multi-region-design
+      - week: 10
+        topics:
+          - aws-architecture
+          - security
+      - week: 11
+        topics:
+          - ai-platforms
+          - architecture-leadership
+      - week: 12
+        topics:
+          - behavioral-stories
+          - company-specific-prep
+          - mock-interviews
+
+  - id: 24-week-deep
+    name: 24-Week Deep Preparation
+    description: Two weeks per major domain with labs
+    duration_weeks: 24
+    status: planned
+
+  - id: 40-week-mastery
+    name: 40-Week Principal Architect Mastery
+    description: One major module per week with recurring mock interviews
+    duration_weeks: 40
+    status: planned

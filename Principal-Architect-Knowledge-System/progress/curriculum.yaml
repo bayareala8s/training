@@ -1,0 +1,572 @@
+version: 1
+last_updated: 2026-07-25
+labs:
+  - id: lab-001-consistent-hashing
+    path: labs/lab-001-consistent-hashing
+    status: complete
+    prerequisites: [distributed-caching]
+  - id: lab-002-vector-clocks
+    path: labs/lab-002-vector-clocks
+    status: complete
+    prerequisites: [vector-clocks, lamport-clocks]
+  - id: lab-003-raft-simulation
+    path: labs/lab-003-raft-simulation
+    status: complete
+    prerequisites: [raft, leader-election]
+  - id: lab-004-replicated-kv-store
+    path: labs/lab-004-replicated-kv-store
+    status: complete
+    prerequisites: [raft, quorum-systems, leaderless-replication]
+  - id: lab-005-eventual-consistency
+    path: labs/lab-005-eventual-consistency
+    status: complete
+    prerequisites: [eventual-consistency, leaderless-replication, vector-clocks]
+  - id: lab-006-kafka-stream-processing
+    path: labs/lab-006-kafka-stream-processing
+    status: complete
+    prerequisites: [kafka-architecture, message-delivery-semantics, stream-and-batch-processing]
+  - id: lab-007-distributed-locks
+    path: labs/lab-007-distributed-locks
+    status: complete
+    prerequisites: [distributed-leases, fencing-tokens, etcd]
+  - id: lab-008-idempotent-api
+    path: labs/lab-008-idempotent-api
+    status: complete
+    prerequisites: [idempotency, rest-grpc-and-graphql]
+  - id: lab-009-outbox-pattern
+    path: labs/lab-009-outbox-pattern
+    status: complete
+    prerequisites: [transactional-outbox, message-delivery-semantics, idempotency]
+  - id: lab-010-saga-orchestration
+    path: labs/lab-010-saga-orchestration
+    status: complete
+    prerequisites: [sagas, transactional-outbox, resilience-patterns]
+  - id: lab-011-rate-limiter
+    path: labs/lab-011-rate-limiter
+    status: complete
+    prerequisites: [distributed-rate-limiter, distributed-caching]
+  - id: lab-012-multi-region-aws
+    path: labs/lab-012-multi-region-aws
+    status: complete
+    prerequisites: [aws-fundamentals, multi-region-architecture, disaster-recovery-and-multi-region]
+  - id: lab-013-chaos-testing
+    path: labs/lab-013-chaos-testing
+    status: complete
+    prerequisites: [chaos-engineering, slo-sli-error-budgets, resilience-patterns]
+  - id: lab-014-observability
+    path: labs/lab-014-observability
+    status: complete
+    prerequisites: [observability-fundamentals, distributed-tracing, slo-sli-error-budgets]
+  - id: lab-015-rag-platform
+    path: labs/lab-015-rag-platform
+    status: complete
+    prerequisites: [rag-architecture, llm-serving-and-model-gateways]
+  - id: lab-016-agentic-ai-platform
+    path: labs/lab-016-agentic-ai-platform
+    status: complete
+    prerequisites: [agent-platform-architecture, agent-governance-and-safety, llm-gateway]
+  - id: lab-017-stripe-payment-idempotency
+    path: labs/lab-017-stripe-payment-idempotency
+    status: complete
+    prerequisites: [partial-failure, idempotency, stripe-payment-idempotency]
+case_studies:
+  - id: dynamodb-case-study
+    path: case-studies/dynamodb
+    status: complete
+  - id: kafka-case-study
+    path: case-studies/kafka
+    status: complete
+  - id: s3-case-study
+    path: case-studies/s3
+    status: complete
+  - id: netflix-case-study
+    path: case-studies/netflix
+    status: complete
+  - id: stripe-case-study
+    path: case-studies/stripe
+    status: complete
+  - id: global-file-transfer-case-study
+    path: case-studies/global-file-transfer
+    status: complete
+phases:
+  - id: phase-0
+    name: Foundation
+    status: complete
+  - id: phase-1
+    name: Distributed Systems Core
+    status: not_started
+  - id: phase-2
+    name: Data Systems
+    status: not_started
+  - id: phase-3
+    name: Production Architecture
+    status: not_started
+  - id: phase-4
+    name: AI and Leadership
+    status: not_started
+  - id: phase-5
+    name: Interview System
+    status: in_progress
+domains:
+  - id: computer-architecture
+    path: docs/01-computer-architecture
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: cpu-and-memory-fundamentals
+        status: complete
+      - id: caches-and-cache-coherence
+        status: complete
+      - id: memory-ordering-and-concurrency
+        status: complete
+  - id: operating-systems
+    path: docs/02-operating-systems
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: processes-threads-and-scheduling
+        status: complete
+      - id: virtual-memory-and-io
+        status: complete
+      - id: kernel-networking-and-io-uring
+        status: complete
+  - id: networking
+    path: docs/03-networking
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: tcp-ip-fundamentals
+        status: complete
+      - id: http-tls-and-quic
+        status: complete
+      - id: routing-load-balancing-and-congestion
+        status: complete
+  - id: distributed-systems-foundations
+    path: docs/04-distributed-systems-foundations
+    status: scaffolded
+    priority: critical
+    chapters:
+      - id: what-is-a-distributed-system
+        status: planned
+      - id: partial-failure
+        status: planned
+      - id: safety-and-liveness
+        status: complete
+      - id: distributed-system-models
+        status: complete
+      - id: failure-detectors
+        status: complete
+      - id: idempotency
+        status: complete
+  - id: time-ordering-and-coordination
+    path: docs/05-time-ordering-and-coordination
+    status: scaffolded
+    priority: critical
+    chapters:
+      - id: physical-and-logical-time
+        status: complete
+      - id: ordering-of-events
+        status: complete
+      - id: vector-clocks
+        status: complete
+  - id: consensus
+    path: docs/06-consensus
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: consensus-problem
+        status: complete
+      - id: flp-impossibility
+        status: complete
+      - id: leader-election
+        status: complete
+      - id: paxos
+        status: complete
+      - id: multi-paxos
+        status: complete
+      - id: viewstamped-replication
+        status: complete
+      - id: raft
+        status: complete
+      - id: zab
+        status: complete
+      - id: membership-changes
+        status: complete
+      - id: distributed-leases
+        status: complete
+      - id: fencing-tokens
+        status: complete
+      - id: zookeeper
+        status: complete
+      - id: etcd
+        status: complete
+      - id: consul
+        status: complete
+  - id: replication
+    path: docs/07-replication
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: primary-secondary-replication
+        status: complete
+      - id: multi-leader-replication
+        status: complete
+      - id: leaderless-replication
+        status: complete
+      - id: conflict-resolution
+        status: complete
+  - id: consistency
+    path: docs/08-consistency
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: cap-theorem
+        status: complete
+      - id: pacelc
+        status: complete
+      - id: linearizability
+        status: complete
+      - id: eventual-consistency
+        status: complete
+      - id: causal-consistency
+        status: complete
+      - id: sequential-consistency
+        status: complete
+      - id: session-guarantees
+        status: complete
+      - id: quorum-systems
+        status: complete
+  - id: transactions
+    path: docs/09-transactions
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: acid-and-isolation
+        status: complete
+      - id: mvcc
+        status: complete
+      - id: two-phase-commit
+        status: complete
+      - id: sagas
+        status: complete
+      - id: transactional-outbox
+        status: complete
+  - id: storage-engines
+    path: docs/10-storage-engines
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: storage-engine-fundamentals
+        status: complete
+      - id: b-trees
+        status: complete
+      - id: lsm-trees
+        status: complete
+      - id: write-ahead-log
+        status: complete
+  - id: distributed-databases
+    path: docs/11-distributed-databases
+    status: in_progress
+    priority: critical
+    chapters:
+      - id: amazon-dynamo
+        status: complete
+      - id: dynamodb
+        status: complete
+      - id: apache-cassandra
+        status: complete
+      - id: google-spanner
+        status: complete
+      - id: apache-kafka
+        status: complete
+      - id: redis
+        status: complete
+      - id: snowflake-architecture
+        status: complete
+      - id: mongodb-architecture
+        status: complete
+      - id: cockroachdb-architecture
+        status: complete
+  - id: data-platforms
+    path: docs/21-data-platforms
+    status: in_progress
+    priority: high
+    chapters:
+      - id: data-lakehouse-architecture
+        status: complete
+      - id: stream-and-batch-processing
+        status: complete
+      - id: data-governance-and-lineage
+        status: complete
+  - id: messaging-and-streaming
+    path: docs/12-messaging-and-streaming
+    status: in_progress
+    priority: high
+    chapters:
+      - id: message-delivery-semantics
+        status: complete
+      - id: kafka-architecture
+        status: complete
+      - id: event-driven-architecture
+        status: complete
+  - id: caching
+    path: docs/13-caching
+    status: in_progress
+    priority: high
+    chapters:
+      - id: caching-fundamentals
+        status: complete
+      - id: cache-invalidation
+        status: complete
+      - id: distributed-caching
+        status: complete
+  - id: microservices
+    path: docs/14-microservices
+    status: in_progress
+    priority: high
+    chapters:
+      - id: service-decomposition-and-ddd
+        status: complete
+      - id: resilience-patterns
+        status: complete
+      - id: service-mesh-and-sidecars
+        status: complete
+  - id: api-and-integration-architecture
+    path: docs/15-api-and-integration-architecture
+    status: in_progress
+    priority: high
+    chapters:
+      - id: rest-grpc-and-graphql
+        status: complete
+      - id: api-versioning-and-evolution
+        status: complete
+  - id: cloud-architecture
+    path: docs/16-cloud-architecture
+    status: in_progress
+    priority: high
+    chapters:
+      - id: aws-fundamentals
+        status: complete
+      - id: multi-region-architecture
+        status: complete
+  - id: kubernetes-and-platform-engineering
+    path: docs/17-kubernetes-and-platform-engineering
+    status: in_progress
+    priority: high
+    chapters:
+      - id: kubernetes-architecture
+        status: complete
+      - id: platform-engineering-and-gitops
+        status: complete
+  - id: reliability-and-resilience
+    path: docs/18-reliability-and-resilience
+    status: in_progress
+    priority: high
+    chapters:
+      - id: slo-sli-error-budgets
+        status: complete
+      - id: disaster-recovery-and-multi-region
+        status: complete
+      - id: chaos-engineering
+        status: complete
+  - id: cost-and-finops
+    path: docs/26-cost-and-finops
+    status: in_progress
+    priority: high
+    chapters:
+      - id: cloud-cost-optimization
+        status: complete
+  - id: observability
+    path: docs/19-observability
+    status: in_progress
+    priority: high
+    chapters:
+      - id: observability-fundamentals
+        status: complete
+      - id: distributed-tracing
+        status: complete
+  - id: security
+    path: docs/20-security
+    status: in_progress
+    priority: high
+    chapters:
+      - id: security-architecture-fundamentals
+        status: complete
+      - id: zero-trust-architecture
+        status: complete
+  - id: system-design
+    path: docs/24-system-design
+    status: in_progress
+    priority: high
+    chapters:
+      - id: system-design-methodology
+        status: complete
+      - id: global-file-transfer-platform
+        status: complete
+      - id: url-shortener
+        status: complete
+      - id: distributed-rate-limiter
+        status: complete
+      - id: notification-platform
+        status: complete
+      - id: chat-platform
+        status: complete
+      - id: news-feed
+        status: complete
+      - id: distributed-cache-design
+        status: complete
+      - id: payment-platform
+        status: complete
+      - id: video-streaming-platform
+        status: complete
+      - id: secrets-management-platform
+        status: complete
+      - id: api-platform
+        status: complete
+      - id: identity-platform
+        status: complete
+      - id: llm-gateway
+        status: complete
+      - id: agentic-ai-platform-design
+        status: complete
+      - id: search-autocomplete
+        status: complete
+      - id: file-storage-system
+        status: complete
+      - id: dropbox-design
+        status: complete
+      - id: global-object-store
+        status: complete
+      - id: ride-sharing-platform
+        status: complete
+      - id: metrics-platform
+        status: complete
+      - id: logging-platform
+        status: complete
+      - id: workflow-engine
+        status: complete
+      - id: kafka-like-event-platform
+        status: complete
+      - id: feature-flag-platform
+        status: complete
+  - id: ai-distributed-systems
+    path: docs/22-ai-distributed-systems
+    status: in_progress
+    priority: high
+    chapters:
+      - id: distributed-training-and-inference
+        status: complete
+      - id: llm-serving-and-model-gateways
+        status: complete
+      - id: rag-architecture
+        status: complete
+  - id: agentic-ai-architecture
+    path: docs/23-agentic-ai-architecture
+    status: in_progress
+    priority: high
+    chapters:
+      - id: agent-platform-architecture
+        status: complete
+      - id: agent-governance-and-safety
+        status: complete
+  - id: architecture-leadership
+    path: docs/25-architecture-leadership
+    status: in_progress
+    chapters:
+      - id: architecture-decision-records
+        status: complete
+      - id: executive-communication
+        status: complete
+      - id: technical-strategy-and-roadmaps
+        status: complete
+      - id: architecture-governance
+        status: complete
+      - id: influencing-without-authority
+        status: complete
+  - id: production-failures
+    path: docs/27-production-failures
+    status: in_progress
+    priority: high
+    chapters:
+      - id: failure-analysis-methodology
+        status: complete
+      - id: postmortem-culture
+        status: complete
+  - id: company-specific-preparation
+    path: docs/28-company-specific-preparation
+    status: in_progress
+    priority: high
+    chapters:
+      - id: adobe
+        status: complete
+      - id: amazon-aws
+        status: complete
+      - id: google
+        status: complete
+      - id: microsoft
+        status: complete
+      - id: nvidia
+        status: complete
+      - id: snowflake-databricks
+        status: complete
+      - id: openai-anthropic
+        status: complete
+  - id: behavioral-and-leadership
+    path: docs/29-behavioral-and-leadership
+    status: in_progress
+    priority: high
+    chapters:
+      - id: star-story-framework
+        status: complete
+      - id: leadership-principles
+        status: complete
+      - id: enterprise-file-transfer-stories
+        status: complete
+  - id: mock-interviews
+    path: docs/30-mock-interviews
+    status: in_progress
+    priority: high
+    chapters:
+      - id: mock-interview-rubric
+        status: complete
+      - id: distributed-systems-mock
+        status: complete
+      - id: system-design-mock
+        status: complete
+  - id: reference
+    path: docs/31-reference
+    status: in_progress
+    priority: high
+    chapters:
+      - id: glossary
+        status: complete
+      - id: decision-frameworks
+        status: complete
+      - id: reading-list
+        status: complete
+interview_system:
+  status: in_progress
+  question_banks:
+    - id: distributed-systems
+      path: interview/question-bank/distributed-systems.yaml
+      question_count: 50
+      status: complete
+    - id: consensus
+      path: interview/question-bank/consensus.yaml
+      question_count: 30
+      status: complete
+    - id: system-design
+      path: interview/question-bank/system-design.yaml
+      question_count: 40
+      status: complete
+    - id: leadership
+      path: interview/question-bank/leadership.yaml
+      question_count: 25
+      status: complete
+  scoring_rubrics:
+    - id: principal-system-design
+      path: interview/scoring-rubrics/principal-system-design.md
+      status: complete
+    - id: distributed-systems-deep-dive
+      path: interview/scoring-rubrics/distributed-systems-deep-dive.md
+      status: complete

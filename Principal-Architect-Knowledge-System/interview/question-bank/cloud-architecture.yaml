@@ -1,0 +1,1272 @@
+version: 1
+domain: cloud-architecture
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 45
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: cloud-001
+  domain: cloud-architecture
+  topic: multi-region-active-active
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design active-active multi-region architecture for a global SaaS API. What consistency and failover tradeoffs do you accept?
+  expected_signals:
+    - Data classification drives sync vs async replication
+    - Conflict resolution explicit for shared writes
+    - RPO/RTO per data class with stated assumptions
+    - Runbooks for regional drain and traffic shift
+  red_flags:
+    - Linearizable writes everywhere without cost discussion
+    - DNS-only failover story
+    - No partition behavior
+  follow_ups:
+    - How do you test regional failover?
+    - Data residency constraints?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-002
+  domain: cloud-architecture
+  topic: hybrid-cloud-networking
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    A enterprise requires hybrid connectivity between on-prem DC and three cloud regions. Compare DX, ExpressRoute, and VPN hub designs.
+  expected_signals:
+    - Bandwidth, latency, SLA differences stated
+    - "Routing: transitive vs hub-spoke"
+    - "Security: private endpoints, NACLs, firewall rules"
+    - Operational ownership split
+  red_flags:
+    - Single flat network without segmentation
+    - Ignore egress cost paths
+    - No HA for connectivity
+  follow_ups:
+    - BGP vs static routing tradeoffs?
+    - How handle asymmetric routing?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-003
+  domain: cloud-architecture
+  topic: landing-zone-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    As principal architect, define a multi-account landing zone for 50 product teams. What guardrails are mandatory vs optional?
+  expected_signals:
+    - Account vending, network hub, centralized logging
+    - "IAM baseline: SCPs, break-glass, federation"
+    - "Separation: prod vs non-prod accounts"
+    - Golden path faster than exceptions
+  red_flags:
+    - One shared prod account for all
+    - No SCP discussion
+    - Manual account setup only
+  follow_ups:
+    - How onboard a new region?
+    - FinOps tagging enforcement?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-004
+  domain: cloud-architecture
+  topic: well-architected-reliability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Apply AWS/GCP reliability pillar to a tier-1 payment API. What architectural controls map to each design principle?
+  expected_signals:
+    - "Fault isolation: cells, bulkheads, multi-AZ"
+    - "Recovery: backups, game days, defined RTO"
+    - "Change management: deployments, feature flags"
+    - Metrics tied to SLOs not vanity uptime
+  red_flags:
+    - Single AZ acceptable without justification
+    - No chaos or DR testing
+    - Reliability = autoscaling only
+  follow_ups:
+    - How quantify blast radius per cell?
+    - Error budget policy link?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-005
+  domain: cloud-architecture
+  topic: well-architected-cost
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Finance mandates 25% cloud cost reduction. Which architectural levers matter vs operational tuning?
+  expected_signals:
+    - "Architecture: right service tier, data transfer paths, storage lifecycle"
+    - Commitments vs architecture lock-in
+    - Unit economics per workload class
+    - Trade velocity vs cost explicitly
+  red_flags:
+    - Only shrink instance sizes
+    - Cut observability first
+    - Ignore egress architecture
+  follow_ups:
+    - Spot vs on-demand workload fit?
+    - Chargeback model impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-006
+  domain: cloud-architecture
+  topic: vpc-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design VPC layout for 200 microservices with private-only workloads and controlled egress.
+  expected_signals:
+    - "Subnet tiers: app, data, endpoints"
+    - NAT gateway HA and cost awareness
+    - VPC endpoints to reduce NAT egress
+    - Peering vs TGW for shared services
+  red_flags:
+    - Public subnets for app tier
+    - Flat security group allow-all
+    - Single NAT for prod
+  follow_ups:
+    - IPv6 dual-stack when?
+    - Shared services VPC pattern?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-007
+  domain: cloud-architecture
+  topic: peering-vs-transit-gateway
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    When do you choose VPC peering vs transit gateway vs PrivateLink for service connectivity?
+  expected_signals:
+    - "Peering: low latency, non-transitive limits"
+    - "TGW: hub model, route scale limits"
+    - "PrivateLink: consumer/provider isolation"
+    - Cost and ops complexity compared
+  red_flags:
+    - TGW for everything always
+    - Ignore route table explosion
+    - No security boundary discussion
+  follow_ups:
+    - Cross-region TGW peering costs?
+    - When service mesh replaces PrivateLink?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-008
+  domain: cloud-architecture
+  topic: private-link
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Expose an internal platform API to 30 consumer VPCs via PrivateLink. Design security and onboarding.
+  expected_signals:
+    - Endpoint service with IAM/resource policies
+    - Per-consumer endpoint with audit
+    - DNS private hosted zone integration
+    - Rate limits and abuse monitoring
+  red_flags:
+    - Public ALB with IP allowlist only
+    - Shared endpoint credentials
+    - No consumer isolation
+  follow_ups:
+    - Cross-account endpoint acceptance?
+    - Failover if NLB backend unhealthy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-009
+  domain: cloud-architecture
+  topic: iam-federation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design enterprise SSO federation for 10K engineers across AWS, GCP, and SaaS tools.
+  expected_signals:
+    - "IdP integration: SAML/OIDC patterns"
+    - Role mapping and least privilege
+    - Session duration and MFA policy
+    - Audit and offboarding automation
+  red_flags:
+    - Long-lived access keys per developer
+    - Shared admin role for convenience
+    - No SCIM/offboarding
+  follow_ups:
+    - Break-glass access design?
+    - Multi-cloud identity sprawl?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-010
+  domain: cloud-architecture
+  topic: cross-account-access
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Platform team must assume roles in 200 accounts for deployments. Design secure cross-account access.
+  expected_signals:
+    - Central deployment role with externalId/condition keys
+    - SCP guardrails on trust policies
+    - Session tagging for audit
+    - Rotation and no long-lived keys
+  red_flags:
+    - Wildcard trust on */*
+    - Shared deployment user keys
+    - No session audit
+  follow_ups:
+    - GitHub OIDC vs static roles?
+    - Blast radius if pipeline compromised?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-011
+  domain: cloud-architecture
+  topic: organization-policy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Which SCPs would you enforce org-wide vs leave to account owners? Give examples and rationale.
+  expected_signals:
+    - "Deny: unencrypted storage, public S3, root API keys"
+    - Region allowlist for data residency
+    - Exception process with ADR
+    - SCP ≠ IAM—layered model
+  red_flags:
+    - SCP replaces all IAM
+    - No exceptions ever
+    - Deny everything approach
+  follow_ups:
+    - How test SCP blast radius?
+    - Delegated admin for security team?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-012
+  domain: cloud-architecture
+  topic: tag-governance
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Implement mandatory tagging for cost allocation and security classification at scale.
+  expected_signals:
+    - Tag policies / config rules with enforcement
+    - Default tags at provisioning
+    - Retrofit automation for legacy
+    - Dashboards require tag completeness
+  red_flags:
+    - Manual tagging hope
+    - Tags optional for prod
+    - No remediation automation
+  follow_ups:
+    - Tag inheritance for K8s?
+    - Conflict with auto-scaling tags?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-013
+  domain: cloud-architecture
+  topic: finops-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    How does architecture enable FinOps—not just dashboards?
+  expected_signals:
+    - Architectural choices visible in unit cost
+    - Shared vs dedicated resource models
+    - Data lifecycle tiers (hot/warm/cold)
+    - Product-aware capacity planning
+  red_flags:
+    - FinOps = finance team only
+    - Architecture ignores cost until crisis
+    - No per-tenant attribution
+  follow_ups:
+    - Real-time cost anomaly alerts?
+    - Reserved capacity strategy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-014
+  domain: cloud-architecture
+  topic: reserved-capacity
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Decide reserved instances vs savings plans vs spot for a mixed workload fleet.
+  expected_signals:
+    - Baseline on commitments; burst on spot
+    - "Risk: spot interruption handling"
+    - Coverage metrics and review cadence
+    - Architect for replaceable nodes
+  red_flags:
+    - 100% reserved without utilization analysis
+    - Spot for stateful primary DB
+    - No interruption tolerance design
+  follow_ups:
+    - Graviton migration impact?
+    - Cross-region commitment flexibility?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-015
+  domain: cloud-architecture
+  topic: spot-instance-strategy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Run 70% of batch compute on spot. How do you architect for interruption?
+  expected_signals:
+    - Checkpointing, work queue redelivery
+    - Diversified instance types and AZs
+    - On-demand fallback pool sizing
+    - SLO for job completion not single node
+  red_flags:
+    - Assume spot never interrupted
+    - Stateful primary on spot
+    - No checkpoint story
+  follow_ups:
+    - Spot placement score usage?
+    - Fleet vs single-instance spot?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-016
+  domain: cloud-architecture
+  topic: autoscaling-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design autoscaling for a latency-sensitive API with cold-start constraints on workers.
+  expected_signals:
+    - Predictive vs reactive signals
+    - Warm pools / pre-warming
+    - Scale-out speed vs cost
+    - Load test validation of scaling policy
+  red_flags:
+    - CPU-only trigger for all tiers
+    - Scale to zero without latency discussion
+    - No max limit causing cost runaway
+  follow_ups:
+    - KEDA custom metrics?
+    - Scheduled scaling for known peaks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-017
+  domain: cloud-architecture
+  topic: lambda-vs-container
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Choose serverless functions vs containers for an event-driven image processing pipeline.
+  expected_signals:
+    - Burst scale, duration limits, concurrency caps
+    - "Container: long jobs, custom runtime, GPU"
+    - Cost model per invocation vs always-on
+    - "Operational model: patching, observability"
+  red_flags:
+    - Lambda for 15min GPU transcode always
+    - Containers without orchestration plan
+    - Ignore concurrency limits
+  follow_ups:
+    - Lambda destination DLQ design?
+    - Fargate vs EKS for middle ground?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-018
+  domain: cloud-architecture
+  topic: serverless-cold-start
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    API Gateway + Lambda p99 latency regresses after idle periods. Mitigations at architecture level?
+  expected_signals:
+    - Provisioned concurrency cost tradeoff
+    - SnapStart / smaller artifacts
+    - "Architecture: async where sync not needed"
+    - Client timeout and retry policy
+  red_flags:
+    - Ignore cold start as unfixable
+    - Always provisioned for all functions
+    - No client-side deadline
+  follow_ups:
+    - VPC-attached Lambda cold start?
+    - Java vs Go runtime impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-019
+  domain: cloud-architecture
+  topic: api-gateway-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design a regional API gateway layer for 500 internal services with auth, rate limits, and observability.
+  expected_signals:
+    - Central vs distributed gateway tradeoffs
+    - JWT validation, mTLS options
+    - Per-tenant rate limits at edge
+    - Standardized access logs and trace propagation
+  red_flags:
+    - Every service public internet
+    - Gateway as single SPOF without HA
+    - No rate limit fairness
+  follow_ups:
+    - GraphQL at gateway vs BFF?
+    - Multi-region gateway failover?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-020
+  domain: cloud-architecture
+  topic: cloudfront-patterns
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Use CloudFront/CDN for dynamic API acceleration globally. What works and what fails?
+  expected_signals:
+    - Cache only safe endpoints; TTL policy
+    - Origin shield, connection pooling
+    - Signed URLs for private content
+    - Stale content and auth at edge
+  red_flags:
+    - Cache all API responses blindly
+    - Ignore cache key design
+    - No origin overload protection
+  follow_ups:
+    - Lambda@Edge security risks?
+    - Dynamic route to nearest region?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-021
+  domain: cloud-architecture
+  topic: waf-edge-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Place WAF at edge for a public API. What rules, logging, and false-positive handling?
+  expected_signals:
+    - Managed rule groups + custom rate limits
+    - Geo blocking vs fraud signals
+    - Log sampling to SIEM
+    - Runbook for rule tuning incidents
+  red_flags:
+    - WAF replaces app security
+    - Block without monitoring false positives
+    - No bot management layer
+  follow_ups:
+    - OWASP CRS tuning process?
+    - WAF vs API gateway auth overlap?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-022
+  domain: cloud-architecture
+  topic: dns-routing-policies
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Choose Route53 routing: latency, geolocation, failover, weighted. Scenario: DR and gradual migration.
+  expected_signals:
+    - Health checks and failover pairs
+    - Weighted for blue/green traffic shift
+    - Latency for global active-active reads
+    - DNS caching affects RTO realism
+  red_flags:
+    - DNS instant global switch
+    - No health check on failover
+    - Ignore client resolver TTL
+  follow_ups:
+    - Alias vs CNAME for apex?
+    - Multi-value answer for load spread?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-023
+  domain: cloud-architecture
+  topic: disaster-recovery-tiers
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Define DR tiers (backup-restore, pilot light, warm standby, active-active) for three workload classes.
+  expected_signals:
+    - RPO/RTO drives tier selection
+    - Cost and ops burden per tier
+    - Automation level per tier
+    - Test frequency requirements
+  red_flags:
+    - Active-active for everything
+    - Backup-only without restore testing
+    - Confuse RPO with RTO
+  follow_ups:
+    - Cross-region backup encryption?
+    - Runbook ownership model?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-024
+  domain: cloud-architecture
+  topic: backup-strategy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design backup strategy for RDS, object storage, and Kubernetes etcd with cross-region requirements.
+  expected_signals:
+    - Backup frequency vs RPO; immutable backups
+    - Restore testing cadence
+    - Cross-region copy encryption keys
+    - Application-consistent vs crash-consistent
+  red_flags:
+    - Snapshots without restore tests
+    - Single-region backups for critical data
+    - No ransomware immutability
+  follow_ups:
+    - PITR window sizing?
+    - Backup cost vs compliance retention?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-025
+  domain: cloud-architecture
+  topic: cross-region-replication
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Replicate object storage cross-region for DR. Consistency, replication lag, and failover read path?
+  expected_signals:
+    - Async replication lag monitoring
+    - "Failover: promote secondary or dual-origin"
+    - List consistency limitations
+    - Lifecycle and versioning for recovery
+  red_flags:
+    - Instant cross-region consistency assumed
+    - No replication lag alerts
+    - Failover without DNS/orchestration
+  follow_ups:
+    - CRR vs dual-write?
+    - Compliance data residency blocks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-026
+  domain: cloud-architecture
+  topic: data-residency
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    EU customers require data never leaves EU. Architect multi-region SaaS with US operations team.
+  expected_signals:
+    - Region-scoped accounts and data stores
+    - Support access via break-glass in-region
+    - Metadata vs primary data separation
+    - Legal review of subprocessors
+  red_flags:
+    - Global shared database
+    - US admin full prod data access default
+    - Ignore metadata leakage
+  follow_ups:
+    - Cross-border analytics?
+    - Customer-specific residency tiers?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-027
+  domain: cloud-architecture
+  topic: sovereignty-controls
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Government workload requires sovereign cloud controls. What architecture changes vs standard public cloud?
+  expected_signals:
+    - Dedicated regions / air-gapped options
+    - Key management sovereignty
+    - Personnel access restrictions
+    - Supply chain and attestation requirements
+  red_flags:
+    - Standard shared tenancy OK
+    - Ignore key escrow laws
+    - Same architecture as consumer SaaS
+  follow_ups:
+    - Confidential computing role?
+    - Audit evidence for regulators?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-028
+  domain: cloud-architecture
+  topic: networking-security-groups
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design security group and NACL strategy for defense in depth without operational paralysis.
+  expected_signals:
+    - "SG: stateful, least privilege per tier"
+    - NACL for subnet-level guardrails
+    - Automation via IaC and policy lint
+    - Documented exceptions with expiry
+  red_flags:
+    - Allow 0.0.0.0/0 on app tier
+    - Manual SG changes in prod
+    - SG as only security layer
+  follow_ups:
+    - SG referencing vs IP lists?
+    - IPv6 security group patterns?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-029
+  domain: cloud-architecture
+  topic: zero-trust-cloud
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Implement zero trust in cloud: no VPN, identity-based access to workloads.
+  expected_signals:
+    - Identity-aware proxy / ZTNA
+    - mTLS or JWT between services
+    - Network segmentation still matters
+    - Device posture where required
+  red_flags:
+    - Zero trust = remove all firewalls
+    - VPN still primary access
+    - Long-lived shared secrets
+  follow_ups:
+    - SPIFFE/SPIRE on cloud?
+    - Admin access without bastion?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-030
+  domain: cloud-architecture
+  topic: service-endpoints
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Reduce NAT costs and improve security using VPC interface and gateway endpoints.
+  expected_signals:
+    - S3/Dynamo gateway endpoints
+    - Interface endpoints for AWS APIs
+    - Private DNS and hybrid DNS forwarders
+    - Endpoint policy least privilege
+  red_flags:
+    - All traffic via NAT for AWS APIs
+    - Open endpoint policies
+    - Ignore endpoint per-AZ cost
+  follow_ups:
+    - On-prem access to endpoints?
+    - Cross-account endpoint sharing?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-031
+  domain: cloud-architecture
+  topic: egress-cost
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Cross-AZ and internet egress costs dominate. Architectural mitigations?
+  expected_signals:
+    - Data locality in schedulers
+    - CDN and edge caching
+    - Compress and batch transfers
+    - Architecture review for chatty cross-region
+  red_flags:
+    - Ignore egress in design
+    - Mirror all data cross-region unnecessarily
+    - No cost attribution
+  follow_ups:
+    - VPC flow logs for egress audit?
+    - Private connectivity to SaaS?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-032
+  domain: cloud-architecture
+  topic: lift-and-shift-vs-modernize
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    200 VMs lift-and-shift vs phased modernization. How do you structure the program?
+  expected_signals:
+    - Wave planning by dependency and risk
+    - Quick wins vs strategic replatform
+    - Parallel run and rollback criteria
+    - Skills and operating model gap
+  red_flags:
+    - Big bang rewrite hidden in migration
+    - Lift-shift forever without plan
+    - No application discovery
+  follow_ups:
+    - Mainframe integration waves?
+    - Migration factory metrics?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-033
+  domain: cloud-architecture
+  topic: cloud-migration-waves
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Sequence migration waves for a portfolio of 80 applications. What goes in wave 1 vs wave 5?
+  expected_signals:
+    - Low dependency, high learning value first
+    - Critical path and data gravity later
+    - Shared platform early
+    - Kill criteria per wave
+  red_flags:
+    - Most critical app first
+    - Random order
+    - No rollback per app
+  follow_ups:
+    - Dependency graph tooling?
+    - Cutover window constraints?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-034
+  domain: cloud-architecture
+  topic: exit-strategy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design cloud exit strategy without building everything portable day one.
+  expected_signals:
+    - Data export contracts and formats
+    - Abstraction at integration boundaries
+    - Open standards where ROI clear
+    - Renewal decision framework
+  red_flags:
+    - Assume never leaving cloud
+    - Proprietary lock-in everywhere
+    - Exit = impossible
+  follow_ups:
+    - Kubernetes as portability layer?
+    - Multi-cloud active failover cost?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-035
+  domain: cloud-architecture
+  topic: vendor-agnostic-abstraction
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Where to abstract cloud APIs vs use native services directly?
+  expected_signals:
+    - "Abstract: commodity (object store interface)"
+    - "Native: differentiated (managed ML, serverless)"
+    - Team skill and ops burden
+    - Exit cost quantified
+  red_flags:
+    - Abstract everything
+    - Native everything without rationale
+    - Abstraction without testing portability
+  follow_ups:
+    - Terraform vs CDK tradeoffs?
+    - Multi-cloud K8s control plane?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-036
+  domain: cloud-architecture
+  topic: managed-vs-self-managed
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Choose managed Kafka vs self-managed on K8s for a 5M msg/sec platform.
+  expected_signals:
+    - Ops burden, expertise, on-call
+    - Feature parity and upgrade path
+    - Cost at scale including engineering
+    - Compliance and networking integration
+  red_flags:
+    - Always managed
+    - Always self-managed for control
+    - Ignore operational toil
+  follow_ups:
+    - MSK vs Confluent Cloud?
+    - Self-managed Strimzi ops?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-037
+  domain: cloud-architecture
+  topic: control-plane-ha
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Cloud control plane outage affects your region. How does application architecture respond?
+  expected_signals:
+    - Regional isolation and graceful degradation
+    - Multi-region failover where justified
+    - Dependency mapping for control plane
+    - Cache critical metadata locally
+  red_flags:
+    - Assume control plane never fails
+    - Single-region hard dependency
+    - No degraded mode UX
+  follow_ups:
+    - EC2 API outage impact?
+    - Cross-region control plane dependency?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-038
+  domain: cloud-architecture
+  topic: regional-isolation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Design regional isolation so one region's failure does not cascade globally.
+  expected_signals:
+    - No shared fate dependencies across regions
+    - Rate limits and circuit breakers on cross-region calls
+    - Regional config and feature flags
+    - Capacity headroom per region
+  red_flags:
+    - Global sync dependency chain
+    - Cross-region DB for all reads
+    - No regional drain playbook
+  follow_ups:
+    - Global load balancer pitfalls?
+    - Data sync backlog on recovery?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-039
+  domain: cloud-architecture
+  topic: blast-radius-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Limit blast radius for a platform outage affecting 100 tenants.
+  expected_signals:
+    - Cell-based architecture
+    - Noisy neighbor quotas
+    - Bulkheads per tenant tier
+    - Incident comms per tenant scope
+  red_flags:
+    - Single shared pool unlimited
+    - No per-tenant circuit breakers
+    - Blast radius undefined
+  follow_ups:
+    - Shuffle sharding tenants?
+    - Enterprise dedicated cells?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-040
+  domain: cloud-architecture
+  topic: cell-based-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Implement cell-based architecture for a global API. Routing, data, and operations model?
+  expected_signals:
+    - Cell = independent stack subset of tenants
+    - Routing layer maps tenant to cell
+    - No cross-cell sync for tenant data
+    - Cell drain and expansion playbook
+  red_flags:
+    - Cells share one database
+    - Random tenant placement forever
+    - No cell health monitoring
+  follow_ups:
+    - Cross-cell admin operations?
+    - Cell size growth limits?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-041
+  domain: cloud-architecture
+  topic: substrate-platform
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Build internal 'substrate' platform abstracting cloud primitives for product teams.
+  expected_signals:
+    - Paved road APIs with guardrails
+    - Self-service with policy enforcement
+    - Versioned platform with deprecation
+    - SLOs for platform itself
+  red_flags:
+    - Leaky abstraction forcing cloud console
+    - Platform team bottleneck on every change
+    - No platform SLO
+  follow_ups:
+    - Platform vs product team boundaries?
+    - Measure golden path adoption?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-042
+  domain: cloud-architecture
+  topic: multi-cloud-failover
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Active failover across AWS and GCP for regulatory reasons. Realistic architecture?
+  expected_signals:
+    - Async replication and manual/automated failover
+    - Data consistency and conflict handling
+    - Dual operational expertise cost
+    - Often DR not load-sharing
+  red_flags:
+    - Seamless active-active multi-cloud writes
+    - Ignore 2x operational burden
+    - Kubernetes alone solves multi-cloud
+  follow_ups:
+    - DNS failover timing?
+    - Portable workload packaging?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-043
+  domain: cloud-architecture
+  topic: cloud-native-identity
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Workload identity for 500 services: IAM roles, workload identity federation, SPIFFE.
+  expected_signals:
+    - No static credentials in workloads
+    - Short-lived tokens and rotation
+    - Trust policy least privilege
+    - Audit identity to action
+  red_flags:
+    - Shared service account keys in repos
+    - Permanent kubeconfig secrets
+    - Identity not in threat model
+  follow_ups:
+    - IRSA vs Pod Identity?
+    - Cross-cloud workload identity?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-044
+  domain: cloud-architecture
+  topic: shared-responsibility
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    Explain shared responsibility model for IaaS vs PaaS vs SaaS. Where does your accountability shift?
+  expected_signals:
+    - Customer owns data, IAM, config at each layer
+    - Provider owns physical, hypervisor (varies)
+    - Misconfig remains customer risk
+    - Compliance attestation scope
+  red_flags:
+    - Cloud provider secures everything
+    - Same model for all service types
+    - Ignore config drift
+  follow_ups:
+    - SOC2 shared evidence?
+    - Container shared model nuances?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: cloud-045
+  domain: cloud-architecture
+  topic: incident-response-cloud
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['aws', 'gcp', 'azure']
+  estimated_minutes: 15
+  question: |
+    SEV1: misconfigured S3 bucket exposed. Cloud-native incident response architecture and process?
+  expected_signals:
+    - Automated public access detection
+    - GuardDuty/Config rules and SIEM
+    - "Containment: policy, credential rotation"
+    - "Forensics: CloudTrail, VPC flow logs"
+  red_flags:
+    - Manual audit quarterly only
+    - No automated detection
+    - Delete bucket without preservation
+  follow_ups:
+    - Customer notification triggers?
+    - Prevent recurrence via SCP?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

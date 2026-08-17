@@ -1,0 +1,1132 @@
+version: 1
+domain: ai-systems
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 40
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: ai-001
+  domain: ai-systems
+  topic: llm-inference-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Design LLM inference platform serving 50K concurrent chat sessions globally.
+  expected_signals:
+    - Model routing and load balancing
+    - KV cache and batching architecture
+    - Regional deployment for latency
+    - Fallback and degradation tiers
+  red_flags:
+    - Single GPU server
+    - No batching discussion
+    - Ignore tail latency
+  follow_ups:
+    - Disaggregated prefill/decode?
+    - Multi-model fleet management?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-002
+  domain: ai-systems
+  topic: gpu-cluster-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Design GPU cluster for training and inference shared fleet.
+  expected_signals:
+    - Separate pools or unified with quotas
+    - "Network: NVLink, RoCE for scale-out"
+    - Job scheduler and preemption
+    - Power and cooling constraints
+  red_flags:
+    - CPU cluster pretend GPU
+    - No network topology plan
+    - Training blocks all inference
+  follow_ups:
+    - MIG partitioning?
+    - Spot GPU for training?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-003
+  domain: ai-systems
+  topic: model-serving-triton
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Triton vs custom serving for multi-model GPU inference.
+  expected_signals:
+    - Dynamic batching in Triton
+    - Model ensemble pipelines
+    - Concurrent model instances
+    - Metrics and model versioning
+  red_flags:
+    - One model one server always
+    - No batching config
+    - Ignore model load time
+  follow_ups:
+    - vLLM vs Triton?
+    - TensorRT-LLM integration?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-004
+  domain: ai-systems
+  topic: batching-dynamic
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Continuous/dynamic batching for variable-length LLM requests.
+  expected_signals:
+    - Batch window tradeoff latency vs throughput
+    - Padding waste minimization
+    - Priority tiers preemption
+    - Monitor batch size distribution
+  red_flags:
+    - Static batch only
+    - Unbounded wait for batch
+    - No priority for paid tier
+  follow_ups:
+    - Iteration-level batching?
+    - Batching across models?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-005
+  domain: ai-systems
+  topic: kv-cache-management
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    KV cache memory dominates LLM serving. Architectural mitigations?
+  expected_signals:
+    - PagedAttention / fragmented cache
+    - Prefix caching shared prompts
+    - Limit max context per tier
+    - Disaggregate KV to CPU/disk tier
+  red_flags:
+    - Ignore KV in capacity plan
+    - Unlimited context all users
+    - No prefix cache for RAG
+  follow_ups:
+    - KV cache quantization?
+    - Multi-turn session affinity?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-006
+  domain: ai-systems
+  topic: quantization-tradeoffs
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Choose INT8/FP8/INT4 quantization for production LLM.
+  expected_signals:
+    - Accuracy eval on domain tasks
+    - Latency and memory wins quantified
+    - Quant-aware training vs PTQ
+    - Rollback to full precision path
+  red_flags:
+    - Quantize without eval
+    - INT4 for all without quality gate
+    - No A/B on quant model
+  follow_ups:
+    - Mixed precision layers?
+    - Quant for embedding model too?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-007
+  domain: ai-systems
+  topic: fine-tuning-platform
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Internal fine-tuning platform for domain adapters. Architecture and governance.
+  expected_signals:
+    - Dataset versioning and consent
+    - Isolated training jobs per tenant
+    - Eval gate before registry promote
+    - GPU quota and cost attribution
+  red_flags:
+    - Fine-tune on prod data no scrub
+    - Shared weights all tenants
+    - No eval before deploy
+  follow_ups:
+    - LoRA vs full fine-tune default?
+    - PEFT storage model?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-008
+  domain: ai-systems
+  topic: rag-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    RAG architecture for enterprise knowledge base with access control.
+  expected_signals:
+    - Chunking and metadata for ACL filter
+    - Hybrid search vector + keyword
+    - Citation in response
+    - Refresh pipeline on doc change
+  red_flags:
+    - Vector search only no ACL
+    - Huge chunks no overlap
+    - No eval retrieval recall
+  follow_ups:
+    - GraphRAG when?
+    - Multi-hop retrieval?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-009
+  domain: ai-systems
+  topic: vector-database-selection
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Choose vector database for 100M embeddings with filtered search.
+  expected_signals:
+    - Filter pre/post tradeoffs
+    - Sharding and replication
+    - Recall vs latency benchmarks
+    - Managed vs self-hosted ops
+  red_flags:
+    - Brute force in Postgres only
+    - No filter on tenant_id
+    - Ignore recall metrics
+  follow_ups:
+    - Pinecone vs pgvector vs Weaviate?
+    - Disk-based vector index?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-010
+  domain: ai-systems
+  topic: embedding-pipeline
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Embedding pipeline at document ingest scale with model upgrades.
+  expected_signals:
+    - Batch embed jobs versioned
+    - Re-embed on model upgrade strategy
+    - Idempotent chunk IDs
+    - Monitor embedding drift
+  red_flags:
+    - Embed on every query
+    - Model upgrade without re-embed plan
+    - Chunks change ID on re-run
+  follow_ups:
+    - Multilingual embeddings?
+    - Embedding cache layer?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-011
+  domain: ai-systems
+  topic: retrieval-quality
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Measure and improve retrieval quality before optimizing generation.
+  expected_signals:
+    - Recall@k on labeled set
+    - MRR and nDCG for ranking
+    - Human eval on sample queries
+    - Separate retrieval from generation bugs
+  red_flags:
+    - Only end-to-end user rating
+    - No golden query set
+    - Tune LLM before retrieval
+  follow_ups:
+    - Synthetic eval data risks?
+    - Online learning from clicks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-012
+  domain: ai-systems
+  topic: agent-orchestration
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Orchestrate multi-step agents with tools across untrusted boundaries.
+  expected_signals:
+    - Planner/worker separation
+    - Tool allowlist per agent tier
+    - Step budget and timeout
+    - Human approval for high risk
+  red_flags:
+    - Agent with all prod credentials
+    - Unbounded tool loops
+    - No audit of tool calls
+  follow_ups:
+    - ReAct vs plan-execute?
+    - Parallel tool calls safety?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-013
+  domain: ai-systems
+  topic: tool-use-safety
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Safe tool use: prevent agent from destructive production actions.
+  expected_signals:
+    - Read-only tools default
+    - Confirmation for mutating ops
+    - Sandbox environment for exploration
+    - Policy engine on tool args
+  red_flags:
+    - Agent DELETE in prod
+    - Tools share admin creds
+    - No argument validation
+  follow_ups:
+    - Capability-based tool tokens?
+    - Simulate before execute?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-014
+  domain: ai-systems
+  topic: prompt-injection-defense
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Defend RAG system against prompt injection via retrieved documents.
+  expected_signals:
+    - Treat retrieved text as untrusted
+    - Input/output classifiers
+    - Delimiter and instruction hierarchy
+    - Monitor anomalous tool triggers
+  red_flags:
+    - Concatenate docs into prompt blindly
+    - Only prompt engineering defense
+    - No logging of attacks
+  follow_ups:
+    - Canary tokens in docs?
+    - Separate LLM for summarization?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-015
+  domain: ai-systems
+  topic: guardrails-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Guardrails layer for toxicity, PII, and policy violations at inference.
+  expected_signals:
+    - Pre and post generation checks
+    - Latency budget for guardrails
+    - Fail closed vs open per tier
+    - Human review queue for edge cases
+  red_flags:
+    - No guardrails for internal only
+    - Guardrails block all latency ignored
+    - Single regex only
+  follow_ups:
+    - LLM-as-judge guardrail?
+    - Regional policy differences?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-016
+  domain: ai-systems
+  topic: eval-framework
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Build eval framework for LLM features before each release.
+  expected_signals:
+    - Golden datasets versioned
+    - Automated regression in CI
+    - Human eval stratified sample
+    - Separate offline vs online metrics
+  red_flags:
+    - Ship without eval
+    - Eval only once at launch
+    - Single accuracy number only
+  follow_ups:
+    - LLM-as-judge bias?
+    - Eval prod traffic sampling?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-017
+  domain: ai-systems
+  topic: offline-vs-online-eval
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Balance offline benchmarks and online A/B for model updates.
+  expected_signals:
+    - Offline gates block bad releases
+    - Online A/B for business metrics
+    - Shadow mode before full rollout
+    - Guardrail metrics in online
+  red_flags:
+    - Online only no offline
+    - Offline benchmark overfit
+    - No shadow traffic
+  follow_ups:
+    - Interleaving experiments?
+    - Multi-armed bandit routing?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-018
+  domain: ai-systems
+  topic: model-registry
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Model registry with lineage, approval, and deployment integration.
+  expected_signals:
+    - Version, metadata, training data ref
+    - Approval workflow tiered
+    - Integration to serving rollout
+    - Deprecated model sunset
+  red_flags:
+    - Models in S3 paths only
+    - No lineage to data
+    - Anyone deploy any model
+  follow_ups:
+    - MLflow vs custom registry?
+    - Registry across regions?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-019
+  domain: ai-systems
+  topic: experiment-tracking
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Experiment tracking at scale without slowing researchers.
+  expected_signals:
+    - Central metadata store
+    - Artifact store for large objects
+    - Compare experiments UI
+    - Retention policy for artifacts
+  red_flags:
+    - No experiment tracking
+    - Artifacts on laptop only
+    - Infinite artifact retention
+  follow_ups:
+    - Autolog vs manual?
+    - Cross-team experiment visibility?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-020
+  domain: ai-systems
+  topic: ab-testing-models
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    A/B test two LLM versions with statistical rigor.
+  expected_signals:
+    - Power analysis for sample size
+    - Stratify by user segment
+    - Guardrail metrics monitored
+    - Sequential testing pitfalls
+  red_flags:
+    - Eyeball two days of metrics
+    - Change multiple variables
+    - Ignore novelty effect
+  follow_ups:
+    - Multi-armed bandit?
+    - A/B for RAG components?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-021
+  domain: ai-systems
+  topic: shadow-deployment-ml
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Shadow deploy new model: architecture for duplicate inference cost control.
+  expected_signals:
+    - Sample fraction shadow traffic
+    - Compare outputs offline metrics
+    - No user impact path
+    - Auto promote criteria
+  red_flags:
+    - 100% shadow doubles cost always
+    - Shadow affects latency
+    - No comparison metrics
+  follow_ups:
+    - Shadow for agents?
+    - Record shadow for training?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-022
+  domain: ai-systems
+  topic: canary-models
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Canary rollout for embedding model change affecting retrieval.
+  expected_signals:
+    - Dual index or dual query path
+    - Compare retrieval metrics canary cohort
+    - Rollback switch
+    - Re-embed backlog job
+  red_flags:
+    - Swap embedding model instantly
+    - No dual index plan
+    - Ignore recall drop
+  follow_ups:
+    - Blue-green vector index?
+    - Canary per tenant?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-023
+  domain: ai-systems
+  topic: drift-detection
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Detect data and concept drift for ML models in production.
+  expected_signals:
+    - Monitor input distribution
+    - Performance drift on labeled slice
+    - Alert thresholds tuned
+    - Retrain trigger policy
+  red_flags:
+    - Retrain on calendar only
+    - No input logging
+    - Drift alert without action
+  follow_ups:
+    - Evidently vs custom?
+    - Drift for LLM outputs?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-024
+  domain: ai-systems
+  topic: feedback-loop-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    User feedback (thumbs down) improves models without bias amplification.
+  expected_signals:
+    - Feedback linked to trace/session
+    - Human review before training
+    - Bias check on feedback cohort
+    - Separate toxic feedback handling
+  red_flags:
+    - Auto-train on all thumbs down
+    - Feedback without context stored
+    - Ignore spam feedback
+  follow_ups:
+    - Active learning loop?
+    - Feedback for retrieval vs generation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-025
+  domain: ai-systems
+  topic: human-in-the-loop
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Human-in-the-loop for high-stakes agent workflows.
+  expected_signals:
+    - Queue for human approval
+    - SLA for human response
+    - Audit trail of overrides
+    - Escalation tiers
+  red_flags:
+    - Human reviews everything
+    - No timeout if human slow
+    - Overrides not logged
+  follow_ups:
+    - HITL UI integration?
+    - Partial automation confidence scores?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-026
+  domain: ai-systems
+  topic: cost-per-inference
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Architect for cost visibility: cost per inference per tenant.
+  expected_signals:
+    - Token counting and GPU time attribution
+    - Cache hit rate in cost model
+    - Budget caps per tenant
+    - Showback dashboards
+  red_flags:
+    - No cost attribution
+    - Optimize latency only
+    - Unlimited inference per tenant
+  follow_ups:
+    - Reserved GPU vs on-demand?
+    - Semantic cache ROI?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-027
+  domain: ai-systems
+  topic: multi-model-routing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Route queries to small vs large model based on complexity.
+  expected_signals:
+    - Router model or heuristics
+    - Fallback upscale on low confidence
+    - Monitor router accuracy
+    - Cost vs quality tradeoff explicit
+  red_flags:
+    - Large model for all queries
+    - Router without eval
+    - No fallback path
+  follow_ups:
+    - Cascade routing?
+    - Router fine-tuning?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-028
+  domain: ai-systems
+  topic: fallback-degradation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Degradation ladder when GPU pool exhausted or model unavailable.
+  expected_signals:
+    - Smaller model tier
+    - Cached response for common queries
+    - Graceful text-only mode
+    - Queue with ETA honest UX
+  red_flags:
+    - Hard fail 500
+    - Infinite queue no message
+    - Cross-provider failover no data policy
+  follow_ups:
+    - Regional failover models?
+    - CPU inference fallback?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-029
+  domain: ai-systems
+  topic: latency-sla-llm
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Meet p99 < 2s for streaming chat with 128K context users.
+  expected_signals:
+    - Streaming tokens early
+    - Context truncation policy
+    - Speculative decoding
+    - Regional edge routing
+  red_flags:
+    - Wait full response
+    - No context limit
+    - Ignore prefill latency
+  follow_ups:
+    - TTFT vs TPOT SLO?
+    - Adaptive context pruning?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-030
+  domain: ai-systems
+  topic: streaming-tokens
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Streaming token delivery architecture through API gateway to client.
+  expected_signals:
+    - SSE or WebSocket end-to-end
+    - Backpressure on slow clients
+    - Cancel propagation upstream
+    - Billing on completed streams
+  red_flags:
+    - Buffer full response at gateway
+    - No cancel on client disconnect
+    - Gateway timeout kills long streams
+  follow_ups:
+    - gRPC streaming to HTTP?
+    - Reconnect mid-stream?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-031
+  domain: ai-systems
+  topic: multi-modal-serving
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Serve vision-language model with image upload and text.
+  expected_signals:
+    - Image preprocess pipeline GPU
+    - Size limits and malware scan
+    - Separate image encoder cache
+    - Latency budget per modality
+  red_flags:
+    - Unlimited image size
+    - Sync encode on every identical image
+    - No content safety on images
+  follow_ups:
+    - Batch image encode?
+    - Multi-modal agent tools?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-032
+  domain: ai-systems
+  topic: edge-inference
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Edge inference for on-device vs cloud hybrid architecture.
+  expected_signals:
+    - Model size constraints on device
+    - Sync and update model OTA
+    - Privacy benefits local
+    - Fallback cloud for hard queries
+  red_flags:
+    - All cloud ignoring privacy
+    - Huge model on phone
+    - No model update strategy
+  follow_ups:
+    - Federated inference?
+    - Split inference across edge/cloud?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-033
+  domain: ai-systems
+  topic: federated-learning-scope
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    When is federated learning appropriate vs centralized training?
+  expected_signals:
+    - Data cannot leave device/regulation
+    - High communication rounds cost
+    - Non-IID data challenges
+    - Centralized usually simpler
+  red_flags:
+    - Federated for everything
+    - Ignore convergence issues
+    - No secure aggregation
+  follow_ups:
+    - Cross-device FL at scale?
+    - FL vs synthetic data?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-034
+  domain: ai-systems
+  topic: training-data-governance
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Governance for training data: licenses, consent, and deletion.
+  expected_signals:
+    - Dataset catalog with license
+    - Consent flags per record
+    - Delete propagates to trained model retrain?
+    - PII scrub before training
+  red_flags:
+    - Scrape web ignore license
+    - No deletion from trained weights
+    - Customer data in base model
+  follow_ups:
+    - Synthetic data licensing?
+    - DMCA takedown process?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-035
+  domain: ai-systems
+  topic: synthetic-data-risks
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Risks of training on synthetic LLM-generated data.
+  expected_signals:
+    - Model collapse risk
+    - Quality and diversity monitoring
+    - Watermark detection limits
+    - Hybrid real+synthetic ratio
+  red_flags:
+    - 100% synthetic cheaper
+    - Ignore collapse research
+    - No quality filter
+  follow_ups:
+    - Synthetic for rare classes?
+    - Legal IP on synthetic?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-036
+  domain: ai-systems
+  topic: ip-licensing-models
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    IP and licensing when fine-tuning on customer and third-party data.
+  expected_signals:
+    - Customer contract defines model ownership
+    - Third-party data license audit
+    - Open model license compliance
+    - Output IP policy
+  red_flags:
+    - Assume all outputs owned by vendor
+    - Ignore GPL in training stack
+    - No customer DPAs
+  follow_ups:
+    - Indemnification clauses?
+    - Open weights commercial use?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-037
+  domain: ai-systems
+  topic: responsible-ai-tiers
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Risk-tier framework for AI use cases before production.
+  expected_signals:
+    - Tier defines eval, human review, logging
+    - "High tier: financial, medical, legal"
+    - Documentation for regulators
+    - Kill switch per tier
+  red_flags:
+    - Same process all use cases
+    - No tier for internal bots
+    - Ship high tier without legal
+  follow_ups:
+    - EU AI Act mapping?
+    - Tier downgrade process?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-038
+  domain: ai-systems
+  topic: observability-llm
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Observability for LLM: traces, prompts, costs, and quality scores.
+  expected_signals:
+    - Trace per request with spans tools/retrieval
+    - Prompt/response logging policy
+    - Online quality scorer
+    - Cost per trace
+  red_flags:
+    - Log full prompts PII always
+    - No tool span visibility
+    - Metrics only token count
+  follow_ups:
+    - OpenTelemetry gen AI?
+    - Sampling sensitive traces?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-039
+  domain: ai-systems
+  topic: token-budget-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Enforce per-user and per-tenant token budgets at platform level.
+  expected_signals:
+    - Pre-check budget before inference
+    - Soft vs hard limits
+    - Burst allowance tiered
+    - Alert customer near limit
+  red_flags:
+    - Post-hoc billing only
+    - Race allows overspend
+    - Same budget all tiers
+  follow_ups:
+    - Token pool rollover?
+    - Budget for agents multi-step?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ai-040
+  domain: ai-systems
+  topic: ai-platform-multi-tenant
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['openai', 'anthropic', 'google']
+  estimated_minutes: 15
+  question: |
+    Multi-tenant AI platform: isolation for models, data, and GPUs.
+  expected_signals:
+    - Namespace isolation K8s
+    - Encrypted tenant data paths
+    - GPU quota per tenant
+    - No cross-tenant cache leakage
+  red_flags:
+    - Shared prompts cache all tenants
+    - Single API key all customers
+    - Tenant data in shared fine-tune
+  follow_ups:
+    - Dedicated GPU for enterprise?
+    - Cross-tenant prompt injection?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

@@ -1,0 +1,15 @@
+flowchart TB
+    subgraph Region["AWS Region"]
+        subgraph AZa["AZ-a"]
+            SvcA[Services]
+        end
+        subgraph AZb["AZ-b"]
+            SvcB[Services]
+        end
+        subgraph AZc["AZ-c"]
+            SvcC[Services]
+        end
+    end
+    ALB[Application Load Balancer] --> SvcA
+    ALB --> SvcB
+    ALB --> SvcC

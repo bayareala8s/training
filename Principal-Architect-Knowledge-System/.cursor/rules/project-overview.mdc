@@ -1,0 +1,25 @@
+---
+description: Overall product purpose and repository conventions
+alwaysApply: true
+---
+
+This repository is a Principal Architect Knowledge System for Senior Principal
+Architect and Distinguished Engineer interview preparation.
+
+Optimize all work for:
+- technical depth
+- production realism
+- explicit tradeoffs
+- principal-level interview relevance
+- accurate distributed-systems reasoning
+- clear diagrams
+- hands-on learning
+- architecture leadership
+
+Before creating new content:
+1. Inspect related existing files.
+2. Reuse the required templates.
+3. Avoid duplicate explanations.
+4. Link related concepts.
+5. Update curriculum and progress metadata.
+6. Add authoritative references.

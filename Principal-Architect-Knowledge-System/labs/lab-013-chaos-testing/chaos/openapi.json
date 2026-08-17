@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Lab 013 — Chaos Testing",
+    "description": "Fault injection and chaos experiment runner with SLO abort gates.",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:8103", "description": "Local Docker / go run --serve" }],
+  "tags": [
+    { "name": "experiments", "description": "Chaos experiments" },
+    { "name": "faults", "description": "Fault injection control" },
+    { "name": "health", "description": "Health and stats" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check and observability stats",
+        "responses": {
+          "200": {
+            "description": "Service healthy",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/experiments/run": {
+      "post": {
+        "tags": ["experiments"],
+        "summary": "Run a chaos experiment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RunExperimentRequest" },
+              "example": {
+                "name": "dep-slow",
+                "fault_type": "latency",
+                "latency_ms": 50,
+                "error_rate": 0,
+                "target": "api-1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Experiment passed" },
+          "409": { "description": "Experiment failed (SLO breach)" }
+        }
+      }
+    },
+    "/v1/faults/enable": {
+      "post": {
+        "tags": ["faults"],
+        "summary": "Enable fault injection",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EnableFaultRequest" },
+              "example": {
+                "fault_type": "latency",
+                "latency_ms": 100,
+                "error_rate": 0,
+                "target": "api-1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Fault enabled" }
+        }
+      }
+    },
+    "/v1/faults/disable": {
+      "post": {
+        "tags": ["faults"],
+        "summary": "Disable fault injection",
+        "responses": {
+          "200": { "description": "Faults disabled" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "stats": { "type": "object" }
+        }
+      },
+      "RunExperimentRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "fault_type": { "type": "string", "enum": ["latency", "error_rate", "dependency_down"] },
+          "latency_ms": { "type": "integer" },
+          "error_rate": { "type": "number" },
+          "target": { "type": "string" },
+          "hypothesis": { "type": "string" },
+          "slo_breach": { "type": "number" }
+        }
+      },
+      "EnableFaultRequest": {
+        "type": "object",
+        "properties": {
+          "fault_type": { "type": "string" },
+          "latency_ms": { "type": "integer" },
+          "error_rate": { "type": "number" },
+          "target": { "type": "string" }
+        }
+      },
+      "Report": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "hypothesis": { "type": "string" },
+          "passed": { "type": "boolean" },
+          "summary": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,688 @@
+version: 1
+domain: architecture-leadership
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 25
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: lead-001
+  domain: architecture-leadership
+  topic: technical-strategy
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    How would you draft a three-year technical strategy for a platform team supporting 30 product squads?
+  expected_signals:
+    - Vision pillars tied to business outcomes
+    - Phased roadmap with explicit non-goals
+    - Metrics for adoption and toil reduction
+    - Risk register and dependencies
+  red_flags:
+    - Technology laundry list
+    - No stakeholder alignment plan
+  follow_ups:
+    - How handle competing executive priorities?
+    - What if strategy ignored after publish?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-002
+  domain: architecture-leadership
+  topic: build-vs-buy
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    A product team wants to build a custom stream processor instead of using managed Kafka. How do you decide?
+  expected_signals:
+    - "Decision criteria: differentiation, cost, team skill, time-to-market"
+    - Total cost of ownership including on-call
+    - Exit strategy and portability
+    - Pilot before commit
+  red_flags:
+    - Always build for control
+    - Always buy without context
+  follow_ups:
+    - What ADR would you require?
+    - How measure success at 6 months?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-003
+  domain: architecture-leadership
+  topic: adr-governance
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Teams bypass ADRs and deploy inconsistent patterns. How do you improve governance without slowing delivery?
+  expected_signals:
+    - Golden paths faster than custom
+    - Guardrails not gates for common cases
+    - Exception process with principals
+    - Measure compliance via catalog/lint
+  red_flags:
+    - Mandate committee approval all
+    - Ignore problem
+  follow_ups:
+    - Architecture review board scope?
+    - How handle legacy exceptions?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-004
+  domain: architecture-leadership
+  topic: executive-communication
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    CEO asks for one-page recommendation: migrate monolith vs strangle. You have 24 hours.
+  expected_signals:
+    - Options with tradeoffs and recommendation
+    - Cost, risk, timeline ranges
+    - Clear ask/decision needed
+    - No jargon; business impact first
+  red_flags:
+    - 50-page technical doc
+    - Single option without alternatives
+  follow_ups:
+    - What if CEO picks worse option?
+    - How present uncertainty?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-005
+  domain: architecture-leadership
+  topic: influencing-without-authority
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Three EMs resist adopting your API platform. What is your influence plan?
+  expected_signals:
+    - Discover pain via interviews
+    - Pilot with willing team; publish metrics
+    - Executive sponsor for enterprise deals
+    - Office hours not mandates first
+  red_flags:
+    - Top-down mandate day one
+    - Dismiss concerns
+  follow_ups:
+    - What if pilot fails?
+    - How handle public dissent in staff meeting?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-006
+  domain: architecture-leadership
+  topic: incident-leadership
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    SEV1 outage during your architecture migration. How do you lead technically and organizationally?
+  expected_signals:
+    - Stabilize first; rollback/feature flag
+    - Clear incident commander role
+    - Customer communication path
+    - Blameless postmortem with actions
+  red_flags:
+    - Debug quietly alone
+    - Blame vendor/team publicly
+  follow_ups:
+    - When escalate to exec?
+    - How prevent recurrence architecturally?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-007
+  domain: architecture-leadership
+  topic: postmortem-culture
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Postmortems produce actions never completed. How do you fix the system?
+  expected_signals:
+    - Action owners and due dates tracked
+    - SLO/error budget linkage
+    - Review in staff meetings
+    - Limit action count per incident
+  red_flags:
+    - More process documents only
+    - Punitive postmortems
+  follow_ups:
+    - How prioritize actions?
+    - External customer-facing postmortem?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-008
+  domain: architecture-leadership
+  topic: platform-adoption
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Developers complain paved road is slower than DIY. Response as principal?
+  expected_signals:
+    - Measure time-to-production metrics
+    - Fix top 3 DX blockers
+    - Co-design with users
+    - Sunset only when golden path wins
+  red_flags:
+    - Ignore feedback
+    - Force migration without improvement
+  follow_ups:
+    - Platform SLO definition?
+    - Funding model for platform team?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-009
+  domain: architecture-leadership
+  topic: conway-alignment
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Org reorg conflicts with desired service boundaries. What do you recommend?
+  expected_signals:
+    - Conway's law explicit
+    - Align teams to desired architecture over time
+    - Interim integration layer if needed
+    - Communicate transition
+  red_flags:
+    - Perfect architecture ignoring org
+    - Big-bang reorg only solution
+  follow_ups:
+    - Reverse Conway maneuver?
+    - Measure cognitive load per team?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-010
+  domain: architecture-leadership
+  topic: cost-finops
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Finance demands 30% cloud cost reduction without killing roadmap. Approach?
+  expected_signals:
+    - Rightsizing, commitments, architecture efficiency
+    - Unit economics per product
+    - Tiered environments policy
+    - Tradeoffs communicated to product
+  red_flags:
+    - Random instance downsizing
+    - Cut observability first
+  follow_ups:
+    - Chargeback/showback?
+    - When accept higher cost for velocity?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-011
+  domain: architecture-leadership
+  topic: security-compliance
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Security wants zero-trust; delivery teams cite velocity risk. Mediate?
+  expected_signals:
+    - Phased rollout with golden path mTLS
+    - Risk-based prioritization
+    - Automated policy as code
+    - Executive risk acceptance documented
+  red_flags:
+    - Security wins everything day 1
+    - Ignore compliance
+  follow_ups:
+    - Break-glass design?
+    - Audit evidence for SOC2?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-012
+  domain: architecture-leadership
+  topic: hiring-bar
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    You interview a strong staff candidate weak on organizational scope. Feedback?
+  expected_signals:
+    - Evidence-based dimensions
+    - Separate level from polish
+    - Growth areas specific
+    - No vague 'not a culture fit'
+  red_flags:
+    - Inflate to principal
+    - Harsh without examples
+  follow_ups:
+    - Bar raiser disagreement?
+    - Calibrate scope questions?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-013
+  domain: architecture-leadership
+  topic: mentorship-scale
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    How do you scale architecture mentorship across 200 engineers?
+  expected_signals:
+    - Office hours, guilds, RFC reviews
+    - Documented patterns and ADR library
+    - Train staff as force multipliers
+    - Avoid principal bottleneck
+  red_flags:
+    - Only you review all designs
+    - No written guidance
+  follow_ups:
+    - Measure mentorship impact?
+    - When say no to review request?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-014
+  domain: architecture-leadership
+  topic: tech-debt
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Product pressures skip debt paydown for 4 quarters. Escalation path?
+  expected_signals:
+    - "Quantify debt interest: incidents, velocity"
+    - Tie to reliability SLO breaches
+    - Negotiate capacity slice
+    - Executive decision record
+  red_flags:
+    - Silent accumulation
+    - All-or-nothing rewrite pitch
+  follow_ups:
+    - Debt register format?
+    - When debt becomes rewrite?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-015
+  domain: architecture-leadership
+  topic: vendor-lockin
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Team chose proprietary managed service with high switching cost. Retrospective and path forward?
+  expected_signals:
+    - Acknowledge tradeoff accepted
+    - Abstraction where ROI clear
+    - Data export contracts
+    - Revisit at renewal
+  red_flags:
+    - Pretend portable
+    - Rip-and-replace immediately
+  follow_ups:
+    - Open standards where?
+    - Negotiate exit clause?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-016
+  domain: architecture-leadership
+  topic: multi-region-program
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Lead a multi-year active-active program across 4 regions. First 90 days?
+  expected_signals:
+    - "Discovery: data classes and RPO/RTO"
+    - Reference architecture and pilot
+    - Team topology and governance
+    - Success metrics and kill criteria
+  red_flags:
+    - Design everything upfront
+    - No pilot
+  follow_ups:
+    - Data residency legal?
+    - Conflict resolution policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-017
+  domain: architecture-leadership
+  topic: ai-governance
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Board asks for AI governance without blocking innovation. Framework?
+  expected_signals:
+    - Risk tiers for use cases
+    - Eval gates before production
+    - Human review for high tier
+    - Audit logs and model catalog
+  red_flags:
+    - Ban all AI
+    - No controls until incident
+  follow_ups:
+    - Open vs closed models?
+    - IP and data leakage policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-018
+  domain: architecture-leadership
+  topic: disagree-commit
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    You lost architecture vote for event-driven rewrite. What do you do?
+  expected_signals:
+    - Document dissent in ADR
+    - Commit to decision; define success metrics
+    - Pre-mortem risks with team
+    - Revisit with data not ego
+  red_flags:
+    - Sabotage implementation
+    - Passive aggressive non-compliance
+  follow_ups:
+    - When reopen decision?
+    - How support team morale?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-019
+  domain: architecture-leadership
+  topic: acquisition-integration
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Acquired startup stack duplicates your platform. Integration strategy?
+  expected_signals:
+    - Customer impact first
+    - Capability mapping
+    - Sunset timeline with exceptions
+    - Team retention plan
+  red_flags:
+    - Force immediate decommission
+    - Parallel forever without plan
+  follow_ups:
+    - Data migration waves?
+    - Brand/API compatibility?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-020
+  domain: architecture-leadership
+  topic: roadmap-prioritization
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    How do you prioritize platform roadmap with 50 feature requests?
+  expected_signals:
+    - "Framework: reach, impact, confidence, effort"
+    - Theme alignment to strategy
+    - Transparent scoring
+    - Say no with rationale
+  red_flags:
+    - Loudest voice wins
+    - Everything P0
+  follow_ups:
+    - Customer advisory input?
+    - Revisit quarterly how?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-021
+  domain: architecture-leadership
+  topic: sla-negotiation
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Sales sold 99.99% SLA your architecture cannot meet. Response?
+  expected_signals:
+    - Honest gap analysis
+    - Remediation cost/timeline
+    - Contract renegotiation or guardrails
+    - Error budget and ops investment
+  red_flags:
+    - Promise anyway
+    - Blame sales only
+  follow_ups:
+    - Tiered SLAs?
+    - Penalty exposure quantified?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-022
+  domain: architecture-leadership
+  topic: legacy-modernization
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Present strangler fig plan for 20-year mainframe integration to skeptical COO.
+  expected_signals:
+    - Incremental value milestones
+    - Risk reduction per phase
+    - Cost compared to big bang
+    - Operational continuity
+  red_flags:
+    - Technical detail heavy
+    - No business milestones
+  follow_ups:
+    - First slice choice?
+    - Rollback per phase?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-023
+  domain: architecture-leadership
+  topic: diversity-inclusion
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Interview loop lacks diverse perspectives. Change as hiring manager partner?
+  expected_signals:
+    - Structured rubrics reduce bias
+    - Diverse interview panel
+    - Work sample over trivia
+    - Calibration sessions
+  red_flags:
+    - Lower bar for diversity
+    - Ignore pipeline problem
+  follow_ups:
+    - Sponsorship programs?
+    - Measure panel composition?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-024
+  domain: architecture-leadership
+  topic: open-source-strategy
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Engineers want to open-source internal tool. Decision framework?
+  expected_signals:
+    - Strategic differentiation check
+    - License and patent review
+    - Maintenance commitment
+    - Security scrub
+  red_flags:
+    - Open source everything
+    - Block all OSS
+  follow_ups:
+    - Foundation vs internal?
+    - Community governance?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.
+- id: lead-025
+  domain: architecture-leadership
+  topic: principal-scope
+  difficulty: principal
+  question_type: behavioral-leadership
+  company_patterns: ['amazon', 'microsoft', 'google']
+  estimated_minutes: 20
+  question: |
+    Describe how principal scope differs from staff in your last major program.
+  expected_signals:
+    - Multi-team/org impact
+    - Personal 'I' decisions with evidence
+    - Metrics and lessons
+    - Reflection on what you'd change
+  red_flags:
+    - Only technical depth
+    - Team-level scope only
+    - No metrics
+  follow_ups:
+    - What would distinguished add?
+    - How handle failure story?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Situation → constraints → actions (I) → measurable outcome → lessons → principal scope reflection.

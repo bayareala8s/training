@@ -1,0 +1,463 @@
+import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
+
+const sidebars: SidebarsConfig = {
+  startHere: [
+    {
+      type: 'category',
+      label: 'Start Here',
+      collapsed: false,
+      items: [
+        'start-here/welcome',
+        'start-here/how-to-use-this-system',
+        'start-here/curriculum-overview',
+        'start-here/12-week-learning-path',
+        'start-here/weekly-study-routine',
+        'start-here/interview-readiness',
+        'start-here/real-world-interview-prep',
+        'start-here/coding-preparation',
+        'start-here/aws-deployment',
+      ],
+    },
+  ],
+  curriculum: [
+    {
+      type: 'category',
+      label: 'Foundations',
+      collapsed: false,
+      items: [
+        {
+          type: 'category',
+          label: 'Computer Architecture',
+          link: { type: 'doc', id: 'computer-architecture/overview' },
+          items: [
+            'computer-architecture/cpu-and-memory-fundamentals',
+            'computer-architecture/caches-and-cache-coherence',
+            'computer-architecture/memory-ordering-and-concurrency',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Operating Systems',
+          link: { type: 'doc', id: 'operating-systems/overview' },
+          items: [
+            'operating-systems/processes-threads-and-scheduling',
+            'operating-systems/virtual-memory-and-io',
+            'operating-systems/kernel-networking-and-io-uring',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Networking',
+          link: { type: 'doc', id: 'networking/overview' },
+          items: [
+            'networking/tcp-ip-fundamentals',
+            'networking/routing-load-balancing-and-congestion',
+            'networking/http-tls-and-quic',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Distributed Systems Foundations',
+          link: { type: 'doc', id: 'distributed-systems-foundations/overview' },
+          items: [
+            'distributed-systems-foundations/what-is-a-distributed-system',
+            'distributed-systems-foundations/partial-failure',
+            'distributed-systems-foundations/safety-and-liveness',
+            'distributed-systems-foundations/distributed-system-models',
+            'distributed-systems-foundations/failure-detectors',
+            'distributed-systems-foundations/idempotency',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Core Distributed Systems',
+      items: [
+        {
+          type: 'category',
+          label: 'Time, Ordering, and Coordination',
+          link: { type: 'doc', id: 'time-ordering-and-coordination/overview' },
+          items: [
+            'time-ordering-and-coordination/physical-and-logical-time',
+            'time-ordering-and-coordination/lamport-clocks',
+            'time-ordering-and-coordination/vector-clocks',
+            'time-ordering-and-coordination/ordering-of-events',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Consensus',
+          link: { type: 'doc', id: 'consensus/overview' },
+          items: [
+            'consensus/consensus-problem',
+            'consensus/flp-impossibility',
+            'consensus/leader-election',
+            'consensus/paxos',
+            'consensus/multi-paxos',
+            'consensus/raft',
+            'consensus/viewstamped-replication',
+            'consensus/zab',
+            'consensus/membership-changes',
+            'consensus/distributed-leases',
+            'consensus/fencing-tokens',
+            'consensus/zookeeper',
+            'consensus/etcd',
+            'consensus/consul',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Replication',
+          link: { type: 'doc', id: 'replication/overview' },
+          items: [
+            'replication/primary-secondary-replication',
+            'replication/multi-leader-replication',
+            'replication/leaderless-replication',
+            'replication/conflict-resolution',
+            'replication/crdts',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Consistency Models',
+          link: { type: 'doc', id: 'consistency/overview' },
+          items: [
+            'consistency/cap-theorem',
+            'consistency/pacelc',
+            'consistency/linearizability',
+            'consistency/sequential-consistency',
+            'consistency/causal-consistency',
+            'consistency/eventual-consistency',
+            'consistency/session-guarantees',
+            'consistency/quorum-systems',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Transactions',
+          link: { type: 'doc', id: 'transactions/overview' },
+          items: [
+            'transactions/acid-and-isolation',
+            'transactions/mvcc',
+            'transactions/two-phase-commit',
+            'transactions/sagas',
+            'transactions/transactional-outbox',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Data Systems',
+      items: [
+        {
+          type: 'category',
+          label: 'Storage Engines',
+          link: { type: 'doc', id: 'storage-engines/overview' },
+          items: [
+            'storage-engines/storage-engine-fundamentals',
+            'storage-engines/b-trees',
+            'storage-engines/lsm-trees',
+            'storage-engines/write-ahead-log',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Distributed Databases',
+          link: { type: 'doc', id: 'distributed-databases/overview' },
+          items: [
+            'distributed-databases/amazon-dynamo',
+            'distributed-databases/dynamodb',
+            'distributed-databases/apache-cassandra',
+            'distributed-databases/google-spanner',
+            'distributed-databases/cockroachdb-architecture',
+            'distributed-databases/mongodb-architecture',
+            'distributed-databases/snowflake-architecture',
+            'distributed-databases/apache-kafka',
+            'distributed-databases/redis',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Messaging and Streaming',
+          link: { type: 'doc', id: 'messaging-and-streaming/overview' },
+          items: [
+            'messaging-and-streaming/message-delivery-semantics',
+            'messaging-and-streaming/kafka-architecture',
+            'messaging-and-streaming/event-driven-architecture',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Caching',
+          link: { type: 'doc', id: 'caching/overview' },
+          items: [
+            'caching/caching-fundamentals',
+            'caching/cache-invalidation',
+            'caching/distributed-caching',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Production Architecture',
+      items: [
+        {
+          type: 'category',
+          label: 'Microservices',
+          link: { type: 'doc', id: 'microservices/overview' },
+          items: [
+            'microservices/service-decomposition-and-ddd',
+            'microservices/resilience-patterns',
+            'microservices/service-mesh-and-sidecars',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'API and Integration Architecture',
+          link: { type: 'doc', id: 'api-and-integration-architecture/overview' },
+          items: [
+            'api-and-integration-architecture/rest-grpc-and-graphql',
+            'api-and-integration-architecture/api-versioning-and-evolution',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Cloud Architecture',
+          link: { type: 'doc', id: 'cloud-architecture/overview' },
+          items: [
+            'cloud-architecture/aws-fundamentals',
+            'cloud-architecture/multi-region-architecture',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Kubernetes and Platform Engineering',
+          link: { type: 'doc', id: 'kubernetes-and-platform-engineering/overview' },
+          items: [
+            'kubernetes-and-platform-engineering/kubernetes-architecture',
+            'kubernetes-and-platform-engineering/platform-engineering-and-gitops',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Reliability and Resilience',
+          link: { type: 'doc', id: 'reliability-and-resilience/overview' },
+          items: [
+            'reliability-and-resilience/slo-sli-error-budgets',
+            'reliability-and-resilience/disaster-recovery-and-multi-region',
+            'reliability-and-resilience/chaos-engineering',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Observability',
+          link: { type: 'doc', id: 'observability/overview' },
+          items: [
+            'observability/observability-fundamentals',
+            'observability/distributed-tracing',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Security Architecture',
+          link: { type: 'doc', id: 'security/overview' },
+          items: [
+            'security/security-architecture-fundamentals',
+            'security/zero-trust-architecture',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Data Platforms & AI',
+      items: [
+        {
+          type: 'category',
+          label: 'Data Platforms',
+          link: { type: 'doc', id: 'data-platforms/overview' },
+          items: [
+            'data-platforms/data-lakehouse-architecture',
+            'data-platforms/stream-and-batch-processing',
+            'data-platforms/data-governance-and-lineage',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'AI Distributed Systems',
+          link: { type: 'doc', id: 'ai-distributed-systems/overview' },
+          items: [
+            'ai-distributed-systems/distributed-training-and-inference',
+            'ai-distributed-systems/llm-serving-and-model-gateways',
+            'ai-distributed-systems/rag-architecture',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Agentic AI Architecture',
+          link: { type: 'doc', id: 'agentic-ai-architecture/overview' },
+          items: [
+            'agentic-ai-architecture/agent-platform-architecture',
+            'agentic-ai-architecture/agent-governance-and-safety',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'System Design',
+      link: { type: 'doc', id: 'system-design/overview' },
+      items: [
+        'system-design/system-design-methodology',
+        'system-design/url-shortener',
+        'system-design/distributed-rate-limiter',
+        'system-design/notification-platform',
+        'system-design/chat-platform',
+        'system-design/news-feed',
+        'system-design/distributed-cache-design',
+        'system-design/payment-platform',
+        'system-design/video-streaming-platform',
+        'system-design/search-autocomplete',
+        'system-design/file-storage-system',
+        'system-design/dropbox-design',
+        'system-design/global-object-store',
+        'system-design/ride-sharing-platform',
+        'system-design/global-file-transfer-platform',
+        'system-design/metrics-platform',
+        'system-design/logging-platform',
+        'system-design/workflow-engine',
+        'system-design/kafka-like-event-platform',
+        'system-design/feature-flag-platform',
+        'system-design/api-platform',
+        'system-design/identity-platform',
+        'system-design/secrets-management-platform',
+        'system-design/llm-gateway',
+        'system-design/agentic-ai-platform-design',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Architecture Leadership',
+      items: [
+        {
+          type: 'category',
+          label: 'Architecture Leadership',
+          link: { type: 'doc', id: 'architecture-leadership/overview' },
+          items: [
+            'architecture-leadership/architecture-decision-records',
+            'architecture-leadership/technical-strategy-and-roadmaps',
+            'architecture-leadership/architecture-governance',
+            'architecture-leadership/influencing-without-authority',
+            'architecture-leadership/executive-communication',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Cost and FinOps',
+          link: { type: 'doc', id: 'cost-and-finops/overview' },
+          items: [
+            'cost-and-finops/cloud-cost-optimization',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Production Failures',
+          link: { type: 'doc', id: 'production-failures/overview' },
+          items: [
+            'production-failures/failure-analysis-methodology',
+            'production-failures/postmortem-culture',
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Interview Preparation',
+      collapsed: false,
+      items: [
+        {
+          type: 'category',
+          label: 'Company-Specific Preparation',
+          link: { type: 'doc', id: 'company-specific-preparation/overview' },
+          items: [
+            'company-specific-preparation/adobe',
+            'company-specific-preparation/amazon-aws',
+            'company-specific-preparation/google',
+            'company-specific-preparation/microsoft',
+            'company-specific-preparation/nvidia',
+            'company-specific-preparation/snowflake-databricks',
+            'company-specific-preparation/openai-anthropic',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Behavioral and Leadership',
+          link: { type: 'doc', id: 'behavioral-and-leadership/overview' },
+          items: [
+            'behavioral-and-leadership/star-story-framework',
+            'behavioral-and-leadership/leadership-principles',
+            'behavioral-and-leadership/enterprise-file-transfer-stories',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Mock Interviews',
+          link: { type: 'doc', id: 'mock-interviews/overview' },
+          items: [
+            'mock-interviews/mock-interview-rubric',
+            'mock-interviews/distributed-systems-mock',
+            'mock-interviews/system-design-mock',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Coding Preparation',
+          link: { type: 'doc', id: 'coding-preparation/overview' },
+          items: [
+            'coding-preparation/principal-level-expectations',
+            'coding-preparation/design-adjacent-problems',
+            'coding-preparation/practice-routine',
+            'coding-preparation/coding-mock-interview',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Real-World Scenarios',
+          link: { type: 'doc', id: 'real-world-scenarios/overview' },
+          items: [
+            'real-world-scenarios/stripe-payment-idempotency',
+            'real-world-scenarios/netflix-cascading-failure',
+            'real-world-scenarios/shopify-transactional-outbox',
+            'real-world-scenarios/amazon-dynamodb-eventual-consistency',
+            'real-world-scenarios/uber-ride-matching',
+            'real-world-scenarios/slack-message-delivery',
+            'real-world-scenarios/google-spanner-global-consistency',
+            'real-world-scenarios/airbnb-distributed-rate-limiting',
+            'real-world-scenarios/dropbox-file-sync-conflicts',
+            'real-world-scenarios/meta-news-feed-design',
+            'real-world-scenarios/aws-s3-multi-region-dr',
+            'real-world-scenarios/openai-llm-gateway',
+          ],
+        },
+      ],
+    },
+  ],
+  reference: [
+    {
+      type: 'category',
+      label: 'Reference',
+      items: [
+        'reference/glossary',
+        'reference/decision-frameworks',
+        'reference/reading-list',
+        'reference/real-world-scenario-index',
+        'reference/coding-preparation-index',
+      ],
+    },
+  ],
+};
+
+export default sidebars;

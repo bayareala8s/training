@@ -1,0 +1,117 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Lab 004 — Replicated Key-Value Store",
+    "description": "Sharded replicated KV with quorum reads/writes (N=3, R=2, W=2) and read repair.",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:8095", "description": "Local Docker / go run --serve" }],
+  "tags": [
+    { "name": "keys", "description": "Key-value operations" },
+    { "name": "chaos", "description": "Failure injection" },
+    { "name": "health", "description": "Health and stats" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check and cluster stats",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    },
+    "/v1/keys/{key}": {
+      "put": {
+        "tags": ["keys"],
+        "summary": "Write key to W replicas on routed shard",
+        "parameters": [
+          { "name": "key", "in": "path", "required": true, "schema": { "type": "string", "example": "user:42" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PutRequest" },
+              "example": { "value": "alice" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Written with version token" },
+          "503": { "description": "Quorum unavailable" }
+        }
+      },
+      "get": {
+        "tags": ["keys"],
+        "summary": "Quorum read (highest version)",
+        "parameters": [
+          { "name": "key", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "repair", "in": "query", "schema": { "type": "boolean", "default": false } }
+        ],
+        "responses": {
+          "200": { "description": "Value found" },
+          "404": { "description": "Key not found" }
+        }
+      }
+    },
+    "/v1/keys/{key}/replicas": {
+      "get": {
+        "tags": ["keys"],
+        "summary": "Inspect per-replica versions for a key",
+        "parameters": [
+          { "name": "key", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Replica view" }
+        }
+      }
+    },
+    "/v1/chaos/replica-down": {
+      "post": {
+        "tags": ["chaos"],
+        "summary": "Mark a replica down for chaos demo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChaosRequest" },
+              "example": { "shard": 0, "replica": 2 }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Replica marked down" }
+        }
+      }
+    },
+    "/v1/chaos/reset": {
+      "post": {
+        "tags": ["chaos"],
+        "summary": "Clear all chaos flags",
+        "responses": {
+          "200": { "description": "Reset" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PutRequest": {
+        "type": "object",
+        "required": ["value"],
+        "properties": {
+          "value": { "type": "string", "example": "alice" }
+        }
+      },
+      "ChaosRequest": {
+        "type": "object",
+        "required": ["shard", "replica"],
+        "properties": {
+          "shard": { "type": "integer", "minimum": 0, "maximum": 2 },
+          "replica": { "type": "integer", "minimum": 0, "maximum": 2 }
+        }
+      }
+    }
+  }
+}

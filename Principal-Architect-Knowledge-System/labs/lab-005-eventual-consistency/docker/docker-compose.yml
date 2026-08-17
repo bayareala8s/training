@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8099:8099"
+    networks:
+      - eventual-net
+
+networks:
+  eventual-net:
+    driver: bridge

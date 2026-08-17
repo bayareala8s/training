@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant C as Client
+    participant P as Proposer
+    participant A1 as Acceptor 1
+    participant A2 as Acceptor 2
+    participant A3 as Acceptor 3
+
+    C->>P: propose value
+    P->>A1: prepare(n)
+    P->>A2: prepare(n)
+    P->>A3: prepare(n)
+    A1-->>P: promise
+    A2-->>P: promise
+    A3-->>P: promise
+    P->>A1: accept(n, v)
+    P->>A2: accept(n, v)
+    P->>A3: accept(n, v)

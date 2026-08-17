@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8091:8081"
+    networks:
+      - idempotent-net
+
+networks:
+  idempotent-net:
+    driver: bridge

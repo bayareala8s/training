@@ -1,0 +1,992 @@
+version: 1
+domain: production-ops
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 35
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: ops-001
+  domain: production-ops
+  topic: deployment-strategies
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Choose deployment strategy for stateful payment service vs stateless API.
+  expected_signals:
+    - "Stateful: careful rollout PDB"
+    - "Stateless: rolling or blue-green"
+    - Database migration coordination
+    - Rollback criteria defined
+  red_flags:
+    - Rolling stateful without PDB
+    - Same strategy all services
+    - No rollback tested
+  follow_ups:
+    - Canary for stateful?
+    - Recreate vs rolling statefulset?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-002
+  domain: production-ops
+  topic: feature-flag-rollout
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Feature flag architecture for gradual rollout and instant kill switch.
+  expected_signals:
+    - Runtime config not redeploy
+    - Percentage and cohort targeting
+    - Flag debt retirement process
+    - Audit flag changes
+  red_flags:
+    - Compile-time flags only
+    - 100 flags never removed
+    - No kill switch tested
+  follow_ups:
+    - OpenFeature standard?
+    - Flag evaluation latency?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-003
+  domain: production-ops
+  topic: canary-analysis
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Automated canary analysis comparing golden signals before promotion.
+  expected_signals:
+    - Compare error rate latency to baseline
+    - Minimum canary duration
+    - Auto rollback on regression
+    - Statistical significance awareness
+  red_flags:
+    - Promote after 5 minutes eyeball
+    - Canary 1% insufficient stats
+    - No auto rollback
+  follow_ups:
+    - Argo Rollouts analysis?
+    - Multi-metric composite health?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-004
+  domain: production-ops
+  topic: rollback-automation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Rollback automation within 2 minutes of bad deploy detection.
+  expected_signals:
+    - Previous image digest pinned
+    - One-click rollback pipeline
+    - DB migration backward compatible
+    - Rollback drill monthly
+  red_flags:
+    - Manual kubectl rollback only
+    - Rollback breaks DB schema
+    - No digest pin redeploy wrong
+  follow_ups:
+    - Git revert vs image rollback?
+    - Rollback during canary?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-005
+  domain: production-ops
+  topic: blue-green-production
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Blue-green production with database schema compatibility requirement.
+  expected_signals:
+    - Expand-contract migrations only
+    - Green preview with prod traffic copy
+    - Switch router not DNS only
+    - Instant switch back blue
+  red_flags:
+    - Blue-green schema breaking
+    - Switch without synthetic validation
+    - Shared writable state both colors
+  follow_ups:
+    - Dual write blue-green?
+    - Green idle cost acceptance?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-006
+  domain: production-ops
+  topic: immutable-infrastructure
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Immutable infrastructure: replace servers not patch. Ops architecture.
+  expected_signals:
+    - Golden AMI / image pipeline
+    - No SSH patch prod
+    - Faster rollback replace
+    - Config via IaC only
+  red_flags:
+    - SSH fix prod servers
+    - Mutable pet servers
+    - Manual snowflake servers
+  follow_ups:
+    - Cattle vs pets at DB?
+    - Image signing verification?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-007
+  domain: production-ops
+  topic: config-management
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Config management: env vars, config maps, and feature flags boundaries.
+  expected_signals:
+    - Static config in IaC
+    - Runtime dynamic in flag service
+    - Secrets never in config maps plain
+    - Config change audit
+  red_flags:
+    - Secrets in env git
+    - Runtime config for static rarely changed
+    - No separation secrets config
+  follow_ups:
+    - 12-factor config?
+    - Config reload without restart?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-008
+  domain: production-ops
+  topic: secret-rotation-ops
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Rotate database credentials without downtime across 200 services.
+  expected_signals:
+    - Dual credential window
+    - Automated rotation Lambda/operator
+    - Connection pool refresh
+    - Monitor auth errors spike
+  red_flags:
+    - Rotate instant single password
+    - Manual quarterly rotation
+    - Services miss rotation fail
+  follow_ups:
+    - Vault dynamic creds?
+    - K8s secret rotation operator?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-009
+  domain: production-ops
+  topic: capacity-planning-ops
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Capacity planning process linking growth forecasts to infrastructure orders.
+  expected_signals:
+    - Lead time for hardware/quota
+    - Headroom for failover and peaks
+    - Quarterly review with product
+    - Load test validates plan
+  red_flags:
+    - Reactive scale only
+    - No forecast product input
+    - Capacity plan no load test
+  follow_ups:
+    - Capacity buffer policy?
+    - FinOps in capacity plan?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-010
+  domain: production-ops
+  topic: incident-management
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Incident management architecture: roles, tools, and severity routing.
+  expected_signals:
+    - IC, comms, ops roles clear
+    - Severity matrix documented
+    - Status page integration
+    - "Tooling: pager, war room, timeline"
+  red_flags:
+    - Everyone fixes no IC
+    - SEV1 no exec comms
+    - No severity definitions
+  follow_ups:
+    - Incident command training?
+    - Customer comms templates?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-011
+  domain: production-ops
+  topic: severity-definition
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Define SEV1-SEV4 with customer impact and response time targets.
+  expected_signals:
+    - "SEV1: major customer impact"
+    - Response and update intervals
+    - Auto-escalation rules
+    - Blameless culture explicit
+  red_flags:
+    - Severity by team annoyance
+    - SEV1 for minor bug
+    - No update SLA
+  follow_ups:
+    - SEV0 definition?
+    - Severity vs priority?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-012
+  domain: production-ops
+  topic: comms-customer-incident
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Customer communication during prolonged SEV1 without root cause.
+  expected_signals:
+    - Regular status updates cadence
+    - Honest scope no false ETA
+    - Status page and support macros
+    - Post-resolution summary
+  red_flags:
+    - Silence until fixed
+    - Misleading all green
+    - Blame customer config
+  follow_ups:
+    - External postmortem publish?
+    - VIP customer direct comms?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-013
+  domain: production-ops
+  topic: postmortem-process
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Postmortem process producing completed actions not shelf documents.
+  expected_signals:
+    - Timeline facts not opinions
+    - 5 whys or fishbone optional
+    - Limited actionable owners
+    - Track in same system as bugs
+  red_flags:
+    - Name blame postmortem
+    - 20 actions none done
+    - No follow-up review
+  follow_ups:
+    - Postmortem within 48h?
+    - Incident review meeting format?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-014
+  domain: production-ops
+  topic: runbook-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Runbook quality standards for on-call at 2am effectiveness.
+  expected_signals:
+    - Symptom-based entry
+    - Verification steps
+    - Rollback explicit
+    - Links to dashboards
+  red_flags:
+    - Wiki essay no steps
+    - Runbook outdated 3 years
+    - Assumes expert knowledge
+  follow_ups:
+    - Executable runbooks?
+    - Runbook drill program?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-015
+  domain: production-ops
+  topic: on-call-rotation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    On-call rotation design: sustainable load and escalation.
+  expected_signals:
+    - Max pages per week target
+    - Follow-the-sun optional
+    - Secondary and manager escalation
+    - Comp time or pay policy
+  red_flags:
+    - Single person always on-call
+    - No secondary
+    - Pager for all alerts
+  follow_ups:
+    - On-call handoff ritual?
+    - Reduce toil before more on-call?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-016
+  domain: production-ops
+  topic: toil-reduction
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Measure and reduce toil for platform SRE team.
+  expected_signals:
+    - Define toil vs engineering
+    - 50% engineering goal
+    - Automate top 5 manual tasks
+    - Track toil hours quarterly
+  red_flags:
+    - Accept manual toil forever
+    - Automate without measuring
+    - Toil on product teams ignored
+  follow_ups:
+    - SRE book principles?
+    - Toil budget per sprint?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-017
+  domain: production-ops
+  topic: automation-platform
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Internal automation platform for safe prod changes self-service.
+  expected_signals:
+    - Guardrails not raw kubectl
+    - Audit all automation actions
+    - RBAC integrated
+    - Rollback built into actions
+  red_flags:
+    - Shared admin scripts
+    - No audit on automation
+    - Self-service without guardrails
+  follow_ups:
+    - Chatops risks?
+    - Temporal for ops workflows?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-018
+  domain: production-ops
+  topic: iac-terraform
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Terraform at scale: module design, state, and blast radius.
+  expected_signals:
+    - Modules versioned
+    - State per env/account
+    - Plan in CI mandatory
+    - Drift detection scheduled
+  red_flags:
+    - Monolithic state all infra
+    - Apply from laptop prod
+    - No module versioning
+  follow_ups:
+    - OpenTofu consideration?
+    - Cross-stack dependencies?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-019
+  domain: production-ops
+  topic: drift-detection-iac
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Detect and remediate IaC drift from console changes.
+  expected_signals:
+    - Scheduled plan drift alerts
+    - Policy deny manual console prod
+    - Reconcile vs alert only
+    - Exception break-glass logged
+  red_flags:
+    - Ignore drift
+    - Auto revert without review
+    - No console audit
+  follow_ups:
+    - Terraform Cloud drift?
+    - Import vs revert decision?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-020
+  domain: production-ops
+  topic: ci-cd-pipeline-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    CI/CD pipeline for 100 services: speed, security gates, and deploy.
+  expected_signals:
+    - Fast feedback unit tests first
+    - Security scan parallel
+    - Deploy promotion stages
+    - Artifact signing
+  red_flags:
+    - 45 min unit tests gate
+    - Skip security scan prod
+    - Deploy on green main only no canary
+  follow_ups:
+    - Dagger vs Jenkins?
+    - Pipeline per service vs template?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-021
+  domain: production-ops
+  topic: trunk-based-development
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Trunk-based development with feature flags vs long-lived branches.
+  expected_signals:
+    - Short-lived branches < 1 day
+    - Flags hide incomplete
+    - Main always releasable
+    - Release branches rare hotfix
+  red_flags:
+    - Month-long feature branches
+    - Main broken often
+    - Flags never removed
+  follow_ups:
+    - Branch by abstraction?
+    - Release train compatibility?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-022
+  domain: production-ops
+  topic: release-train
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Release train weekly with 40 teams. Architecture and coordination.
+  expected_signals:
+    - Fixed cadence predictable
+    - Integration branch or main only
+    - Cherry-pick hotfix process
+    - Miss train criteria
+  red_flags:
+    - Daily forced train all
+    - No hotfix path
+    - Train without integration env
+  follow_ups:
+    - Continuous delivery vs train?
+    - Train captain role?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-023
+  domain: production-ops
+  topic: environment-strategy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Environment strategy: dev, staging, prod parity and cost.
+  expected_signals:
+    - Staging prod-like subset scale
+    - Ephemeral env per PR optional
+    - Prod data never in dev default
+    - Config parity automated check
+  red_flags:
+    - Dev connects prod DB
+    - Staging tiny no parity
+    - 20 permanent staging envs stale
+  follow_ups:
+    - Preview env cost control?
+    - Synthetic data generation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-024
+  domain: production-ops
+  topic: prod-data-in-staging
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Need prod-like data in staging for perf test. Safe architecture?
+  expected_signals:
+    - Synthetic data generation preferred
+    - Masked snapshot refresh
+    - Network isolation staging
+    - Legal approval for real data
+  red_flags:
+    - Copy prod DB weekly unmasked
+    - Perf test in prod
+    - Staging public internet
+  follow_ups:
+    - Tonic/Mimesis tools?
+    - Subset sampling strategy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-025
+  domain: production-ops
+  topic: disaster-recovery-testing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    DR test quarterly without customer impact. Program design.
+  expected_signals:
+    - Isolated failover to DR region
+    - Synthetic traffic validation
+    - Defined success criteria
+    - Document gaps each test
+  red_flags:
+    - DR never tested
+    - Failover prod traffic untested
+    - Test once was enough
+  follow_ups:
+    - Game day vs DR test?
+    - Partial DR service subset?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-026
+  domain: production-ops
+  topic: game-day-ops
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Game day injects AZ failure. Steady state and abort criteria.
+  expected_signals:
+    - "Hypothesis: SLO maintained"
+    - Blast radius containment
+    - Abort if error budget burn excessive
+    - Findings become backlog
+  red_flags:
+    - Game day surprise prod no notice
+    - No abort criteria
+    - Findings not tracked
+  follow_ups:
+    - Customer-impacting game day?
+    - Automated game days?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-027
+  domain: production-ops
+  topic: change-management
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Change management balancing velocity and risk for tier-1 services.
+  expected_signals:
+    - Risk-tiered change process
+    - Standard change pre-approved patterns
+    - Emergency change retroactive review
+    - "Metrics: change failure rate"
+  red_flags:
+    - CAB every deploy
+    - No emergency process
+    - Same process all tiers
+  follow_ups:
+    - DORA change fail rate?
+    - Policy-as-code change gate?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-028
+  domain: production-ops
+  topic: cab-process
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Modern CAB: when is human review still required?
+  expected_signals:
+    - High risk novel changes
+    - Automated standard changes bypass
+    - CAB reviews trends not every ticket
+    - Post-implementation review
+  red_flags:
+    - CAB all teams all changes
+    - No automation pre-approval
+    - CAB blocks Friday deploys only
+  follow_ups:
+    - Virtual CAB async?
+    - CAB metrics effectiveness?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-029
+  domain: production-ops
+  topic: maintenance-windows
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Maintenance windows for unavoidable breaking infra changes.
+  expected_signals:
+    - Communicate early multi-channel
+    - Rollback during window
+    - Minimize window via architecture
+    - After-hours cost tradeoff
+  red_flags:
+    - Silent maintenance Sunday
+    - No rollback in window
+    - Weekly maintenance normalized
+  follow_ups:
+    - Zero-downtime maintenance goal?
+    - Customer maintenance notifications API?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-030
+  domain: production-ops
+  topic: dependency-upgrades
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Upgrade Kubernetes minor version across 20 clusters. Program architecture.
+  expected_signals:
+    - Surge node pools test
+    - Addon compatibility matrix
+    - Phased cluster order
+    - Rollback node pool not downgrade CP
+  red_flags:
+    - Upgrade all clusters one day
+    - Skip addon compatibility
+    - No surge test pool
+  follow_ups:
+    - Auto-upgrade managed?
+    - Skip minor versions policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-031
+  domain: production-ops
+  topic: slo-driven-ops
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    SLO-driven operations prioritization when multiple services degrade.
+  expected_signals:
+    - Prioritize by customer impact SLO
+    - Error budget remaining
+    - Dependency critical path
+    - Communicate tradeoffs
+  red_flags:
+    - Fix loudest internal team first
+    - All SEV2 equal priority
+    - Ignore SLO data
+  follow_ups:
+    - SLO-based incident severity?
+    - Multi-service budget rollup?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-032
+  domain: production-ops
+  topic: capacity-incident-response
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Sudden 5× traffic spike exhausts capacity. Real-time response playbook.
+  expected_signals:
+    - Scale out autoscaling limits
+    - Load shed non-critical
+    - Rate limit at edge
+    - Communicate degradation
+  red_flags:
+    - Hope traffic drops
+    - Scale DB without app scale
+    - No load shed tiers
+  follow_ups:
+    - Pre-warmed capacity?
+    - DDoS vs legitimate spike?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-033
+  domain: production-ops
+  topic: cost-incident-response
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Cost incident: runaway autoscaling doubles bill overnight. Response architecture.
+  expected_signals:
+    - Billing anomaly alert
+    - Kill switch scaling policy
+    - Identify triggering deploy/config
+    - FinOps war room
+  red_flags:
+    - Notice at month end
+    - No spend alerts
+    - Delete resources panic unlabeled
+  follow_ups:
+    - Budget hard caps cloud?
+    - Cost incident postmortem?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-034
+  domain: production-ops
+  topic: vendor-outage-response
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Major cloud region degraded 6 hours. Multi-region architecture response.
+  expected_signals:
+    - Regional drain playbook
+    - Status page dependency comms
+    - Degraded mode features off
+    - Post-incident dependency review
+  red_flags:
+    - Single region no DR
+    - Retry storm into bad region
+    - No customer comms
+  follow_ups:
+    - Chaos test regional failure?
+    - Insurance contractual credits?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ops-035
+  domain: production-ops
+  topic: production-readiness-review
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['sre', 'google', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Production readiness review checklist for new tier-1 service launch.
+  expected_signals:
+    - SLO defined and measured
+    - Runbooks on-call paging tested
+    - Load test and DR plan
+    - Security review tier appropriate
+  red_flags:
+    - Launch without on-call
+    - No load test
+    - SLO aspirational not monitored
+  follow_ups:
+    - PRR vs security review?
+    - Launch gate automated scorecard?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Principal Architect Knowledge System">
+  <defs>
+    <linearGradient id="ks-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1f33"/>
+      <stop offset="55%" stop-color="#12304d"/>
+      <stop offset="100%" stop-color="#0d4a5c"/>
+    </linearGradient>
+    <linearGradient id="ks-page" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0a6d84"/>
+      <stop offset="100%" stop-color="#12a3c4"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#ks-bg)"/>
+
+  <!-- Knowledge graph (connected system) -->
+  <g fill="none" stroke="#0d8fad" stroke-width="9" stroke-linecap="round" opacity="0.95">
+    <line x1="256" y1="198" x2="256" y2="268"/>
+    <line x1="256" y1="198" x2="176" y2="148"/>
+    <line x1="256" y1="198" x2="336" y2="148"/>
+    <line x1="256" y1="198" x2="148" y2="228"/>
+    <line x1="256" y1="198" x2="364" y2="228"/>
+    <line x1="176" y1="148" x2="336" y2="148"/>
+    <line x1="148" y1="228" x2="176" y2="148"/>
+    <line x1="364" y1="228" x2="336" y2="148"/>
+    <line x1="148" y1="228" x2="364" y2="228"/>
+  </g>
+  <g fill="#0d8fad">
+    <circle cx="176" cy="148" r="16"/>
+    <circle cx="336" cy="148" r="16"/>
+    <circle cx="148" cy="228" r="14"/>
+    <circle cx="364" cy="228" r="14"/>
+    <circle cx="256" cy="268" r="14"/>
+  </g>
+  <!-- Core knowledge hub -->
+  <circle cx="256" cy="198" r="22" fill="#c9a227"/>
+  <circle cx="256" cy="198" r="10" fill="#0a1f33"/>
+
+  <!-- Open book (knowledge base) -->
+  <path fill="url(#ks-page)" d="M256 292 L128 412 C128 392 132 340 256 308 Z"/>
+  <path fill="url(#ks-page)" opacity="0.92" d="M256 292 L384 412 C384 392 380 340 256 308 Z"/>
+  <path fill="#c9a227" d="M244 292h24v128c-8-4-16-4-24 0V292z"/>
+  <path fill="#c9a227" d="M168 404h176v14H168z"/>
+  <path fill="#c9a227" d="M236 404h40v20h-40z"/>
+
+  <!-- Page lines (readable knowledge) -->
+  <g stroke="#0a1f33" stroke-width="5" stroke-linecap="round" opacity="0.22">
+    <line x1="168" y1="352" x2="228" y2="332"/>
+    <line x1="176" y1="372" x2="232" y2="356"/>
+    <line x1="284" y1="332" x2="344" y2="352"/>
+    <line x1="280" y1="356" x2="336" y2="372"/>
+  </g>
+</svg>

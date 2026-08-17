@@ -1,0 +1,19 @@
+---
+description: Citation and reference standards
+globs:
+  - "docs/**/*.md"
+  - "case-studies/**/*.md"
+  - "references/**/*"
+alwaysApply: false
+---
+
+Prefer primary sources: academic papers, official documentation, engineering blogs from system authors.
+
+Every substantive chapter must include a References section.
+
+Distinguish between:
+- formal guarantees (from papers or specs)
+- implementation choices (from production systems)
+- anecdotal operational experience
+
+Add entries to references/ YAML files for books, papers, talks, and postmortems.

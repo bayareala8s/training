@@ -1,0 +1,8 @@
+flowchart TB
+    Write[Write] --> WAL[WAL Append]
+    WAL --> Mem[Memtable]
+    Mem -->|flush| L0[SSTable L0]
+    L0 -->|compaction| L1[SSTable L1]
+    Read[Read] --> Mem
+    Read --> Bloom[Bloom Filter]
+    Bloom --> L0

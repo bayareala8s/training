@@ -1,0 +1,185 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Lab 007 — Distributed Locks",
+    "description": "TTL-based locks with monotonic fencing tokens protecting a shared resource.",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:8100", "description": "Local Docker / go run --serve" }],
+  "tags": [
+    { "name": "locks", "description": "Distributed lock acquire/release" },
+    { "name": "fencing", "description": "Fencing token issuance" },
+    { "name": "resource", "description": "Gated resource writes" },
+    { "name": "health", "description": "Health and stats" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check and observability stats",
+        "responses": {
+          "200": {
+            "description": "Service healthy",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/locks/acquire": {
+      "post": {
+        "tags": ["locks"],
+        "summary": "Acquire a distributed lock",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AcquireRequest" },
+              "example": { "resource_id": "blob-1", "ttl_ms": 5000 }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lock acquired",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LockResponse" }
+              }
+            }
+          },
+          "409": { "description": "Lock already held" }
+        }
+      }
+    },
+    "/v1/locks/release": {
+      "post": {
+        "tags": ["locks"],
+        "summary": "Release a distributed lock",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ReleaseRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Lock released" },
+          "409": { "description": "Release failed" }
+        }
+      }
+    },
+    "/v1/fencing/issue": {
+      "post": {
+        "tags": ["fencing"],
+        "summary": "Issue next monotonic fencing token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/IssueFenceRequest" },
+              "example": { "resource_id": "blob-1" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fence token issued",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FenceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/resource/write": {
+      "post": {
+        "tags": ["resource"],
+        "summary": "Write to gated resource with fencing token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WriteRequest" },
+              "example": { "resource_id": "blob-1", "fence_id": 1, "data": "payload" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Write accepted" },
+          "409": { "description": "Stale fence rejected" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "stats": { "type": "object" }
+        }
+      },
+      "AcquireRequest": {
+        "type": "object",
+        "required": ["resource_id"],
+        "properties": {
+          "resource_id": { "type": "string" },
+          "ttl_ms": { "type": "integer" }
+        }
+      },
+      "ReleaseRequest": {
+        "type": "object",
+        "required": ["resource_id", "token"],
+        "properties": {
+          "resource_id": { "type": "string" },
+          "token": { "type": "string" }
+        }
+      },
+      "IssueFenceRequest": {
+        "type": "object",
+        "required": ["resource_id"],
+        "properties": {
+          "resource_id": { "type": "string" }
+        }
+      },
+      "WriteRequest": {
+        "type": "object",
+        "required": ["resource_id", "fence_id"],
+        "properties": {
+          "resource_id": { "type": "string" },
+          "fence_id": { "type": "integer", "format": "int64" },
+          "data": { "type": "string" }
+        }
+      },
+      "LockHandle": {
+        "type": "object",
+        "properties": {
+          "ResourceID": { "type": "string" },
+          "Token": { "type": "string" },
+          "TTLMs": { "type": "integer" }
+        }
+      },
+      "LockResponse": {
+        "type": "object",
+        "properties": {
+          "lock": { "$ref": "#/components/schemas/LockHandle" }
+        }
+      },
+      "FenceResponse": {
+        "type": "object",
+        "properties": {
+          "resource_id": { "type": "string" },
+          "fence_id": { "type": "integer", "format": "int64" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+flowchart TB
+    Client[Client] --> API[API Gateway]
+    API --> Svc[Shortener Service]
+    Svc --> Cache[Cache]
+    Svc --> DB[(Key-Value Store)]
+    Svc --> Counter[Counter Service]
+    DB --> CDN[CDN for redirects]

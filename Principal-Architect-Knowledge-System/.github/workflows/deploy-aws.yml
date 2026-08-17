@@ -1,0 +1,105 @@
+name: Deploy to AWS
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_ci:
+        description: Skip validation (deploy only)
+        required: false
+        default: 'false'
+        type: boolean
+  push:
+    branches: [main, master]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'static/**'
+      - 'sidebars.ts'
+      - 'docusaurus.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+
+concurrency:
+  group: deploy-aws
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.event.inputs.skip_ci != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          pip install pyyaml
+
+      - name: Validate
+        run: npm run validate
+
+      - name: Build
+        run: npm run build:aws
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+
+  deploy:
+    needs: [validate]
+    if: always() && (needs.validate.result == 'success' || needs.validate.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for AWS
+        run: npm run build:aws
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync build/ s3://${{ secrets.S3_BUCKET }}/ \
+            --delete \
+            --cache-control "public,max-age=31536000,immutable" \
+            --exclude "index.html" \
+            --exclude "docs/**/index.html" \
+            --exclude "404.html"
+          aws s3 sync build/ s3://${{ secrets.S3_BUCKET }}/ \
+            --exclude "*" \
+            --include "index.html" \
+            --include "docs/**/index.html" \
+            --include "404.html" \
+            --cache-control "public,max-age=300,must-revalidate"
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"

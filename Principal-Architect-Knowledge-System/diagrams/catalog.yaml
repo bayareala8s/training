@@ -1,0 +1,85 @@
+version: 1
+last_updated: 2026-07-25
+total_embedded_diagrams: 0  # updated by validate script
+categories:
+  distributed-systems:
+    - id: partial-failure-topology
+      file: mermaid/distributed-systems/partial-failure-topology.mmd
+      used_in: docs/04-distributed-systems-foundations/partial-failure.md
+      type: component
+    - id: safety-liveness-taxonomy
+      file: mermaid/distributed-systems/safety-liveness-taxonomy.mmd
+      used_in: docs/04-distributed-systems-foundations/safety-and-liveness.md
+      type: flowchart
+  consensus:
+    - id: raft-states
+      file: mermaid/consensus/raft-states.mmd
+      used_in: docs/06-consensus/raft.md
+      type: stateDiagram
+    - id: raft-log-replication
+      file: mermaid/consensus/raft-log-replication.mmd
+      used_in: docs/06-consensus/raft.md
+      type: sequence
+    - id: paxos-phases
+      file: mermaid/consensus/paxos-phases.mmd
+      used_in: docs/06-consensus/paxos.md
+      type: sequence
+  consistency:
+    - id: consistency-spectrum
+      file: mermaid/consistency/consistency-spectrum.mmd
+      used_in: docs/08-consistency/linearizability.md
+      type: flowchart
+    - id: cap-tradeoff
+      file: mermaid/consistency/cap-tradeoff.mmd
+      used_in: docs/08-consistency/cap-theorem.md
+      type: flowchart
+  replication:
+    - id: primary-secondary
+      file: mermaid/replication/primary-secondary.mmd
+      used_in: docs/07-replication/primary-secondary-replication.md
+      type: component
+    - id: quorum-intersection
+      file: mermaid/replication/quorum-intersection.mmd
+      used_in: docs/08-consistency/quorum-systems.md
+      type: component
+  storage:
+    - id: lsm-write-path
+      file: mermaid/storage/lsm-write-path.mmd
+      used_in: docs/10-storage-engines/lsm-trees.md
+      type: flowchart
+    - id: btree-structure
+      file: mermaid/storage/btree-structure.mmd
+      used_in: docs/10-storage-engines/b-trees.md
+      type: flowchart
+  messaging:
+    - id: kafka-partitions
+      file: mermaid/messaging/kafka-partitions.mmd
+      used_in: docs/12-messaging-and-streaming/kafka-architecture.md
+      type: component
+    - id: delivery-semantics
+      file: mermaid/messaging/delivery-semantics.mmd
+      used_in: docs/12-messaging-and-streaming/message-delivery-semantics.md
+      type: flowchart
+  cloud:
+    - id: aws-multi-az
+      file: mermaid/cloud/aws-multi-az.mmd
+      used_in: docs/16-cloud-architecture/aws-fundamentals.md
+      type: component
+    - id: multi-region-active-active
+      file: mermaid/cloud/multi-region-active-active.mmd
+      used_in: docs/16-cloud-architecture/multi-region-architecture.md
+      type: component
+  system-design:
+    - id: system-design-methodology
+      file: mermaid/system-design/methodology.mmd
+      used_in: docs/24-system-design/system-design-methodology.md
+      type: flowchart
+    - id: url-shortener
+      file: mermaid/system-design/url-shortener.mmd
+      used_in: docs/24-system-design/url-shortener.md
+      type: component
+  reference:
+    - id: curriculum-map
+      file: mermaid/reference/curriculum-map.mmd
+      used_in: docs/00-start-here/welcome.md
+      type: flowchart

@@ -1,0 +1,6 @@
+flowchart TB
+    W[Write Quorum W] --> N1[Node 1]
+    W --> N2[Node 2]
+    R[Read Quorum R] --> N2
+    R --> N3[Node 3]
+    Note[R + W > N guarantees overlap]

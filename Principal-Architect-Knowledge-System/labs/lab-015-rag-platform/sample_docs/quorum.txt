@@ -1,0 +1,1 @@
+Quorum replication requires overlapping read and write sets when using version checks.

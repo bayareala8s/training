@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8097:8097"
+    networks:
+      - clocks-lab
+
+networks:
+  clocks-lab:
+    driver: bridge

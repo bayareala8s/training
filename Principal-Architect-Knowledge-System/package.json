@@ -1,0 +1,71 @@
+{
+  "name": "principal-architect-knowledge-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Principal Architect Knowledge System — interview preparation and distributed systems reference",
+  "author": "Himanshu Bhadra",
+  "license": "MIT",
+  "scripts": {
+    "start": "docusaurus start --host 0.0.0.0 --port 3000",
+    "dev": "npm start",
+    "build": "docusaurus build",
+    "build:aws": "docusaurus build",
+    "build:gh-pages": "GITHUB_PAGES=true docusaurus build",
+    "serve": "docusaurus serve --host 0.0.0.0 --port 3000",
+    "clear": "docusaurus clear",
+    "typecheck": "tsc",
+    "lint": "npm run lint:md && npm run lint:eslint",
+    "lint:md": "markdownlint-cli2 \"docs/**/*.md\" \"case-studies/**/*.md\" \"interview/**/*.md\" \"templates/**/*.md\" \"architecture-decisions/**/*.md\" \"cheat-sheets/**/*.md\" \"*.md\"",
+    "lint:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "format": "prettier --write \"**/*.{md,mdx,ts,tsx,js,jsx,json,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{md,mdx,ts,tsx,js,jsx,json,yml,yaml}\"",
+    "spell": "cspell \"docs/**/*.md\" \"case-studies/**/*.md\" \"interview/**/*.md\" \"*.md\"",
+    "validate": "npm run validate:metadata && npm run validate:links && npm run validate:coverage && npm run validate:diagrams",
+    "validate:diagrams": "python3 scripts/validate_mermaid.py",
+    "validate:metadata": "python3 scripts/validate_frontmatter.py",
+    "validate:links": "python3 scripts/validate_links.py",
+    "validate:coverage": "python3 scripts/check_content_coverage.py",
+    "validate:flashcards": "python3 scripts/build_flashcards.py",
+    "build:flashcards": "python3 scripts/build_flashcards.py",
+    "ci": "npm run lint && npm run spell && npm run validate && npm run typecheck && npm run build"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.7.0",
+    "@docusaurus/preset-classic": "^3.7.0",
+    "@docusaurus/theme-mermaid": "^3.7.0",
+    "@mdx-js/react": "^3.1.0",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@docusaurus/eslint-plugin": "^3.10.2",
+    "@docusaurus/module-type-aliases": "^3.7.0",
+    "@docusaurus/tsconfig": "^3.7.0",
+    "@docusaurus/types": "^3.7.0",
+    "@types/react": "^18.3.18",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "cspell": "^8.17.4",
+    "eslint": "^8.57.1",
+    "markdownlint-cli2": "^0.17.2",
+    "prettier": "^3.5.1",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  }
+}

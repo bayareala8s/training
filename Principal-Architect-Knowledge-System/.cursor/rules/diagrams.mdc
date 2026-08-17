@@ -1,0 +1,19 @@
+---
+description: Diagram creation standards
+globs:
+  - "docs/**/*.md"
+  - "case-studies/**/*.md"
+  - "diagrams/**/*"
+alwaysApply: false
+---
+
+Prefer Mermaid for text-maintainable diagrams.
+
+Every diagram must:
+- have a title
+- name all important components
+- show direction clearly
+- identify failure or trust boundaries when relevant
+- be followed by an explanation
+- avoid unnecessary decoration
+- render successfully in the documentation site

@@ -1,0 +1,23 @@
+---
+description: Hands-on lab standards
+globs:
+  - "labs/**/*"
+alwaysApply: false
+---
+
+Labs must be reproducible and safe.
+
+Each lab requires:
+- README
+- architecture
+- prerequisites
+- setup
+- implementation
+- automated tests
+- observability
+- failure tests
+- cleanup instructions
+- cost warning for cloud resources
+- interview discussion
+
+Never place secrets in source code.

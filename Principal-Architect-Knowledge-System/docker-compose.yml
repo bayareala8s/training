@@ -1,0 +1,4 @@
+# Placeholder for local development services (labs, LocalStack, etc.)
+# Expand as labs are implemented in Phase 6.
+
+services: {}

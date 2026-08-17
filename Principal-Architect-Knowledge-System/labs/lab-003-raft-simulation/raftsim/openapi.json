@@ -1,0 +1,152 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Lab 003 — Raft Simulation",
+    "description": "In-memory Raft cluster simulation: leader election and log replication.",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:8098", "description": "Local Docker / go run --serve" }],
+  "tags": [
+    { "name": "cluster", "description": "Leader election" },
+    { "name": "log", "description": "Log replication" },
+    { "name": "health", "description": "Health and stats" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check and observability stats",
+        "responses": {
+          "200": {
+            "description": "Service healthy",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cluster/elect-leader": {
+      "post": {
+        "tags": ["cluster"],
+        "summary": "Elect a new leader for the next term",
+        "responses": {
+          "200": {
+            "description": "Leader elected",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ElectLeaderResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/log/append": {
+      "post": {
+        "tags": ["log"],
+        "summary": "Append a command to the replicated log",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppendRequest" },
+              "example": { "command": "set x=1" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Command replicated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppendResponse" }
+              }
+            }
+          },
+          "409": {
+            "description": "Append failed (no leader or not leader)"
+          }
+        }
+      }
+    },
+    "/v1/peers": {
+      "get": {
+        "tags": ["cluster"],
+        "summary": "List all peers and their Raft state",
+        "responses": {
+          "200": {
+            "description": "Peer list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PeersResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "example": "ok" },
+          "stats": { "type": "object" }
+        }
+      },
+      "PeerInfo": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "state": { "type": "string", "enum": ["follower", "candidate", "leader"] },
+          "current_term": { "type": "integer" },
+          "log_len": { "type": "integer" },
+          "commit_index": { "type": "integer" }
+        }
+      },
+      "ElectLeaderResponse": {
+        "type": "object",
+        "properties": {
+          "leader_id": { "type": "integer" },
+          "term": { "type": "integer" },
+          "peers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PeerInfo" }
+          }
+        }
+      },
+      "AppendRequest": {
+        "type": "object",
+        "required": ["command"],
+        "properties": {
+          "command": { "type": "string" }
+        }
+      },
+      "AppendResponse": {
+        "type": "object",
+        "properties": {
+          "leader_id": { "type": "integer" },
+          "log_len": { "type": "integer" },
+          "peers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PeerInfo" }
+          }
+        }
+      },
+      "PeersResponse": {
+        "type": "object",
+        "properties": {
+          "peers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PeerInfo" }
+          },
+          "stats": { "type": "object" }
+        }
+      }
+    }
+  }
+}

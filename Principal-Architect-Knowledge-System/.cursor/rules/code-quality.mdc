@@ -1,0 +1,18 @@
+---
+description: Code quality standards for labs and scripts
+globs:
+  - "labs/**/*"
+  - "scripts/**/*"
+  - "**/*.{py,go,java,ts,tsx}"
+alwaysApply: false
+---
+
+Match existing language conventions in each directory.
+
+Labs and scripts must include:
+- clear README instructions
+- automated tests where applicable
+- no hardcoded secrets
+- reproducible setup
+
+Run appropriate linters before submitting changes (Ruff for Python, ESLint for TypeScript).

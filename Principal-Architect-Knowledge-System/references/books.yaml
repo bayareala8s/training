@@ -1,0 +1,15 @@
+books:
+  - id: kleppmann-ddia-2017
+    title: "Designing Data-Intensive Applications"
+    authors: ["Martin Kleppmann"]
+    year: 2017
+    publisher: O'Reilly Media
+    topics: [consistency, replication, causality, distributed-systems]
+  - id: herlihy-shavit-amp-2020
+    title: "The Art of Multiprocessor Programming"
+    authors: ["Maurice Herlihy", "Nasser Shavit"]
+    year: 2020
+    edition: "2nd"
+    publisher: Morgan Kaufmann
+    topics: [linearizability, concurrent-objects, consistency-models]
+last_updated: 2026-07-24

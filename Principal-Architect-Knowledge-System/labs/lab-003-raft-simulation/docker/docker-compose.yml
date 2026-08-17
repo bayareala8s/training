@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8098:8098"
+    networks:
+      - raft-net
+
+networks:
+  raft-net:
+    driver: bridge

@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8100:8100"
+    networks:
+      - locks-net
+
+networks:
+  locks-net:
+    driver: bridge

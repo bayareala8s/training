@@ -1,0 +1,1362 @@
+version: 1
+domain: distributed-systems
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 50
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: ds-001
+  domain: distributed-systems
+  topic: partial-failure
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Why is partial failure the defining challenge of distributed systems, and how does it change API and timeout design?
+  expected_signals:
+    - Distinguishes fail-stop from slow/degraded (gray failure)
+    - Timeouts create ambiguity—at-least-once retries and idempotency
+    - "End-to-end argument: reliability requires application awareness"
+    - Operational detection harder than crash
+  red_flags:
+    - Claims TCP guarantees application reliability
+    - No mention of retry duplication
+  follow_ups:
+    - What is a gray failure?
+    - How do you test partial failure in CI?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define partial failure → async network → ambiguous outcomes → design idempotent handlers, deadlines, cancellation, and observability for in-flight work.
+- id: ds-002
+  domain: distributed-systems
+  topic: safety-and-liveness
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    For a leader-based replication system, state one safety and one liveness property. What happens to each during a partition?
+  expected_signals:
+    - "Safety: at most one leader / no conflicting commits"
+    - "Liveness: eventual progress with majority"
+    - Minority partition sacrifices liveness to preserve safety
+    - Links to FLP intuition without misquoting
+  red_flags:
+    - Conflates safety with availability
+    - Claims both fully satisfied under partition
+  follow_ups:
+    - Give an example where liveness is intentionally weakened
+    - How do operators detect liveness violations?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Name properties → map to leader election → partition splits majority/minority → minority stalls, majority continues → client visibility.
+- id: ds-003
+  domain: distributed-systems
+  topic: cap-theorem
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Explain CAP in terms of network partitions. What can a system choose, and what is often misunderstood?
+  expected_signals:
+    - Partition is given; tradeoff is C vs A for that partition window
+    - Many systems are AP with tunable consistency
+    - CAP is about one partition event, not permanent choice
+    - PACELC extension for normal operation
+  red_flags:
+    - Claims you must pick one of three always
+    - Confuses consistency with ACID only
+  follow_ups:
+    - How does DynamoDB tunable consistency fit?
+    - What does Spanner optimize under PACELC?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Partition scenario → cannot have linearizable writes and full availability on both sides → examples → normal-case latency/consistency via PACELC.
+- id: ds-004
+  domain: distributed-systems
+  topic: pacelc
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Apply PACELC to choose between a strongly consistent metadata service and an eventually consistent configuration cache.
+  expected_signals:
+    - "If Partition: choose consistency or availability"
+    - "Else: Latency vs Consistency tradeoff"
+    - "Metadata: favor consistency; cache: favor latency with TTL/version"
+    - "Organizational: blast radius of stale config"
+  red_flags:
+    - Uses PACELC as slogan only
+    - Same answer for both components
+  follow_ups:
+    - What staleness is acceptable for feature flags?
+    - How do you validate cache coherence in prod?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Two components → different EL choices → detection/versioning for cache → monitoring staleness → rollback path.
+- id: ds-005
+  domain: distributed-systems
+  topic: linearizability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Define linearizability. Is read-your-writes the same guarantee?
+  expected_signals:
+    - "Linearizability: real-time order respecting sequential spec"
+    - RYW is session guarantee, weaker than linearizable
+    - Requires coordination or sticky routing for RYW under replicas
+    - "Client examples: register read after write"
+  red_flags:
+    - Calls everything strong consistency
+    - Assumes quorum read returns latest without conditions
+  follow_ups:
+    - Is Cassandra QUORUM+QUORUM linearizable?
+    - Role of fencing tokens?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define → compare to sequential/causal → RYW session scope → implementation patterns (sticky, read primary, sync replicate).
+- id: ds-006
+  domain: distributed-systems
+  topic: eventual-consistency
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Design conflict handling for an eventually consistent shopping cart spanning mobile offline and web.
+  expected_signals:
+    - Version vectors or CRDTs for merge
+    - Tie-break rules explicit; UX for conflicts
+    - Causal metadata if possible
+    - "Business rules: quantity merge vs last-writer-wins risks"
+  red_flags:
+    - Last-writer-wins for all fields blindly
+    - No client offline queue strategy
+  follow_ups:
+    - What CRDT fits cart quantity?
+    - How to test convergence?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Availability offline → async sync → per-item version → CRDT or application merge → UX + monitoring divergence.
+- id: ds-007
+  domain: distributed-systems
+  topic: causal-consistency
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How would you provide causal consistency without a single global sequencer?
+  expected_signals:
+    - Track dependencies (version vectors, Lamport with gaps)
+    - Rely on metadata piggybacking on writes
+    - Causal+ session guarantees
+    - Trade latency vs centralization
+  red_flags:
+    - Assumes Spanner-like TrueTime required
+    - Cannot explain what causality preserves
+  follow_ups:
+    - Difference from sequential consistency?
+    - Cost at 10K RPS per key?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Happens-before relation → attach deps to ops → deliver reads respecting causal order → optional hybrid logical clocks.
+- id: ds-008
+  domain: distributed-systems
+  topic: quorum-systems
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    For N=5 replicas, what read and write quorum sizes give strong consistency? What if R+W ≤ N?
+  expected_signals:
+    - R+W > N prevents stale quorum overlap
+    - W > N/2 for write uniqueness
+    - Analyze stale read scenario when R+W ≤ N
+    - Tail latency impact of larger quorums
+  red_flags:
+    - Says majority without math
+    - Ignores concurrent writers
+  follow_ups:
+    - Sloppy quorum vs strict quorum?
+    - Impact of async replication on quorums?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define quorums → overlap argument → example N=5 R3 W3 → failure cases → sloppy quorums and hint handoff risks.
+- id: ds-009
+  domain: distributed-systems
+  topic: replication-lag
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    A user updates profile then immediately reads from a replica and sees stale data. Diagnose and fix without killing availability.
+  expected_signals:
+    - Identifies replication lag
+    - "Session guarantees: sticky sessions, read-your-writes tokens"
+    - Sync replicate critical path cost
+    - "Metrics: replication lag histogram"
+  red_flags:
+    - Force all reads to primary always
+    - No measurement plan
+  follow_ups:
+    - Monotonic reads for feed?
+    - How does DynamoDB GSIs relate?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Reproduce → measure lag → choose session guarantee → implement tokens/sticky → degrade gracefully if primary overloaded.
+- id: ds-010
+  domain: distributed-systems
+  topic: split-brain
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How does split brain occur in primary-secondary replication and how do you prevent it?
+  expected_signals:
+    - Two primaries accept writes → divergent histories
+    - Fencing tokens, STONITH, consensus for leader
+    - Quorum before promote
+    - "Organizational: runbook for failover"
+  red_flags:
+    - DNS failover alone sufficient
+    - Ignores stale primary writes
+  follow_ups:
+    - What is STONITH in cloud?
+    - Compare etcd vs manual failover
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Dual primary scenario → detection → prevention via consensus/fencing → recovery reconcile or conflict rules.
+- id: ds-011
+  domain: distributed-systems
+  topic: idempotency
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    A payment API uses at-least-once delivery. How do you prevent duplicate charges?
+  expected_signals:
+    - Idempotency keys stored with unique constraint
+    - "State machine: pending/succeeded"
+    - TTL and key scope
+    - Outbox for downstream exactly-once illusion
+  red_flags:
+    - Retries without dedup store
+    - Only client-side dedup
+  follow_ups:
+    - What if DB unique constraint races?
+    - Idempotency at workflow layer?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    At-least-once → dedup table → atomic state transition → return same response for duplicate key → audit trail.
+- id: ds-012
+  domain: distributed-systems
+  topic: message-delivery
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Compare at-most-once, at-least-once, and exactly-once semantics in a Kafka-like log.
+  expected_signals:
+    - Producer acks, retries, idempotent producer
+    - Consumer offset commit vs processing order
+    - Exactly-once needs transactional boundaries + idempotent sinks
+    - End-to-end exactly-once is rare
+  red_flags:
+    - Claims Kafka always exactly-once everywhere
+    - Ignores external side effects
+  follow_ups:
+    - Poison message handling?
+    - Effect on lag under retry storm?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define three → Kafka mechanisms → consumer design → sink idempotency → operational monitoring.
+- id: ds-013
+  domain: distributed-systems
+  topic: failure-detectors
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Why are failure detectors central to practical consensus? What goes wrong with aggressive timeouts?
+  expected_signals:
+    - Unreliable FD enables leader election in practice
+    - "Too aggressive: false suspicions, churn"
+    - "Too slow: availability loss"
+    - Phi-accrual or adaptive timeouts
+  red_flags:
+    - Perfect failure detection assumed
+    - No correlation with GC pauses
+  follow_ups:
+    - How does Raft election timeout work?
+    - Cross-AZ latency impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Perfect detection impossible → approximate with timeouts → false positive/negative tradeoff → adaptive detection examples.
+- id: ds-014
+  domain: distributed-systems
+  topic: clock-skew
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Why can't you order events by wall-clock timestamps across datacenters?
+  expected_signals:
+    - Clock skew and NTP jumps
+    - Logical clocks for causality
+    - TrueTime uses uncertainty interval (not magic sync)
+    - Hybrid logical clocks in practice
+  red_flags:
+    - Assumes NTP always accurate
+    - Uses timestamp as sole ordering
+  follow_ups:
+    - How does HLC work?
+    - Leap second / VM freeze impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Skew examples → Lamport/HLC → Spanner wait for uncertainty → operational clock monitoring.
+- id: ds-015
+  domain: distributed-systems
+  topic: vector-clocks
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    When do version vectors help detect conflicts that Lamport clocks cannot?
+  expected_signals:
+    - "Concurrent events: incomparable Lamport timestamps"
+    - Version vectors detect concurrency
+    - Compaction challenges at scale
+    - Dynamo-style reconciliation
+  red_flags:
+    - Lamport gives total order always
+    - Unbounded vector growth ignored
+  follow_ups:
+    - Version vector pruning?
+    - CRDT vs explicit merge?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Concurrent writes → incomparable → vector comparison → merge policy → pruning strategies.
+- id: ds-016
+  domain: distributed-systems
+  topic: distributed-transactions
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Compare 2PC and Saga for cross-service money transfer. When is each appropriate?
+  expected_signals:
+    - "2PC: blocking, coordinator SPOF, strong atomicity"
+    - "Saga: compensations, eventual consistency"
+    - Outbox/inbox for reliability
+    - Business tolerance for in-flight visibility
+  red_flags:
+    - 2PC across microservices without caveats
+    - Saga without compensation design
+  follow_ups:
+    - What is transactional outbox?
+    - How to handle poison compensation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → 2PC limits in microservices → saga choreography/orchestration → idempotent steps → observability.
+- id: ds-017
+  domain: distributed-systems
+  topic: transactional-outbox
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Explain the transactional outbox pattern and how you avoid dual-write problems.
+  expected_signals:
+    - DB transaction includes outbox row
+    - Relay publishes asynchronously
+    - At-least-once to broker; consumers idempotent
+    - Ordering and dedup keys
+  red_flags:
+    - Write DB then publish hope
+    - No relay failure handling
+  follow_ups:
+    - Polling vs log-based CDC relay?
+    - How to monitor relay lag?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Dual write problem → same transaction → relay → delivery semantics → failure recovery.
+- id: ds-018
+  domain: distributed-systems
+  topic: cascading-failure
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    A dependency slows 10× and your service thread pool exhausts. Walk through mitigation layers.
+  expected_signals:
+    - Timeouts, bulkheads, circuit breakers
+    - Load shedding and priority queues
+    - Retry budgets; avoid retry storms
+    - Autoscaling limits and backpressure
+  red_flags:
+    - Infinite retries
+    - No timeout on client
+  follow_ups:
+    - What metrics trigger circuit open?
+    - How to test in staging?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Slow dependency → queue growth → bulkhead isolation → breaker → shed load → graceful degradation → post-incident retry policy.
+- id: ds-019
+  domain: distributed-systems
+  topic: backpressure
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How do you implement backpressure end-to-end in a streaming pipeline?
+  expected_signals:
+    - Bounded queues; reactive pull
+    - Broker consumer lag as signal
+    - Publisher rate limit based on downstream health
+    - Drop vs delay policies explicit
+  red_flags:
+    - Unbounded in-memory buffers
+    - Backpressure only at one hop
+  follow_ups:
+    - Kafka consumer pause?
+    - gRPC flow control relation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Identify bottleneck → bounded buffers → propagate pressure upstream → monitor lag → autoscale constraints.
+- id: ds-020
+  domain: distributed-systems
+  topic: cache-invalidation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Design cache invalidation for a high-read social graph. How do you avoid thundering herd?
+  expected_signals:
+    - TTL + event-driven invalidation
+    - Probabilistic early expiration
+    - Request coalescing / singleflight
+    - Stale-while-revalidate
+  red_flags:
+    - Invalidate entire cache on any write
+    - No locking on miss storm
+  follow_ups:
+    - Cache aside vs read-through?
+    - How does Redis pub/sub scale?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Write path invalidation → TTL safety net → herd mitigation → metrics on miss rate and staleness.
+- id: ds-021
+  domain: distributed-systems
+  topic: distributed-caching
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Compare consistent hashing vs naive modulo sharding when nodes are added.
+  expected_signals:
+    - Consistent hashing minimizes key movement
+    - Virtual nodes for balance
+    - Hot key mitigation separate problem
+    - Rebalancing operational plan
+  red_flags:
+    - Modulo is always fine
+    - Ignores hot spots
+  follow_ups:
+    - Rendezvous hashing when?
+    - Cross-region cache coherence?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Modulo remaps most keys → consistent hash ring → vnodes → handoff strategy → monitor imbalance.
+- id: ds-022
+  domain: distributed-systems
+  topic: hot-partition
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    A celebrity post causes one Kafka partition to saturate. Mitigations?
+  expected_signals:
+    - Key splitting; salt in key
+    - Dedicated topic / partition override
+    - Rate limit at edge
+    - Async fan-out architecture
+  red_flags:
+    - Only scale consumers
+    - Ignore producer key choice
+  follow_ups:
+    - How to rebalance keys live?
+    - Observability for skew?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Detect skew → key design → fan-out service → rate limits → long-term partitioning strategy.
+- id: ds-023
+  domain: distributed-systems
+  topic: service-discovery
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How does service discovery fail during partitions, and how do clients behave safely?
+  expected_signals:
+    - Stale registry → wrong endpoints
+    - Cache TTL and health checks
+    - Prefer local zone; degrade gracefully
+    - Service mesh vs client-side lb
+  red_flags:
+    - Discovery is always consistent
+    - No health check discussion
+  follow_ups:
+    - Compare Consul vs K8s DNS
+    - Split brain in registry?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Registry model → caching → health-based routing → partition behavior → client retry policies.
+- id: ds-024
+  domain: distributed-systems
+  topic: load-balancing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Why can round-robin hurt a heterogeneous fleet, and what do you use instead?
+  expected_signals:
+    - Slow instances get equal share → latency tail
+    - Weighted LB, least-conn, power of two choices
+    - Autoscaling signal alignment
+    - Zone-aware routing
+  red_flags:
+    - Round-robin always optimal
+    - Ignores long-lived connections
+  follow_ups:
+    - Maglev vs consistent hash for L7?
+    - Impact of HTTP/2 multiplexing?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Heterogeneity → tail latency → adaptive algorithms → health-aware routing → observability.
+- id: ds-025
+  domain: distributed-systems
+  topic: dns-failover
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    What are the failure modes of DNS-based failover for a global API?
+  expected_signals:
+    - TTL caching delays convergence
+    - Clients ignore low TTL
+    - Health check flapping
+    - Combine with anycast/LB layer
+  red_flags:
+    - DNS instant failover
+    - No mention of resolver caches
+  follow_ups:
+    - Active-active vs active-passive DNS?
+    - GeoDNS tradeoffs?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    DNS caching → stale routes → layered failover → health checks → RTO realistic expectations.
+- id: ds-026
+  domain: distributed-systems
+  topic: multi-region
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Design active-active writes for a product catalog across two regions. What consistency do you offer?
+  expected_signals:
+    - Conflict resolution strategy explicit
+    - Causal or eventual with CRDTs
+    - Read paths and staleness UX
+    - Network partition behavior
+  red_flags:
+    - Active-active with linearizable writes everywhere
+    - No conflict story
+  follow_ups:
+    - How does Spanner differ?
+    - Data residency constraints?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Partition tolerance → choose consistency → replication model → conflict detection → operational monitoring of divergence.
+- id: ds-027
+  domain: distributed-systems
+  topic: disaster-recovery
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Define RPO and RTO for a payment ledger. How do architecture choices affect them?
+  expected_signals:
+    - "RPO: data loss window; RTO: downtime"
+    - Sync replication lowers RPO, costs latency
+    - Backup/restore raises RTO
+    - Runbooks and game days
+  red_flags:
+    - Confuses RPO/RTO
+    - Zero RPO without cost discussion
+  follow_ups:
+    - Pilot light vs warm standby?
+    - How to test DR without customer impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Business requirements → replication/backups → failover automation → test cadence → document accepted loss windows.
+- id: ds-028
+  domain: distributed-systems
+  topic: observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How do traces help debug a partial failure that metrics miss?
+  expected_signals:
+    - End-to-end latency breakdown
+    - Shows which hop dropped/cancelled
+    - Correlate with logs via trace ID
+    - Tail sampling for rare paths
+  red_flags:
+    - Metrics alone sufficient
+    - 100% trace sampling at scale
+  follow_ups:
+    - Head vs tail sampling tradeoff?
+    - Baggage security risks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Ambiguous timeout → trace spans per hop → identify slow/failed segment → tie to dependency map → fix retry/timeout policy.
+- id: ds-029
+  domain: distributed-systems
+  topic: slo-error-budgets
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Your error budget burns during dependency degradation. What architectural actions follow?
+  expected_signals:
+    - Freeze features; focus reliability
+    - Prioritize circuit breaker / bulkhead work
+    - Adjust SLO if mis-scoped
+    - Communicate to stakeholders
+  red_flags:
+    - Ignore budget; ship anyway
+    - Blame vendor without mitigation
+  follow_ups:
+    - Multi-window burn alerts?
+    - How to allocate budget across tiers?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Error budget concept → burn rate → policy on releases → engineering investments → executive communication.
+- id: ds-030
+  domain: distributed-systems
+  topic: chaos-engineering
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    What experiments would you run before multi-region cutover?
+  expected_signals:
+    - Region isolation injection
+    - Dependency failure and latency
+    - Data replication lag under load
+    - Game day with rollback criteria
+  red_flags:
+    - Chaos in prod without blast radius control
+    - No success criteria
+  follow_ups:
+    - Steady state hypothesis format?
+    - How to avoid customer impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Hypothesis → blast radius → experiments list → abort conditions → fix loop → document findings.
+- id: ds-031
+  domain: distributed-systems
+  topic: security-distributed
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How do mTLS and service identity change trust boundaries in microservices?
+  expected_signals:
+    - Per-service identity; no network perimeter trust
+    - Cert rotation and SPIFFE
+    - Policy at sidecar/gateway
+    - Break-glass procedures
+  red_flags:
+    - VPN equals zero trust
+    - Long-lived shared secrets everywhere
+  follow_ups:
+    - Compare mesh vs gateway enforcement
+    - Latency cost of mTLS?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Zero trust model → identity per workload → cert lifecycle → policy enforcement points → ops burden tradeoff.
+- id: ds-032
+  domain: distributed-systems
+  topic: api-evolution
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How do you evolve a public API without breaking mobile clients on old versions?
+  expected_signals:
+    - Versioning strategy; additive changes
+    - Deprecation timeline
+    - Contract tests and compatibility CI
+    - Feature flags for behavior
+  red_flags:
+    - Breaking change without version bump
+    - Force upgrade overnight
+  follow_ups:
+    - Protobuf field evolution rules?
+    - GraphQL schema deprecation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Compatibility policy → versioning → sunset process → monitoring old version usage → communication plan.
+- id: ds-033
+  domain: distributed-systems
+  topic: grpc-vs-rest
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    When would you choose gRPC over REST for internal east-west traffic?
+  expected_signals:
+    - Binary efficiency; streaming; codegen contracts
+    - Browser/interop limits for gRPC
+    - Observability tooling maturity
+    - Team onboarding cost
+  red_flags:
+    - gRPC always better
+    - No story for debugging
+  follow_ups:
+    - How handle load balancing with HTTP/2?
+    - Deadline propagation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Workload profile → performance needs → tooling → migration path → fallback gateways for external clients.
+- id: ds-034
+  domain: distributed-systems
+  topic: event-driven
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    What are the operational downsides of event-driven architecture at scale?
+  expected_signals:
+    - Distributed debugging complexity
+    - Schema evolution for events
+    - Ordering and duplication handling
+    - Ownership of async contracts
+  red_flags:
+    - Events solve all coupling
+    - No contract governance
+  follow_ups:
+    - Event catalog tooling?
+    - Poison pill handling?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Benefits acknowledged → debuggability → schema registry → delivery semantics → organizational ownership model.
+- id: ds-035
+  domain: distributed-systems
+  topic: workflow-durability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How does a durable workflow engine survive worker crashes mid-activity?
+  expected_signals:
+    - Event sourcing of workflow history
+    - At-least-once activity execution
+    - Idempotent activities required
+    - Deterministic replay constraints
+  red_flags:
+    - In-memory state only
+    - Exactly-once activities without caveats
+  follow_ups:
+    - Temporal vs step functions?
+    - Versioning workflows in prod?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    History log → replay on new worker → idempotent side effects → timeouts and heartbeats → versioning strategy.
+- id: ds-036
+  domain: distributed-systems
+  topic: storage-engines
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Compare B-tree vs LSM-tree for a write-heavy time-series workload.
+  expected_signals:
+    - "LSM: sequential writes, compaction cost"
+    - "B-tree: in-place update, write amplification on SSD"
+    - Read amplification tradeoffs
+    - TTL and tiered storage fit
+  red_flags:
+    - One size fits all
+    - Ignores compaction stalls
+  follow_ups:
+    - When RocksDB tuning matters?
+    - Impact on p99 during compaction?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Access pattern → write amplification → read amplification → compaction strategy → operational monitoring.
+- id: ds-037
+  domain: distributed-systems
+  topic: distributed-storage
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How does an object store achieve durability across AZs? What consistency does ListObjects provide?
+  expected_signals:
+    - Erasure coding / replication across AZs
+    - Eventual listing consistency in S3-class systems
+    - Read-after-write for new objects (vendor-specific)
+    - Lifecycle and versioning for recovery
+  red_flags:
+    - List is always strongly consistent
+    - Eleven nines without understanding domains
+  follow_ups:
+    - Strong read consistency options?
+    - Cross-region replication lag?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Durability via replication → consistency dimensions per API → client design for listing → monitoring replication backlog.
+- id: ds-038
+  domain: distributed-systems
+  topic: rate-limiting
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Design a distributed rate limiter for 1M RPS API. Compare token bucket vs sliding window.
+  expected_signals:
+    - Central Redis vs local approximate counters
+    - Race conditions and atomic Lua
+    - Edge aggregation vs global accuracy
+    - Fairness across tenants
+  red_flags:
+    - Single-node counter
+    - No burst handling discussion
+  follow_ups:
+    - Gossip-based limiters?
+    - Behavior under Redis partition?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → algorithm choice → distributed store → sync vs eventual accuracy → per-tenant config and observability.
+- id: ds-039
+  domain: distributed-systems
+  topic: leader-election
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    What guarantees does a distributed lease provide, and why are fencing tokens needed?
+  expected_signals:
+    - Lease is time-bounded, not proof of liveness
+    - Clock skew can expire lease early/late
+    - Fencing token monotonic to block stale leader
+    - Storage layer must enforce token
+  red_flags:
+    - Lease equals lock forever
+    - Ignore stale leader writes
+  follow_ups:
+    - Compare etcd lease vs DB advisory lock
+    - GC pause impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Lease mechanism → failure scenarios → stale primary → fencing token enforced at storage → operational monitoring.
+- id: ds-040
+  domain: distributed-systems
+  topic: gossip-protocols
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Where are gossip protocols appropriate, and what consistency do they provide?
+  expected_signals:
+    - Membership and failure dissemination
+    - Eventually consistent state convergence
+    - Anti-entropy for repair
+    - Not for strong consistency workloads
+  red_flags:
+    - Gossip for financial ledger
+    - No convergence time discussion
+  follow_ups:
+    - SWIM protocol benefits?
+    - Seed nodes as bottleneck?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Use cases → epidemic dissemination → convergence latency → hybrid with strong stores for metadata.
+- id: ds-041
+  domain: distributed-systems
+  topic: consistent-snapshots
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How do you take a consistent snapshot across sharded databases for analytics?
+  expected_signals:
+    - Logical timestamps or coordinated snapshot API
+    - Chunked export per shard with boundary markers
+    - Impact on production traffic
+    - Verify snapshot integrity
+  red_flags:
+    - pg_dump each shard independently without coordination
+    - No validation
+  follow_ups:
+    - CDC vs batch snapshot?
+    - Spanner read timestamp?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Global logical time → per-shard snapshot → assemble → validate row counts → incremental CDC for delta.
+- id: ds-042
+  domain: distributed-systems
+  topic: stream-processing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Explain exactly-once processing semantics in Flink-style stream processors.
+  expected_signals:
+    - Checkpointing aligned barriers
+    - Idempotent sinks or transactional writes
+    - End-to-end needs sink cooperation
+    - State backend recovery
+  red_flags:
+    - Processor exactly-once equals business exactly-once
+    - Ignore duplicate sink writes
+  follow_ups:
+    - At-least-once + idempotent sink pattern?
+    - State size operational cost?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Checkpoint mechanism → replay on failure → sink dedup/transaction → limits → monitoring checkpoint duration.
+- id: ds-043
+  domain: distributed-systems
+  topic: data-locality
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Why does data locality matter for Spark/Hadoop jobs, and when do you ignore it?
+  expected_signals:
+    - Reduce network shuffle cost
+    - Rack awareness
+    - Cloud disaggregated storage changes calculus
+    - SLO-driven tradeoff
+  red_flags:
+    - Always schedule compute on data node
+    - Ignore network cost in cloud
+  follow_ups:
+    - Impact of NVMe remote storage?
+    - Kubernetes locality labels?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Shuffle cost → locality scheduling → cloud storage bandwidth → when remote OK → measure before optimizing.
+- id: ds-044
+  domain: distributed-systems
+  topic: kubernetes-failures
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    What happens to in-flight requests when a Kubernetes pod is terminated during rollout?
+  expected_signals:
+    - SIGTERM grace period; preStop hook
+    - LB deregistration delay
+    - Connection draining
+    - Client retries and idempotency
+  red_flags:
+    - Instant kill without drain
+    - Ignore in-flight work
+  follow_ups:
+    - Compare rolling vs blue-green
+    - How long should grace period be?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Pod termination flow → endpoint removal timing → drain → client behavior → tune grace and probes.
+- id: ds-045
+  domain: distributed-systems
+  topic: network-partitions
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    Your service spans three AZs. An AZ partition isolates 1/3 of nodes but clients still route there. Response?
+  expected_signals:
+    - Health checks remove bad endpoints
+    - Zone-aware routing
+    - Capacity headroom in remaining AZs
+    - Avoid cross-zone quorum assumptions broken
+  red_flags:
+    - Keep sending traffic
+    - No autoscaling plan
+  follow_ups:
+    - Control plane partition effects?
+    - Cross-AZ latency budget?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Detect AZ impairment → routing policy → shed load → maintain SLO in surviving zones → postmortem routing fixes.
+- id: ds-046
+  domain: distributed-systems
+  topic: cost-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How do architectural choices in multi-tenant SaaS affect noisy neighbor and cost allocation?
+  expected_signals:
+    - Per-tenant quotas and isolation
+    - Noisy neighbor via shared pools
+    - Chargeback metrics
+    - Tiered architecture for enterprise
+  red_flags:
+    - Infinite shared pool
+    - No fairness mechanism
+  follow_ups:
+    - Hard vs soft multitenancy?
+    - FinOps dashboards?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Tenant isolation strategies → resource limits → observability per tenant → pricing alignment → escalation for hot tenants.
+- id: ds-047
+  domain: distributed-systems
+  topic: ai-serving
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    What distributed systems challenges are unique to LLM inference at scale?
+  expected_signals:
+    - KV cache memory; batching dynamics
+    - Model sharding and pipeline parallel
+    - Tail latency under variable sequence length
+    - GPU failure and request rerouting
+  red_flags:
+    - Treat like CRUD API only
+    - Ignore GPU memory fragmentation
+  follow_ups:
+    - Continuous batching concept?
+    - Gateway rate limits per model?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Workload shape → memory-bound → scheduling/batching → hardware failures → gateway and observability extensions.
+- id: ds-048
+  domain: distributed-systems
+  topic: edge-computing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    When would you push computation to edge PoPs vs central region?
+  expected_signals:
+    - Latency-sensitive read-heavy
+    - Consistency challenges at edge
+    - Invalidation and auth token TTL
+    - Operational complexity of many sites
+  red_flags:
+    - Edge for strongly consistent writes
+    - No security model
+  follow_ups:
+    - CDN vs compute edge?
+    - Conflict resolution at edge cache?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Latency goals → data freshness → security → ops footprint → hybrid with regional origin.
+- id: ds-049
+  domain: distributed-systems
+  topic: testing-distributed
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    How do you test correctness of a distributed system beyond unit tests?
+  expected_signals:
+    - Jepsen-style consistency checks
+    - Fault injection integration tests
+    - Model checking for protocols
+    - Load tests with partition simulation
+  red_flags:
+    - Unit tests only
+    - Test in prod without controls
+  follow_ups:
+    - Linearizability checker tools?
+    - CI time vs coverage tradeoff?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Test pyramid → fault injection → formal methods where justified → staging game days → production canaries.
+- id: ds-050
+  domain: distributed-systems
+  topic: organizational-scale
+  difficulty: principal
+  question_type: architecture-leadership
+  company_patterns: []
+  estimated_minutes: 15
+  question: |
+    As principal architect, how do you align 40 teams on shared reliability patterns without central bottlenecks?
+  expected_signals:
+    - Golden paths and paved roads
+    - RFC/ADR process with defaults
+    - Platform SLOs and self-service tooling
+    - Governance for exceptions not every service
+  red_flags:
+    - Mandate review for every deploy
+    - No metrics on adoption
+  follow_ups:
+    - Conway's law example?
+    - Measure toil reduction?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Problem scale → platform team charter → paved road → guardrails → measure adoption and incident reduction → escalate exceptions via ADR.

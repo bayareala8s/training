@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8095:8095"
+    networks:
+      - kv-net
+
+networks:
+  kv-net:
+    driver: bridge

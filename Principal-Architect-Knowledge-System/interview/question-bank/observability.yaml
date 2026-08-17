@@ -1,0 +1,992 @@
+version: 1
+domain: observability
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 35
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: obs-001
+  domain: observability
+  topic: metrics-cardinality
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Prometheus cardinality explosion from high-cardinality labels. Architectural fixes?
+  expected_signals:
+    - Label design guidelines; avoid user_id in labels
+    - Recording rules and aggregation
+    - Federation or hierarchical metrics
+    - Cost and retention tiering
+  red_flags:
+    - Unlimited label dimensions
+    - Delete metrics without stakeholder notice
+    - Cardinality ignored until crash
+  follow_ups:
+    - Exemplars for traces link?
+    - Mimir/Cortex vs single Prometheus?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-002
+  domain: observability
+  topic: prometheus-federation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Design Prometheus topology for 50 clusters aggregating to global view.
+  expected_signals:
+    - Hierarchical federation vs remote write
+    - Cardinality at global tier
+    - HA pairs and query fan-out
+    - Long-term storage separation
+  red_flags:
+    - Single Prometheus scrapes all clusters
+    - Federation without dedup strategy
+    - Global tier same retention as local
+  follow_ups:
+    - Thanos vs Mimir?
+    - Cross-region query latency?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-003
+  domain: observability
+  topic: histogram-vs-summary
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Choose histogram vs summary for SLO latency tracking. Client library implications?
+  expected_signals:
+    - "Histogram: aggregatable buckets, SLO in PromQL"
+    - "Summary: client-side quantiles, poor aggregate"
+    - Native histogram evolution
+    - Bucket design for SLO thresholds
+  red_flags:
+    - Summary for global p99 SLO
+    - Default buckets for all services
+    - Ignore _bucket metric cost
+  follow_ups:
+    - Heatmaps vs histograms?
+    - OpenTelemetry histogram migration?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-004
+  domain: observability
+  topic: slo-slis-definition
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Define SLIs and SLOs for a multi-tenant API platform. What to measure and what to avoid?
+  expected_signals:
+    - "User-centric SLIs: availability, latency, freshness"
+    - Exclude dependencies not in user path wisely
+    - Per-tenant SLO for enterprise tier
+    - SLO scoped to realistic windows
+  red_flags:
+    - Infrastructure CPU as primary SLI
+    - 100% availability SLO
+    - Same SLO for all tiers
+  follow_ups:
+    - SLO for async pipelines?
+    - Error budget multi-window alerts?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-005
+  domain: observability
+  topic: error-budget-policy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Error budget exhausted for payment API. Engineering policy and architectural investments?
+  expected_signals:
+    - Freeze risky releases; reliability sprint
+    - "Prioritize: retries, circuit breakers, redundancy"
+    - Executive communication with data
+    - Revisit SLO if mis-scoped
+  red_flags:
+    - Ship features anyway
+    - Blame dependency without mitigation
+    - No policy documented
+  follow_ups:
+    - Budget per dependency?
+    - Customer-facing SLO reporting?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-006
+  domain: observability
+  topic: alerting-fatigue
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    On-call receives 200 alerts per week; 95% non-actionable. Fix alerting architecture.
+  expected_signals:
+    - Alert on symptoms not causes
+    - SLO-based paging
+    - Runbook link and severity taxonomy
+    - Regular alert audit cadence
+  red_flags:
+    - Page on every threshold breach
+    - No alert ownership
+    - Duplicate alerts per shard
+  follow_ups:
+    - Alert grouping and inhibition?
+    - AI anomaly alerts without tuning?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-007
+  domain: observability
+  topic: on-call-runbooks
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Design runbook system integrated with paging for platform team.
+  expected_signals:
+    - Runbook per alert type linked in pager
+    - Executable steps and rollback
+    - Ownership and review SLA
+    - Post-incident runbook updates
+  red_flags:
+    - Wiki runbooks never updated
+    - Runbooks without escalation paths
+    - Only verbal tribal knowledge
+  follow_ups:
+    - Automated remediation links?
+    - "Runbook metrics: time to mitigate?"
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-008
+  domain: observability
+  topic: distributed-tracing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Introduce distributed tracing across 200 services. Sampling, propagation, and storage architecture.
+  expected_signals:
+    - W3C trace context propagation
+    - Head vs tail sampling strategy
+    - Collector pipeline and retention
+    - Trace-log correlation standard
+  red_flags:
+    - 100% sampling at scale
+    - Broken context across async boundaries
+    - Traces without service dependency map
+  follow_ups:
+    - Tail sampling for errors?
+    - OpenTelemetry collector HA?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-009
+  domain: observability
+  topic: trace-sampling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Choose head-based vs tail-based sampling for 1M RPS API.
+  expected_signals:
+    - "Head: cheap, may miss rare errors"
+    - "Tail: keep interesting traces, needs buffering"
+    - Always sample errors/slow paths
+    - Cost vs debuggability tradeoff
+  red_flags:
+    - No sampling—store everything
+    - Random head sampling only for payments
+    - Ignore tail sampling infra cost
+  follow_ups:
+    - Adaptive sampling?
+    - Sampling bias in analytics?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-010
+  domain: observability
+  topic: log-aggregation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Centralize logs from K8s, Lambdas, and on-prem at 2TB/day. Architecture and cost control.
+  expected_signals:
+    - Structured JSON; common schema
+    - Hot/warm/cold retention tiers
+    - Index only searchable fields
+    - Agent resource limits
+  red_flags:
+    - Full text index everything forever
+    - Unstructured printf logs
+    - No PII handling in pipeline
+  follow_ups:
+    - OpenTelemetry logs?
+    - Cross-region log shipping cost?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-011
+  domain: observability
+  topic: structured-logging
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Mandate structured logging org-wide. Schema governance and tooling.
+  expected_signals:
+    - "Canonical fields: trace_id, tenant_id, level"
+    - Schema registry for log fields
+    - Lint in CI for required fields
+    - Sampling noisy debug in prod
+  red_flags:
+    - Free-form logs only
+    - Secrets in log fields
+    - No correlation IDs
+  follow_ups:
+    - Log events vs wide events?
+    - Cardinality in log-derived metrics?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-012
+  domain: observability
+  topic: correlation-ids
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    End-to-end correlation across HTTP, Kafka, and batch jobs.
+  expected_signals:
+    - Single trace_id propagated or mapped
+    - Baggage for tenant context carefully
+    - "Async: embed in message headers"
+    - Dashboard jump trace→logs
+  red_flags:
+    - New random ID per hop
+    - Baggage unlimited size
+    - Batch jobs ignore correlation
+  follow_ups:
+    - W3C baggage security?
+    - Legacy system correlation bridge?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-013
+  domain: observability
+  topic: apm-vs-infra
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Balance APM spend vs infrastructure metrics for troubleshooting.
+  expected_signals:
+    - APM for golden paths and SLO services
+    - Infra metrics for capacity
+    - Avoid duplicate instrumentation cost
+    - Open standards reduce lock-in
+  red_flags:
+    - APM on every function
+    - No infra metrics
+    - Vendor agent everywhere without budget
+  follow_ups:
+    - eBPF-based APM?
+    - Unified OpenTelemetry backend?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-014
+  domain: observability
+  topic: synthetic-monitoring
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Design synthetic probes for global API availability and latency.
+  expected_signals:
+    - Multi-region probe runners
+    - Canary workflows not just GET /health
+    - Separate from user SLO measurement
+    - Alert on regression vs baseline
+  red_flags:
+    - Health check only synthetics
+    - Single-region probes
+    - Synthetics share prod credentials insecurely
+  follow_ups:
+    - Private API synthetics?
+    - Synthetic vs RUM weight in SLO?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-015
+  domain: observability
+  topic: rum-vs-synthetic
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Compare RUM and synthetic monitoring for frontend SLOs.
+  expected_signals:
+    - "RUM: real user variance, privacy constraints"
+    - "Synthetic: controlled scenarios"
+    - Combine for complete picture
+    - Sample rate and data minimization
+  red_flags:
+    - RUM only ignores crawler noise
+    - Synthetic only misses real network paths
+    - Ignore GDPR on RUM
+  follow_ups:
+    - Core Web Vitals SLO?
+    - RUM SDK performance impact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-016
+  domain: observability
+  topic: anomaly-detection
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Deploy ML anomaly detection on metrics. When it helps vs hurts on-call.
+  expected_signals:
+    - Use for trend detection not primary paging
+    - Tune seasonality for business cycles
+    - Human feedback loop on alerts
+    - Fallback to static SLO alerts
+  red_flags:
+    - ML pages replace SLO alerts
+    - Black box alerts without context
+    - No baseline training period
+  follow_ups:
+    - Cardinality for ML features?
+    - Vendor vs open source anomaly?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-017
+  domain: observability
+  topic: dashboards-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Design golden dashboards for service owners: USE vs RED vs four golden signals.
+  expected_signals:
+    - RED for request-driven services
+    - USE for resources
+    - Dashboards linked to runbooks
+    - Avoid dashboard sprawl—templates
+  red_flags:
+    - 1000-panel dashboards
+    - No SLO burn on dashboard
+    - Copy-paste unrelated metrics
+  follow_ups:
+    - "Hierarchy: service→dependency?"
+    - Dashboard as code?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-018
+  domain: observability
+  topic: service-catalog
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Service catalog powers ownership, SLOs, and dependency graphs. Architecture?
+  expected_signals:
+    - Auto-discovery from K8s and cloud tags
+    - Manual ownership fields required
+    - Integrate with paging and CI
+    - Deprecation status visible
+  red_flags:
+    - Static spreadsheet catalog
+    - No link to observability
+    - Stale ownership after reorg
+  follow_ups:
+    - Backstage plugins?
+    - Catalog as deployment gate?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-019
+  domain: observability
+  topic: dependency-maps
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Build live service dependency map from traces. Accuracy and limitations.
+  expected_signals:
+    - Derived from trace edges over window
+    - "Known gaps: async without context"
+    - Validate with declared architecture
+    - Use for blast radius and incident
+  red_flags:
+    - Dependency map from config only
+    - Trust incomplete traces fully
+    - No staleness indicator
+  follow_ups:
+    - Service mesh vs APM map?
+    - Map during incident staleness?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-020
+  domain: observability
+  topic: observability-maturity
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Assess observability maturity across 40 teams. Framework and improvement path.
+  expected_signals:
+    - "Levels: metrics, logs, traces, SLOs"
+    - Measure coverage not tool install
+    - Platform paved road accelerates
+    - Executive scorecard quarterly
+  red_flags:
+    - Tool mandate without adoption metrics
+    - Maturity = vendor spend
+    - One-size assessment
+  follow_ups:
+    - DORA metrics link?
+    - Team-specific maturity goals?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-021
+  domain: observability
+  topic: cardinality-explosion
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Incident: single deploy increases metric series 10×. Response and prevention.
+  expected_signals:
+    - Identify new label dimensions
+    - Emergency drop relabel rules
+    - CI check on series count
+    - "Postmortem: label guidelines"
+  red_flags:
+    - Restart Prometheus without fix
+    - Ignore until OOM
+    - No deploy gate on metrics
+  follow_ups:
+    - Prometheus limits config?
+    - Recording rule to aggregate?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-022
+  domain: observability
+  topic: high-availability-metrics
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    HA architecture for metrics pipeline: no gap during collector failure.
+  expected_signals:
+    - HA Prometheus pairs or remote write buffer
+    - Dual write tradeoffs
+    - Query federation dedup
+    - RPO for metrics acceptable loss window
+  red_flags:
+    - Single collector
+    - HA without deduplication
+    - Ignore query gaps
+  follow_ups:
+    - Agent buffering disk?
+    - Cross-region metrics failover?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-023
+  domain: observability
+  topic: long-term-storage
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Metrics retention: 15 days hot, 1 year cold. Architecture and query patterns.
+  expected_signals:
+    - Remote write to object storage backend
+    - Downsampling for historical queries
+    - Query router hot+cold
+    - Cost vs query latency stated
+  red_flags:
+    - Keep all raw samples 1 year
+    - Cold storage unqueryable
+    - No downsampling strategy
+  follow_ups:
+    - Parquet metrics experiments?
+    - Compliance retention locks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-024
+  domain: observability
+  topic: opentelemetry-adoption
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Migrate 100 services from vendor agents to OpenTelemetry.
+  expected_signals:
+    - SDK + collector standard pipeline
+    - Gradual per-service migration
+    - Vendor backend via OTLP
+    - Semantic conventions enforced
+  red_flags:
+    - Big bang rip out agents
+    - Custom instrumentation everywhere
+    - No semantic convention lint
+  follow_ups:
+    - Collector scaling?
+    - OTel vs vendor trace format?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-025
+  domain: observability
+  topic: vendor-lockin-observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Reduce observability vendor lock-in while keeping SLO workflows.
+  expected_signals:
+    - OpenTelemetry export path
+    - Portable alert rules where possible
+    - Data export contracts
+    - Multi-backend for transition period
+  red_flags:
+    - Proprietary instrumentation only
+    - No export API in contract
+    - Ignore query language portability
+  follow_ups:
+    - Dual-write migration?
+    - OpenMetrics compatibility?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-026
+  domain: observability
+  topic: cost-of-observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Observability bill is 20% of infra. Architectural cost controls.
+  expected_signals:
+    - Sampling, retention tiers, cardinality
+    - Per-team budgets and dashboards
+    - Drop debug telemetry in prod
+    - Aggregate before export
+  red_flags:
+    - Cut logs entirely
+    - No attribution to teams
+    - Index all fields
+  follow_ups:
+    - Showback for log volume?
+    - Metrics vs logs cost trade?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-027
+  domain: observability
+  topic: privacy-in-logs
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    PII appears in production logs. Architecture for detection and prevention.
+  expected_signals:
+    - Log scrubbing at collector
+    - CI lint for sensitive patterns
+    - Field-level redaction policies
+    - Access control on log stores
+  red_flags:
+    - Full PII in logs for debug
+    - Retroactive delete impossible
+    - All engineers access prod logs
+  follow_ups:
+    - Tokenization in logs?
+    - Audit log access?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-028
+  domain: observability
+  topic: pii-redaction
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Implement real-time PII redaction in log pipeline without breaking search.
+  expected_signals:
+    - Hash or tokenize stable identifiers
+    - Preserve correlation on hashed user_id
+    - Reversible only in secure vault
+    - Test redaction rules in CI
+  red_flags:
+    - Drop all user-related fields
+    - Regex redaction without tests
+    - Redact after storage
+  follow_ups:
+    - GDPR delete in logs?
+    - Redaction performance at scale?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-029
+  domain: observability
+  topic: audit-trails-observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Separate audit logs from operational logs. Architecture requirements.
+  expected_signals:
+    - Immutable append-only store
+    - Distinct retention and access
+    - Tamper-evident or WORM storage
+    - Who accessed audit data logged
+  red_flags:
+    - Audit in same index as debug logs
+    - Mutable audit records
+    - No access separation
+  follow_ups:
+    - SIEM integration?
+    - CloudTrail vs app audit?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-030
+  domain: observability
+  topic: chaos-observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Validate observability catches injected failures during game day.
+  expected_signals:
+    - Pre-define steady state metrics
+    - Inject latency and verify trace capture
+    - Alert fires within SLO window
+    - Gaps documented as actions
+  red_flags:
+    - Game day without observability criteria
+    - Assume tools work
+    - No gap tracking
+  follow_ups:
+    - Fault injection service mesh?
+    - Observability SLO for platform?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-031
+  domain: observability
+  topic: profiling-production
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Continuous profiling in production at 5% CPU overhead budget.
+  expected_signals:
+    - Sample-based profilers eBPF/Java
+    - Profile storage and retention
+    - Link profiles to traces
+    - Access restricted for sensitive stacks
+  red_flags:
+    - Always-on full profiling all pods
+    - No overhead measurement
+    - Profiles public to all devs
+  follow_ups:
+    - Flame graph automation?
+    - Profile during incident only?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-032
+  domain: observability
+  topic: continuous-profiling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Platform offers continuous profiling as a service. Multi-tenant isolation?
+  expected_signals:
+    - Per-service profile namespaces
+    - PII in stack frames policy
+    - Retention and cost caps
+    - Self-service UI with RBAC
+  red_flags:
+    - Shared profile bucket all stacks
+    - No RBAC on profiles
+    - Unbounded retention
+  follow_ups:
+    - Diff profiles for regressions?
+    - Profile-guided optimization loop?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-033
+  domain: observability
+  topic: ebpf-observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    eBPF for network and security observability without sidecars.
+  expected_signals:
+    - Kernel version requirements
+    - Privilege and security review
+    - Cardinality from eBPF maps
+    - Fallback when kernel unsupported
+  red_flags:
+    - eBPF everywhere without testing
+    - Ignore kernel CVE surface
+    - Replace all app instrumentation
+  follow_ups:
+    - Cilium Hubble use cases?
+    - eBPF vs sidecar cost model?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-034
+  domain: observability
+  topic: incident-timeline-reconstruction
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Reconstruct incident timeline from metrics, logs, traces, and deploy events.
+  expected_signals:
+    - Unified timestamp and trace_id
+    - Deploy markers on dashboards
+    - Changelog correlation automated
+    - Timeline tool for incident commander
+  red_flags:
+    - Manual grep across tools
+    - No deploy event integration
+    - Clock skew unaddressed
+  follow_ups:
+    - Event correlation platform?
+    - Timeline in postmortem template?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: obs-035
+  domain: observability
+  topic: observability-platform-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['datadog', 'grafana', 'google']
+  estimated_minutes: 15
+  question: |
+    Design internal observability platform for 200 teams self-service onboarding.
+  expected_signals:
+    - Tenant isolation in backends
+    - "Paved road: dashboards, SLOs, alerts templates"
+    - Platform SLO and support model
+    - Cost attribution per team
+  red_flags:
+    - Central team configures everything
+    - No tenant limits
+    - Platform without SLO
+  follow_ups:
+    - Multi-tenant Grafana?
+    - Onboarding API vs UI?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

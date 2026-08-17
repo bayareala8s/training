@@ -1,0 +1,6 @@
+flowchart TB
+    Lin[Linearizability] --> Seq[Sequential Consistency]
+    Seq --> Causal[Causal Consistency]
+    Causal --> Eventual[Eventual Consistency]
+    Lin -.->|strongest single-object| Client[Client View]
+    Eventual -.->|weakest| Client

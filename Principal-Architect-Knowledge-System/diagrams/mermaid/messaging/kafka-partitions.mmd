@@ -1,0 +1,8 @@
+flowchart LR
+    P[Producer] --> T[Topic]
+    T --> P0[Partition 0]
+    T --> P1[Partition 1]
+    T --> P2[Partition 2]
+    P0 --> CG[Consumer Group]
+    P1 --> CG
+    P2 --> CG

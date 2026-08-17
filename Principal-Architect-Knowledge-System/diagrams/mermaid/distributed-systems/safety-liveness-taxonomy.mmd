@@ -1,0 +1,12 @@
+flowchart TB
+    subgraph Safety["Safety Properties"]
+        S1[Mutual Exclusion]
+        S2[Agreement]
+        S3[Validity]
+    end
+    subgraph Liveness["Liveness Properties"]
+        L1[Termination]
+        L2[Progress]
+    end
+    Partition[Network Partition] --> Safety
+    Partition --> Liveness

@@ -1,0 +1,9 @@
+{
+  "config": {
+    "default": true,
+    "extends": "markdownlint/style/prettier",
+    "MD025": false,
+    "MD041": false
+  },
+  "ignores": ["node_modules", "build", ".docusaurus"]
+}

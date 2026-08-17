@@ -1,0 +1,822 @@
+version: 1
+domain: consensus
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 30
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: con-001
+  domain: consensus
+  topic: consensus-problem
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    What is the consensus problem, and what inputs/outputs does a consensus algorithm provide?
+  expected_signals:
+    - Agree on single value among failures
+    - Validity, agreement, integrity, termination
+    - Distinguish sync vs async models
+    - Relation to state machine replication
+  red_flags:
+    - Confuses with load balancing
+    - No termination discussion
+  follow_ups:
+    - How does SMR extend single-value consensus?
+    - Business example needing consensus?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-002
+  domain: consensus
+  topic: flp-impossibility
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    State the FLP impossibility result. What practical systems do despite it?
+  expected_signals:
+    - No deterministic consensus in async with crash failures
+    - Failure detectors, randomization, partial sync
+    - Liveness relaxed during instability
+    - Does not forbid practical protocols with timeouts
+  red_flags:
+    - FLP means consensus impossible always
+    - Misstates model assumptions
+  follow_ups:
+    - Compare Raft liveness argument
+    - When is partial synchrony reasonable?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-003
+  domain: consensus
+  topic: paxos
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Walk through Basic Paxos phases for a single decree. Where can liveness stall?
+  expected_signals:
+    - Prepare/promise; accept/learn
+    - Majority quorums
+    - Live lock without distinguished proposer
+    - Multi-Paxos needs stable leader
+  red_flags:
+    - Only one phase described
+    - Ignores learner role
+  follow_ups:
+    - What is a ballot number?
+    - How does Multi-Paxos reduce phase 1?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-004
+  domain: consensus
+  topic: multi-paxos
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Why does Multi-Paxos use a stable leader, and what happens when the leader fails?
+  expected_signals:
+    - Amortize prepare over log
+    - Leader failure triggers new election with higher ballot
+    - Uncommitted entries may block briefly
+    - Compare to Raft terminology
+  red_flags:
+    - Leaderless Multi-Paxos by default
+    - No mention of log continuity
+  follow_ups:
+    - Disk sync before ack?
+    - Impact of pipelining?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-005
+  domain: consensus
+  topic: raft
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Explain Raft leader election and log matching. When is an entry committed?
+  expected_signals:
+    - Randomized timeouts; vote on higher term
+    - Log up-to-date check
+    - Committed when replicated on majority
+    - "Safety: committed entries preserved"
+  red_flags:
+    - Committed on leader only
+    - Confuses with ZAB
+  follow_ups:
+    - What happens to divergent logs?
+    - Joint consensus for membership?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-006
+  domain: consensus
+  topic: raft-safety
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Prove informally why Raft prevents two leaders in the same term.
+  expected_signals:
+    - Majority vote uniqueness per term
+    - One voter grants at most one vote per term
+    - Split vote leads to re-election
+    - Does not cover clock tricks—election logic
+  red_flags:
+    - Hand-wave without quorum math
+    - Assumes synchronized clocks
+  follow_ups:
+    - "Edge case: network partition minority leader?"
+    - How does step-down work?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-007
+  domain: consensus
+  topic: viewstamped-replication
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    How does Viewstamped Replication relate to Paxos and Raft?
+  expected_signals:
+    - Primary-backup with view changes
+    - Similar safety story to Raft
+    - Historical influence on Raft
+    - Operational view change complexity
+  red_flags:
+    - Never heard of VR
+    - Claims totally different safety
+  follow_ups:
+    - When prefer VR literature?
+    - Compare to Zab primary epoch?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-008
+  domain: consensus
+  topic: zab
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    What problem does ZAB solve in ZooKeeper, and how does epoch change work?
+  expected_signals:
+    - Total order broadcast for coordination
+    - Leader epoch increments on failover
+    - Recovery sync before accepting writes
+    - Differs in details from Raft paper
+  red_flags:
+    - ZAB equals Raft
+    - No epoch discussion
+  follow_ups:
+    - ZK read consistency model?
+    - Observe mode in ZK?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-009
+  domain: consensus
+  topic: zookeeper
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    What consistency guarantees does ZooKeeper provide for writes and linearizable reads?
+  expected_signals:
+    - Sequential consistency for updates via leader
+    - sync() for linearizable read
+    - Session guarantees
+    - Not a general database
+  red_flags:
+    - ZK is fully linearizable always
+    - Unlimited write throughput assumption
+  follow_ups:
+    - herd effect pattern?
+    - When use etcd instead?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-010
+  domain: consensus
+  topic: etcd
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    How does etcd use Raft, and what operational concerns arise at 5-node scale?
+  expected_signals:
+    - Raft for replicated log
+    - Defragmentation, compaction, alarms
+    - Maintenance windows for upgrades
+    - Watch scalability limits
+  red_flags:
+    - Infinite watch clients free
+    - No backup strategy
+  follow_ups:
+    - Compare lease API to locks
+    - Cross-region etcd anti-pattern?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-011
+  domain: consensus
+  topic: consul
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    How does Consul achieve consensus for the catalog vs service mesh use case?
+  expected_signals:
+    - Raft for server state
+    - Gossip for agent membership
+    - Split architecture concerns
+    - WAN federation tradeoffs
+  red_flags:
+    - Single mechanism for everything
+    - Ignore split-brain across DCs
+  follow_ups:
+    - Connect sidecar overhead?
+    - When use Consul vs K8s native?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-012
+  domain: consensus
+  topic: membership-changes
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Why are membership changes dangerous in Raft, and how does joint consensus help?
+  expected_signals:
+    - Two independent majorities can overlap wrongly
+    - Joint configuration as bridge
+    - Single-server change safest
+    - Operational rolling adds
+  red_flags:
+    - Add/remove instant without joint
+    - Ignore overlap math
+  follow_ups:
+    - Raft §6 joint consensus steps?
+    - Automated vs manual membership?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-013
+  domain: consensus
+  topic: distributed-leases
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Implement a distributed lock with etcd. What guarantees do you actually get?
+  expected_signals:
+    - Mutual exclusion with fencing caveat
+    - Lease TTL and keepalive
+    - Not a substitute for fencing at resource
+    - Watch for session expire
+  red_flags:
+    - Lock solves all concurrency
+    - Ignore stale lock holder
+  follow_ups:
+    - Redlock controversy awareness?
+    - Compare to DB advisory locks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-014
+  domain: consensus
+  topic: fencing-tokens
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Explain fencing tokens with a stale primary writing to shared storage.
+  expected_signals:
+    - Monotonic token from coordination service
+    - Storage rejects lower token writes
+    - Prevents split-brain damage
+    - Requires storage layer support
+  red_flags:
+    - DNS failover enough
+    - Token optional
+  follow_ups:
+    - Martin Kleppmann Redlock critique?
+    - Design token store HA?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-015
+  domain: consensus
+  topic: leader-election
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Compare bully algorithm vs Raft for leader election in a datacenter cluster.
+  expected_signals:
+    - "Bully: simple, O(n) messages, assumes reliable detection"
+    - "Raft: formal safety for replicated log"
+    - Bully not for SMR alone
+    - "Use case: job scheduler vs metadata"
+  red_flags:
+    - Bully for financial ledger
+    - No failure detection caveat
+  follow_ups:
+    - Ring election algorithm?
+    - K8s leader election configmap?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-016
+  domain: consensus
+  topic: log-compaction
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Why must replicated logs be compacted, and what safety rules apply during snapshotting?
+  expected_signals:
+    - Unbounded disk growth
+    - Snapshot includes index; install snapshot to slow followers
+    - Committed entries preserved
+    - Catch-up before voting
+  red_flags:
+    - Delete log arbitrarily
+    - Snapshot without index
+  follow_ups:
+    - Incremental snapshot approaches?
+    - Impact on restore time?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-017
+  domain: consensus
+  topic: byzantine-faults
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    When do Byzantine faults matter, and how does PBFT differ from Raft?
+  expected_signals:
+    - Malicious nodes; crypto and 3f+1 replicas
+    - Higher cost; blockchain context
+    - Raft assumes crash-stop
+    - Most cloud infra stays crash-stop
+  red_flags:
+    - PBFT for every service
+    - Ignore 3f+1 cost
+  follow_ups:
+    - BFT in Hyperledger?
+    - When crash-stop insufficient?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-018
+  domain: consensus
+  topic: clock-leader
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Can you implement global leader election using synchronized wall clocks?
+  expected_signals:
+    - Clock skew breaks correctness
+    - Need lease + fencing or consensus
+    - TrueTime narrows uncertainty not eliminates
+    - Leap seconds and VM freeze
+  red_flags:
+    - NTP guarantees order
+    - Lease without fencing at resource
+  follow_ups:
+    - How Spanner uses TrueTime?
+    - Hybrid logical clocks role?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-019
+  domain: consensus
+  topic: witness-replicas
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    What is a witness replica in quorum systems, and when is it useful?
+  expected_signals:
+    - Votes but stores no data
+    - Reduces storage cost; affects fault tolerance math
+    - Cannot serve reads of data
+    - Geo distribution scenarios
+  red_flags:
+    - Witness serves reads
+    - Same fault tolerance as full replica
+  follow_ups:
+    - Dynamo quorum with witnesses?
+    - Operational complexity?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-020
+  domain: consensus
+  topic: log-replication-lag
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    A Raft follower falls far behind. Describe catch-up mechanisms without violating safety.
+  expected_signals:
+    - Snapshot install + AppendEntries
+    - Reject stale terms
+    - Leader never overwrites committed entries
+    - Monitor lag metric
+  red_flags:
+    - Truncate committed log on follower
+    - Force follower vote while lagging
+  follow_ups:
+    - Max bytes per AppendEntries?
+    - Follower election while lagging?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-021
+  domain: consensus
+  topic: pipelining
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    How does request pipelining affect consensus latency and throughput?
+  expected_signals:
+    - Amortizes RTT
+    - Maintains order per leader
+    - Backpressure if follower slow
+    - Commit index advancement
+  red_flags:
+    - Unlimited pipeline without flow control
+    - Ignore slow follower impact
+  follow_ups:
+    - Batching vs pipelining?
+    - Effect on election during pipeline?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-022
+  domain: consensus
+  topic: read-index
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    How does Raft serve linearizable reads without going through the log?
+  expected_signals:
+    - Read index / heartbeat confirmation leader still leader
+    - "Tradeoff: extra RTT"
+    - Lease-based read optimization risks
+    - Compare to etcd serializable read
+  red_flags:
+    - Leader read always safe without check
+    - Follower read linearizable by default
+  follow_ups:
+    - Quorum read alternative?
+    - Stale read when leader partitioned?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-023
+  domain: consensus
+  topic: transactional-consensus
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Can you nest 2PC inside consensus log application? What are pitfalls?
+  expected_signals:
+    - Coordination overhead
+    - Blocking if coordinator fails
+    - Prefer saga/outbox at application layer
+    - Consensus for metadata not every business txn
+  red_flags:
+    - 2PC everywhere via Raft
+    - Ignore poison transaction
+  follow_ups:
+    - Percolator model?
+    - When Calvin architecture fits?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-024
+  domain: consensus
+  topic: heterogeneous-cluster
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    You must upgrade Raft binary on all nodes. Describe a safe rollout.
+  expected_signals:
+    - Rolling restart maintaining quorum
+    - Version compatibility window
+    - Pre-upgrade backup/snapshot
+    - Validate election metrics post-step
+  red_flags:
+    - Simultaneous restart majority
+    - Skip health checks
+  follow_ups:
+    - Feature flag for protocol tweak?
+    - Rollback plan?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-025
+  domain: consensus
+  topic: cross-datacenter
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Stretch a 5-node Raft cluster across 3 datacenters. What placement and quorum risks appear?
+  expected_signals:
+    - Latency on every commit
+    - DC loss may lose quorum
+    - Witness/observer patterns
+    - Prefer per-DC consensus + async replication for some workloads
+  red_flags:
+    - Stretch for low-latency writes
+    - Ignore WAN partition
+  follow_ups:
+    - Google Spanner approach?
+    - etcd cross-region guidance?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-026
+  domain: consensus
+  topic: observer-nodes
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    What role do non-voting observers play in consensus clusters?
+  expected_signals:
+    - Catch up for reads/local DR
+    - Do not count in quorum
+    - Reduce WAN voting latency if placed locally
+    - Promotion to voter planned
+  red_flags:
+    - Observers vote
+    - No promotion story
+  follow_ups:
+    - TiKV learner role?
+    - Read load on observers?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-027
+  domain: consensus
+  topic: priority-leadership
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    How would you bias leader election toward a specific AZ for cost or locality?
+  expected_signals:
+    - Priority in candidacy—implementation-specific
+    - "Risk: lower priority partitions"
+    - Trade availability vs locality
+    - Fallback when preferred AZ down
+  red_flags:
+    - Hardcode leader forever
+    - Ignore failover
+  follow_ups:
+    - K8s preferred leader annotation?
+    - Cost of cross-AZ traffic?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-028
+  domain: consensus
+  topic: consensus-performance
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Your consensus cluster handles 10K small writes/sec. Bottlenecks and mitigations?
+  expected_signals:
+    - Disk fsync latency
+    - Batching proposals
+    - "Separate concerns: use consensus only for metadata"
+    - Hardware NVMe, dedicated nodes
+  red_flags:
+    - Bigger cluster fixes throughput
+    - Consensus for all app data without sharding
+  follow_ups:
+    - Sharding metadata service?
+    - Compare to Calvin sequencer?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-029
+  domain: consensus
+  topic: split-vote
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    Raft elections keep splitting votes. Diagnose and fix.
+  expected_signals:
+    - Randomized election timeout too similar
+    - Network partition or asymmetric delay
+    - Check clock not required but check GC
+    - Pre-vote extension (etcd)
+  red_flags:
+    - Reduce timeout to zero
+    - Add even number of voters
+  follow_ups:
+    - Pre-vote protocol?
+    - Is symmetric partition possible?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.
+- id: con-030
+  domain: consensus
+  topic: operational-consensus
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['google', 'aws', 'snowflake']
+  estimated_minutes: 15
+  question: |
+    As platform owner, what SLOs and alerts do you set for a managed etcd cluster?
+  expected_signals:
+    - Leader changes rate
+    - Proposal apply latency
+    - Disk usage, defrag needed
+    - Failed proposals, auth errors
+  red_flags:
+    - No alerts until down
+    - Only CPU alert
+  follow_ups:
+    - Runbook for quorum loss?
+    - Backup/restore RTO test?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → ops → tradeoffs vs alternatives.

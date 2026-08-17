@@ -1,0 +1,992 @@
+version: 1
+domain: security
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 35
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: sec-001
+  domain: security
+  topic: zero-trust-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Design zero-trust architecture for internal services replacing perimeter VPN model.
+  expected_signals:
+    - Identity per workload and user
+    - mTLS or token-based service auth
+    - Policy enforcement points explicit
+    - Continuous verification not one-time
+  red_flags:
+    - Zero trust = no firewalls
+    - VPN with flat network inside
+    - Implicit trust by IP range
+  follow_ups:
+    - ZTNA vs mesh?
+    - Legacy app migration waves?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-002
+  domain: security
+  topic: defense-in-depth
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Apply defense-in-depth to a public API handling PII.
+  expected_signals:
+    - Edge WAF, auth, app validation, encryption
+    - Layer failures assumed
+    - Monitoring at each layer
+    - No single control reliance
+  red_flags:
+    - WAF alone sufficient
+    - Encryption only at transport
+    - Skip app-layer authz
+  follow_ups:
+    - Which layer failed in breach?
+    - Cost of too many layers?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-003
+  domain: security
+  topic: threat-modeling-stride
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Threat model a new file upload feature using STRIDE.
+  expected_signals:
+    - "Spoofing: auth on upload"
+    - "Tampering: integrity checks"
+    - "Repudiation: audit logs"
+    - "DoS: size limits; Elevation: sandbox"
+  red_flags:
+    - Skip threat model for internal
+    - Generic threats only
+    - No mitigations mapped
+  follow_ups:
+    - PASTA vs STRIDE?
+    - Threat model in CI gate?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-004
+  domain: security
+  topic: oauth2-oidc-flows
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Choose OAuth2 flow for SPA, mobile, and B2B API clients.
+  expected_signals:
+    - "SPA: auth code + PKCE"
+    - "Mobile: secure storage for tokens"
+    - "B2B: client credentials or mTLS"
+    - Token lifetime and refresh rotation
+  red_flags:
+    - Implicit flow for SPA
+    - Long-lived access tokens
+    - Same flow for all clients
+  follow_ups:
+    - OIDC vs OAuth2 scopes?
+    - Token binding?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-005
+  domain: security
+  topic: mTLS-service-mesh
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Roll out mTLS across 300 services. Certificate lifecycle and blast radius.
+  expected_signals:
+    - Short-lived certs via CA mesh
+    - SPIFFE IDs where applicable
+    - Gradual permissive→strict mode
+    - Break-glass non-mTLS paths documented
+  red_flags:
+    - Manual cert per service forever
+    - 10-year cert validity
+    - mTLS without identity in authz
+  follow_ups:
+    - Cert rotation without restart?
+    - Mesh CA compromise response?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-006
+  domain: security
+  topic: secrets-management-vault
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Central secrets management for apps, CI, and humans. Architecture?
+  expected_signals:
+    - Dynamic secrets where possible
+    - Namespace/path isolation per team
+    - Audit all secret access
+    - Break-glass procedure
+  red_flags:
+    - Secrets in env vars in Git
+    - Shared root token for apps
+    - No rotation
+  follow_ups:
+    - Vault HA across regions?
+    - External Secrets vs agent?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-007
+  domain: security
+  topic: certificate-rotation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Automate TLS cert rotation for 10K endpoints without outages.
+  expected_signals:
+    - ACME or internal CA automation
+    - Dual cert overlap window
+    - Monitor expiry 30/7/1 day
+    - Service mesh cert rotation
+  red_flags:
+    - Manual renewal yearly
+    - Restart all pods same minute
+    - No expiry monitoring
+  follow_ups:
+    - Private CA hierarchy?
+    - Cross-region cert sync?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-008
+  domain: security
+  topic: kms-envelope-encryption
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Envelope encryption for application data keys with cloud KMS.
+  expected_signals:
+    - DEK per tenant or per object
+    - KEK in KMS with rotation
+    - Cache DEKs with TTL carefully
+    - Crypto shredding for delete
+  red_flags:
+    - Single app-wide DEK in config
+    - KEK rotation breaks all data without plan
+    - Decrypt all data for every read unnecessarily
+  follow_ups:
+    - BYOK customer keys?
+    - Multi-region KMS failover?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-009
+  domain: security
+  topic: data-encryption-at-rest
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Encryption at rest strategy: database TDE vs application-level field encryption.
+  expected_signals:
+    - "TDE: transparent, coarse granularity"
+    - "Field-level: selective, query limitations"
+    - Key management separation
+    - Compliance driver per choice
+  red_flags:
+    - Encryption at rest = app not needed
+    - Same key for all tenants
+    - No key access audit
+  follow_ups:
+    - Search on encrypted fields?
+    - TDE vs customer-managed keys?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-010
+  domain: security
+  topic: tokenization-pci
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Tokenize PAN for PCI scope reduction. Architecture and key domains.
+  expected_signals:
+    - Token vault isolated network
+    - Format-preserving tokens if needed
+    - Scope diagram updated
+    - No PAN in logs ever
+  red_flags:
+    - Store PAN encrypted in app DB
+    - Token reversible without vault
+    - PCI scope unchanged claimed
+  follow_ups:
+    - HSM requirements?
+    - Token migration from legacy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-011
+  domain: security
+  topic: waf-vs-api-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    WAF vs API gateway auth/rate limit vs app-level security. Layering?
+  expected_signals:
+    - "WAF: OWASP, bots, geo"
+    - "Gateway: authn, coarse rate limits"
+    - "App: authz, business logic"
+    - Avoid duplicating same rule badly
+  red_flags:
+    - Only WAF for API security
+    - App does everything—no edge
+    - Conflicting rules untested
+  follow_ups:
+    - API schema validation at edge?
+    - GraphQL depth attack?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-012
+  domain: security
+  topic: owasp-api-top10
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Prevent OWASP API Top 10 in a high-growth public API.
+  expected_signals:
+    - "BOLA: object-level authz checks"
+    - "Mass assignment: schema allowlist"
+    - Rate limits and anomaly detection
+    - Security tests in CI
+  red_flags:
+    - AuthN equals AuthZ
+    - No object-level checks
+    - Security only pen test yearly
+  follow_ups:
+    - API fuzzing in CI?
+    - Shadow API discovery?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-013
+  domain: security
+  topic: supply-chain-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Secure CI/CD supply chain: dependencies, images, and pipeline integrity.
+  expected_signals:
+    - Signed commits and build provenance SLSA
+    - Dependency scanning and pin
+    - Image scan and admission deny
+    - Pipeline OIDC not long-lived keys
+  red_flags:
+    - Pull latest deps in prod build
+    - Unsigned container images
+    - Shared pipeline secrets
+  follow_ups:
+    - SBOM in release?
+    - Build cache poisoning?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-014
+  domain: security
+  topic: sbom-requirements
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    SBOM generation and consumption for enterprise customers.
+  expected_signals:
+    - Generate per release artifact
+    - VEX for false positives
+    - Customer delivery format CycloneDX
+    - Vuln scan against SBOM
+  red_flags:
+    - SBOM never updated
+    - No vuln response process
+    - SBOM contains secrets
+  follow_ups:
+    - Runtime SBOM drift?
+    - Legal license audit from SBOM?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-015
+  domain: security
+  topic: container-image-scanning
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Image scanning in pipeline and admission. False positives and SLAs.
+  expected_signals:
+    - Scan on build and admission
+    - Severity policy with exception workflow
+    - Base image golden and minimal
+    - Rescan on new CVE database
+  red_flags:
+    - Scan only at build
+    - Block all CVEs including unreachable
+    - No base image update process
+  follow_ups:
+    - Distroless adoption?
+    - Scan runtime vs build time?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-016
+  domain: security
+  topic: runtime-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Runtime threat detection for Kubernetes workloads.
+  expected_signals:
+    - Syscall and network anomaly rules
+    - Tune to reduce false positives
+    - Automated isolate vs alert-only policy
+    - Integration with incident response
+  red_flags:
+    - Runtime security disabled
+    - Default rules only noisy
+    - Auto kill pods without runbook
+  follow_ups:
+    - Falco vs eBPF sensors?
+    - Runtime vs admission overlap?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-017
+  domain: security
+  topic: siem-integration
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Feed security signals to SIEM without drowning analysts.
+  expected_signals:
+    - High-value events prioritized
+    - Correlation rules maintained
+    - Retention and cost tiering
+    - Playbooks for top alert types
+  red_flags:
+    - Every debug log to SIEM
+    - No tuning after deploy
+    - SIEM without IR process
+  follow_ups:
+    - UEBA on cloud logs?
+    - Cross-cloud SIEM architecture?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-018
+  domain: security
+  topic: incident-response-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Security incident: credential leak in public repo. IR architecture and steps.
+  expected_signals:
+    - Revoke and rotate immediately
+    - "Scope: git history, forks, caches"
+    - Preserve evidence forensically
+    - Customer notification assessment
+  red_flags:
+    - Delete commit only
+    - No secret scanning prevention
+    - Ignore dependency on leaked key
+  follow_ups:
+    - Automated secret scanning?
+    - Post-incident SCP changes?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-019
+  domain: security
+  topic: forensics-cloud
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Cloud forensics after suspected compromise. Data preservation architecture.
+  expected_signals:
+    - Snapshot volumes immutable
+    - CloudTrail org trail integrity
+    - Network flow log retention
+    - Legal hold process
+  red_flags:
+    - Live disk overwrite
+    - Insufficient log retention
+    - No forensic account isolation
+  follow_ups:
+    - Memory capture in cloud?
+    - Cross-account attacker pivot trace?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-020
+  domain: security
+  topic: dlp-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    DLP for data exfiltration via API and storage.
+  expected_signals:
+    - Classification labels at source
+    - Outbound API monitoring
+    - Storage public access prevention
+    - Alert on anomalous download volume
+  red_flags:
+    - DLP only on email
+    - No exfiltration monitoring on APIs
+    - Classification manual only
+  follow_ups:
+    - ML DLP false positives?
+    - DLP for SaaS multi-tenant?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-021
+  domain: security
+  topic: iam-least-privilege
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Implement least privilege IAM at scale for 500 microservices.
+  expected_signals:
+    - IAM policy per service minimal
+    - Periodic access analyzer reviews
+    - Deny policies for dangerous actions
+    - No shared roles across services
+  red_flags:
+    - Wildcard * on actions
+    - Same role for prod and dev
+    - Never review permissions
+  follow_ups:
+    - ABAC vs RBAC at scale?
+    - Permission boundaries pattern?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-022
+  domain: security
+  topic: break-glass-access
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Design break-glass admin access with audit and time bounds.
+  expected_signals:
+    - Just-in-time elevation workflow
+    - MFA and manager approval
+    - Session recorded and alerted
+    - Auto-revoke TTL
+  red_flags:
+    - Shared break-glass password
+    - Permanent emergency admin
+    - No alert on break-glass use
+  follow_ups:
+    - PAM integration?
+    - Break-glass during IdP outage?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-023
+  domain: security
+  topic: privileged-access-management
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    PAM for infrastructure access replacing shared bastion passwords.
+  expected_signals:
+    - Vaulted credentials or session proxy
+    - Recording and command filtering
+    - No direct SSH keys on laptops
+    - Integration with IdP
+  red_flags:
+    - Shared root SSH keys
+    - Bastion as single weak point unmonitored
+    - Permanent sudo for all
+  follow_ups:
+    - Zero standing privilege?
+    - PAM for database access?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-024
+  domain: security
+  topic: sso-federation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Federation architecture for B2B customers using their IdP.
+  expected_signals:
+    - SAML/OIDC per customer config
+    - JIT provisioning and SCIM deprovision
+    - Session timeout alignment
+    - Audit login events per tenant
+  red_flags:
+    - One shared SAML cert for all
+    - Manual user offboarding
+    - No tenant IdP isolation
+  follow_ups:
+    - Home realm discovery?
+    - Multiple IdP per enterprise?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-025
+  domain: security
+  topic: scim-provisioning
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    SCIM for automated user lifecycle in multi-tenant SaaS.
+  expected_signals:
+    - SCIM push from customer IdP
+    - Deprovision revokes sessions fast
+    - Group→role mapping explicit
+    - SCIM audit and error handling
+  red_flags:
+    - Manual user delete weekly job
+    - SCIM without group support
+    - Orphan accounts after offboard
+  follow_ups:
+    - SCIM vs custom API?
+    - Rate limits on SCIM?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-026
+  domain: security
+  topic: compliance-soc2
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Map architecture controls to SOC2 Trust Service Criteria.
+  expected_signals:
+    - Access control, change management, monitoring evidence
+    - Automated compliance checks in IaC
+    - Vendor subprocessors documented
+    - Continuous not point-in-time only
+  red_flags:
+    - SOC2 = checkbox annual
+    - No automation for evidence
+    - Ignore CC6 logical access
+  follow_ups:
+    - Continuous compliance tools?
+    - Customer audit portal?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-027
+  domain: security
+  topic: compliance-pci-dss
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Architect payment flow for PCI DSS scope minimization.
+  expected_signals:
+    - Card data never touches merchant servers if possible
+    - Network segmentation CDE
+    - Logging and access control on CDE
+    - Quarterly scan process
+  red_flags:
+    - Store PAN in app database
+    - CDE flat with corporate network
+    - No ASV scan program
+  follow_ups:
+    - SAQ type determination?
+    - Tokenization provider integration?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-028
+  domain: security
+  topic: gdpr-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    GDPR delete and export requests at scale across microservices.
+  expected_signals:
+    - Orchestrated delete workflow with idempotency
+    - Data map per service
+    - Export API with auth verification
+    - Retention policies enforced
+  red_flags:
+    - Manual ticket per service
+    - Delete without audit trail
+    - Orphan data in analytics
+  follow_ups:
+    - Right to restrict processing?
+    - Cross-border transfer controls?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-029
+  domain: security
+  topic: privacy-by-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Embed privacy-by-design in new customer analytics feature.
+  expected_signals:
+    - Data minimization at collection
+    - Purpose limitation documented
+    - Pseudonymization in pipeline
+    - DPIA before launch
+  red_flags:
+    - Collect all fields just in case
+    - No privacy review gate
+    - Production data in analytics default
+  follow_ups:
+    - Consent management integration?
+    - Anonymization vs aggregation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-030
+  domain: security
+  topic: pen-test-program
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Structure annual pen test program tied to architecture changes.
+  expected_signals:
+    - Scope based on threat model deltas
+    - Remediation SLA by severity
+    - Retest critical findings
+    - Share results with engineering
+  red_flags:
+    - Pen test only after breach
+    - Findings without owners
+    - Same scope every year
+  follow_ups:
+    - Bug bounty vs pen test?
+    - Continuous pen testing tools?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-031
+  domain: security
+  topic: bug-bounty-integration
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Integrate bug bounty with internal triage and secure release.
+  expected_signals:
+    - Defined scope and safe harbor
+    - 24/7 triage rotation or vendor
+    - Duplicate internal vs external findings
+    - Fast patch path for critical
+  red_flags:
+    - Public bounty without triage
+    - Ignore researcher reports
+    - Pay without fix
+  follow_ups:
+    - VDP before bounty?
+    - Coordinated disclosure timeline?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-032
+  domain: security
+  topic: security-champions
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Scale security review via security champions in 30 teams.
+  expected_signals:
+    - Champions trained on threat modeling lite
+    - Security provides playbooks not gates
+    - "Metrics: reviews per quarter"
+    - Escalation path to AppSec
+  red_flags:
+    - AppSec reviews every PR
+    - Champions without training
+    - Security bottleneck
+  follow_ups:
+    - Champion certification?
+    - Measure vulnerability density?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-033
+  domain: security
+  topic: secure-sdlc
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Secure SDLC gates without blocking velocity.
+  expected_signals:
+    - "Risk-tiered gates: SAST for all, DAST for tier-1"
+    - Shift-left in CI fast feedback
+    - Exception with expiry
+    - Metrics not wall of shame
+  red_flags:
+    - Same heavy gate for all apps
+    - Security only at release
+    - No exception process
+  follow_ups:
+    - IAST in staging?
+    - Supply chain gate placement?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-034
+  domain: security
+  topic: api-gateway-auth
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Centralize auth at API gateway vs per-service JWT validation.
+  expected_signals:
+    - "Gateway: terminate TLS, coarse auth, rate limits"
+    - Services validate JWT signature
+    - Avoid gateway as authz brain
+    - Token propagation to downstream
+  red_flags:
+    - Gateway does all authz
+    - Trust gateway without JWT validation in service
+    - Opaque tokens without service validation
+  follow_ups:
+    - mTLS plus JWT?
+    - Gateway bypass paths?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: sec-035
+  domain: security
+  topic: encryption-key-hierarchy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['security', 'stripe', 'cloud']
+  estimated_minutes: 15
+  question: |
+    Design key hierarchy: root KMS → tenant KEK → data DEK.
+  expected_signals:
+    - Separation of duties on root
+    - Per-tenant crypto isolation
+    - Rotation without re-encrypt all if design allows
+    - HSM for root optional tier
+  red_flags:
+    - Single master key in config
+    - No rotation plan
+    - Same DEK for all tenants
+  follow_ups:
+    - Envelope encryption performance?
+    - Customer-managed key per tenant?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

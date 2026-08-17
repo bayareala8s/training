@@ -1,0 +1,20 @@
+---
+description: Principal-level interview content requirements
+globs:
+  - "interview/**/*"
+  - "docs/**/*"
+alwaysApply: false
+---
+
+Interview content must test reasoning, not memorization.
+
+Each advanced question should include:
+- expected answer signals
+- follow-up questions
+- red flags
+- tradeoffs
+- a scoring rubric
+- a strong-answer outline
+
+Principal-level questions must include organizational, operational, or
+business implications where relevant.

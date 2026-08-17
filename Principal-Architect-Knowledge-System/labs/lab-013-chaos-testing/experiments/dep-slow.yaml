@@ -1,0 +1,11 @@
+name: dep-slow
+hypothesis: "Redis slowdown increases latency but success rate stays above 99%"
+duration_seconds: 60
+fault:
+  type: dependency_latency
+  target: redis
+  latency_ms: 500
+blast_radius:
+  instances: ["demo-service"]
+abort_on:
+  error_rate_gt: 0.05

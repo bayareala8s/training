@@ -1,0 +1,29 @@
+---
+description: Standards for technical chapters
+globs:
+  - "docs/**/*.md"
+  - "case-studies/**/*.md"
+alwaysApply: false
+---
+
+Every technical chapter must explain:
+- the problem
+- assumptions
+- mechanism
+- guarantees
+- failure modes
+- performance
+- alternatives
+- operational concerns
+- security
+- cost
+- interview relevance
+
+Avoid shallow summaries.
+
+Use examples, calculations, diagrams, failure scenarios, and production
+implementations.
+
+Define acronyms on first use.
+
+Do not claim universal best practices. Explain decision criteria.

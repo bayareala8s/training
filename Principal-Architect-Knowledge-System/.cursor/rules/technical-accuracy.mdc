@@ -1,0 +1,17 @@
+---
+description: Technical accuracy and factual integrity
+alwaysApply: true
+---
+
+Do not invent facts, benchmark numbers, outage details, research claims, or
+product capabilities.
+
+When uncertain:
+- mark the statement for verification
+- add a TODO with the verification requirement
+- prefer primary sources
+- distinguish guarantees from implementation choices
+- distinguish theory from operational practice
+- state assumptions explicitly
+
+For distributed algorithms, identify safety and liveness properties separately.

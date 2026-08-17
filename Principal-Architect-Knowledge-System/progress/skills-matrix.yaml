@@ -1,0 +1,59 @@
+domains:
+  distributed_systems_foundations:
+    importance: critical
+    current_level: 3
+    target_level: 5
+    confidence: medium
+    topics:
+      partial_failure:
+        status: in_progress
+        confidence: medium
+      safety_liveness:
+        status: not_started
+        confidence: low
+
+  consensus:
+    importance: critical
+    current_level: 2
+    target_level: 5
+    confidence: low
+    topics:
+      raft:
+        status: in_progress
+        confidence: medium
+      paxos:
+        status: not_started
+        confidence: low
+
+  cloud_architecture:
+    importance: critical
+    current_level: 4
+    target_level: 5
+    confidence: high
+    topics:
+      aws_core_services:
+        status: in_progress
+        confidence: high
+      multi_region:
+        status: in_progress
+        confidence: medium
+
+  system_design:
+    importance: critical
+    current_level: 3
+    target_level: 5
+    confidence: medium
+
+  architecture_leadership:
+    importance: high
+    current_level: 3
+    target_level: 5
+    confidence: medium
+
+levels:
+  0: No familiarity
+  1: Recognize terminology
+  2: Explain basic concepts
+  3: Apply concepts in designs
+  4: Critique and optimize production systems
+  5: Teach, innovate, and defend decisions under challenge

@@ -1,0 +1,233 @@
+papers:
+  - id: lamport-1978-time-clocks
+    title: "Time, Clocks, and the Ordering of Events in a Distributed System"
+    authors: ["Leslie Lamport"]
+    year: 1978
+    venue: "Communications of the ACM"
+    topics: [ordering, causality, logical-clocks, happens-before]
+    url: "https://lamport.azurewebsites.net/pubs/time-clocks.pdf"
+  - id: fidge-1988-vector-clocks
+    title: "Timestamps in Message-Passing Systems That Preserve the Partial Ordering"
+    authors: ["Colin J. Fidge"]
+    year: 1988
+    venue: "Australian Computer Science Conference"
+    topics: [vector-clocks, causality, partial-order]
+  - id: mattern-1989-virtual-time
+    title: "Virtual Time and Global States of Distributed Systems"
+    authors: ["Friedemann Mattern"]
+    year: 1989
+    venue: "Parallel and Distributed Algorithms"
+    topics: [vector-clocks, global-snapshots, causality]
+  - id: dynamo-2007-sosp
+    title: "Dynamo: Amazon's Highly Available Key-value Store"
+    authors: ["Giuseppe DeCandia", "Deniz Hastorun", "Madan Jampani", "Gunavardhan Kakulapati", "Avinash Lakshman", "Alex Pilchin", "Swaminathan Sivasubramanian", "Peter Vosshall", "Werner Vogels"]
+    year: 2007
+    venue: SOSP
+    topics: [vector-clocks, version-vectors, eventual-consistency]
+    url: "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+  - id: kulkarni-2014-hlc
+    title: "Logical Physical Clocks and Consistent Snapshots in Globally Distributed Systems"
+    authors: ["Sandesh Kulkarni", "Murat Demirbas", "Deepak Madeppa", "Bharat Avva", "Mike Leone"]
+    year: 2014
+    venue: OPODIS
+    topics: [hybrid-logical-clocks, causality]
+    url: "https://www.ics.uci.edu/~baldoni/papers/2014/2014-opodis-hybrid.pdf"
+  - id: spanner-truetime-2012
+    title: "Spanner: Google's Globally-Distributed Database"
+    authors: ["James C. Corbett", "et al."]
+    year: 2012
+    venue: OSDI
+    topics: [TrueTime, external-consistency, clock-uncertainty]
+    url: "https://research.google/pubs/pub39966/"
+  - id: rfc-5905-ntp
+    title: "Network Time Protocol Version 4: Protocol and Algorithms Specification"
+    authors: ["David L. Mills"]
+    year: 2010
+    venue: RFC 5905
+    topics: [NTP, clock-synchronization]
+    url: "https://www.rfc-editor.org/rfc/rfc5905"
+  - id: chandra-toueg-1996-failure-detectors
+    title: "Unreliable Failure Detectors for Reliable Distributed Systems"
+    authors: ["Tushar D. Chandra", "Sam Toueg"]
+    year: 1996
+    venue: "Journal of the ACM"
+    topics: [failure-detection, partial-synchrony, consensus, diamond-P]
+    url: "https://dl.acm.org/doi/10.1145/226643.226647"
+  - id: hayashibara-2004-phi-accrual
+    title: "The φ Accrual Failure Detector"
+    authors: ["Naohiro Hayashibara", "Antoine Cherif", "Xavier Defago"]
+    year: 2004
+    venue: "IEEE International Symposium on Reliable Distributed Systems"
+    topics: [failure-detection, phi-accrual, adaptive-timeouts]
+  - id: das-2008-swim
+    title: "SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol"
+    authors: ["Abhinandan Das", "Indranil Gupta", "Ashish Gurumurthi"]
+    year: 2008
+    venue: DSN
+    topics: [failure-detection, gossip, membership, SWIM]
+  - id: gilbert-lynch-2002-cap
+    title: "Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services"
+    authors: ["Seth Gilbert", "Nancy A. Lynch"]
+    year: 2002
+    venue: "ACM SIGACT News"
+    topics: [CAP, consistency, availability, partition-tolerance, linearizability]
+    url: "https://courses.csail.mit.edu/6.824/papers/cap.pdf"
+  - id: abadi-2012-pacelc
+    title: "Consistency Tradeoffs in Modern Distributed Database System Design"
+    authors: ["Daniel Abadi"]
+    year: 2012
+    venue: "IEEE Computer"
+    topics: [PACELC, consistency, latency, CAP]
+    url: "https://cs.umd.edu/~abadi/papers/abadi-pacelc.pdf"
+  - id: herlihy-wing-1990-linearizability
+    title: "Linearizability: A Correctness Condition for Concurrent Objects"
+    authors: ["Maurice P. Herlihy", "Jeannette M. Wing"]
+    year: 1990
+    venue: "ACM Transactions on Programming Languages and Systems"
+    topics: [linearizability, strong-consistency, concurrent-objects]
+    url: "https://cs.brown.edu/~mph/HerlihyW90/p90.html"
+  - id: ahamad-1995-causal-memory
+    title: "Causal Memory: Definitions, Implementation, and Programming"
+    authors: ["Mustaque Ahamad", "Gil Neiger", "James E. Burns", "Prince Kohli", "P. W. Hutto"]
+    year: 1995
+    venue: Distributed Computing
+    topics: [causal-consistency, distributed-memory]
+    url: "https://www.cs.cornell.edu/home/rvr/papers/causal-memory.pdf"
+  - id: lloyd-2011-cops
+    title: "Don't Be EVENTual: Causal Consistency for the Globally Distributed Cloud"
+    authors: ["Wyatt Lloyd", "Michael J. Freedman", "Michael Kaminsky", "David G. Andersen"]
+    year: 2011
+    venue: USENIX ATC
+    topics: [causal-consistency, geo-replication]
+    url: "https://www.usenix.org/system/files/conference/atc11/atc11-final85.pdf"
+  - id: terry-1995-bayou
+    title: "Managing Update Conflicts in Bayou, a Weakly Connected Replicated Storage System"
+    authors: ["Douglas B. Terry", "Marvin M. Theimer", "Karsten Petersen", "Alan J. Demers", "Mike J. Spreitzer", "Carl H. Hauser"]
+    year: 1995
+    venue: SOSP
+    topics: [causal-consistency, conflict-resolution, replication]
+    url: "https://www2.cs.duke.edu/courses/common/compsci590/papers/bayou.pdf"
+  - id: shapiro-2011-crdt
+    title: "Conflict-free Replicated Data Types"
+    authors: ["Marc Shapiro", "Nuno Preguiça", "Carlos Baquero", "Marek Zawirski"]
+    year: 2011
+    venue: SSS
+    topics: [crdts, replication, strong-eventual-consistency, state-based, op-based]
+    url: "https://hal.science/hal-00609329v1/document"
+  - id: lamport-1979-sequential-consistency
+    title: "How to Make a Multiprocessor Computer That Correctly Executes Multiprocess Programs"
+    authors: ["Leslie Lamport"]
+    year: 1979
+    venue: "IEEE Transactions on Computers"
+    topics: [sequential-consistency, memory-models, multiprocessors]
+    url: "https://lamport.azurewebsites.net/pubs/how-to-make-a.pdf"
+  - id: terry-1994-session-guarantees
+    title: "Session Guarantees for Weakly Consistent Replicated Data"
+    authors: ["Douglas B. Terry", "Alan J. Demers", "Karsten Petersen", "Mike J. Spreitzer", "Marvin M. Theimer", "Carl H. Hauser"]
+    year: 1994
+    venue: PDIS
+    topics: [session-guarantees, read-your-writes, monotonic-reads, eventual-consistency]
+    url: "https://www.microsoft.com/en-us/research/publication/session-guarantees-for-weakly-consistent-replicated-data/"
+  - id: gifford-1979-quorum
+    title: "Weighted Voting for Replicated Data"
+    authors: ["David K. Gifford"]
+    year: 1979
+    venue: SOSP
+    topics: [quorum, replication, voting, fault-tolerance]
+    url: "https://www.microsoft.com/en-us/research/publication/weighted-voting-for-replicated-data/"
+  - id: shapiro-2011-crdt-report
+    title: "A Comprehensive Study of Convergent and Commutative Replicated Data Types"
+    authors: ["Marc Shapiro", "Nuno Preguiça", "Carlos Baquero", "Marek Zawirski"]
+    year: 2011
+    venue: INRIA Research Report RR-7506
+    topics: [crdts, replication, join-semilattice, G-Counter, OR-Set]
+    url: "https://hal.inria.fr/inria-00555588/document"
+  - id: fischer-lynch-patterson-1985-flp
+    title: "Impossibility of Distributed Consensus with One Faulty Process"
+    authors: ["Michael J. Fischer", "Nancy A. Lynch", "Michael S. Patterson"]
+    year: 1985
+    venue: "Journal of the ACM"
+    topics: [consensus, impossibility, asynchronous, flp]
+    url: "https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf"
+  - id: ongaro-ousterhout-2014-raft
+    title: "In Search of an Understandable Consensus Algorithm (Extended Version)"
+    authors: ["Diego Ongaro", "John Ousterhout"]
+    year: 2014
+    venue: USENIX ATC
+    topics: [raft, consensus, leader-election, log-replication]
+    url: "https://raft.github.io/raft.pdf"
+  - id: lamport-1998-paxos
+    title: "The Part-Time Parliament"
+    authors: ["Leslie Lamport"]
+    year: 1998
+    venue: "ACM Transactions on Computer Systems"
+    topics: [paxos, consensus]
+    url: "https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf"
+  - id: dwork-lynch-stockmeyer-1988-partial-sync
+    title: "Consensus in the Presence of Partial Synchrony"
+    authors: ["Cynthia Dwork", "Nancy A. Lynch", "Larry Stockmeyer"]
+    year: 1988
+    venue: "Journal of the ACM"
+    topics: [consensus, partial-synchrony]
+  - id: bayer-mccreight-1972-btree
+    title: "Organization and Maintenance of Large Ordered Indexes"
+    authors: ["Rudolf Bayer", "Edward M. McCreight"]
+    year: 1972
+    venue: "Acta Informatica"
+    topics: [b-tree, indexing, storage-engine]
+    url: "https://wis-ifs.uni-regensburg.de/wis/Lehre/DBS/DBS1/Bayer_McCreight_1972.pdf"
+  - id: oneil-1996-lsm-tree
+    title: "The Log-Structured Merge-Tree (LSM-Tree)"
+    authors: ["Patrick O'Neil", "Edward Cheng", "Dieter Gawlick", "Elizabeth O'Neil"]
+    year: 1996
+    venue: "Acta Informatica"
+    topics: [lsm-tree, storage-engine, compaction]
+    url: "https://www.cs.umb.edu/~poneil/lsmtree.pdf"
+  - id: rosenblum-ousterhout-1992-lfs
+    title: "The Design and Implementation of a Log-Structured File System"
+    authors: ["Mendel Rosenblum", "John K. Ousterhout"]
+    year: 1992
+    venue: "ACM Transactions on Computer Systems"
+    topics: [log-structured, wal, storage-engine]
+  - id: mohan-1992-aries
+    title: "ARIES: A Transaction Recovery Method Supporting Fine-Granularity Locking and Partial Rollbacks Using Write-Ahead Logging"
+    authors: ["C. Mohan", "Don Haderle", "Bruce Lindsay", "Hamid Pirahesh", "Paul Schwarz"]
+    year: 1992
+    venue: "ACM Transactions on Database Systems"
+    topics: [wal, recovery, redo, undo, aries]
+  - id: berenson-1995-sql-isolation
+    title: "A Critique of ANSI SQL Isolation Levels"
+    authors: ["Hal Berenson", "Phil Bernstein", "Jim Gray", "Jim Melton", "Elizabeth O'Neil", "Patrick O'Neil"]
+    year: 1995
+    venue: SIGMOD
+    topics: [isolation-levels, anomalies, snapshot-isolation, transactions]
+    url: "https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-95-51.pdf"
+  - id: adya-1999-weak-consistency
+    title: "Weak Consistency: A Generalized Theory and Optimistic Implementations for Distributed Transactions"
+    authors: ["Atul Adya"]
+    year: 1999
+    venue: MIT PhD thesis
+    topics: [isolation-levels, snapshot-isolation, serializability, mvcc]
+    url: "https://www.pmg.lcs.mit.edu/papers/adyathesis.pdf"
+  - id: garcia-molina-salem-1987-sagas
+    title: "Sagas"
+    authors: ["Hector Garcia-Molina", "Kenneth Salem"]
+    year: 1987
+    venue: SIGMOD
+    topics: [sagas, distributed-transactions, compensation]
+    url: "https://www.cs.cornell.edu/hals/Papers/sagas.pdf"
+  - id: ports-clements-2012-ssi
+    title: "Serializable Snapshot Isolation in PostgreSQL"
+    authors: ["Dan R. K. Ports", "Kevin C. Clements"]
+    year: 2012
+    venue: VLDB
+    topics: [mvcc, serializable-snapshot-isolation, postgresql, transactions]
+    url: "https://drkp.net/papers/ssi.pdf"
+  - id: skeen-1981-nonblocking-commit
+    title: "Nonblocking Commit Protocols"
+    authors: ["Dale Skeen"]
+    year: 1981
+    venue: SIGMOD
+    topics: [two-phase-commit, three-phase-commit, distributed-transactions]
+    url: "https://www.cs.cornell.edu/skeen/papers/skeen81.pdf"
+last_updated: 2026-07-24

@@ -1,0 +1,1292 @@
+version: 1
+domain: system-design
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 40
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: sd-001
+  domain: system-design
+  topic: url-shortener
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a global URL shortener handling 100M new URLs/day and 10:1 read ratio.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-002
+  domain: system-design
+  topic: chat-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design WhatsApp-class messaging for 500M DAU with delivery receipts and groups up to 256 members.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-003
+  domain: system-design
+  topic: news-feed
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a personalized news feed for 200M DAU with sub-second refresh for followed accounts.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-004
+  domain: system-design
+  topic: payment-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a payment platform processing 50K TPS with idempotent transfers and auditability.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-005
+  domain: system-design
+  topic: distributed-rate-limiter
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a distributed API rate limiter enforcing per-tenant limits at 2M RPS globally.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-006
+  domain: system-design
+  topic: notification-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a multi-channel notification system (push, email, SMS) with delivery tracking.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-007
+  domain: system-design
+  topic: video-streaming
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a Netflix-like video streaming platform for 50M concurrent viewers peak.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-008
+  domain: system-design
+  topic: search-autocomplete
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design search autocomplete serving 500K QPS with p99 < 50ms.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-009
+  domain: system-design
+  topic: file-storage
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design Dropbox-class file sync for 100M users with conflict resolution.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-010
+  domain: system-design
+  topic: metrics-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a metrics platform ingesting 10M samples/sec with 13-month retention.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-011
+  domain: system-design
+  topic: logging-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a centralized logging platform for 1PB/month ingest with full-text search.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-012
+  domain: system-design
+  topic: workflow-engine
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a durable workflow engine executing 1B steps/day with automatic recovery.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-013
+  domain: system-design
+  topic: kafka-like-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a Kafka-like event streaming platform with 5M msgs/sec per cluster.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-014
+  domain: system-design
+  topic: feature-flags
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a feature flag service evaluated on every page load at 1M RPS.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-015
+  domain: system-design
+  topic: distributed-cache
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a distributed cache for a social graph with 95% hit rate target.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-016
+  domain: system-design
+  topic: ride-sharing
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design Uber-like ride matching for a metro area with 100K active drivers.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-017
+  domain: system-design
+  topic: global-object-store
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design S3-like object storage with eleven-nines durability claims—state assumptions.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-018
+  domain: system-design
+  topic: api-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design an internal API platform onboarding 200 product teams per year.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-019
+  domain: system-design
+  topic: identity-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design an identity platform supporting SSO, OAuth2, and SCIM for enterprise customers.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-020
+  domain: system-design
+  topic: llm-gateway
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design an LLM gateway routing across providers with budget caps and semantic caching.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-021
+  domain: system-design
+  topic: agentic-platform
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design an enterprise agent platform with tool use, audit logs, and blast-radius tiers.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-022
+  domain: system-design
+  topic: secrets-management
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a secrets management platform with rotation, audit, and break-glass access.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-023
+  domain: system-design
+  topic: global-file-transfer
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a managed file transfer platform for B2B partners with SLA and compliance.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-024
+  domain: system-design
+  topic: email-system
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design Gmail-scale email storage and search for 1B mailboxes.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-025
+  domain: system-design
+  topic: calendar-system
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a shared calendar system with recurring events and timezone correctness.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-026
+  domain: system-design
+  topic: collaborative-editor
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design Google Docs-class collaborative editing with offline support.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-027
+  domain: system-design
+  topic: ticket-booking
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a concert ticket booking system preventing oversell under flash traffic.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-028
+  domain: system-design
+  topic: ad-bidding
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a real-time ad bidding system with 100K QPS and 50ms deadline.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-029
+  domain: system-design
+  topic: iot-ingestion
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design IoT telemetry ingestion for 10M devices sending every 10 seconds.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-030
+  domain: system-design
+  topic: ml-feature-store
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a feature store serving online inference at 500K QPS with training consistency.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-031
+  domain: system-design
+  topic: data-catalog
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design an enterprise data catalog with lineage across warehouse and streams.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-032
+  domain: system-design
+  topic: cdn-design
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a CDN for static and dynamic content with global PoPs.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-033
+  domain: system-design
+  topic: multi-tenant-saas
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a multi-tenant B2B SaaS platform with noisy-neighbor isolation.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-034
+  domain: system-design
+  topic: compliance-audit
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design an audit log system that is tamper-evident for SOC2 customers.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-035
+  domain: system-design
+  topic: search-engine
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a web search engine crawling 1B pages with ranking pipeline.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-036
+  domain: system-design
+  topic: recommendation-system
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a recommendation system blending batch and real-time signals.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-037
+  domain: system-design
+  topic: banking-ledger
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a double-entry ledger supporting ACID per account with monthly statements.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-038
+  domain: system-design
+  topic: health-records
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design an EHR interoperability hub with HIPAA constraints.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-039
+  domain: system-design
+  topic: gaming-leaderboard
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design a real-time gaming leaderboard for 10M concurrent players.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.
+- id: sd-040
+  domain: system-design
+  topic: dispatch-logistics
+  difficulty: principal
+  question_type: system-design
+  company_patterns: ['faang', 'snowflake', 'stripe']
+  estimated_minutes: 45
+  question: |
+    Design last-mile delivery dispatch optimizing 1M packages/day.
+  expected_signals:
+    - Clarifies functional and non-functional requirements; states non-goals
+    - High-level diagram with data flow and API sketch
+    - Back-of-envelope QPS/storage with stated assumptions
+    - Deep dive on bottleneck with tradeoffs
+    - "Failure modes: partition, dependency, hot keys; observability and rollout"
+  red_flags:
+    - Jumps to technology list without requirements
+    - No failure or consistency discussion where needed
+    - Invented scale numbers inconsistent with math
+    - Ignores cost or operational burden
+  follow_ups:
+    - What breaks at 10× scale?
+    - How do you migrate from current architecture?
+    - What consistency does the write path provide?
+    - What are your SLOs and error budget policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Requirements → estimates → architecture → deep dive → failures → ops/evolution → summary tradeoffs.

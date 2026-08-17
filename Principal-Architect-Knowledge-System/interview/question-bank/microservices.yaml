@@ -1,0 +1,992 @@
+version: 1
+domain: microservices
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 35
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: ms-001
+  domain: microservices
+  topic: service-boundary-definition
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    How do you define service boundaries for a monolith decomposition program?
+  expected_signals:
+    - Domain-driven bounded contexts
+    - Organizational team alignment
+    - Data ownership per service
+    - Avoid distributed monolith
+  red_flags:
+    - One service per layer
+    - Split by technical tier only
+    - Shared database across services
+  follow_ups:
+    - Event storming output?
+    - Strangler slice selection?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-002
+  domain: microservices
+  topic: domain-driven-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Apply DDD tactical patterns in microservices without over-engineering.
+  expected_signals:
+    - Aggregates define consistency boundary
+    - Domain events for cross-aggregate
+    - Anti-corruption layers at edges
+    - Not every entity needs full DDD
+  red_flags:
+    - DDD everywhere ceremony
+    - Anemic domain model in services
+    - Shared kernel ungoverned
+  follow_ups:
+    - Bounded context map?
+    - Ubiquitous language docs?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-003
+  domain: microservices
+  topic: bounded-context-mapping
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Map bounded contexts and integration patterns between order, inventory, and billing.
+  expected_signals:
+    - Partnership vs customer-supplier
+    - Published language events
+    - Conformist vs ACL
+    - Avoid inappropriate shared model
+  red_flags:
+    - One unified domain model
+    - Direct DB coupling
+    - Synchronous only integration
+  follow_ups:
+    - Context map in ADR?
+    - Merge contexts when?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-004
+  domain: microservices
+  topic: api-composition
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    API composition pattern for mobile home screen aggregating 5 services.
+  expected_signals:
+    - Composer service or BFF
+    - Parallel fetch with timeouts
+    - Partial response degradation
+    - Cache composed view
+  red_flags:
+    - Mobile calls 5 services serial
+    - Composer without timeout
+    - No fallback partial UI
+  follow_ups:
+    - GraphQL federation vs BFF?
+    - Composer caching invalidation?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-005
+  domain: microservices
+  topic: bff-pattern
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    BFF per client type vs generic API. Tradeoffs at scale.
+  expected_signals:
+    - BFF shapes response per client
+    - Avoid N BFFs unmaintained
+    - Shared core domain services
+    - BFF not bypassing domain logic
+  red_flags:
+    - One API all clients forever
+    - 10 BFFs duplicate logic
+    - BFF contains business rules
+  follow_ups:
+    - BFF per team vs per client?
+    - BFF deployed where?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-006
+  domain: microservices
+  topic: strangler-fig
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Strangler fig migration from monolith: routing and data sync architecture.
+  expected_signals:
+    - Edge router splits traffic
+    - Anti-corruption at boundary
+    - Dual-write or CDC sync phase
+    - Measurable slice completion
+  red_flags:
+    - Big bang rewrite hidden
+    - Strangler without traffic router
+    - Permanent dual-write
+  follow_ups:
+    - Feature flags for routing?
+    - Monolith data freeze?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-007
+  domain: microservices
+  topic: database-per-service
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Database-per-service: how to handle queries needing cross-service joins?
+  expected_signals:
+    - Materialized views via events
+    - API composition for reads
+    - Avoid distributed joins
+    - CQRS read models
+  red_flags:
+    - Cross-service SQL joins
+    - Shared read replica all DBs
+    - Sync API chain for reports
+  follow_ups:
+    - Data mesh data products?
+    - Event-carried state transfer?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-008
+  domain: microservices
+  topic: shared-database-anti-pattern
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Team wants shared database for 'simplicity'. Principal response and alternative.
+  expected_signals:
+    - Coupling on schema changes
+    - Scaling and ownership blur
+    - "Alternative: APIs and events"
+    - Phased extraction plan
+  red_flags:
+    - Approve shared DB long term
+    - Split tables without boundary
+    - Ignore migration cost argument only
+  follow_ups:
+    - Read replica sharing?
+    - Schema ownership committee?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-009
+  domain: microservices
+  topic: transactional-boundaries
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Define transactional boundaries when business operation spans services.
+  expected_signals:
+    - Single service owns transaction
+    - Saga for cross-service
+    - Outbox for reliable events
+    - Avoid 2PC across services
+  red_flags:
+    - Distributed 2PC default
+    - Partial update without saga
+    - Events before commit
+  follow_ups:
+    - Orchestration vs choreography?
+    - Compensation design example?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-010
+  domain: microservices
+  topic: saga-choreography
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Saga choreography for order fulfillment vs orchestration.
+  expected_signals:
+    - "Choreography: events only, less central"
+    - "Orchestration: visibility and debug"
+    - Choose based on complexity
+    - Idempotent consumers required
+  red_flags:
+    - Choreography for 20-step saga
+    - Orchestrator without state store
+    - No idempotency
+  follow_ups:
+    - Temporal for sagas?
+    - Saga timeout handling?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-011
+  domain: microservices
+  topic: event-carried-state
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Event-carried state transfer vs event notification. When each?
+  expected_signals:
+    - "Notification: small events refetch"
+    - "Carried state: larger events less chatty"
+    - Version fields for staleness
+    - Schema evolution harder carried
+  red_flags:
+    - Huge events always
+    - Notification without idempotency
+    - No version in event
+  follow_ups:
+    - CDC events as carried state?
+    - Event size limits Kafka?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-012
+  domain: microservices
+  topic: contract-testing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Contract testing strategy for 80 service pairs.
+  expected_signals:
+    - Consumer-driven contracts in CI
+    - Provider verification pipeline
+    - Versioned contracts
+    - Not full integration env for all pairs
+  red_flags:
+    - E2E only testing
+    - Contracts not in CI
+    - Breaking provider silent
+  follow_ups:
+    - Pact vs Spring Cloud Contract?
+    - Contract for events?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-013
+  domain: microservices
+  topic: consumer-driven-contracts
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Implement CDC with Pact broker at enterprise scale.
+  expected_signals:
+    - Broker as contract registry
+    - Can-I-deploy gate
+    - Provider states for states
+    - Org-wide adoption metrics
+  red_flags:
+    - Contracts on developer laptops only
+    - No deploy gate
+    - Provider never verifies
+  follow_ups:
+    - Bi-directional contracts?
+    - Event contract Pact?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-014
+  domain: microservices
+  topic: service-versioning
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Version internal APIs without breaking 30 consumers.
+  expected_signals:
+    - Additive changes default
+    - Parallel version endpoints rare
+    - Deprecation telemetry
+    - Consumer upgrade windows
+  red_flags:
+    - Breaking change Friday deploy
+    - Unversioned internal APIs
+    - Force upgrade no notice
+  follow_ups:
+    - URL vs header versioning?
+    - Protobuf field rules?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-015
+  domain: microservices
+  topic: backward-compatibility
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Backward compatibility policy for event schemas.
+  expected_signals:
+    - New fields optional
+    - Consumers ignore unknown
+    - Schema registry enforcement
+    - Dual consume during migration
+  red_flags:
+    - Remove field without version
+    - Consumers strict parse fail
+    - No registry
+  follow_ups:
+    - Upcasting events?
+    - Protobuf vs Avro compat?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-016
+  domain: microservices
+  topic: circuit-breaker-pattern
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Circuit breaker defaults across mesh vs library implementation.
+  expected_signals:
+    - Failure rate and slow call thresholds
+    - Half-open probe behavior
+    - Per-dependency tuning
+    - Metrics on breaker state
+  red_flags:
+    - Global breaker all dependencies
+    - Breaker without fallback
+    - Never tune thresholds
+  follow_ups:
+    - Mesh outlier detection?
+    - Breaker vs retry interaction?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-017
+  domain: microservices
+  topic: bulkhead-isolation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Bulkhead thread pools per dependency in high-traffic service.
+  expected_signals:
+    - Isolate slow dependency pool
+    - Default pool for fast paths
+    - Reject vs queue policy
+    - Pool sizing from load test
+  red_flags:
+    - Single pool all deps
+    - Unbounded queue
+    - No rejection metrics
+  follow_ups:
+    - K8s bulkhead via quotas?
+    - Virtual threads change bulkhead?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-018
+  domain: microservices
+  topic: sidecar-vs-library
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Sidecar vs library for retries, metrics, and mTLS in microservices.
+  expected_signals:
+    - "Sidecar: uniform policy, extra resources"
+    - "Library: perf, language lock-in"
+    - Mesh for polyglot fleet
+    - Upgrade rollout complexity sidecar
+  red_flags:
+    - Sidecar always no cost analysis
+    - Library in every language always
+    - Mix without standard
+  follow_ups:
+    - eBPF replaces sidecar?
+    - Shared gateway vs sidecar?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-019
+  domain: microservices
+  topic: service-discovery-patterns
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Service discovery: client-side vs server-side LB in Kubernetes and multi-cloud.
+  expected_signals:
+    - K8s DNS and endpoints
+    - Health-aware LB
+    - Stale endpoint caching
+    - Multi-cluster discovery
+  red_flags:
+    - Hardcoded service IPs
+    - Discovery without health checks
+    - DNS TTL issues ignored
+  follow_ups:
+    - Service mesh discovery?
+    - Consul vs K8s native?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-020
+  domain: microservices
+  topic: api-gateway-aggregation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    API gateway aggregates and transforms responses. Risks and limits.
+  expected_signals:
+    - Gateway not domain logic brain
+    - Transformation maintenance
+    - Latency stack serial calls
+    - Rate limit and auth central
+  red_flags:
+    - All business logic in gateway
+    - Gateway calls 10 services sync
+    - No timeout per hop
+  follow_ups:
+    - GraphQL at gateway?
+    - Gateway HA architecture?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-021
+  domain: microservices
+  topic: graphql-federation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    GraphQL federation for 20 subgraphs. Ownership and performance.
+  expected_signals:
+    - Subgraph per domain team
+    - N+1 and DataLoader plan
+    - Federation schema governance
+    - Auth at gateway and subgraph
+  red_flags:
+    - One mega GraphQL server
+    - No query cost analysis
+    - Public introspection prod
+  follow_ups:
+    - Federation vs monograph?
+    - Query depth limits?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-022
+  domain: microservices
+  topic: grpc-internal
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Standardize on gRPC internal with REST at edge. Migration architecture.
+  expected_signals:
+    - Protobuf contracts versioned
+    - gRPC LB and health protocol
+    - Gateway transcoding for legacy
+    - Debugging tooling investment
+  red_flags:
+    - gRPC to external clients default
+    - No protobuf compatibility CI
+    - REST internal forever no plan
+  follow_ups:
+    - Connect/gRPC-Web?
+    - Deadline propagation standard?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-023
+  domain: microservices
+  topic: sync-vs-async-communication
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Choose sync REST vs async events between two services.
+  expected_signals:
+    - "Sync: query, strong feedback, coupling"
+    - "Async: decouple, eventual"
+    - Temporal coupling cost sync
+    - Hybrid outbox pattern
+  red_flags:
+    - Async for everything including queries
+    - Sync chain 6 services
+    - No timeout on sync
+  follow_ups:
+    - Request-reply over Kafka?
+    - When CQRS split?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-024
+  domain: microservices
+  topic: organizational-conway
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Conway's law: org chart has 5 horizontal layers. Architecture impact?
+  expected_signals:
+    - Layers become services anti-pattern
+    - "Reverse Conway: align teams to domains"
+    - Platform for shared capability
+    - Interim integration layers
+  red_flags:
+    - Architecture ignores org
+    - Reorg to match overnight
+    - 5 tier microservices
+  follow_ups:
+    - Team topologies mapping?
+    - Measure cognitive load?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-025
+  domain: microservices
+  topic: team-topology
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Apply team topologies: stream-aligned, platform, enabling, complicated-subsystem.
+  expected_signals:
+    - Stream-aligned owns features E2E
+    - Platform accelerates not blocks
+    - Enabling temporary coaching
+    - Subsystem for specialized (ML, payments)
+  red_flags:
+    - Platform owns all decisions
+    - No stream-aligned ownership
+    - Enabling permanent staff
+  follow_ups:
+    - Thinnest viable platform?
+    - Subsystem team boundaries?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-026
+  domain: microservices
+  topic: platform-team-interaction
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Platform team relationship with product stream-aligned teams.
+  expected_signals:
+    - X-as-a-service with SLO
+    - Joint roadmap quarterly
+    - Not ticket queue bottleneck
+    - Measure developer productivity
+  red_flags:
+    - Platform dictates all stacks
+    - Platform ivory tower no users
+    - Product builds all infra
+  follow_ups:
+    - Platform SLO examples?
+    - Inner source on platform?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-027
+  domain: microservices
+  topic: microservice-decomposition
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Signs you've decomposed too finely. How to merge or simplify?
+  expected_signals:
+    - Distributed tracing shows chatty calls
+    - Deploy coordination overhead
+    - Merge related contexts
+    - Modular monolith interim
+  red_flags:
+    - More splits always better
+    - Ignore operational cost
+    - 200 one-function services
+  follow_ups:
+    - Service granularity metrics?
+    - When stop decomposing?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-028
+  domain: microservices
+  topic: monolith-first
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Monolith-first vs microservices-first for new product. Principal guidance.
+  expected_signals:
+    - Monolith until domain clear
+    - Modular monolith boundaries early
+    - Extract when scaling or team pain
+    - Not microservices day 1 default
+  red_flags:
+    - Microservices for 3 dev startup always
+    - Monolith forever no modules
+    - Rewrite to microservices panic
+  follow_ups:
+    - Modular monolith patterns?
+    - Extraction triggers list?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-029
+  domain: microservices
+  topic: modular-monolith
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Modular monolith architecture with clear module boundaries in one deployable.
+  expected_signals:
+    - Module APIs internal only
+    - Separate schemas per module
+    - Event bus internal optional
+    - Single deploy with module tests
+  red_flags:
+    - Modular monolith shared tables all
+    - No module boundaries enforced
+    - Same as ball of mud label
+  follow_ups:
+    - Package by feature?
+    - Module integration tests?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-030
+  domain: microservices
+  topic: testing-microservices
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Testing pyramid for microservices at 50 services.
+  expected_signals:
+    - Unit + contract dominant
+    - Integration per service
+    - E2E few critical journeys
+    - Testcontainers for deps
+  red_flags:
+    - E2E only env
+    - No contract tests
+    - Shared staging always broken
+  follow_ups:
+    - Consumer-driven in pyramid?
+    - Ephemeral env per PR?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-031
+  domain: microservices
+  topic: integration-test-strategy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Integration tests without 50-service staging environment.
+  expected_signals:
+    - Service virtualization / mocks
+    - Contract tests substitute pairs
+    - Synthetic dependencies
+    - Smoke env subset rotating
+  red_flags:
+    - Full env required every test
+    - Mocks only no contracts
+    - Prod testing default
+  follow_ups:
+    - Toxiproxy fault injection?
+    - Test data management?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-032
+  domain: microservices
+  topic: deployment-independence
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    True deployment independence: what architecture and org conditions required?
+  expected_signals:
+    - Backward compatible APIs/events
+    - Database per service
+    - No shared library coupling
+    - Team owns deploy rollback
+  red_flags:
+    - Shared DB breaks independence
+    - Lockstep deploy all services
+    - Breaking changes weekly
+  follow_ups:
+    - Feature flags cross service?
+    - Shared library versioning?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-033
+  domain: microservices
+  topic: blast-radius-services
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Limit blast radius when one microservice has bad deploy.
+  expected_signals:
+    - Canary and auto rollback
+    - Bulkheads limit cascade
+    - Feature flags isolate feature
+    - Cell architecture per tenant
+  red_flags:
+    - Big bang deploy all pods
+    - No rollback automation
+    - Shared fate thread pools
+  follow_ups:
+    - Progressive delivery metrics?
+    - Blameless deploy postmortem?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-034
+  domain: microservices
+  topic: microservice-observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Observability standards every microservice must implement.
+  expected_signals:
+    - RED metrics, trace propagation, structured logs
+    - SLO per service template
+    - Service catalog registration
+    - Cardinality guidelines
+  red_flags:
+    - Optional observability per team
+    - No trace propagation standard
+    - Custom metrics chaos
+  follow_ups:
+    - Golden path SDK?
+    - Observability linter in CI?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: ms-035
+  domain: microservices
+  topic: microservice-incident-response
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['microservices', 'netflix', 'amazon']
+  estimated_minutes: 15
+  question: |
+    Incident: cascading failure across 8 services. Triage architecture and process.
+  expected_signals:
+    - Trace root cause service
+    - Circuit breaker status dashboard
+    - Isolate dependency or feature flag
+    - Comm single coordinator
+  red_flags:
+    - Restart all services
+    - No dependency map
+    - Fix leaf without root
+  follow_ups:
+    - Failure injection postmortem?
+    - Chaos test this path?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

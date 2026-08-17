@@ -1,0 +1,11 @@
+{
+  "primary_region": "us-east-1",
+  "dr_region": "us-west-2",
+  "rto_minutes": 15,
+  "rpo_minutes": 5,
+  "budget_usd": 25,
+  "regions": [
+    {"name": "us-east-1", "vpc_cidr": "10.0.0.0/16", "is_primary": true},
+    {"name": "us-west-2", "vpc_cidr": "10.1.0.0/16", "is_primary": false}
+  ]
+}

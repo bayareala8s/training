@@ -1,0 +1,18 @@
+---
+description: Architecture Decision Record standards
+globs:
+  - "architecture-decisions/**/*.md"
+alwaysApply: false
+---
+
+Use the ADR template in templates/adr-template.md.
+
+Each ADR must document:
+- context and problem
+- decision drivers
+- considered options
+- chosen decision and rationale
+- consequences (positive and negative)
+- status and date
+
+Number ADRs sequentially (ADR-0001, ADR-0002, ...).

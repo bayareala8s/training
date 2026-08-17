@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8096:8096"
+    networks:
+      - ring-lab
+
+networks:
+  ring-lab:
+    driver: bridge

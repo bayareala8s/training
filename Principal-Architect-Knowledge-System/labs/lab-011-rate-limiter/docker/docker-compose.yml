@@ -1,0 +1,22 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6382:6379"
+    networks:
+      - ratelimit-net
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8101:8101"
+    depends_on:
+      - redis
+    networks:
+      - ratelimit-net
+
+networks:
+  ratelimit-net:
+    driver: bridge

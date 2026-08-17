@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Lint Markdown
+        run: npm run lint:md
+
+      - name: Spell check
+        run: npm run spell
+
+      - name: Validate metadata
+        run: npm run validate:metadata
+
+      - name: Validate links
+        run: npm run validate:links
+
+      - name: Content coverage
+        run: npm run validate:coverage
+
+      - name: Validate Mermaid diagrams
+        run: npm run validate:diagrams
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build documentation
+        run: npm run build
+
+  python-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Ruff check
+        run: ruff check scripts/

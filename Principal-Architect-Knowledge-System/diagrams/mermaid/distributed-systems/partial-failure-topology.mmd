@@ -1,0 +1,10 @@
+flowchart TB
+    subgraph Cluster["Distributed Cluster"]
+        N1[Node A]
+        N2[Node B]
+        N3[Node C]
+    end
+    Client[Client] --> N1
+    N1 <-.->|network partition| N2
+    N2 <-.-> N3
+    N3 -.->|slow / gray failure| Client

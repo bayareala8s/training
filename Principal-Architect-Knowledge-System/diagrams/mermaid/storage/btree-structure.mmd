@@ -1,0 +1,6 @@
+flowchart TB
+    Root[B-Tree Root] --> I1[Internal Node]
+    Root --> I2[Internal Node]
+    I1 --> L1[Leaf Pages]
+    I2 --> L2[Leaf Pages]
+    L1 --> Data[(Sorted Records)]

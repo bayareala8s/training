@@ -1,0 +1,5 @@
+flowchart TB
+    AtMost[At-most-once] --> AtLeast[At-least-once]
+    AtLeast --> Effectively[Effectively-once]
+    Effectively --> Idempotent[Idempotent Consumer]
+    Idempotent --> Dedup[Deduplication Store]

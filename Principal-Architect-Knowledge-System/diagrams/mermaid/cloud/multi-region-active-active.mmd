@@ -1,0 +1,12 @@
+flowchart TB
+    subgraph US["US-East"]
+        App1[Application]
+        DB1[(Primary DB)]
+    end
+    subgraph EU["EU-West"]
+        App2[Application]
+        DB2[(Replica DB)]
+    end
+    Route53[Route 53 Health Checks] --> App1
+    Route53 --> App2
+    DB1 <-->|async replication| DB2

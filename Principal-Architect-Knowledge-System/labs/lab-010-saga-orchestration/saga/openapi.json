@@ -1,0 +1,322 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Lab 010 — Saga Orchestration",
+    "description": "Orchestration-based saga: payment → inventory → shipping with compensating transactions.",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:8093", "description": "Local Docker / go run --serve" }],
+  "tags": [
+    { "name": "sagas", "description": "Saga orchestration" },
+    { "name": "chaos", "description": "Failure injection for demos" },
+    { "name": "health", "description": "Health and stats" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check and observability stats",
+        "responses": {
+          "200": {
+            "description": "Service healthy",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sagas": {
+      "get": {
+        "tags": ["sagas"],
+        "summary": "List all sagas",
+        "responses": {
+          "200": {
+            "description": "Saga list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sagas": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Saga" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["sagas"],
+        "summary": "Start a new saga",
+        "description": "Runs payment → inventory → shipping. Returns 409 with compensated saga if inventory fails.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StartSagaRequest" },
+              "example": { "product_id": "PROD-100", "idempotency_key": "demo-happy" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Saga completed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SagaResponse" }
+              }
+            }
+          },
+          "409": {
+            "description": "Saga failed and compensated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SagaErrorResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sagas/{id}": {
+      "get": {
+        "tags": ["sagas"],
+        "summary": "Get saga by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "example": "saga-1" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saga details with transition log",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SagaResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Saga not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sagas/{id}/recover": {
+      "post": {
+        "tags": ["sagas"],
+        "summary": "Recover saga after simulated crash",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "example": "saga-1" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saga resumed from last committed step",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SagaResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Saga not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sagas/{id}/crash": {
+      "post": {
+        "tags": ["sagas"],
+        "summary": "Simulate orchestrator crash mid-saga",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "example": "saga-1" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CrashRequest" },
+              "example": { "state": "payment_reserved" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Crash simulated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SagaResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chaos/inventory-fail": {
+      "post": {
+        "tags": ["chaos"],
+        "summary": "Enable inventory failure for next saga",
+        "responses": {
+          "200": {
+            "description": "Chaos enabled",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChaosResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chaos/reset": {
+      "post": {
+        "tags": ["chaos"],
+        "summary": "Disable chaos injection",
+        "responses": {
+          "200": {
+            "description": "Chaos disabled",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChaosResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StartSagaRequest": {
+        "type": "object",
+        "required": ["product_id"],
+        "properties": {
+          "product_id": { "type": "string", "example": "PROD-100" },
+          "idempotency_key": { "type": "string", "example": "demo-happy" }
+        }
+      },
+      "CrashRequest": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "started",
+              "payment_reserved",
+              "inventory_reserved",
+              "shipped",
+              "completed",
+              "compensating",
+              "compensated",
+              "failed"
+            ],
+            "default": "payment_reserved"
+          }
+        }
+      },
+      "StepLog": {
+        "type": "object",
+        "properties": {
+          "step": { "type": "string" },
+          "state": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Saga": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "saga-1" },
+          "product_id": { "type": "string" },
+          "state": {
+            "type": "string",
+            "enum": [
+              "started",
+              "payment_reserved",
+              "inventory_reserved",
+              "shipped",
+              "completed",
+              "compensating",
+              "compensated",
+              "failed"
+            ]
+          },
+          "idempotency_key": { "type": "string" },
+          "log": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/StepLog" }
+          },
+          "error": { "type": "string" }
+        }
+      },
+      "SagaResponse": {
+        "type": "object",
+        "properties": {
+          "saga": { "$ref": "#/components/schemas/Saga" }
+        }
+      },
+      "SagaErrorResponse": {
+        "type": "object",
+        "properties": {
+          "saga": { "$ref": "#/components/schemas/Saga" },
+          "error": { "type": "string" }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "example": "ok" },
+          "stats": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "ChaosResponse": {
+        "type": "object",
+        "properties": {
+          "inventory_fail": { "type": "boolean" },
+          "message": { "type": "string" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" }
+        }
+      }
+    }
+  }
+}

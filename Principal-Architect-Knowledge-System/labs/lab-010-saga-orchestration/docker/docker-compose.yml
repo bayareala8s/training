@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8093:8093"
+    networks:
+      - saga-net
+
+networks:
+  saga-net:
+    driver: bridge

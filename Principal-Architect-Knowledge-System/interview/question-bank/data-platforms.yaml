@@ -1,0 +1,1132 @@
+version: 1
+domain: data-platforms
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 40
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: data-001
+  domain: data-platforms
+  topic: lakehouse-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Design lakehouse architecture unifying warehouse and data lake for 500 analysts.
+  expected_signals:
+    - Open table format on object storage
+    - ACID on lake via Iceberg/Delta
+    - Separate compute engines sharing storage
+    - Governance layer unified
+  red_flags:
+    - Duplicate data lake and warehouse forever
+    - No table format—raw files only
+    - Ignore concurrent write conflicts
+  follow_ups:
+    - Iceberg vs Delta vs Hudi?
+    - Multi-engine concurrency?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-002
+  domain: data-platforms
+  topic: medallion-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Implement medallion (bronze/silver/gold) with SLAs and ownership.
+  expected_signals:
+    - "Bronze: raw immutable"
+    - "Silver: cleaned conformed"
+    - "Gold: business aggregates"
+    - Per-layer retention and quality gates
+  red_flags:
+    - Skip bronze—direct to gold
+    - No data quality between layers
+    - One team owns all layers
+  follow_ups:
+    - Streaming bronze?
+    - Gold layer product team ownership?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-003
+  domain: data-platforms
+  topic: batch-vs-stream
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Choose batch vs stream for customer analytics dashboard freshness requirements.
+  expected_signals:
+    - Latency SLO drives choice
+    - "Lambda: batch speed layer + stream"
+    - Cost of always-on stream
+    - Reprocessing and late data handling
+  red_flags:
+    - Stream everything always
+    - Batch only ignoring real-time need
+    - No late data strategy
+  follow_ups:
+    - Micro-batch compromise?
+    - When Kappa sufficient?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-004
+  domain: data-platforms
+  topic: lambda-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Implement Lambda architecture for metrics with batch correction layer.
+  expected_signals:
+    - Speed layer approximate real-time
+    - Batch layer reconciles
+    - Serving layer merge logic
+    - Complexity and ops cost acknowledged
+  red_flags:
+    - Speed layer only forever
+    - Batch never reconciles
+    - Duplicate logic unmaintained
+  follow_ups:
+    - Replace with Kappa when?
+    - Serving layer tech choice?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-005
+  domain: data-platforms
+  topic: kappa-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    When is Kappa (log-only) architecture appropriate vs Lambda?
+  expected_signals:
+    - Uniform log as source of truth
+    - Reprocessing from log for corrections
+    - Requires compacted topics and retention
+    - Not fit for complex historical recompute
+  red_flags:
+    - Kappa for all workloads blindly
+    - No reprocessing capability
+    - Infinite retention without cost plan
+  follow_ups:
+    - Iceberg as log?
+    - Stream-table duality?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-006
+  domain: data-platforms
+  topic: data-ingestion-patterns
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Ingestion at 5M events/sec from APIs, DBs, and files. Unified platform design.
+  expected_signals:
+    - CDC for DBs, streaming for events
+    - Schema registry at boundary
+    - Backpressure and dead letter
+    - Idempotent writers
+  red_flags:
+    - One ingestion tool for all
+    - No schema validation
+    - Synchronous ingest API at scale
+  follow_ups:
+    - Managed vs self-managed connect?
+    - Ordering per entity key?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-007
+  domain: data-platforms
+  topic: schema-evolution
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Schema evolution policy for Avro/Protobuf in production pipelines.
+  expected_signals:
+    - Backward compatible changes default
+    - CI compatibility checks
+    - Breaking change version bump
+    - Consumer-driven contract tests
+  red_flags:
+    - Delete fields without version
+    - No registry enforcement
+    - Breaking changes silent
+  follow_ups:
+    - Schema as governance gate?
+    - JSON schema at edge?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-008
+  domain: data-platforms
+  topic: data-contracts
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Data contracts between producers and consumers. Enforcement architecture.
+  expected_signals:
+    - Contract defines schema, SLAs, quality
+    - Breaking change notification
+    - Automated validation in pipeline
+    - SLA breach alerting
+  red_flags:
+    - Informal Slack agreements
+    - Consumers parse any shape
+    - No producer accountability
+  follow_ups:
+    - Contract testing tools?
+    - Financial penalties in contract?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-009
+  domain: data-platforms
+  topic: lineage-tracking
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    End-to-end lineage from source DB to dashboard. Minimum viable architecture?
+  expected_signals:
+    - Parse SQL and pipeline metadata
+    - OpenLineage standard
+    - Impact analysis for schema change
+    - Not 100% manual lineage
+  red_flags:
+    - Lineage spreadsheet
+    - No column-level lineage
+    - Stale lineage ignored
+  follow_ups:
+    - Lineage in CI?
+    - Cross-system lineage gaps?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-010
+  domain: data-platforms
+  topic: data-quality-framework
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Data quality framework: freshness, completeness, accuracy checks at scale.
+  expected_signals:
+    - Expectations on silver layer
+    - SLA metrics published
+    - Quarantine bad batches
+    - Root cause routing to producer
+  red_flags:
+    - Quality only in warehouse
+    - Alert on every null
+    - No producer feedback loop
+  follow_ups:
+    - Great Expectations vs Deequ?
+    - Quality SLO for platform?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-011
+  domain: data-platforms
+  topic: iceberg-vs-hudi
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Compare Iceberg and Hudi for upsert-heavy CDC workload on object storage.
+  expected_signals:
+    - Merge performance and file layout
+    - Compaction strategies
+    - Engine support matrix
+    - Time travel and snapshot isolation
+  red_flags:
+    - Pick without workload fit
+    - Ignore compaction ops
+    - No concurrency testing
+  follow_ups:
+    - Delta third option?
+    - Partition evolution support?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-012
+  domain: data-platforms
+  topic: parquet-optimization
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Optimize Parquet files for analytic queries: row groups, compression, sorting.
+  expected_signals:
+    - Sort by filter columns
+    - Row group size tuning
+    - Compression codec tradeoffs
+    - Small file problem mitigation
+  red_flags:
+    - Default Parquet settings
+    - Millions of tiny files
+    - No partition pruning design
+  follow_ups:
+    - Z-ordering?
+    - Bloom filters in Parquet?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-013
+  domain: data-platforms
+  topic: spark-tuning
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Spark job misses SLA due to shuffle. Architectural and tuning response.
+  expected_signals:
+    - Shuffle partition sizing
+    - AQE enabled
+    - Skew join handling
+    - Right instance type and spot tolerance
+  red_flags:
+    - Only increase executor count
+    - Ignore data skew
+    - No stage timing analysis
+  follow_ups:
+    - Spark vs Flink for this job?
+    - Photon/Velox engines?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-014
+  domain: data-platforms
+  topic: flink-state-management
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Flink state grows unbounded for sessionization job. Architecture fixes.
+  expected_signals:
+    - State TTL and cleanup
+    - RocksDB state backend tuning
+    - Incremental checkpoints
+    - Rescale state redistribution plan
+  red_flags:
+    - Heap state backend at scale
+    - No state TTL
+    - Ignore checkpoint duration
+  follow_ups:
+    - Flink vs Spark Structured Streaming?
+    - State migration on rescale?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-015
+  domain: data-platforms
+  topic: kafka-connect-patterns
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Kafka Connect cluster design for 200 connectors with fault isolation.
+  expected_signals:
+    - Connector isolation and resource limits
+    - Dead letter queue pattern
+    - Single message transforms carefully
+    - Distributed connect HA
+  red_flags:
+    - One connect cluster no limits
+    - Transform chains opaque
+    - No DLQ
+  follow_ups:
+    - Debezium scaling?
+    - Connect vs native consumers?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-016
+  domain: data-platforms
+  topic: debezium-cdc
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    CDC with Debezium to lakehouse. Ordering, schema change, and initial snapshot.
+  expected_signals:
+    - Snapshot then stream ordering per table
+    - Schema change events handling
+    - Exactly-once to sink challenges
+    - High volume table snapshot strategy
+  red_flags:
+    - CDC without ordering guarantees
+    - Ignore schema change events
+    - Snapshot blocks production DB
+  follow_ups:
+    - Incremental snapshot?
+    - Oracle vs Postgres debezium?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-017
+  domain: data-platforms
+  topic: warehouse-modeling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Dimensional modeling vs OBT wide tables for cloud warehouse.
+  expected_signals:
+    - Star schema for conformed dimensions
+    - OBT for perf on wide queries
+    - Balance maintenance cost
+    - Semantic layer on top
+  red_flags:
+    - Only 3NF normalized
+    - 1000 tables no conformed dims
+    - No semantic layer
+  follow_ups:
+    - Data vault when?
+    - Aggregate tables refresh strategy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-018
+  domain: data-platforms
+  topic: dimensional-modeling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Design fact and dimension tables for multi-currency e-commerce analytics.
+  expected_signals:
+    - Fact grain explicit
+    - Currency conversion dimension
+    - Slowly changing dims type 2
+    - Avoid double-counting metrics
+  red_flags:
+    - Mixed grains in one fact
+    - SCD mishandled
+    - Metrics undefined
+  follow_ups:
+    - Snapshot vs transactional facts?
+    - Dimension denormalization?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-019
+  domain: data-platforms
+  topic: data-mesh-principles
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Apply data mesh principles without chaos in a 40-team org.
+  expected_signals:
+    - Domain-owned data products
+    - Self-serve platform capabilities
+    - Federated governance
+    - Not every team builds infra
+  red_flags:
+    - Data mesh = no central platform
+    - Duplicate pipelines per team
+    - No global standards
+  follow_ups:
+    - Data product SLAs?
+    - Mesh without catalog failure?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-020
+  domain: data-platforms
+  topic: domain-owned-data
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Define boundaries for domain-owned datasets vs shared platform datasets.
+  expected_signals:
+    - Domain publishes versioned data products
+    - Platform provides ingestion/compute
+    - Global entities shared carefully
+    - Deprecation policy
+  red_flags:
+    - Every team custom S3 layout
+    - No shared identity keys
+    - Platform team owns all logic
+  follow_ups:
+    - Cross-domain joins?
+    - Data product certification?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-021
+  domain: data-platforms
+  topic: catalog-discovery
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Data catalog adoption is low. Architecture and product fixes.
+  expected_signals:
+    - Auto-ingest metadata from pipelines
+    - Search quality and business glossary
+    - Linked lineage and quality scores
+    - Embedded in analyst tools
+  red_flags:
+    - Catalog separate from workflows
+    - Manual metadata only
+    - Stale tables dominate search
+  follow_ups:
+    - AI-generated descriptions?
+    - Catalog as access control gate?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-022
+  domain: data-platforms
+  topic: access-control-lake
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Fine-grained access control on data lake for 1000 users.
+  expected_signals:
+    - Table/column/row level policies
+    - IAM integration and SSO groups
+    - Policy engine on metastore
+    - Audit access queries
+  red_flags:
+    - S3 bucket policy only coarse
+    - Copy data per team for access
+    - No column masking
+  follow_ups:
+    - Unity Catalog vs Ranger?
+    - Dynamic row filters?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-023
+  domain: data-platforms
+  topic: row-column-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Implement row-level and column-level security for multi-tenant warehouse.
+  expected_signals:
+    - Tenant_id row filters
+    - PII columns masked by role
+    - Policy tested in CI
+    - Performance impact measured
+  red_flags:
+    - Separate DB per tenant only
+    - Security in BI tool only bypassable
+    - No policy tests
+  follow_ups:
+    - RLS in views?
+    - Attribute-based access?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-024
+  domain: data-platforms
+  topic: pii-handling-pipeline
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    PII flows through ingestion to analytics. Pipeline architecture for minimization.
+  expected_signals:
+    - Identify and tag PII at ingest
+    - Tokenize before silver
+    - Separate restricted zone
+    - Analyst access via views
+  red_flags:
+    - PII in bronze open to all
+    - Delete PII only at export
+    - No tagging automation
+  follow_ups:
+    - Automated PII detection?
+    - Regional PII residency?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-025
+  domain: data-platforms
+  topic: gdpr-delete-pipeline
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Orchestrate GDPR delete across lake, warehouse, and ML features.
+  expected_signals:
+    - Delete workflow with completion proof
+    - Hard delete vs crypto shred
+    - Orphan check in derived tables
+    - SLA for delete request
+  red_flags:
+    - Manual delete per system
+    - Delete source only
+    - No verification job
+  follow_ups:
+    - Event-driven delete propagation?
+    - Legal hold exceptions?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-026
+  domain: data-platforms
+  topic: ml-pipeline-orchestration
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Orchestrate batch ML training pipelines with dependency and retry semantics.
+  expected_signals:
+    - Workflow engine with lineage
+    - Artifact versioning
+    - Idempotent stages
+    - Resource isolation GPU pools
+  red_flags:
+    - Cron per script
+    - No artifact registry
+    - Shared GPU no queue
+  follow_ups:
+    - Airflow vs Dagster vs Prefect?
+    - Pipeline mesh complexity?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-027
+  domain: data-platforms
+  topic: feature-store-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Online/offline feature store for real-time inference consistency.
+  expected_signals:
+    - Point-in-time correct training data
+    - Low-latency online serving
+    - Feature versioning and backfill
+    - Monitor training-serving skew
+  red_flags:
+    - Query warehouse at inference
+    - No point-in-time joins
+    - Feature defs untracked
+  follow_ups:
+    - Feast vs Tecton vs custom?
+    - Feature sharing across teams?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-028
+  domain: data-platforms
+  topic: real-time-analytics
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Sub-second analytics on streaming data for operations dashboard.
+  expected_signals:
+    - Stream processor or OLAP on ingest
+    - Windowing and late data
+    - Separate from batch numbers reconciliation
+    - Cardinality control
+  red_flags:
+    - Poll warehouse every second
+    - No late data handling
+    - Ignore reconciliation with batch
+  follow_ups:
+    - Materialize vs ClickHouse ingest?
+    - Flink SQL vs ksqlDB?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-029
+  domain: data-platforms
+  topic: olap-cube-vs-columnar
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    OLAP cube vs columnar warehouse for finance reporting workloads.
+  expected_signals:
+    - "Cube: pre-agg fast known queries"
+    - "Columnar: flexible SQL scale"
+    - Refresh latency tradeoffs
+    - Cost at billions of rows
+  red_flags:
+    - Cube for exploratory analytics
+    - Warehouse without partition strategy
+    - Ignore query concurrency
+  follow_ups:
+    - DuckDB embedded analytics?
+    - Semantic layer replaces cube?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-030
+  domain: data-platforms
+  topic: clickhouse-use-cases
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    When is ClickHouse right vs warehouse vs stream processor?
+  expected_signals:
+    - Append-heavy analytics, wide scans
+    - Not primary OLTP
+    - Replication and sharding ops
+    - Compare to Druid/Pinot
+  red_flags:
+    - ClickHouse as system of record
+    - No replication plan
+    - Small data ClickHouse only
+  follow_ups:
+    - ClickHouse vs BigQuery cost?
+    - Materialized views pattern?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-031
+  domain: data-platforms
+  topic: bi-tool-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    BI tool architecture: live query vs extract, governance, and performance.
+  expected_signals:
+    - Extract for heavy dashboards scheduled
+    - Live for small governed datasets
+    - Row-level security in warehouse
+    - Certified datasets only in prod BI
+  red_flags:
+    - Live query everything
+    - BI bypasses security
+    - Uncertified metrics in exec dashboards
+  follow_ups:
+    - Headless BI API?
+    - BI on semantic layer only?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-032
+  domain: data-platforms
+  topic: reverse-etl
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Reverse ETL syncs warehouse to SaaS tools. Architecture and pitfalls.
+  expected_signals:
+    - CDC out with rate limits
+    - Idempotent upserts to SaaS API
+    - Field mapping versioning
+    - Not duplicate of forward ETL
+  red_flags:
+    - Full table sync hourly to CRM
+    - No API quota handling
+    - Schema change breaks sync
+  follow_ups:
+    - Hightouch/Census vs custom?
+    - Operational vs analytics sync?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-033
+  domain: data-platforms
+  topic: operational-analytics
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Blend operational DB reads with warehouse for operational analytics without OLTP load.
+  expected_signals:
+    - Read replicas or CDC to analytics
+    - Never heavy scan on primary
+    - Caching hot operational metrics
+    - SLO separate from OLTP
+  red_flags:
+    - Analyst SQL on production DB
+    - Duplicate writes to warehouse sync
+    - No replica lag monitoring
+  follow_ups:
+    - HTAP databases when?
+    - Materialized views on replica?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-034
+  domain: data-platforms
+  topic: data-platform-sla
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Define SLAs for data platform: pipeline freshness, quality, and query performance.
+  expected_signals:
+    - Freshness SLO per tier
+    - Incident severity for stale critical data
+    - Query p95 per workload class
+    - Error budget for platform
+  red_flags:
+    - Best effort only
+    - Same SLA all pipelines
+    - No customer-visible freshness
+  follow_ups:
+    - SLA for self-serve queries?
+    - Penalty credits for enterprise?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-035
+  domain: data-platforms
+  topic: backfill-strategies
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Backfill 6 months of data after logic bug. Safe architecture and execution.
+  expected_signals:
+    - Isolate backfill compute
+    - Version output tables or partitions
+    - Validate row counts and checksums
+    - Gradual cutover to fixed logic
+  red_flags:
+    - Overwrite prod tables live
+    - No validation
+    - Backfill on same cluster as prod
+  follow_ups:
+    - Incremental backfill chunks?
+    - Communicate to downstream consumers?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-036
+  domain: data-platforms
+  topic: idempotent-etl
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Idempotent ETL jobs for at-least-once pipeline semantics.
+  expected_signals:
+    - Merge keys and partition overwrite
+    - Deterministic transforms
+    - Job run_id in metadata
+    - Safe retries
+  red_flags:
+    - Append duplicates on retry
+    - Non-deterministic UDFs
+    - No merge key
+  follow_ups:
+    - Iceberg merge vs insert overwrite?
+    - Exactly-once sink patterns?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-037
+  domain: data-platforms
+  topic: sla-monitoring-data
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Monitor data pipeline SLAs at platform scale.
+  expected_signals:
+    - Freshness checks per table
+    - Anomaly on row count
+    - Pager only tier-1 datasets
+    - Self-service SLA dashboard
+  red_flags:
+    - Manual email when late
+    - Alert every minor delay
+    - No dataset tiering
+  follow_ups:
+    - Open metadata SLA integration?
+    - SLA burn like error budget?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-038
+  domain: data-platforms
+  topic: cost-optimization-data
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Data platform cloud bill 40% over budget. Architectural levers?
+  expected_signals:
+    - Storage lifecycle and format compaction
+    - Right-size clusters spot for batch
+    - Query scheduling off-peak
+    - Eliminate duplicate datasets
+  red_flags:
+    - Delete all history
+    - Downsize without query impact analysis
+    - Ignore egress between regions
+  follow_ups:
+    - Warehouse auto-suspend?
+    - FinOps per domain chargeback?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-039
+  domain: data-platforms
+  topic: multi-region-data
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Multi-region data platform for disaster recovery and local query performance.
+  expected_signals:
+    - Async replication metadata and data
+    - Region-local query endpoints
+    - Failover RPO for catalog
+    - Conflict handling explicit
+  red_flags:
+    - Sync cross-region all writes
+    - Single region catalog
+    - No failover test
+  follow_ups:
+    - Global table vs replicated?
+    - Geo-partitioned datasets?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: data-040
+  domain: data-platforms
+  topic: data-platform-governance
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['snowflake', 'databricks', 'aws']
+  estimated_minutes: 15
+  question: |
+    Federated governance model for enterprise data platform.
+  expected_signals:
+    - Central standards, domain enforcement
+    - Policy as code in pipelines
+    - Steward role per domain
+    - Exception ADR process
+  red_flags:
+    - Central committee every dataset
+    - No standards
+    - Governance blocks all self-serve
+  follow_ups:
+    - Governance metrics?
+    - AI on catalog for policy?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

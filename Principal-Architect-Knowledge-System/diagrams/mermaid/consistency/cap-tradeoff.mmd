@@ -1,0 +1,6 @@
+flowchart LR
+    subgraph Partition["During Partition"]
+        CP[CP: Consistency + Partition tolerance]
+        AP[AP: Availability + Partition tolerance]
+    end
+    NoPartition[No Partition] --> Latency[Latency vs Consistency tradeoff]

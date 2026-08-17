@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant C as Client
+    participant L as Leader
+    participant F1 as Follower 1
+    participant F2 as Follower 2
+
+    C->>L: Write command
+    L->>F1: AppendEntries
+    L->>F2: AppendEntries
+    F1-->>L: Acknowledged
+    F2-->>L: Acknowledged
+    L->>L: Commit after quorum
+    L-->>C: Success

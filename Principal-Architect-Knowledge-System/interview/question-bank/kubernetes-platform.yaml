@@ -1,0 +1,1132 @@
+version: 1
+domain: kubernetes-platform
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 40
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: k8s-001
+  domain: kubernetes-platform
+  topic: cluster-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Design Kubernetes cluster topology for 300 microservices across prod and non-prod with strong isolation.
+  expected_signals:
+    - Separate clusters vs large shared with policy
+    - Control plane sizing and HA
+    - Node pool segmentation by workload
+    - Upgrade and blast radius per cluster
+  red_flags:
+    - Single cluster for everything
+    - No non-prod isolation
+    - Ignore control plane failure
+  follow_ups:
+    - How many clusters per region?
+    - Hosted vs self-managed control plane?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-002
+  domain: kubernetes-platform
+  topic: multi-tenancy
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Implement multi-tenancy on shared clusters for 20 internal teams. Hard vs soft isolation choices?
+  expected_signals:
+    - Namespace + network policy + quota
+    - "Hard: dedicated clusters for regulated"
+    - Admission policy for labels/standards
+    - Fair scheduling and noisy neighbor controls
+  red_flags:
+    - Trust namespace alone for security
+    - No resource quotas
+    - Shared cluster for PCI workloads without isolation
+  follow_ups:
+    - vCluster / virtual clusters?
+    - Chargeback per namespace?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-003
+  domain: kubernetes-platform
+  topic: namespace-isolation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    A team can see another team's pods via network. Fix isolation without new clusters.
+  expected_signals:
+    - Default deny network policies
+    - Service mesh mTLS optional layer
+    - RBAC least privilege
+    - Audit policy for secret access
+  red_flags:
+    - Allow-all network policy
+    - Cluster-admin for developers
+    - Ignore east-west traffic
+  follow_ups:
+    - Cilium vs Calico features?
+    - DNS policy restrictions?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-004
+  domain: kubernetes-platform
+  topic: rbac-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Design RBAC model: developers deploy, SRE cluster-admin, CI pipeline deploy role.
+  expected_signals:
+    - Role aggregation and group binding
+    - No cluster-admin for apps
+    - CI OIDC short-lived credentials
+    - Periodic access review automation
+  red_flags:
+    - Shared kubeconfig admin
+    - Pipeline with permanent cluster-admin
+    - RBAC not auditable
+  follow_ups:
+    - Kyverno vs OPA for policy?
+    - Break-glass cluster access?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-005
+  domain: kubernetes-platform
+  topic: admission-controllers
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Which policies enforce via admission controllers vs CI lint?
+  expected_signals:
+    - "Admission: security context, labels, image registry"
+    - "CI: schema validation, best practices"
+    - Fail closed for policy violations
+    - Exception workflow with expiry
+  red_flags:
+    - All policies only in CI
+    - Admission disabled for speed
+    - No exception process
+  follow_ups:
+    - Validating vs mutating order?
+    - Policy performance at scale?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-006
+  domain: kubernetes-platform
+  topic: pod-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Migrate from PodSecurityPolicy to Pod Security Standards / admission policy.
+  expected_signals:
+    - Baseline vs restricted profiles per namespace
+    - "Gradual enforcement: warn → audit → enforce"
+    - Workloads requiring exceptions documented
+    - Rootless and read-only root filesystem
+  red_flags:
+    - Run as root everywhere
+    - Disable security context
+    - Big bang enforce breaking prod
+  follow_ups:
+    - Seccomp and AppArmor defaults?
+    - Windows node security?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-007
+  domain: kubernetes-platform
+  topic: network-policies
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Default-deny network policy rollout breaks legacy apps. Migration strategy?
+  expected_signals:
+    - Inventory traffic flows first
+    - Phased namespace enablement
+    - Policy simulator / flow logs
+    - Rollback per namespace
+  red_flags:
+    - Enforce default-deny globally day one
+    - No traffic visibility before policy
+    - Ignore DNS egress
+  follow_ups:
+    - Egress to external APIs?
+    - Host network pods exception?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-008
+  domain: kubernetes-platform
+  topic: service-mesh-istio
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Adopt Istio service mesh for mTLS and traffic management. Tradeoffs and rollout plan?
+  expected_signals:
+    - "Sidecar cost: latency, memory"
+    - Progressive rollout namespace by namespace
+    - Ingress vs mesh gateway boundaries
+    - Operational complexity and upgrades
+  red_flags:
+    - Mesh for all clusters day one
+    - Ignore sidecar resource cost
+    - Mesh replaces network policies
+  follow_ups:
+    - Ambient mesh vs sidecars?
+    - Canary traffic split at mesh?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-009
+  domain: kubernetes-platform
+  topic: ingress-vs-gateway-api
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Compare Ingress, Gateway API, and cloud LB for north-south traffic.
+  expected_signals:
+    - "Gateway API: role-oriented, extensible"
+    - TLS termination and cert management
+    - Multi-tenant gateway sharing
+    - Migration path from legacy Ingress
+  red_flags:
+    - One giant Ingress without isolation
+    - TLS secrets unencrypted in etcd discussion ignored
+    - No rate limiting at edge
+  follow_ups:
+    - ExternalDNS integration?
+    - gRPC routing at gateway?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-010
+  domain: kubernetes-platform
+  topic: hpa-vs-keda
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Choose HPA vs KEDA for scaling workers on queue depth and custom metrics.
+  expected_signals:
+    - "HPA: CPU/memory/custom metrics API"
+    - "KEDA: event-driven scalers to zero"
+    - Cooldown and stabilization windows
+    - Cluster autoscaler interaction
+  red_flags:
+    - CPU-only scaling for queue workers
+    - Scale to zero without cold start plan
+    - HPA and CA misconfigured limits
+  follow_ups:
+    - Prometheus adapter ops?
+    - KEDA lag metric design?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-011
+  domain: kubernetes-platform
+  topic: cluster-autoscaler
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Cluster autoscaler fails to add nodes during traffic spike. Diagnose architecture issues.
+  expected_signals:
+    - CA limits, ASG quotas, instance types
+    - "Pod scheduling constraints: PDB, affinity"
+    - Over-provisioned buffer nodes tradeoff
+    - Regional capacity exhaustion
+  red_flags:
+    - Only increase max nodes blindly
+    - Ignore pod pending reasons
+    - No priority classes
+  follow_ups:
+    - Karpenter vs cluster-autoscaler?
+    - GPU node pool scaling?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-012
+  domain: kubernetes-platform
+  topic: pod-disruption-budget
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Rolling deployment evicts too many pods violating availability. PDB design?
+  expected_signals:
+    - PDB minAvailable vs maxUnavailable
+    - Interaction with node drains and CA
+    - Critical tier stricter PDB
+    - Monitor allowed disruptions metric
+  red_flags:
+    - No PDB on stateful tier
+    - PDB blocks all node maintenance
+    - Ignore voluntary vs involuntary disruption
+  follow_ups:
+    - PDB for single-replica workloads?
+    - Zonal outage with PDB?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-013
+  domain: kubernetes-platform
+  topic: rolling-updates
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Configure rolling update for zero-downtime with slow-starting Java services.
+  expected_signals:
+    - maxSurge/maxUnavailable tuning
+    - readiness vs liveness probe correctness
+    - preStop hook and grace period
+    - Progress deadline and rollback
+  red_flags:
+    - Liveness kills slow starts
+    - maxUnavailable 100%
+    - No readiness gate
+  follow_ups:
+    - Startup probes when?
+    - Blue-green via Argo Rollouts?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-014
+  domain: kubernetes-platform
+  topic: blue-green-k8s
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Implement blue-green deployments on Kubernetes with service selector switch.
+  expected_signals:
+    - Duplicate deployments + Service switch
+    - Preview URL via separate Service/Ingress
+    - Database migration compatibility
+    - Instant rollback via selector
+  red_flags:
+    - Two production DB schemas incompatible
+    - Switch without health validation
+    - Shared mutable state between colors
+  follow_ups:
+    - Argo Rollouts vs manual?
+    - Blue-green with service mesh?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-015
+  domain: kubernetes-platform
+  topic: gitops-argocd
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Standardize GitOps with ArgoCD for 50 teams. Repo structure and promotion model?
+  expected_signals:
+    - App-of-apps / application sets
+    - Environment branches vs Kustomize overlays
+    - Drift detection and sync policies
+    - "Secrets: external secrets operator"
+  red_flags:
+    - kubectl apply from laptops
+    - Secrets in Git plaintext
+    - No promotion gates
+  follow_ups:
+    - Multi-cluster ArgoCD?
+    - Rollback via Git revert SLA?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-016
+  domain: kubernetes-platform
+  topic: helm-packaging
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Helm chart standards for internal platform: versioning, values, and testing.
+  expected_signals:
+    - Semver chart and app version
+    - Values schema validation
+    - Chart museum / OCI registry
+    - helm unittest or chart-testing
+  red_flags:
+    - Untemplated yaml copy-paste
+    - Breaking changes without major bump
+    - No chart review process
+  follow_ups:
+    - Subcharts vs dependencies?
+    - Helm vs Kustomize platform choice?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-017
+  domain: kubernetes-platform
+  topic: operators-pattern
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    When build a Kubernetes operator vs run managed service or CronJob?
+  expected_signals:
+    - "Operator: complex day-2 lifecycle"
+    - "Managed: reduce ops if SLA fits"
+    - Operator maturity and on-call burden
+    - CRD versioning and upgrades
+  red_flags:
+    - Operator for every trivial app
+    - Custom operator without tests
+    - Ignore CRD migration
+  follow_ups:
+    - Operator SDK vs kubebuilder?
+    - Leader election in operator?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-018
+  domain: kubernetes-platform
+  topic: statefulsets-databases
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Run PostgreSQL on StatefulSet vs managed RDS. Decision for platform team default?
+  expected_signals:
+    - Data gravity, ops expertise, SLA
+    - Backup, failover, patching burden
+    - Storage performance and AZ placement
+    - Escape hatch for regulated dedicated
+  red_flags:
+    - StatefulSet PG as default for all
+    - Ignore storage failure domains
+    - No backup automation
+  follow_ups:
+    - "Operator: Zalando vs Crunchy?"
+    - Local SSD vs network storage?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-019
+  domain: kubernetes-platform
+  topic: persistent-volumes
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Design PV strategy: CSI drivers, storage classes, and zone binding for stateful apps.
+  expected_signals:
+    - Storage class per performance tier
+    - Volume expansion and snapshots
+    - Zone-aware scheduling with PVC
+    - Reclaim policy and data retention
+  red_flags:
+    - Single storage class
+    - Ignore zone mismatch scheduling failures
+    - Delete reclaim on prod PVCs
+  follow_ups:
+    - EBS vs EFS for which workloads?
+    - Cross-AZ volume attachment?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-020
+  domain: kubernetes-platform
+  topic: csi-drivers
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Evaluate CSI driver for new storage backend. Production readiness checklist?
+  expected_signals:
+    - Snapshot, resize, topology support
+    - Driver HA and upgrade strategy
+    - Performance benchmarks per workload
+    - "Security: node publish secrets"
+  red_flags:
+    - In-tree driver legacy
+    - No snapshot for backup
+    - Driver outage impact unplanned
+  follow_ups:
+    - Volume populators?
+    - Multipath for block storage?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-021
+  domain: kubernetes-platform
+  topic: etcd-operations
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    etcd performance degrades on large clusters. Operational and architectural responses?
+  expected_signals:
+    - Defragmentation, compaction cadence
+    - Object count limits and watch fan-out
+    - Dedicated etcd nodes for large clusters
+    - Backup and restore drill
+  red_flags:
+    - Ignore etcd metrics
+    - Huge ConfigMaps in etcd
+    - No restore test
+  follow_ups:
+    - Stacked vs external etcd?
+    - Cross-region etcd anti-pattern?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-022
+  domain: kubernetes-platform
+  topic: control-plane-sizing
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Size control plane for 5K nodes and 100K pods. What metrics drive scaling?
+  expected_signals:
+    - API server request rate and latency
+    - etcd db size and defrag
+    - Controller manager QPS
+    - Hosted control plane limits
+  red_flags:
+    - Default sizing for all scales
+    - Ignore LIST request storms
+    - No API priority/fairness
+  follow_ups:
+    - API caching layers?
+    - Watch bookmark efficiency?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-023
+  domain: kubernetes-platform
+  topic: worker-node-pools
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Segment node pools: system, general, GPU, memory-optimized. Scheduling architecture.
+  expected_signals:
+    - Taints/tolerations and node selectors
+    - System pool isolation
+    - Cost allocation per pool
+    - Upgrade pools independently
+  red_flags:
+    - Single pool for GPU and system
+    - No taints—noisy neighbors
+    - Pool upgrades without surge
+  follow_ups:
+    - Windows node pool ops?
+    - Arm vs x86 pool split?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-024
+  domain: kubernetes-platform
+  topic: gpu-scheduling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Schedule GPU workloads for ML inference with fractional GPUs and autoscaling.
+  expected_signals:
+    - Device plugin and resource limits
+    - MIG / time-slicing options
+    - Queue vs immediate scheduling
+    - GPU node pool expensive—scale policy
+  red_flags:
+    - Oversubscribe GPUs without QoS
+    - No GPU metrics for HPA
+    - Long-running jobs block inference
+  follow_ups:
+    - Karpenter GPU consolidation?
+    - Multi-instance GPU inference?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-025
+  domain: kubernetes-platform
+  topic: topology-spread
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Use topology spread constraints for AZ balance without breaking PDB.
+  expected_signals:
+    - maxSkew and whenUnsatisfiable
+    - Interaction with anti-affinity
+    - Zonal outage survival
+    - Monitor skew metrics
+  red_flags:
+    - Ignore AZ balance
+    - Spread blocks all scheduling
+    - No fallback when zone full
+  follow_ups:
+    - Topology spread vs PDB conflict?
+    - Regional clusters spread?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-026
+  domain: kubernetes-platform
+  topic: descheduler
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Pods pile on few nodes despite spread policies. Descheduler use cases and risks?
+  expected_signals:
+    - Rebalance on node utilization
+    - Eviction respects PDB
+    - Run during maintenance windows
+    - Not fix for bad requests/limits
+  red_flags:
+    - Descheduler during peak traffic
+    - Ignore eviction storms
+    - Replace proper scheduling
+  follow_ups:
+    - Low node utilization policy?
+    - Descheduler with Karpenter?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-027
+  domain: kubernetes-platform
+  topic: resource-quotas
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Team exceeds namespace quota during deploy. Quota design for fairness.
+  expected_signals:
+    - Object count + compute quotas
+    - LimitRange defaults for pods
+    - Quota per environment tier
+    - Alert before hard block
+  red_flags:
+    - No quotas—cluster exhaustion
+    - Quotas so low nothing schedules
+    - No LimitRange pod defaults
+  follow_ups:
+    - Cross-namespace shared pools?
+    - Quota increase workflow?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-028
+  domain: kubernetes-platform
+  topic: limit-ranges
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Pods without requests cause scheduling and HPA issues. LimitRange and governance.
+  expected_signals:
+    - Default requests/limits per namespace
+    - Max limit prevents noisy neighbor
+    - Admission enforce requests required
+    - Education vs enforcement balance
+  red_flags:
+    - Limits without requests
+    - No max—single pod eats node
+    - Ignore HPA custom metrics need requests
+  follow_ups:
+    - VPA vs fixed limits?
+    - Burstable QoS risks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-029
+  domain: kubernetes-platform
+  topic: sidecar-pattern
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Sidecar containers for logging, mesh, and secrets—resource and lifecycle pitfalls.
+  expected_signals:
+    - Sidecar startup order (init vs native sidecars)
+    - Resource sum inflation per pod
+    - Multiple sidecars compound latency
+    - "Lifecycle: sidecar shutdown with main"
+  red_flags:
+    - Unbounded sidecars per pod
+    - Ignore total pod resource math
+    - Sidecar outlives app container
+  follow_ups:
+    - Native sidecar K8s version?
+    - Egress proxy sidecar pattern?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-030
+  domain: kubernetes-platform
+  topic: init-containers
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Init containers for migrations and config fetch—failure and timeout handling.
+  expected_signals:
+    - Init must complete before app starts
+    - Timeout and retry policy
+    - Secrets via init vs CSI
+    - Job vs init for long migrations
+  red_flags:
+    - Init runs forever blocking deploy
+    - Migration in init without rollback
+    - Duplicate init work every pod
+  follow_ups:
+    - Helm hooks vs init?
+    - Init container ordering?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-031
+  domain: kubernetes-platform
+  topic: cronjobs-batch
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Design CronJob platform for 500 scheduled jobs with observability and failure handling.
+  expected_signals:
+    - Concurrency policy and history limits
+    - Deadline seconds and active deadlines
+    - Central logging and alert routing
+    - Replace with workflow engine for complex
+  red_flags:
+    - CronJob without failure alerts
+    - Unlimited concurrent overlapping runs
+    - No idempotent job design
+  follow_ups:
+    - Timezone in CronJob?
+    - Migrate to Argo Workflows?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-032
+  domain: kubernetes-platform
+  topic: multi-cluster-federation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Manage 15 clusters across regions. Multi-cluster ingress, config, and GitOps.
+  expected_signals:
+    - "Fleet management: ArgoCD, Rancher, or cloud fleet"
+    - Global DNS and health-based routing
+    - Consistent policy bundles
+    - Not all workloads need multi-cluster
+  red_flags:
+    - kubectl context switching manual
+    - Divergent cluster versions forever
+    - Global synchronous data assumption
+  follow_ups:
+    - Cluster API provisioning?
+    - Submariner multi-cluster network?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-033
+  domain: kubernetes-platform
+  topic: cluster-upgrades
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Upgrade Kubernetes version on production clusters with minimal risk.
+  expected_signals:
+    - Surge node pools on new version
+    - API deprecation audit in CI
+    - Conformance tests pre-upgrade
+    - "Rollback: node pool not control plane downgrade easy"
+  red_flags:
+    - Upgrade all clusters same weekend
+    - Skip deprecated API checks
+    - No workload compatibility test
+  follow_ups:
+    - Auto-upgrade managed control plane?
+    - Skew policy max version gap?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-034
+  domain: kubernetes-platform
+  topic: api-server-ha
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    API server latency spikes during LIST storms from controllers. Mitigations?
+  expected_signals:
+    - API priority and fairness
+    - Pagination and continue tokens
+    - etcd health and defrag
+    - Reduce excessive watches/listers
+  red_flags:
+    - Disable API priority
+    - Controllers list all pods globally unfiltered
+    - Ignore etcd size
+  follow_ups:
+    - Cache tuning?
+    - Konnectivity for private clusters?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-035
+  domain: kubernetes-platform
+  topic: kubelet-eviction
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Nodes evict pods under memory pressure. Architecture to protect critical tiers.
+  expected_signals:
+    - QoS classes and priorityClass
+    - Pod priority for critical system
+    - Requests/limits correctness
+    - Monitor eviction events
+  red_flags:
+    - BestEffort for payment API
+    - No priority classes
+    - Ignore node memory pressure alerts
+  follow_ups:
+    - Eviction thresholds tuning?
+    - Local ephemeral storage eviction?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-036
+  domain: kubernetes-platform
+  topic: seccomp-falco
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Runtime security: seccomp, Falco, and admission for threat detection.
+  expected_signals:
+    - Seccomp profiles per workload class
+    - Falco rules tuned to reduce noise
+    - Response automation vs alert-only
+    - Performance overhead measured
+  red_flags:
+    - Runtime security disabled for perf
+    - Default allow-all seccomp
+    - Alert fatigue without tuning
+  follow_ups:
+    - eBPF security tools?
+    - False positive handling runbook?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-037
+  domain: kubernetes-platform
+  topic: workload-identity
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Map Kubernetes service accounts to cloud IAM without static keys.
+  expected_signals:
+    - IRSA / workload identity federation
+    - Trust policy scoped to namespace/SA
+    - No long-lived cloud keys in secrets
+    - Audit cloud API calls per SA
+  red_flags:
+    - Node IAM role with broad permissions
+    - Shared SA for all apps
+    - Keys in Kubernetes Secrets
+  follow_ups:
+    - Pod Identity vs IRSA?
+    - GCP WI binding model?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-038
+  domain: kubernetes-platform
+  topic: external-secrets
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Sync secrets from Vault/AWS SM to clusters. Rotation and blast radius.
+  expected_signals:
+    - External Secrets Operator polling vs push
+    - Secret lifecycle tied to app rollout
+    - Namespace-scoped secret stores
+    - Never log secret values
+  red_flags:
+    - Secrets copied to etcd long-lived
+    - Cluster-wide secret store for all
+    - Manual secret copy
+  follow_ups:
+    - Vault agent injector vs ESO?
+    - Rotation without pod restart?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-039
+  domain: kubernetes-platform
+  topic: observability-stack-k8s
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Deploy observability stack on K8s: metrics, logs, traces without cluster meltdown.
+  expected_signals:
+    - Node and pod metrics cardinality control
+    - Log agent resource limits
+    - Trace sampling at collector
+    - Dedicated monitoring cluster option
+  red_flags:
+    - Full log volume to hot storage
+    - Unbounded Prometheus labels
+    - DaemonSet consumes all node CPU
+  follow_ups:
+    - OpenTelemetry collector topology?
+    - Cost of long-term metrics storage?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: k8s-040
+  domain: kubernetes-platform
+  topic: kubernetes-incident-debug
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['kubernetes', 'aws-eks', 'gcp-gke']
+  estimated_minutes: 15
+  question: |
+    Production incident: pods CrashLoopBackOff across namespaces after node upgrade. Debug approach?
+  expected_signals:
+    - Events, logs, previous container logs
+    - Node kernel/CNI version skew
+    - Admission policy change correlation
+    - Rollback node pool or CNI
+  red_flags:
+    - Random restart without correlation
+    - Ignore CNI and kubelet version
+    - Scale replicas without root cause
+  follow_ups:
+    - kubectl debug ephemeral containers?
+    - Postmortem for platform change?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.

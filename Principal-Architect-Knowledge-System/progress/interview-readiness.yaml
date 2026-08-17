@@ -1,0 +1,51 @@
+last_calculated: 2026-07-24
+overall_readiness_score: 0
+weights:
+  distributed_systems_fundamentals: 0.15
+  consensus_replication_consistency: 0.15
+  databases_and_storage: 0.10
+  networking_and_operating_systems: 0.10
+  system_design: 0.14
+  cloud_and_platform: 0.10
+  reliability_and_security: 0.10
+  ai_and_agentic_systems: 0.05
+  architecture_leadership: 0.05
+  communication_and_behavioral: 0.05
+  coding_interview: 0.05
+domains:
+  distributed_systems_fundamentals:
+    knowledge_score: 0
+    explanation_score: 0
+    design_score: 0
+    failure_analysis_score: 0
+    interview_performance_score: 0
+    confidence: low
+    last_reviewed: null
+    evidence: []
+  consensus_replication_consistency:
+    knowledge_score: 0
+    explanation_score: 0
+    design_score: 0
+    failure_analysis_score: 0
+    interview_performance_score: 0
+    confidence: low
+    last_reviewed: null
+    evidence: []
+  system_design:
+    knowledge_score: 0
+    explanation_score: 0
+    design_score: 0
+    failure_analysis_score: 0
+    interview_performance_score: 0
+    confidence: low
+    last_reviewed: null
+    evidence: []
+  coding_interview:
+    knowledge_score: 0
+    explanation_score: 0
+    design_score: 0
+    failure_analysis_score: 0
+    interview_performance_score: 0
+    confidence: low
+    last_reviewed: null
+    evidence: []

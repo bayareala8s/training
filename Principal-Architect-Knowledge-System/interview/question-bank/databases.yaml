@@ -1,0 +1,1132 @@
+version: 1
+domain: databases
+last_updated: 2026-07-25
+difficulty: principal
+total_questions: 40
+template: templates/interview-question-template.md
+scoring_rubrics:
+  - interview/scoring-rubrics/principal-system-design.md
+  - interview/scoring-rubrics/distributed-systems-deep-dive.md
+
+questions:
+
+- id: db-001
+  domain: databases
+  topic: acid-vs-base
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Compare ACID and BASE for a global inventory system with flash sales.
+  expected_signals:
+    - ACID on single shard/partition
+    - BASE across regions with reconciliation
+    - Business tolerance for oversell
+    - Explicit consistency per operation
+  red_flags:
+    - ACID everywhere globally linearizable
+    - BASE without conflict rules
+    - Ignore oversell business impact
+  follow_ups:
+    - Percolator two-phase?
+    - Dynamo-style inventory?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-002
+  domain: databases
+  topic: isolation-levels
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Choose isolation level for financial ledger vs analytics read workload on same DB.
+  expected_signals:
+    - Serializable for ledger writes
+    - Read committed or snapshot for analytics
+    - Anomalies prevented per level stated
+    - Row lock vs MVCC tradeoffs
+  red_flags:
+    - Serializable for all analytics
+    - Read uncommitted anywhere
+    - Confuse isolation with consistency
+  follow_ups:
+    - Snapshot isolation anomalies?
+    - Lock escalation risks?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-003
+  domain: databases
+  topic: mvcc-internals
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Explain MVCC and how long transactions cause bloat and slow reads.
+  expected_signals:
+    - Versions stored per row
+    - Vacuum/visibility cleanup
+    - Long txn blocks cleanup
+    - Monitor txn age and bloat
+  red_flags:
+    - MVCC no maintenance needed
+    - Delete without vacuum
+    - Ignore xmin xmax
+  follow_ups:
+    - Snapshot too old errors?
+    - MVCC in distributed DB?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-004
+  domain: databases
+  topic: b-tree-index-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Design indexes for high-write order table with range queries on status and time.
+  expected_signals:
+    - Composite index column order
+    - Avoid over-indexing write penalty
+    - Partial indexes for hot status
+    - Covering index for read path
+  red_flags:
+    - Index every column
+    - Wrong column order in composite
+    - No index maintenance plan
+  follow_ups:
+    - BRIN for time series?
+    - Index-only scans?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-005
+  domain: databases
+  topic: covering-indexes
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Use covering indexes to eliminate heap fetches. When does it stop helping?
+  expected_signals:
+    - INCLUDE columns for select list
+    - Wide indexes maintenance cost
+    - Not for high churn wide rows
+    - Verify with EXPLAIN
+  red_flags:
+    - Covering index 50 columns
+    - Ignore index size
+    - No EXPLAIN verification
+  follow_ups:
+    - Index merge vs covering?
+    - Covering on JSON columns?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-006
+  domain: databases
+  topic: query-optimization
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Query suddenly 100× slower after data growth. Principal-level diagnosis path.
+  expected_signals:
+    - EXPLAIN plan analysis
+    - Stats outdated, seq scan
+    - Join order and nested loop
+    - Partition pruning missing
+  red_flags:
+    - Add RAM without analysis
+    - Force index hint forever
+    - Ignore stats maintenance
+  follow_ups:
+    - Auto explain in prod?
+    - Query rewrite vs index?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-007
+  domain: databases
+  topic: connection-pooling
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Connection pool exhaustion under traffic spike. Architecture and pool sizing.
+  expected_signals:
+    - Pool per service not global giant
+    - PgBouncer transaction mode
+    - Connection storm from serverless
+    - Monitor active connections
+  red_flags:
+    - Pool size = max connections DB
+    - New connection per request
+    - No pool at app layer
+  follow_ups:
+    - RDS proxy when?
+    - Pool vs prepared statements?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-008
+  domain: databases
+  topic: read-replicas-lag
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Use read replicas for reporting without stale data surprises.
+  expected_signals:
+    - Monitor replication lag
+    - Session stickiness or read-after-write routing
+    - Materialized views on replica
+    - Fail reporting if lag high
+  red_flags:
+    - Replica for real-time dashboard always
+    - Ignore lag metric
+    - Writes to replica
+  follow_ups:
+    - Logical vs physical replica lag?
+    - Cross-region replica for reads?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-009
+  domain: databases
+  topic: failover-rpo-rto
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Database failover architecture for RPO < 1 min and RTO < 5 min.
+  expected_signals:
+    - Sync replica in same region
+    - Automated failover with fencing
+    - DNS/connection string abstraction
+    - Regular failover drills
+  red_flags:
+    - Async only RPO zero claimed
+    - Manual failover only
+    - App connects fixed IP primary
+  follow_ups:
+    - Split brain prevention?
+    - Global database failover?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-010
+  domain: databases
+  topic: partitioning-strategies
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Partition large time-series table: range vs list vs hash.
+  expected_signals:
+    - Range by time for retention drop
+    - Hash for even spread hot tenant
+    - Partition pruning in queries
+    - Maintenance per partition
+  red_flags:
+    - One giant table forever
+    - Partition without query alignment
+    - Too many small partitions
+  follow_ups:
+    - Auto partition creation?
+    - Cross-partition queries cost?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-011
+  domain: databases
+  topic: sharding-application
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Application-level sharding for 10B rows. Routing and resharding plan.
+  expected_signals:
+    - Shard key immutable choice
+    - Directory or range routing
+    - Reshard with dual-write migration
+    - Cross-shard queries avoided
+  red_flags:
+    - Random shard key cross-shard joins
+    - No resharding plan
+    - Shard map in app only no service
+  follow_ups:
+    - Vitess vs DIY?
+    - Consistent hashing resharding?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-012
+  domain: databases
+  topic: consistent-hashing-db
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Consistent hashing for shard routing vs directory-based routing.
+  expected_signals:
+    - Minimal key movement on add shard
+    - Virtual nodes balance
+    - Directory easier ops moves
+    - Hot shard still possible both
+  red_flags:
+    - Consistent hash fixes hot keys
+    - Directory without HA
+    - Modulo N sharding
+  follow_ups:
+    - Dynamo ring?
+    - Elastic shard addition?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-013
+  domain: databases
+  topic: global-distributed-db
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    When adopt global distributed DB (Spanner/Cockroach) vs app-level sharding?
+  expected_signals:
+    - Global SQL convenience cost
+    - Latency on cross-region writes
+    - License and ops maturity
+    - Workload needs global transactions?
+  red_flags:
+    - Global DB for all apps
+    - Ignore WAN latency on writes
+    - No fallback architecture
+  follow_ups:
+    - Spanner vs Cockroach tradeoffs?
+    - Read-only global replicas?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-014
+  domain: databases
+  topic: spanner-architecture
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    How does Spanner achieve external consistency? What operational constraints follow?
+  expected_signals:
+    - TrueTime uncertainty interval
+    - Two-phase commit across Paxos groups
+    - Not magic—wait for clock bound
+    - Cost and region placement
+  red_flags:
+    - Spanner linearizable everywhere free
+    - Ignore TrueTime dependency
+    - Use for small startup default
+  follow_ups:
+    - External consistency vs serializable?
+    - Spanner schema design limits?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-015
+  domain: databases
+  topic: dynamodb-access-patterns
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Design DynamoDB access patterns before schema. Walk through one complex query.
+  expected_signals:
+    - Access patterns drive keys
+    - GSIs for alternate queries
+    - Avoid scans in hot path
+    - Item size and hot partition check
+  red_flags:
+    - Relational design on DynamoDB
+    - Scan for reporting hot path
+    - Ignore WCUs on hot key
+  follow_ups:
+    - Single table design?
+    - DAX when?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-016
+  domain: databases
+  topic: single-table-design
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Single-table DynamoDB design for orders, customers, and shipments.
+  expected_signals:
+    - PK/SK patterns per entity
+    - Adjacency lists for hierarchy
+    - GSI sparse indexes
+    - Overloading attributes disciplined
+  red_flags:
+    - Multiple tables relational style
+    - No GSI strategy
+    - Huge items over 400KB
+  follow_ups:
+    - Single table pitfalls?
+    - Electro or similar tooling?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-017
+  domain: databases
+  topic: gsi-design-dynamodb
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    GSI design for query without exploding costs.
+  expected_signals:
+    - GSI projection KEYS_ONLY vs ALL
+    - GSI write amplification
+    - Sparse GSI for subset
+    - Limit number of GSIs
+  red_flags:
+    - ALL projection always
+    - 10 GSIs per table default
+    - GSI hot partition ignored
+  follow_ups:
+    - GSI backfill on add?
+    - LSI vs GSI?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-018
+  domain: databases
+  topic: cassandra-tunable
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Tune Cassandra consistency for write-heavy sensor ingestion.
+  expected_signals:
+    - LOCAL_ONE writes for speed
+    - Read repair and hinted handoff
+    - QUORUM when needed
+    - Replication factor per DC
+  red_flags:
+    - EVERYWHERE ALL always
+    - RF=1 in prod
+    - Ignore compaction backlog
+  follow_ups:
+    - TWCS compaction?
+    - Lightweight transactions cost?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-019
+  domain: databases
+  topic: postgres-ha-patroni
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    PostgreSQL HA with Patroni/etcd. Failover architecture and pitfalls.
+  expected_signals:
+    - Leader election via DCS
+    - Sync rep configuration
+    - Connection pooler failover
+    - Split brain mitigation
+  red_flags:
+    - Patroni without DCS HA
+    - Async rep RPO zero claim
+    - Apps without reconnect logic
+  follow_ups:
+    - Citus vs Patroni scale-out?
+    - Logical replication failover?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-020
+  domain: databases
+  topic: logical-replication
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Logical replication for zero-downtime major upgrade and CDC.
+  expected_signals:
+    - Publication/subscription model
+    - Schema change limitations
+    - Conflict handling on replica
+    - Monitor replication slot lag
+  red_flags:
+    - Logical repl without slot monitoring
+    - Breaking DDL during repl
+    - Infinite slot retains WAL
+  follow_ups:
+    - pglogical vs native?
+    - Repl to Kafka?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-021
+  domain: databases
+  topic: vacuum-bloat
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Autovacuum not keeping up; bloat grows. Architectural and tuning response.
+  expected_signals:
+    - Tune autovacuum per table
+    - Long txn identification
+    - pg_repack maintenance window
+    - Storage growth alerting
+  red_flags:
+    - Disable autovacuum
+    - Manual vacuum only yearly
+    - Ignore wraparound risk
+  follow_ups:
+    - Heap fetches vs vacuum?
+    - Partition reduces bloat?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-022
+  domain: databases
+  topic: lock-contention
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Diagnose row-level lock contention on hot counter row.
+  expected_signals:
+    - Identify blocking queries
+    - Shard counter or use hll
+    - Advisory locks misuse check
+    - NOWAIT and skip locked patterns
+  red_flags:
+    - Increase lock timeout only
+    - Single row global counter
+    - Table lock from DDL surprise
+  follow_ups:
+    - Serializable retry storms?
+    - Queue-based counter update?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-023
+  domain: databases
+  topic: deadlock-detection
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Deadlocks spike after new feature. Detection and prevention architecture.
+  expected_signals:
+    - DB deadlock graph logs
+    - Consistent lock ordering
+    - Short transactions
+    - Retry with backoff idempotent
+  red_flags:
+    - Ignore deadlocks rare
+    - Long transactions holding locks
+    - No retry on serialization failure
+  follow_ups:
+    - Application deadlock vs DB?
+    - Deadlock in distributed txn?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-024
+  domain: databases
+  topic: nosql-when
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    When choose document/ wide-column vs relational for new product data?
+  expected_signals:
+    - Schema flexibility vs join needs
+    - Access pattern predictability
+    - Operational team skills
+    - Multi-document ACID limits
+  red_flags:
+    - NoSQL for everything relational
+    - SQL when nested docs enough
+    - Ignore transaction boundaries
+  follow_ups:
+    - Mongo multi-doc ACID?
+    - Dynamo for relational workload?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-025
+  domain: databases
+  topic: time-series-db
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Timescale vs Influx vs warehouse for metrics storage decision.
+  expected_signals:
+    - Retention and compression native
+    - Query language fit
+    - Cardinality limits Influx
+    - Downsample tiers
+  red_flags:
+    - Postgres raw metrics forever
+    - Wrong tool for high cardinality
+    - No retention policy
+  follow_ups:
+    - M3DB when?
+    - Prometheus remote write to TSDB?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-026
+  domain: databases
+  topic: graph-db-use-cases
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    When is Neo4j/graph DB right vs recursive SQL or warehouse?
+  expected_signals:
+    - Deep relationship traversals
+    - Variable depth queries
+    - Not for bulk analytics default
+    - Operational complexity
+  red_flags:
+    - Graph for all relationships
+    - Graph without query pattern proof
+    - Ignore sharding limits
+  follow_ups:
+    - Graph + vector hybrid?
+    - RDF vs property graph?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-027
+  domain: databases
+  topic: newsql-tradeoffs
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    NewSQL distributed SQL tradeoffs for OLTP at regional scale.
+  expected_signals:
+    - Distributed transactions cost
+    - Resharding online
+    - SQL compatibility limits
+    - Compare TiDB/Yugabyte/Cockroach
+  red_flags:
+    - NewSQL replaces warehouse
+    - Ignore cross-node join cost
+    - Single region only hidden
+  follow_ups:
+    - Serverless SQL when?
+    - Geo-distributed NewSQL?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-028
+  domain: databases
+  topic: migration-zero-downtime
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Zero-downtime migration from self-hosted Postgres to managed with minimal cutover.
+  expected_signals:
+    - Logical replication dual-write phase
+    - Cutover connection drain
+    - Validation row counts checksum
+    - Rollback window
+  red_flags:
+    - Stop traffic weekend migration
+    - Big bang dump restore
+    - No dual-write validation
+  follow_ups:
+    - DMS vs logical repl?
+    - Schema migration tools?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-029
+  domain: databases
+  topic: schema-migration-expand-contract
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Expand-contract pattern for column rename in high-traffic table.
+  expected_signals:
+    - Add column, dual-write, backfill, switch read, drop old
+    - Avoid blocking DDL
+    - Feature flag read path
+    - Monitor during phases
+  red_flags:
+    - ALTER rename instant prod
+    - Skip backfill validation
+    - Drop old before read switch
+  follow_ups:
+    - Online DDL tools?
+    - Contract in microservices?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-030
+  domain: databases
+  topic: backup-pitr
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Backup and PITR strategy for 50TB database RPO 5 minutes.
+  expected_signals:
+    - Continuous WAL archiving
+    - Restore drill quarterly
+    - Cross-region backup copy
+    - RTO for restore test measured
+  red_flags:
+    - Daily snapshot only RPO 5min
+    - Backups never tested
+    - Single region backup
+  follow_ups:
+    - Immutable backup vault?
+    - PITR to new instance cutover?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-031
+  domain: databases
+  topic: encryption-tde
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    TDE vs application encryption for multi-tenant SaaS database.
+  expected_signals:
+    - "TDE: transparent, all data"
+    - "App-level: per-tenant keys"
+    - Search implications
+    - Compliance driver
+  red_flags:
+    - No encryption tenant SaaS
+    - TDE equals tenant isolation
+    - Keys in app config
+  follow_ups:
+    - CMEK rotation?
+    - Field-level for PII only?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-032
+  domain: databases
+  topic: row-level-security
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    PostgreSQL RLS for multi-tenant isolation. Performance and bypass risks.
+  expected_signals:
+    - Policy on tenant_id
+    - Force RLS for table owners
+    - Index tenant_id always
+    - Test bypass paths
+  red_flags:
+    - RLS without index tenant
+    - Superuser app connection
+    - RLS only in API layer
+  follow_ups:
+    - RLS vs schema per tenant?
+    - RLS with connection pooler?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-033
+  domain: databases
+  topic: multi-tenant-db-isolation
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Shared schema vs schema-per-tenant vs DB-per-tenant architecture.
+  expected_signals:
+    - "Shared: cost efficient risk neighbor"
+    - "Schema: moderate isolation"
+    - "DB: enterprise tier cost"
+    - Migration between models hard
+  red_flags:
+    - One model for all tiers
+    - Shared with no RLS
+    - DB per tenant for 10K tenants
+  follow_ups:
+    - Pooler per model?
+    - Noisy neighbor on shared?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-034
+  domain: databases
+  topic: connection-storm
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Serverless functions cause DB connection storm. Architectural fixes.
+  expected_signals:
+    - RDS Proxy / PgBouncer
+    - Pool at edge of DB
+    - Limit concurrent lambdas
+    - Data API for simple queries
+  red_flags:
+    - Raise max_connections unlimited
+    - Each lambda connects direct
+    - No pooler
+  follow_ups:
+    - HTTP API to DB proxy?
+    - Read replicas for lambda reads?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-035
+  domain: databases
+  topic: prepared-statements
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Prepared statements with PgBouncer transaction pooling mode.
+  expected_signals:
+    - Transaction mode breaks named prepared
+    - Use unnamed or disable prepare
+    - Statement cache per connection
+    - ORM settings awareness
+  red_flags:
+    - Prepared with transaction pool errors
+    - Disable pool to fix only
+    - Ignore ORM prepare
+  follow_ups:
+    - Server-side prepare perf?
+    - Citus prepared statements?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-036
+  domain: databases
+  topic: hot-row-problem
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Hot row updates 10K/sec on single account balance. Solutions?
+  expected_signals:
+    - Shard balance into sub-accounts
+    - Serialize via queue
+    - CRDT or delta aggregation
+    - Avoid single row counter
+  red_flags:
+    - Keep single row add CPU
+    - SELECT FOR UPDATE all traffic
+    - Ignore queue lag
+  follow_ups:
+    - Ledger event sourcing?
+    - Dynamo transact write limits?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-037
+  domain: databases
+  topic: write-amplification
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Write amplification in LSM vs B-tree for your workload.
+  expected_signals:
+    - "LSM: compaction write amp"
+    - "B-tree: page split on SSD"
+    - Measure not assume
+    - Workload write/read ratio
+  red_flags:
+    - Ignore WA in capacity plan
+    - LSM always better writes
+    - No compaction monitoring
+  follow_ups:
+    - Leveled vs tiered compaction?
+    - B-tree fillfactor tuning?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-038
+  domain: databases
+  topic: read-amplification
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Read amplification from secondary indexes and LSM bloom filters.
+  expected_signals:
+    - Too many indexes hurt writes and reads
+    - Bloom filter false positives
+    - Covering index reduces amp
+    - Caching layer for hot reads
+  red_flags:
+    - Index every query ad hoc
+    - No cache for hot keys
+    - Ignore LSM read amp
+  follow_ups:
+    - Read repair amplification?
+    - Index-only scan planning?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-039
+  domain: databases
+  topic: database-observability
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Database observability: slow query log, locks, replication, and capacity.
+  expected_signals:
+    - pg_stat_statements / performance insights
+    - Lock wait graphs
+    - Replication lag dashboards
+    - Connection pool metrics
+  red_flags:
+    - No DB metrics until down
+    - Log every query prod
+    - Ignore lock metrics
+  follow_ups:
+    - EXPLAIN in prod auto?
+    - Synthetic query canaries?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
+- id: db-040
+  domain: databases
+  topic: capacity-planning-db
+  difficulty: principal
+  question_type: technical-deep-dive
+  company_patterns: ['postgres', 'aws', 'mongo']
+  estimated_minutes: 15
+  question: |
+    Capacity plan DB for 3× traffic growth in 12 months.
+  expected_signals:
+    - Growth model from QPS and data size
+    - Headroom for failover peak
+    - Shard/add replica timeline
+    - Storage growth and IOPS
+  red_flags:
+    - Wait until CPU 100%
+    - Scale without data growth model
+    - No IOPS planning
+  follow_ups:
+    - Vertical vs horizontal timeline?
+    - Reserved capacity for DB?
+  scoring_rubric:
+    excellent: "Principal-level depth with safety/liveness separation, operational implications, and explicit tradeoffs."
+    good: "Correct mechanism and tradeoffs; minor gaps in ops or organizational scope."
+    adequate: "Surface understanding; struggles under partition or consistency follow-ups."
+    weak: "Hand-waving, confused guarantees, or no failure model."
+  strong_answer_outline: |
+    Define problem → mechanism → failure/partition behavior → operational implications → explicit tradeoffs.
