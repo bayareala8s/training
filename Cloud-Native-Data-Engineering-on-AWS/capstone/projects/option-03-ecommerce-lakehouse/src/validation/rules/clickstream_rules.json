@@ -1,0 +1,56 @@
+{
+  "dataset": "ecommerce/clickstream",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "event_id_not_null",
+      "field": "event_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "event_id is required"
+    },
+    {
+      "name": "session_id_not_null",
+      "field": "session_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "session_id is required"
+    },
+    {
+      "name": "event_type_valid",
+      "field": "event_type",
+      "type": "enum",
+      "params": {
+        "values": ["page_view", "add_to_cart", "remove_from_cart", "checkout_start", "purchase", "search"]
+      },
+      "severity": "error",
+      "message": "event_type must be a known clickstream event"
+    },
+    {
+      "name": "event_id_format",
+      "field": "event_id",
+      "type": "regex",
+      "params": { "pattern": "^EVT-[0-9]{5}$" },
+      "severity": "error",
+      "message": "event_id must match EVT-#####"
+    },
+    {
+      "name": "device_valid",
+      "field": "device",
+      "type": "enum",
+      "params": {
+        "values": ["desktop", "mobile", "tablet"]
+      },
+      "severity": "error",
+      "message": "device must be desktop, mobile, or tablet"
+    },
+    {
+      "name": "page_path_format",
+      "field": "page_path",
+      "type": "regex",
+      "params": { "pattern": "^/[a-z0-9/_-]*$" },
+      "severity": "warning",
+      "message": "page_path should be a relative URL path"
+    }
+  ]
+}

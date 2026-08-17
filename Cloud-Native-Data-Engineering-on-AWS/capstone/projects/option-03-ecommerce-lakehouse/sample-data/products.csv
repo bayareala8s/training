@@ -1,0 +1,18 @@
+product_id,product_name,category,brand,unit_price,is_active
+PRD-0001,FreshDay Item 1,electronics,Northpeak,19.05,true
+PRD-0002,HarborHome Item 2,apparel,Lumen,106.66,true
+PRD-0003,FreshDay Item 3,home,Northpeak,307.1,true
+PRD-0004,AeroFit Item 4,beauty,Northpeak,269.0,true
+PRD-0005,Northpeak Item 5,sports,Northpeak,49.41,true
+PRD-0006,Lumen Item 6,grocery,AeroFit,274.09,true
+PRD-0007,AeroFit Item 7,electronics,Lumen,324.48,true
+PRD-0008,FreshDay Item 8,apparel,AeroFit,193.43,true
+PRD-0009,Vivid Item 9,home,AeroFit,130.96,true
+PRD-0010,Northpeak Item 10,beauty,Lumen,316.58,true
+PRD-0011,HarborHome Item 11,sports,HarborHome,76.72,true
+PRD-0012,HarborHome Item 12,grocery,Northpeak,48.99,false
+PRD-0013,Northpeak Item 13,electronics,HarborHome,382.59,true
+PRD-0014,AeroFit Item 14,apparel,HarborHome,364.75,true
+PRD-0099,Broken Catalog Entry,toys,Unknown,12.50,true
+BAD-PROD,Bad ID Product,electronics,Lumen,99.00,true
+PRD-0098,Negative Price Widget,home,HarborHome,-5.00,true

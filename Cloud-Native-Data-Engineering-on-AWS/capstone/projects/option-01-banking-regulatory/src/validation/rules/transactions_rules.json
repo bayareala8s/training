@@ -1,0 +1,60 @@
+{
+  "dataset": "banking/transactions",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "transaction_id_not_null",
+      "field": "transaction_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "transaction_id is required"
+    },
+    {
+      "name": "account_id_not_null",
+      "field": "account_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "account_id is required"
+    },
+    {
+      "name": "amount_in_range",
+      "field": "amount",
+      "type": "range",
+      "params": { "min": 0.01, "max": 1000000 },
+      "severity": "error",
+      "message": "amount must be between 0.01 and 1000000"
+    },
+    {
+      "name": "currency_valid",
+      "field": "currency",
+      "type": "enum",
+      "params": { "values": ["USD", "EUR", "GBP", "CAD"] },
+      "severity": "error",
+      "message": "currency must be USD, EUR, GBP, or CAD"
+    },
+    {
+      "name": "status_valid",
+      "field": "status",
+      "type": "enum",
+      "params": { "values": ["posted", "pending", "reversed", "settled"] },
+      "severity": "error",
+      "message": "status must be posted, pending, reversed, or settled"
+    },
+    {
+      "name": "transaction_id_format",
+      "field": "transaction_id",
+      "type": "regex",
+      "params": { "pattern": "^TXN-[0-9]{8}-[0-9]{4}$" },
+      "severity": "error",
+      "message": "transaction_id must match TXN-YYYYMMDD-####"
+    },
+    {
+      "name": "settlement_date_format",
+      "field": "settlement_date",
+      "type": "regex",
+      "params": { "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+      "severity": "error",
+      "message": "settlement_date must be YYYY-MM-DD"
+    }
+  ]
+}

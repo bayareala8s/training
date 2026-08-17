@@ -198,12 +198,12 @@ This repository contains **complete professional course materials**:
 |---------|-------|
 | Modules | 10 weeks |
 | Lectures | 10 (2 hours each) |
-| Hands-on labs | 27 with code |
+| Hands-on labs | 26 with code |
 | Assignments | 9 + capstone |
-| Terraform modules | 5 |
+| Terraform modules | 6 |
 | Instructor guide | Included |
 
-**Full navigation:** [docs/COURSE-INDEX.md](docs/COURSE-INDEX.md) · **Diagrams:** [docs/diagrams/](docs/diagrams/README.md)
+**Full navigation:** [docs/COURSE-INDEX.md](docs/COURSE-INDEX.md) · **Lab demo guide:** [docs/LAB-DEMO-GUIDE.md](docs/LAB-DEMO-GUIDE.md) · **Diagrams:** [docs/diagrams/](docs/diagrams/README.md)
 
 ---
 
@@ -212,10 +212,13 @@ This repository contains **complete professional course materials**:
 Use the scripts in [`scripts/`](scripts/) to deploy and destroy all lab AWS resources:
 
 ```bash
-./scripts/start-labs.sh          # Deploy everything
-./scripts/stop-labs.sh           # Tear down (avoid charges)
-./scripts/deploy-verify-destroy.sh  # Deploy → verify → destroy
+./scripts/lab-cycle.sh start       # Start labs
+./scripts/lab-cycle.sh stop --yes    # Stop labs (zero ongoing cost)
+./scripts/lab-cycle.sh status        # Check what's running
+./scripts/test-all-labs.sh           # Full validation (~40 min, tears down)
 ```
+
+**Step-by-step demo for all 26 labs:** [docs/LAB-DEMO-GUIDE.md](docs/LAB-DEMO-GUIDE.md)
 
 See [scripts/README.md](scripts/README.md) for details.
 

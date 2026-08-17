@@ -1,0 +1,60 @@
+{
+  "dataset": "banking/accounts",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "account_id_not_null",
+      "field": "account_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "account_id is required"
+    },
+    {
+      "name": "customer_name_not_null",
+      "field": "customer_name",
+      "type": "not_null",
+      "severity": "error",
+      "message": "customer_name is required"
+    },
+    {
+      "name": "balance_in_range",
+      "field": "balance",
+      "type": "range",
+      "params": { "min": -50000, "max": 10000000 },
+      "severity": "error",
+      "message": "balance must be between -50000 and 10000000"
+    },
+    {
+      "name": "account_type_valid",
+      "field": "account_type",
+      "type": "enum",
+      "params": { "values": ["checking", "savings", "money_market", "brokerage"] },
+      "severity": "error",
+      "message": "account_type must be checking, savings, money_market, or brokerage"
+    },
+    {
+      "name": "status_valid",
+      "field": "status",
+      "type": "enum",
+      "params": { "values": ["active", "dormant", "closed", "frozen"] },
+      "severity": "error",
+      "message": "status must be active, dormant, closed, or frozen"
+    },
+    {
+      "name": "account_id_format",
+      "field": "account_id",
+      "type": "regex",
+      "params": { "pattern": "^ACC-[0-9]{6}$" },
+      "severity": "error",
+      "message": "account_id must match ACC-######"
+    },
+    {
+      "name": "currency_valid",
+      "field": "currency",
+      "type": "enum",
+      "params": { "values": ["USD", "EUR", "GBP", "CAD"] },
+      "severity": "error",
+      "message": "currency must be USD, EUR, GBP, or CAD"
+    }
+  ]
+}

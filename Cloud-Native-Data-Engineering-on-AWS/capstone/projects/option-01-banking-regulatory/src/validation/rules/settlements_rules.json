@@ -1,0 +1,60 @@
+{
+  "dataset": "banking/settlements",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "settlement_id_not_null",
+      "field": "settlement_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "settlement_id is required"
+    },
+    {
+      "name": "settlement_date_not_null",
+      "field": "settlement_date",
+      "type": "not_null",
+      "severity": "error",
+      "message": "settlement_date is required"
+    },
+    {
+      "name": "gross_amount_in_range",
+      "field": "gross_amount",
+      "type": "range",
+      "params": { "min": 0.01, "max": 50000000 },
+      "severity": "error",
+      "message": "gross_amount must be between 0.01 and 50000000"
+    },
+    {
+      "name": "net_amount_in_range",
+      "field": "net_amount",
+      "type": "range",
+      "params": { "min": 0.01, "max": 50000000 },
+      "severity": "error",
+      "message": "net_amount must be between 0.01 and 50000000"
+    },
+    {
+      "name": "currency_valid",
+      "field": "currency",
+      "type": "enum",
+      "params": { "values": ["USD", "EUR", "GBP", "CAD"] },
+      "severity": "error",
+      "message": "currency must be USD, EUR, GBP, or CAD"
+    },
+    {
+      "name": "status_valid",
+      "field": "status",
+      "type": "enum",
+      "params": { "values": ["completed", "pending", "failed", "reconciled"] },
+      "severity": "error",
+      "message": "status must be completed, pending, failed, or reconciled"
+    },
+    {
+      "name": "settlement_id_format",
+      "field": "settlement_id",
+      "type": "regex",
+      "params": { "pattern": "^STL-[0-9]{8}-[A-Z0-9]{4}$" },
+      "severity": "error",
+      "message": "settlement_id must match STL-YYYYMMDD-XXXX"
+    }
+  ]
+}

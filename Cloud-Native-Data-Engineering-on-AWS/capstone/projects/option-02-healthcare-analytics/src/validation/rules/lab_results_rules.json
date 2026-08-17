@@ -1,0 +1,62 @@
+{
+  "dataset": "healthcare/lab_results",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "result_id_not_null",
+      "field": "result_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "result_id is required"
+    },
+    {
+      "name": "patient_id_not_null",
+      "field": "patient_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "patient_id is required"
+    },
+    {
+      "name": "numeric_value_in_range",
+      "field": "numeric_value",
+      "type": "range",
+      "params": { "min": 0, "max": 10000 },
+      "severity": "error",
+      "message": "numeric_value must be between 0 and 10000"
+    },
+    {
+      "name": "test_code_valid",
+      "field": "test_code",
+      "type": "enum",
+      "params": {
+        "values": ["CBC", "BMP", "LIPID", "A1C", "TSH", "COVID_PCR"]
+      },
+      "severity": "error",
+      "message": "test_code must be a supported lab panel"
+    },
+    {
+      "name": "result_flag_valid",
+      "field": "result_flag",
+      "type": "enum",
+      "params": { "values": ["normal", "high", "low", "critical"] },
+      "severity": "error",
+      "message": "result_flag must be normal, high, low, or critical"
+    },
+    {
+      "name": "result_id_format",
+      "field": "result_id",
+      "type": "regex",
+      "params": { "pattern": "^LAB-[0-9]{8}-[0-9]{4}$" },
+      "severity": "error",
+      "message": "result_id must match LAB-YYYYMMDD-####"
+    },
+    {
+      "name": "collected_date_format",
+      "field": "collected_date",
+      "type": "regex",
+      "params": { "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+      "severity": "error",
+      "message": "collected_date must be YYYY-MM-DD"
+    }
+  ]
+}

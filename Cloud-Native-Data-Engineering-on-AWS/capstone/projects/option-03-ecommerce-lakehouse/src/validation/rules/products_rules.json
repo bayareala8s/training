@@ -1,0 +1,54 @@
+{
+  "dataset": "ecommerce/products",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "product_id_not_null",
+      "field": "product_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "product_id is required"
+    },
+    {
+      "name": "product_name_not_null",
+      "field": "product_name",
+      "type": "not_null",
+      "severity": "error",
+      "message": "product_name is required"
+    },
+    {
+      "name": "unit_price_in_range",
+      "field": "unit_price",
+      "type": "range",
+      "params": { "min": 0.01, "max": 10000 },
+      "severity": "error",
+      "message": "unit_price must be between 0.01 and 10000"
+    },
+    {
+      "name": "category_valid",
+      "field": "category",
+      "type": "enum",
+      "params": {
+        "values": ["electronics", "apparel", "home", "beauty", "sports", "grocery"]
+      },
+      "severity": "error",
+      "message": "category must be a known merchandising category"
+    },
+    {
+      "name": "product_id_format",
+      "field": "product_id",
+      "type": "regex",
+      "params": { "pattern": "^PRD-[0-9]{4}$" },
+      "severity": "error",
+      "message": "product_id must match PRD-####"
+    },
+    {
+      "name": "active_flag_valid",
+      "field": "is_active",
+      "type": "enum",
+      "params": { "values": ["true", "false", "True", "False", "1", "0"] },
+      "severity": "warning",
+      "message": "is_active should be a boolean-like flag"
+    }
+  ]
+}

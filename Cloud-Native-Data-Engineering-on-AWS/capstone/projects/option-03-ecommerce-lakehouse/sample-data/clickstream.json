@@ -1,0 +1,302 @@
+[
+  {
+    "event_id": "EVT-00001",
+    "session_id": "SES-0002",
+    "customer_id": "CUST-0001",
+    "product_id": "PRD-0001",
+    "event_type": "page_view",
+    "device": "desktop",
+    "page_path": "/",
+    "event_ts": "2024-01-15T11:01:00Z"
+  },
+  {
+    "event_id": "EVT-00002",
+    "session_id": "SES-0003",
+    "customer_id": "CUST-0002",
+    "product_id": "PRD-0002",
+    "event_type": "add_to_cart",
+    "device": "mobile",
+    "page_path": "/search",
+    "event_ts": "2024-01-15T12:02:00Z"
+  },
+  {
+    "event_id": "EVT-00003",
+    "session_id": "SES-0004",
+    "customer_id": "CUST-0003",
+    "product_id": "",
+    "event_type": "remove_from_cart",
+    "device": "tablet",
+    "page_path": "/p/detail",
+    "event_ts": "2024-01-15T13:03:00Z"
+  },
+  {
+    "event_id": "EVT-00004",
+    "session_id": "SES-0005",
+    "customer_id": "CUST-0004",
+    "product_id": "PRD-0004",
+    "event_type": "checkout_start",
+    "device": "desktop",
+    "page_path": "/cart",
+    "event_ts": "2024-01-15T14:04:00Z"
+  },
+  {
+    "event_id": "EVT-00005",
+    "session_id": "SES-0006",
+    "customer_id": "CUST-0005",
+    "product_id": "PRD-0005",
+    "event_type": "purchase",
+    "device": "mobile",
+    "page_path": "/checkout",
+    "event_ts": "2024-01-15T15:05:00Z"
+  },
+  {
+    "event_id": "EVT-00006",
+    "session_id": "SES-0007",
+    "customer_id": "CUST-0006",
+    "product_id": "",
+    "event_type": "search",
+    "device": "tablet",
+    "page_path": "/account",
+    "event_ts": "2024-01-15T16:06:00Z"
+  },
+  {
+    "event_id": "EVT-00007",
+    "session_id": "SES-0008",
+    "customer_id": "CUST-0007",
+    "product_id": "PRD-0007",
+    "event_type": "page_view",
+    "device": "desktop",
+    "page_path": "/deals",
+    "event_ts": "2024-01-15T17:07:00Z"
+  },
+  {
+    "event_id": "EVT-00008",
+    "session_id": "SES-0009",
+    "customer_id": "CUST-0008",
+    "product_id": "PRD-0008",
+    "event_type": "add_to_cart",
+    "device": "mobile",
+    "page_path": "/",
+    "event_ts": "2024-01-15T10:08:00Z"
+  },
+  {
+    "event_id": "EVT-00009",
+    "session_id": "SES-0001",
+    "customer_id": "CUST-0009",
+    "product_id": "",
+    "event_type": "remove_from_cart",
+    "device": "tablet",
+    "page_path": "/search",
+    "event_ts": "2024-01-15T11:09:00Z"
+  },
+  {
+    "event_id": "EVT-00010",
+    "session_id": "SES-0002",
+    "customer_id": "CUST-0010",
+    "product_id": "PRD-0010",
+    "event_type": "checkout_start",
+    "device": "desktop",
+    "page_path": "/p/detail",
+    "event_ts": "2024-01-15T12:10:00Z"
+  },
+  {
+    "event_id": "EVT-00011",
+    "session_id": "SES-0003",
+    "customer_id": "CUST-0011",
+    "product_id": "PRD-0011",
+    "event_type": "purchase",
+    "device": "mobile",
+    "page_path": "/cart",
+    "event_ts": "2024-01-15T13:11:00Z"
+  },
+  {
+    "event_id": "EVT-00012",
+    "session_id": "SES-0004",
+    "customer_id": "CUST-0012",
+    "product_id": "",
+    "event_type": "search",
+    "device": "tablet",
+    "page_path": "/checkout",
+    "event_ts": "2024-01-15T14:12:00Z"
+  },
+  {
+    "event_id": "EVT-00013",
+    "session_id": "SES-0005",
+    "customer_id": "CUST-0013",
+    "product_id": "PRD-0013",
+    "event_type": "page_view",
+    "device": "desktop",
+    "page_path": "/account",
+    "event_ts": "2024-01-15T15:13:00Z"
+  },
+  {
+    "event_id": "EVT-00014",
+    "session_id": "SES-0006",
+    "customer_id": "CUST-0014",
+    "product_id": "PRD-0014",
+    "event_type": "add_to_cart",
+    "device": "mobile",
+    "page_path": "/deals",
+    "event_ts": "2024-01-15T16:14:00Z"
+  },
+  {
+    "event_id": "EVT-00015",
+    "session_id": "SES-0007",
+    "customer_id": "CUST-0015",
+    "product_id": "",
+    "event_type": "remove_from_cart",
+    "device": "tablet",
+    "page_path": "/",
+    "event_ts": "2024-01-15T17:15:00Z"
+  },
+  {
+    "event_id": "EVT-00016",
+    "session_id": "SES-0008",
+    "customer_id": "CUST-0016",
+    "product_id": "PRD-0098",
+    "event_type": "checkout_start",
+    "device": "desktop",
+    "page_path": "/search",
+    "event_ts": "2024-01-15T10:16:00Z"
+  },
+  {
+    "event_id": "EVT-00017",
+    "session_id": "SES-0009",
+    "customer_id": "CUST-0017",
+    "product_id": "PRD-0001",
+    "event_type": "purchase",
+    "device": "mobile",
+    "page_path": "/p/detail",
+    "event_ts": "2024-01-15T11:17:00Z"
+  },
+  {
+    "event_id": "EVT-00018",
+    "session_id": "SES-0001",
+    "customer_id": "CUST-0018",
+    "product_id": "",
+    "event_type": "search",
+    "device": "tablet",
+    "page_path": "/cart",
+    "event_ts": "2024-01-15T12:18:00Z"
+  },
+  {
+    "event_id": "EVT-00019",
+    "session_id": "SES-0002",
+    "customer_id": "CUST-0099",
+    "product_id": "PRD-0003",
+    "event_type": "page_view",
+    "device": "desktop",
+    "page_path": "/checkout",
+    "event_ts": "2024-01-15T13:19:00Z"
+  },
+  {
+    "event_id": "EVT-00020",
+    "session_id": "SES-0003",
+    "customer_id": "CUST-0001",
+    "product_id": "PRD-0004",
+    "event_type": "add_to_cart",
+    "device": "mobile",
+    "page_path": "/account",
+    "event_ts": "2024-01-15T14:20:00Z"
+  },
+  {
+    "event_id": "EVT-00021",
+    "session_id": "SES-0004",
+    "customer_id": "CUST-0002",
+    "product_id": "",
+    "event_type": "remove_from_cart",
+    "device": "tablet",
+    "page_path": "/deals",
+    "event_ts": "2024-01-15T15:21:00Z"
+  },
+  {
+    "event_id": "EVT-00022",
+    "session_id": "SES-0005",
+    "customer_id": "CUST-0003",
+    "product_id": "PRD-0006",
+    "event_type": "checkout_start",
+    "device": "desktop",
+    "page_path": "/",
+    "event_ts": "2024-01-15T16:22:00Z"
+  },
+  {
+    "event_id": "EVT-00023",
+    "session_id": "SES-0006",
+    "customer_id": "CUST-0004",
+    "product_id": "PRD-0007",
+    "event_type": "purchase",
+    "device": "mobile",
+    "page_path": "/search",
+    "event_ts": "2024-01-15T17:23:00Z"
+  },
+  {
+    "event_id": "EVT-00024",
+    "session_id": "SES-0007",
+    "customer_id": "CUST-0005",
+    "product_id": "",
+    "event_type": "search",
+    "device": "tablet",
+    "page_path": "/p/detail",
+    "event_ts": "2024-01-15T10:24:00Z"
+  },
+  {
+    "event_id": "EVT-00025",
+    "session_id": "SES-0008",
+    "customer_id": "CUST-0006",
+    "product_id": "PRD-0009",
+    "event_type": "page_view",
+    "device": "desktop",
+    "page_path": "/cart",
+    "event_ts": "2024-01-15T11:25:00Z"
+  },
+  {
+    "event_id": "EVT-00026",
+    "session_id": "SES-0009",
+    "customer_id": "CUST-0007",
+    "product_id": "PRD-0010",
+    "event_type": "add_to_cart",
+    "device": "mobile",
+    "page_path": "/checkout",
+    "event_ts": "2024-01-15T12:26:00Z"
+  },
+  {
+    "event_id": "EVT-00027",
+    "session_id": "SES-0001",
+    "customer_id": "CUST-0008",
+    "product_id": "",
+    "event_type": "remove_from_cart",
+    "device": "tablet",
+    "page_path": "/account",
+    "event_ts": "2024-01-15T13:27:00Z"
+  },
+  {
+    "event_id": "",
+    "session_id": "SES-0099",
+    "customer_id": "CUST-0001",
+    "product_id": "PRD-0001",
+    "event_type": "page_view",
+    "device": "desktop",
+    "page_path": "/home",
+    "event_ts": "2024-01-15T12:00:00Z"
+  },
+  {
+    "event_id": "EVT-00991",
+    "session_id": "SES-0098",
+    "customer_id": "CUST-0002",
+    "product_id": "PRD-0002",
+    "event_type": "hover_heatmap",
+    "device": "desktop",
+    "page_path": "/p/detail",
+    "event_ts": "2024-01-15T12:05:00Z"
+  },
+  {
+    "event_id": "EVT-BAD",
+    "session_id": "SES-0097",
+    "customer_id": "CUST-0003",
+    "product_id": "",
+    "event_type": "purchase",
+    "device": "phablet",
+    "page_path": "/checkout",
+    "event_ts": "2024-01-15T12:10:00Z"
+  }
+]

@@ -1,0 +1,58 @@
+{
+  "dataset": "ecommerce/customers",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "customer_id_not_null",
+      "field": "customer_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "customer_id is required"
+    },
+    {
+      "name": "email_not_null",
+      "field": "email",
+      "type": "not_null",
+      "severity": "error",
+      "message": "email is required"
+    },
+    {
+      "name": "email_format",
+      "field": "email",
+      "type": "regex",
+      "params": {
+        "pattern": "^[\\w.+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$"
+      },
+      "severity": "error",
+      "message": "email must be a valid address"
+    },
+    {
+      "name": "customer_id_format",
+      "field": "customer_id",
+      "type": "regex",
+      "params": { "pattern": "^CUST-[0-9]{4}$" },
+      "severity": "error",
+      "message": "customer_id must match CUST-####"
+    },
+    {
+      "name": "segment_valid",
+      "field": "segment",
+      "type": "enum",
+      "params": {
+        "values": ["new", "loyal", "vip", "churn_risk", "wholesale"]
+      },
+      "severity": "error",
+      "message": "segment must be a known CRM segment"
+    },
+    {
+      "name": "region_valid",
+      "field": "region",
+      "type": "enum",
+      "params": {
+        "values": ["us-east", "us-west", "eu-west", "ap-south", "latam"]
+      },
+      "severity": "warning",
+      "message": "region should be a known sales region"
+    }
+  ]
+}

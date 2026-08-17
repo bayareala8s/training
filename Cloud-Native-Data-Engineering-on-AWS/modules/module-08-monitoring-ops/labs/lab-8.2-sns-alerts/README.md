@@ -23,6 +23,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```text
@@ -261,6 +276,14 @@ Create `LAB-REPORT.md`:
 ## Escalation Matrix
 Link to escalation-matrix.md
 ```
+
+---
+
+## Deliverables
+
+- [ ] SNS topics and subscriptions configured for critical/warning severities
+- [ ] CloudWatch alarms tested (metric breach → email received)
+- [ ] `LAB-REPORT.md` with test results and escalation matrix reference
 
 ---
 

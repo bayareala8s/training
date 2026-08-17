@@ -1,0 +1,42 @@
+name: Validate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Terraform format
+        run: terraform fmt -check -recursive infrastructure/
+
+      - name: Terraform validate
+        run: |
+          cd infrastructure/environments/dev
+          terraform init -backend=false
+          terraform validate
+
+      - name: Python compile check
+        run: python -m compileall -q infrastructure/modules modules
+
+      - name: Unit tests (validators)
+        run: |
+          pip install pytest
+          pytest modules/module-04-data-quality/labs/lab-4.1-quality-framework/tests/ -q
+
+      - name: Shellcheck
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          shellcheck scripts/*.sh

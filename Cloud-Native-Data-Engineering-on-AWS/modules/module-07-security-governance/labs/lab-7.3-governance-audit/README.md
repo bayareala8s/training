@@ -24,6 +24,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```mermaid

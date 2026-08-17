@@ -139,3 +139,23 @@ cd Cloud-Native-Data-Engineering-on-AWS
 - [ ] AWS budget alert configured
 
 You are ready for [Module 1](../modules/module-01-foundations/README.md).
+
+---
+
+## 9. Start the Lab Environment
+
+After setup, deploy the shared AWS platform once per lab session:
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+./scripts/lab-cycle.sh verify    # optional health check
+```
+
+When finished (avoid ongoing charges):
+
+```bash
+./scripts/lab-cycle.sh stop --yes
+```
+
+See [scripts/README.md](../scripts/README.md) and [docs/LAB-DEMO-GUIDE.md](../docs/LAB-DEMO-GUIDE.md).

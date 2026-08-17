@@ -1,0 +1,25 @@
+{
+  "project": "cnde-cap-banking",
+  "option": 1,
+  "description": "Banking Regulatory Data Platform – daily settlement reporting",
+  "datasets": [
+    {
+      "name": "transactions",
+      "raw_file": "sample-data/transactions.csv",
+      "rules_file": "src/validation/rules/transactions_rules.json",
+      "curated_transform": "transactions_curated"
+    },
+    {
+      "name": "settlements",
+      "raw_file": "sample-data/settlements.csv",
+      "rules_file": "src/validation/rules/settlements_rules.json",
+      "curated_transform": "settlements_curated"
+    },
+    {
+      "name": "accounts",
+      "raw_file": "sample-data/accounts.json",
+      "rules_file": "src/validation/rules/accounts_rules.json",
+      "curated_transform": "accounts_curated"
+    }
+  ]
+}

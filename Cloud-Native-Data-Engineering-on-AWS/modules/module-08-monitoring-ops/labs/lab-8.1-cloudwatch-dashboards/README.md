@@ -23,6 +23,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```text
@@ -213,6 +228,14 @@ Attach dashboard screenshot showing at least 4 widgets with data.
 ## Observations
 What would you add for a production executive dashboard?
 ```
+
+---
+
+## Deliverables
+
+- [ ] CloudWatch dashboard deployed with Glue, Lambda, quality, and S3 widgets
+- [ ] SLO annotation added to pass-rate widget (99% threshold documented)
+- [ ] `LAB-REPORT.md` with widget list, customizations, and dashboard screenshot
 
 ---
 

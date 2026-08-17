@@ -1,0 +1,61 @@
+{
+  "dataset": "enterprise/vendor_feeds",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "feed_id_not_null",
+      "field": "feed_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "feed_id is required"
+    },
+    {
+      "name": "vendor_id_not_null",
+      "field": "vendor_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "vendor_id is required"
+    },
+    {
+      "name": "sku_not_null",
+      "field": "sku",
+      "type": "not_null",
+      "severity": "error",
+      "message": "sku is required"
+    },
+    {
+      "name": "unit_cost_range",
+      "field": "unit_cost",
+      "type": "range",
+      "params": { "min": 0.01, "max": 50000 },
+      "severity": "error",
+      "message": "unit_cost must be between 0.01 and 50000"
+    },
+    {
+      "name": "feed_status_valid",
+      "field": "feed_status",
+      "type": "enum",
+      "params": {
+        "values": ["accepted", "pending_review", "rejected", "stale"]
+      },
+      "severity": "error",
+      "message": "feed_status must be a known vendor feed state"
+    },
+    {
+      "name": "feed_id_format",
+      "field": "feed_id",
+      "type": "regex",
+      "params": { "pattern": "^VF-[0-9]{5}$" },
+      "severity": "error",
+      "message": "feed_id must match VF-#####"
+    },
+    {
+      "name": "vendor_id_format",
+      "field": "vendor_id",
+      "type": "regex",
+      "params": { "pattern": "^VND-[0-9]{3}$" },
+      "severity": "warning",
+      "message": "vendor_id should match VND-###"
+    }
+  ]
+}

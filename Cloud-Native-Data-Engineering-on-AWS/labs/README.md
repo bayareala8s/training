@@ -2,7 +2,7 @@
 
 **26 hands-on labs** across 10 modules. Each lab includes step-by-step instructions, deliverables checklists, troubleshooting tables, and **architecture diagrams**.
 
-📊 **[View All Lab Diagrams](../docs/diagrams/README.md)** · [Draw.io](../docs/diagrams/drawio/) · [PNG](../docs/diagrams/png/) · [SVG](../docs/diagrams/svg/) · [Platform Overview](../docs/diagrams/course-platform-overview.md) · [COURSE-INDEX](../docs/COURSE-INDEX.md)
+📊 **[View All Lab Diagrams](../docs/diagrams/README.md)** · [Lab Demo Guide](../docs/LAB-DEMO-GUIDE.md) · [Draw.io](../docs/diagrams/drawio/) · [PNG](../docs/diagrams/png/) · [SVG](../docs/diagrams/svg/) · [Platform Overview](../docs/diagrams/course-platform-overview.md) · [COURSE-INDEX](../docs/COURSE-INDEX.md)
 
 ---
 
@@ -93,8 +93,10 @@ modules/module-XX/labs/lab-X.X-title/
 ## Prerequisites for All Labs
 
 - [Environment setup](../setup/SETUP.md) complete
-- Module 1 data lake deployed (most labs depend on S3 bucket)
+- Shared lab environment running: `./scripts/lab-cycle.sh start` then `source ./scripts/lab-env.sh`
 - Python virtual environment with `requirements.txt` installed
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (zero ongoing AWS cost)
 
 ## Lab Submission
 

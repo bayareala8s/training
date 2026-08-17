@@ -1,0 +1,31 @@
+{
+  "project": "cnde-cap-ecommerce",
+  "option": 3,
+  "description": "E-Commerce Analytics Lakehouse – orders, products, customers, clickstream",
+  "datasets": [
+    {
+      "name": "orders",
+      "raw_file": "sample-data/orders.csv",
+      "rules_file": "src/validation/rules/orders_rules.json",
+      "curated_transform": "orders_curated"
+    },
+    {
+      "name": "products",
+      "raw_file": "sample-data/products.csv",
+      "rules_file": "src/validation/rules/products_rules.json",
+      "curated_transform": "products_curated"
+    },
+    {
+      "name": "customers",
+      "raw_file": "sample-data/customers.csv",
+      "rules_file": "src/validation/rules/customers_rules.json",
+      "curated_transform": "customers_curated"
+    },
+    {
+      "name": "clickstream",
+      "raw_file": "sample-data/clickstream.json",
+      "rules_file": "src/validation/rules/clickstream_rules.json",
+      "curated_transform": "clickstream_curated"
+    }
+  ]
+}

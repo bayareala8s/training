@@ -19,14 +19,14 @@ The capstone integrates all course modules into a production-grade enterprise da
 
 ## Capstone Options
 
-| Option | Industry | Focus |
-|--------|----------|-------|
-| **Option 1** | Banking | Regulatory reporting data platform |
-| **Option 2** | Healthcare | Secure patient analytics workflows |
-| **Option 3** | E-Commerce | Customer and sales analytics lakehouse |
-| **Option 4** | Enterprise | Complete cloud-native data platform |
+| Option | Industry | Focus | Reference implementation |
+|--------|----------|-------|--------------------------|
+| **Option 1** | Banking | Regulatory reporting data platform | [option-01-banking-regulatory](../../capstone/projects/option-01-banking-regulatory/) |
+| **Option 2** | Healthcare | Secure patient analytics workflows | [option-02-healthcare-analytics](../../capstone/projects/option-02-healthcare-analytics/) |
+| **Option 3** | E-Commerce | Customer and sales analytics lakehouse | [option-03-ecommerce-lakehouse](../../capstone/projects/option-03-ecommerce-lakehouse/) |
+| **Option 4** | Enterprise | Complete cloud-native data platform | [option-04-enterprise-platform](../../capstone/projects/option-04-enterprise-platform/) |
 
-See [capstone/README.md](../../capstone/README.md) for detailed requirements.
+Each reference project runs locally with `bash scripts/run_local.sh` (no AWS required). See [capstone/README.md](../../capstone/README.md).
 
 ## Project Template
 

@@ -24,6 +24,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```text
@@ -208,6 +223,14 @@ s3://<bucket>/ml/features/
 ## Training/Serving Skew Prevention
 How does the registry prevent duplicate feature logic?
 ```
+
+---
+
+## Deliverables
+
+- [ ] Feature groups written to `output/ml/features/` with versioned snapshots
+- [ ] Feature registry JSON and pipeline manifest generated
+- [ ] `LAB-REPORT.md` with S3 paths, scheduling design, and SageMaker mapping notes
 
 ---
 

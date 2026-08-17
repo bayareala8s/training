@@ -41,3 +41,13 @@ logs/
 
 # Test reports (generated locally)
 scripts/test-modules-*-report.txt
+scripts/test-modules-*-live.log
+
+# Lab runtime output (generated locally)
+modules/**/labs/**/output/
+**/bucket-info.json
+
+# Capstone pipeline output
+capstone/projects/**/output/
+capstone/my-project/
+**/__pycache__/

@@ -1,0 +1,71 @@
+{
+  "dataset": "healthcare/appointments",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "appointment_id_not_null",
+      "field": "appointment_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "appointment_id is required"
+    },
+    {
+      "name": "patient_id_not_null",
+      "field": "patient_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "patient_id is required"
+    },
+    {
+      "name": "duration_minutes_in_range",
+      "field": "duration_minutes",
+      "type": "range",
+      "params": { "min": 5, "max": 240 },
+      "severity": "error",
+      "message": "duration_minutes must be between 5 and 240"
+    },
+    {
+      "name": "department_valid",
+      "field": "department",
+      "type": "enum",
+      "params": {
+        "values": [
+          "cardiology",
+          "oncology",
+          "pediatrics",
+          "orthopedics",
+          "primary_care",
+          "radiology"
+        ]
+      },
+      "severity": "error",
+      "message": "department is not in the allowed clinical list"
+    },
+    {
+      "name": "status_valid",
+      "field": "status",
+      "type": "enum",
+      "params": {
+        "values": ["scheduled", "completed", "cancelled", "no_show"]
+      },
+      "severity": "error",
+      "message": "status must be scheduled, completed, cancelled, or no_show"
+    },
+    {
+      "name": "appointment_id_format",
+      "field": "appointment_id",
+      "type": "regex",
+      "params": { "pattern": "^APT-[0-9]{8}-[0-9]{4}$" },
+      "severity": "error",
+      "message": "appointment_id must match APT-YYYYMMDD-####"
+    },
+    {
+      "name": "appointment_date_format",
+      "field": "appointment_date",
+      "type": "regex",
+      "params": { "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+      "severity": "error",
+      "message": "appointment_date must be YYYY-MM-DD"
+    }
+  ]
+}

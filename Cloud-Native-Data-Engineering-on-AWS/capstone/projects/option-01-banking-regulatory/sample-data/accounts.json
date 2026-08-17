@@ -1,0 +1,167 @@
+[
+  {
+    "account_id": "ACC-000001",
+    "customer_name": "Ava Chen",
+    "account_type": "checking",
+    "status": "active",
+    "currency": "USD",
+    "balance": 159784.58,
+    "opened_date": "2015-12-09",
+    "branch_code": "BR350",
+    "risk_tier": "low"
+  },
+  {
+    "account_id": "ACC-000002",
+    "customer_name": "Marcus Webb",
+    "account_type": "savings",
+    "status": "active",
+    "currency": "EUR",
+    "balance": 55647.33,
+    "opened_date": "2015-11-24",
+    "branch_code": "BR658",
+    "risk_tier": "standard"
+  },
+  {
+    "account_id": "ACC-000003",
+    "customer_name": "Priya Nair",
+    "account_type": "money_market",
+    "status": "active",
+    "currency": "GBP",
+    "balance": 21552.1,
+    "opened_date": "2018-01-01",
+    "branch_code": "BR195",
+    "risk_tier": "elevated"
+  },
+  {
+    "account_id": "ACC-000004",
+    "customer_name": "Jonah Hale",
+    "account_type": "brokerage",
+    "status": "active",
+    "currency": "CAD",
+    "balance": 54503.22,
+    "opened_date": "2019-10-01",
+    "branch_code": "BR674",
+    "risk_tier": "high"
+  },
+  {
+    "account_id": "ACC-000005",
+    "customer_name": "Elena Rossi",
+    "account_type": "checking",
+    "status": "active",
+    "currency": "USD",
+    "balance": 49549.18,
+    "opened_date": "2019-07-08",
+    "branch_code": "BR559",
+    "risk_tier": "low"
+  },
+  {
+    "account_id": "ACC-000006",
+    "customer_name": "Devon Park",
+    "account_type": "savings",
+    "status": "active",
+    "currency": "EUR",
+    "balance": 147234.27,
+    "opened_date": "2015-03-23",
+    "branch_code": "BR532",
+    "risk_tier": "standard"
+  },
+  {
+    "account_id": "ACC-000007",
+    "customer_name": "Sofia Mendes",
+    "account_type": "money_market",
+    "status": "active",
+    "currency": "GBP",
+    "balance": 84930.68,
+    "opened_date": "2016-04-25",
+    "branch_code": "BR444",
+    "risk_tier": "elevated"
+  },
+  {
+    "account_id": "ACC-000008",
+    "customer_name": "Liam Okafor",
+    "account_type": "brokerage",
+    "status": "active",
+    "currency": "CAD",
+    "balance": 25373.01,
+    "opened_date": "2018-02-12",
+    "branch_code": "BR967",
+    "risk_tier": "high"
+  },
+  {
+    "account_id": "ACC-000009",
+    "customer_name": "Nora Blake",
+    "account_type": "checking",
+    "status": "active",
+    "currency": "USD",
+    "balance": 85857.72,
+    "opened_date": "2017-01-24",
+    "branch_code": "BR570",
+    "risk_tier": "low"
+  },
+  {
+    "account_id": "ACC-000010",
+    "customer_name": "Kai Tanaka",
+    "account_type": "savings",
+    "status": "active",
+    "currency": "EUR",
+    "balance": 133964.27,
+    "opened_date": "2018-02-18",
+    "branch_code": "BR400",
+    "risk_tier": "standard"
+  },
+  {
+    "account_id": "ACC-000011",
+    "customer_name": "Amelia Cruz",
+    "account_type": "money_market",
+    "status": "active",
+    "currency": "GBP",
+    "balance": 207317.05,
+    "opened_date": "2019-06-19",
+    "branch_code": "BR296",
+    "risk_tier": "elevated"
+  },
+  {
+    "account_id": "ACC-000012",
+    "customer_name": "Owen Briggs",
+    "account_type": "brokerage",
+    "status": "active",
+    "currency": "CAD",
+    "balance": 176083.87,
+    "opened_date": "2015-11-08",
+    "branch_code": "BR891",
+    "risk_tier": "high"
+  },
+  {
+    "account_id": "BAD-ACC",
+    "customer_name": "Hana Kim",
+    "account_type": "checking",
+    "status": "active",
+    "currency": "USD",
+    "balance": "not-a-number",
+    "opened_date": "2015-04-28",
+    "branch_code": "BR203",
+    "risk_tier": "low"
+  },
+  {
+    "account_id": "ACC-000014",
+    "customer_name": "",
+    "account_type": "crypto",
+    "status": "active",
+    "currency": "EUR",
+    "balance": 19626.19,
+    "opened_date": "2018-11-27",
+    "branch_code": "BR473",
+    "risk_tier": "standard"
+  },
+  {
+    "account_id": "ACC-000015",
+    "customer_name": "Maya Patel",
+    "account_type": "money_market",
+    "status": "closed",
+    "currency": "GBP",
+    "balance": 40496.06,
+    "opened_date": "2017-04-22",
+    "branch_code": "BR373",
+    "risk_tier": "elevated"
+  }
+]

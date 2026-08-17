@@ -1,0 +1,62 @@
+{
+  "dataset": "enterprise/inventory",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "sku_not_null",
+      "field": "sku",
+      "type": "not_null",
+      "severity": "error",
+      "message": "sku is required"
+    },
+    {
+      "name": "warehouse_id_not_null",
+      "field": "warehouse_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "warehouse_id is required"
+    },
+    {
+      "name": "quantity_on_hand_range",
+      "field": "quantity_on_hand",
+      "type": "range",
+      "params": { "min": 0, "max": 100000 },
+      "severity": "error",
+      "message": "quantity_on_hand must be between 0 and 100000"
+    },
+    {
+      "name": "reorder_point_range",
+      "field": "reorder_point",
+      "type": "range",
+      "params": { "min": 0, "max": 10000 },
+      "severity": "error",
+      "message": "reorder_point must be between 0 and 10000"
+    },
+    {
+      "name": "sku_format",
+      "field": "sku",
+      "type": "regex",
+      "params": { "pattern": "^SKU-[A-Z]{2}-[0-9]{4}$" },
+      "severity": "error",
+      "message": "sku must match SKU-XX-####"
+    },
+    {
+      "name": "stock_status_valid",
+      "field": "stock_status",
+      "type": "enum",
+      "params": {
+        "values": ["in_stock", "low_stock", "out_of_stock", "discontinued"]
+      },
+      "severity": "error",
+      "message": "stock_status must be a known inventory state"
+    },
+    {
+      "name": "warehouse_format",
+      "field": "warehouse_id",
+      "type": "regex",
+      "params": { "pattern": "^WH-[0-9]{2}$" },
+      "severity": "warning",
+      "message": "warehouse_id should match WH-##"
+    }
+  ]
+}

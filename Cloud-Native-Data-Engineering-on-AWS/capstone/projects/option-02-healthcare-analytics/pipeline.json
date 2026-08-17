@@ -1,0 +1,25 @@
+{
+  "project": "cnde-cap-healthcare",
+  "option": 2,
+  "description": "Healthcare Analytics Platform – PHI-aware curated analytics",
+  "datasets": [
+    {
+      "name": "patients",
+      "raw_file": "sample-data/patients.csv",
+      "rules_file": "src/validation/rules/patients_rules.json",
+      "curated_transform": "patients_curated"
+    },
+    {
+      "name": "appointments",
+      "raw_file": "sample-data/appointments.csv",
+      "rules_file": "src/validation/rules/appointments_rules.json",
+      "curated_transform": "appointments_curated"
+    },
+    {
+      "name": "lab_results",
+      "raw_file": "sample-data/lab_results.json",
+      "rules_file": "src/validation/rules/lab_results_rules.json",
+      "curated_transform": "lab_results_curated"
+    }
+  ]
+}

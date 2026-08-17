@@ -1,0 +1,71 @@
+{
+  "dataset": "enterprise/orders",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "order_id_not_null",
+      "field": "order_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "order_id is required"
+    },
+    {
+      "name": "customer_id_not_null",
+      "field": "customer_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "customer_id is required"
+    },
+    {
+      "name": "sku_not_null",
+      "field": "sku",
+      "type": "not_null",
+      "severity": "error",
+      "message": "sku is required"
+    },
+    {
+      "name": "amount_in_range",
+      "field": "order_amount",
+      "type": "range",
+      "params": { "min": 0.01, "max": 100000 },
+      "severity": "error",
+      "message": "order_amount must be between 0.01 and 100000"
+    },
+    {
+      "name": "quantity_in_range",
+      "field": "quantity",
+      "type": "range",
+      "params": { "min": 1, "max": 500 },
+      "severity": "error",
+      "message": "quantity must be between 1 and 500"
+    },
+    {
+      "name": "status_valid",
+      "field": "status",
+      "type": "enum",
+      "params": {
+        "values": ["pending", "confirmed", "shipped", "delivered", "cancelled", "returned"]
+      },
+      "severity": "error",
+      "message": "status must be a known enterprise order status"
+    },
+    {
+      "name": "order_id_format",
+      "field": "order_id",
+      "type": "regex",
+      "params": { "pattern": "^EO-[0-9]{6}$" },
+      "severity": "error",
+      "message": "order_id must match EO-######"
+    },
+    {
+      "name": "business_unit_valid",
+      "field": "business_unit",
+      "type": "enum",
+      "params": {
+        "values": ["retail", "wholesale", "marketplace", "b2b"]
+      },
+      "severity": "warning",
+      "message": "business_unit should be a known operating unit"
+    }
+  ]
+}

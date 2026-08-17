@@ -1,0 +1,71 @@
+{
+  "dataset": "ecommerce/orders",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "order_id_not_null",
+      "field": "order_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "order_id is required"
+    },
+    {
+      "name": "customer_id_not_null",
+      "field": "customer_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "customer_id is required"
+    },
+    {
+      "name": "product_id_not_null",
+      "field": "product_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "product_id is required"
+    },
+    {
+      "name": "amount_in_range",
+      "field": "order_amount",
+      "type": "range",
+      "params": { "min": 0.01, "max": 50000 },
+      "severity": "error",
+      "message": "order_amount must be between 0.01 and 50000"
+    },
+    {
+      "name": "quantity_in_range",
+      "field": "quantity",
+      "type": "range",
+      "params": { "min": 1, "max": 100 },
+      "severity": "error",
+      "message": "quantity must be between 1 and 100"
+    },
+    {
+      "name": "status_valid",
+      "field": "status",
+      "type": "enum",
+      "params": {
+        "values": ["pending", "shipped", "delivered", "cancelled", "returned"]
+      },
+      "severity": "error",
+      "message": "status must be a known order lifecycle value"
+    },
+    {
+      "name": "order_id_format",
+      "field": "order_id",
+      "type": "regex",
+      "params": { "pattern": "^ORD-[0-9]{5}$" },
+      "severity": "error",
+      "message": "order_id must match ORD-#####"
+    },
+    {
+      "name": "channel_valid",
+      "field": "channel",
+      "type": "enum",
+      "params": {
+        "values": ["web", "mobile", "marketplace", "store"]
+      },
+      "severity": "warning",
+      "message": "channel should be a known sales channel"
+    }
+  ]
+}

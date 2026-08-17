@@ -1,0 +1,502 @@
+[
+  {
+    "result_id": "LAB-20240110-0001",
+    "patient_id": "PAT-000001",
+    "test_code": "CBC",
+    "numeric_value": 383.114,
+    "unit": "K/uL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0002",
+    "patient_id": "PAT-000002",
+    "test_code": "BMP",
+    "numeric_value": 60.793,
+    "unit": "mg/dL",
+    "result_flag": "high",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0003",
+    "patient_id": "PAT-000003",
+    "test_code": "LIPID",
+    "numeric_value": 70.899,
+    "unit": "mg/dL",
+    "result_flag": "low",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0004",
+    "patient_id": "PAT-000004",
+    "test_code": "A1C",
+    "numeric_value": 93.167,
+    "unit": "%",
+    "result_flag": "critical",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0005",
+    "patient_id": "PAT-000005",
+    "test_code": "TSH",
+    "numeric_value": 93.718,
+    "unit": "mIU/L",
+    "result_flag": "normal",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LAB-20240120-0006",
+    "patient_id": "PAT-000006",
+    "test_code": "COVID_PCR",
+    "numeric_value": 194.243,
+    "unit": "Ct",
+    "result_flag": "high",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0007",
+    "patient_id": "PAT-000007",
+    "test_code": "CBC",
+    "numeric_value": 235.855,
+    "unit": "K/uL",
+    "result_flag": "low",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0008",
+    "patient_id": "PAT-000008",
+    "test_code": "BMP",
+    "numeric_value": 105.467,
+    "unit": "mg/dL",
+    "result_flag": "critical",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0009",
+    "patient_id": "PAT-000009",
+    "test_code": "LIPID",
+    "numeric_value": 2.135,
+    "unit": "mg/dL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0010",
+    "patient_id": "PAT-000010",
+    "test_code": "A1C",
+    "numeric_value": 167.869,
+    "unit": "%",
+    "result_flag": "high",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0011",
+    "patient_id": "PAT-000011",
+    "test_code": "TSH",
+    "numeric_value": 148.017,
+    "unit": "mIU/L",
+    "result_flag": "low",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LAB-20240120-0012",
+    "patient_id": "PAT-000012",
+    "test_code": "COVID_PCR",
+    "numeric_value": 226.753,
+    "unit": "Ct",
+    "result_flag": "critical",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0013",
+    "patient_id": "PAT-000013",
+    "test_code": "CBC",
+    "numeric_value": 381.263,
+    "unit": "K/uL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0014",
+    "patient_id": "PAT-000014",
+    "test_code": "BMP",
+    "numeric_value": 276.352,
+    "unit": "mg/dL",
+    "result_flag": "high",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0015",
+    "patient_id": "PAT-000015",
+    "test_code": "LIPID",
+    "numeric_value": 206.439,
+    "unit": "mg/dL",
+    "result_flag": "low",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0016",
+    "patient_id": "PAT-000016",
+    "test_code": "A1C",
+    "numeric_value": 247.228,
+    "unit": "%",
+    "result_flag": "critical",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0017",
+    "patient_id": "PAT-000017",
+    "test_code": "TSH",
+    "numeric_value": 270.642,
+    "unit": "mIU/L",
+    "result_flag": "normal",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LAB-20240120-0018",
+    "patient_id": "PAT-000018",
+    "test_code": "COVID_PCR",
+    "numeric_value": 22.07,
+    "unit": "Ct",
+    "result_flag": "high",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0019",
+    "patient_id": "PAT-000019",
+    "test_code": "CBC",
+    "numeric_value": 359.863,
+    "unit": "K/uL",
+    "result_flag": "low",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0020",
+    "patient_id": "PAT-000020",
+    "test_code": "BMP",
+    "numeric_value": 312.098,
+    "unit": "mg/dL",
+    "result_flag": "critical",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0021",
+    "patient_id": "PAT-000021",
+    "test_code": "LIPID",
+    "numeric_value": 349.868,
+    "unit": "mg/dL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0022",
+    "patient_id": "PAT-000022",
+    "test_code": "A1C",
+    "numeric_value": 319.25,
+    "unit": "%",
+    "result_flag": "high",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0023",
+    "patient_id": "PAT-000023",
+    "test_code": "TSH",
+    "numeric_value": 157.255,
+    "unit": "mIU/L",
+    "result_flag": "low",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LAB-20240120-0024",
+    "patient_id": "PAT-000024",
+    "test_code": "COVID_PCR",
+    "numeric_value": 159.892,
+    "unit": "Ct",
+    "result_flag": "critical",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0025",
+    "patient_id": "PAT-000025",
+    "test_code": "CBC",
+    "numeric_value": 41.863,
+    "unit": "K/uL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0026",
+    "patient_id": "PAT-000026",
+    "test_code": "BMP",
+    "numeric_value": 253.899,
+    "unit": "mg/dL",
+    "result_flag": "high",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0027",
+    "patient_id": "PAT-000028",
+    "test_code": "LIPID",
+    "numeric_value": 25.368,
+    "unit": "mg/dL",
+    "result_flag": "low",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0028",
+    "patient_id": "PAT-000029",
+    "test_code": "A1C",
+    "numeric_value": 27.405,
+    "unit": "%",
+    "result_flag": "critical",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0029",
+    "patient_id": "PAT-000001",
+    "test_code": "TSH",
+    "numeric_value": 83.901,
+    "unit": "mIU/L",
+    "result_flag": "normal",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LAB-20240120-0030",
+    "patient_id": "PAT-000002",
+    "test_code": "COVID_PCR",
+    "numeric_value": 65.34,
+    "unit": "Ct",
+    "result_flag": "high",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0031",
+    "patient_id": "PAT-000003",
+    "test_code": "CBC",
+    "numeric_value": 136.351,
+    "unit": "K/uL",
+    "result_flag": "low",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0032",
+    "patient_id": "PAT-000004",
+    "test_code": "BMP",
+    "numeric_value": 21.504,
+    "unit": "mg/dL",
+    "result_flag": "critical",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0033",
+    "patient_id": "PAT-000005",
+    "test_code": "LIPID",
+    "numeric_value": 0.593,
+    "unit": "mg/dL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0034",
+    "patient_id": "PAT-000006",
+    "test_code": "A1C",
+    "numeric_value": 60.93,
+    "unit": "%",
+    "result_flag": "high",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0035",
+    "patient_id": "PAT-000007",
+    "test_code": "TSH",
+    "numeric_value": 41.035,
+    "unit": "mIU/L",
+    "result_flag": "low",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LAB-20240120-0036",
+    "patient_id": "PAT-000008",
+    "test_code": "COVID_PCR",
+    "numeric_value": 145.762,
+    "unit": "Ct",
+    "result_flag": "critical",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0037",
+    "patient_id": "PAT-000009",
+    "test_code": "CBC",
+    "numeric_value": 10.688,
+    "unit": "K/uL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0038",
+    "patient_id": "PAT-000010",
+    "test_code": "BMP",
+    "numeric_value": 349.796,
+    "unit": "mg/dL",
+    "result_flag": "high",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0039",
+    "patient_id": "PAT-000011",
+    "test_code": "LIPID",
+    "numeric_value": 245.821,
+    "unit": "mg/dL",
+    "result_flag": "low",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0040",
+    "patient_id": "PAT-000012",
+    "test_code": "A1C",
+    "numeric_value": 59.846,
+    "unit": "%",
+    "result_flag": "critical",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0041",
+    "patient_id": "PAT-000013",
+    "test_code": "TSH",
+    "numeric_value": 101.277,
+    "unit": "mIU/L",
+    "result_flag": "normal",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LAB-20240120-0042",
+    "patient_id": "PAT-000014",
+    "test_code": "COVID_PCR",
+    "numeric_value": 139.282,
+    "unit": "Ct",
+    "result_flag": "high",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0043",
+    "patient_id": "PAT-000015",
+    "test_code": "CBC",
+    "numeric_value": 145.983,
+    "unit": "K/uL",
+    "result_flag": "low",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0044",
+    "patient_id": "PAT-000016",
+    "test_code": "BMP",
+    "numeric_value": 49.575,
+    "unit": "mg/dL",
+    "result_flag": "critical",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "oncology"
+  },
+  {
+    "result_id": "LAB-20240120-0045",
+    "patient_id": "PAT-000017",
+    "test_code": "LIPID",
+    "numeric_value": 339.65,
+    "unit": "mg/dL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "pediatrics"
+  },
+  {
+    "result_id": "LAB-20240110-0046",
+    "patient_id": "PAT-000018",
+    "test_code": "A1C",
+    "numeric_value": 397.245,
+    "unit": "%",
+    "result_flag": "high",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "orthopedics"
+  },
+  {
+    "result_id": "LAB-20240115-0047",
+    "patient_id": "PAT-000019",
+    "test_code": "TSH",
+    "numeric_value": 186.663,
+    "unit": "mIU/L",
+    "result_flag": "low",
+    "collected_date": "2024-01-15",
+    "ordering_dept": "primary_care"
+  },
+  {
+    "result_id": "LABBAD",
+    "patient_id": "PAT-000020",
+    "test_code": "COVID_PCR",
+    "numeric_value": -5,
+    "unit": "Ct",
+    "result_flag": "critical",
+    "collected_date": "2024-01-20",
+    "ordering_dept": "radiology"
+  },
+  {
+    "result_id": "LAB-20240110-0049",
+    "patient_id": "",
+    "test_code": "MRI",
+    "numeric_value": 34.811,
+    "unit": "K/uL",
+    "result_flag": "normal",
+    "collected_date": "2024-01-10",
+    "ordering_dept": "cardiology"
+  },
+  {
+    "result_id": "LAB-20240115-0050",
+    "patient_id": "PAT-000022",
+    "test_code": "BMP",
+    "numeric_value": 41.324,
+    "unit": "mg/dL",
+    "result_flag": "panic",
+    "collected_date": "2024/01/15",
+    "ordering_dept": "oncology"
+  }
+]

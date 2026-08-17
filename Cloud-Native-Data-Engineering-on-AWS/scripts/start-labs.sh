@@ -85,7 +85,7 @@ seed_sample_data() {
   local lab_dir="${REPO_ROOT}/modules/module-01-foundations/labs/lab-1.2-data-lake-zones"
   cd "${lab_dir}"
 
-  python3 scripts/generate_sample_orders.py --count 1000 --date 2024-01-15
+  "$PYTHON" scripts/generate_sample_orders.py --count 1000 --date 2024-01-15
 
   aws s3 cp sample-data/orders_2024-01-15.csv \
     "s3://${bucket}/raw/retail/orders/year=2024/month=01/day=15/orders_2024-01-15.csv" \

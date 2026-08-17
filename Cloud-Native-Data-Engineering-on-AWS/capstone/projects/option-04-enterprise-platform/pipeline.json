@@ -1,0 +1,25 @@
+{
+  "project": "cnde-cap-enterprise",
+  "option": 4,
+  "description": "Enterprise Data Platform – orders, inventory, vendor feeds with KPI and ML features",
+  "datasets": [
+    {
+      "name": "orders",
+      "raw_file": "sample-data/orders.csv",
+      "rules_file": "src/validation/rules/orders_rules.json",
+      "curated_transform": "orders_curated"
+    },
+    {
+      "name": "inventory",
+      "raw_file": "sample-data/inventory.csv",
+      "rules_file": "src/validation/rules/inventory_rules.json",
+      "curated_transform": "inventory_curated"
+    },
+    {
+      "name": "vendor_feeds",
+      "raw_file": "sample-data/vendor_feeds.json",
+      "rules_file": "src/validation/rules/vendor_feeds_rules.json",
+      "curated_transform": "vendor_feeds_curated"
+    }
+  ]
+}

@@ -23,6 +23,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```text
@@ -224,6 +239,14 @@ Link to quality-gate-design.md
 ## Production Recommendations
 What would you add for a recommendation system dataset?
 ```
+
+---
+
+## Deliverables
+
+- [ ] `ai_quality_report.json` generated with drift, leakage, and balance checks
+- [ ] Quality gate pass/fail documented for train/val/test splits
+- [ ] `LAB-REPORT.md` with checks summary and production recommendations
 
 ---
 

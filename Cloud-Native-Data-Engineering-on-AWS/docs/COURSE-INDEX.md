@@ -12,6 +12,7 @@ Complete navigation for all course materials.
 |----------|---------|
 | [README.md](../README.md) | Course overview |
 | [docs/diagrams/](../docs/diagrams/README.md) | **All lab architecture diagrams** |
+| [docs/LAB-DEMO-GUIDE.md](LAB-DEMO-GUIDE.md) | **Step-by-step demo & run guide for all 26 labs** |
 | [setup/SETUP.md](../setup/SETUP.md) | Environment setup |
 | [docs/STUDENT-HANDBOOK.md](STUDENT-HANDBOOK.md) | Weekly workflow & submissions |
 | [docs/SYLLABUS.md](SYLLABUS.md) | Full syllabus |
@@ -127,6 +128,7 @@ Complete navigation for all course materials.
 | Module | [module-10-capstone](../modules/module-10-capstone/README.md) |
 | Lecture | [week-10-lecture.md](../modules/module-10-capstone/lectures/week-10-lecture.md) |
 | Capstone Guide | [capstone/README.md](../capstone/README.md) |
+| **All 4 reference projects** | [capstone/projects/](../capstone/projects/) (Banking · Healthcare · E-Commerce · Enterprise) |
 | Project Template | [capstone/templates/project-structure](../capstone/templates/project-structure/README.md) |
 | Rubric | [capstone/rubric.md](../capstone/rubric.md) |
 | Presentation | [capstone/presentation-guide.md](../capstone/presentation-guide.md) |
@@ -142,6 +144,7 @@ Complete navigation for all course materials.
 | Lambda Ingestion | [lambda-ingestion](../infrastructure/modules/lambda-ingestion/) | Week 2 |
 | Glue ETL | [glue-etl](../infrastructure/modules/glue-etl/) | Week 3 |
 | Step Functions | [step-functions](../infrastructure/modules/step-functions/) | Week 6 |
+| Quality Validation | [quality-validation](../infrastructure/modules/quality-validation/) | Week 4 |
 | Monitoring | [monitoring](../infrastructure/modules/monitoring/) | Week 8 |
 
 Deploy from: [infrastructure/environments/dev](../infrastructure/environments/dev/main.tf)
@@ -154,7 +157,7 @@ Deploy from: [infrastructure/environments/dev](../infrastructure/environments/de
 |----------|-------|
 | Modules | 10 |
 | Lectures | 10 |
-| Labs | 27 |
+| Labs | 26 |
 | Assignments | 9 + Capstone |
 | Terraform modules | 5 |
 | Python/Spark scripts | 15+ |

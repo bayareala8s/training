@@ -116,6 +116,8 @@ main() {
   destroy_terraform
   cleanup_local
   log "=== Lab environment stopped. No ongoing AWS charges from course resources. ==="
+  log "Run ./scripts/cleanup-lab-extras.sh if you used Module 7 labs (KMS/IAM)."
+  log "Or use: ./scripts/lab-cycle.sh stop --yes  (includes full cleanup)"
 }
 
 main "$@"

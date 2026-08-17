@@ -1,0 +1,23 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.96.1
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-recursive
+          - --args=infrastructure/
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        files: ^scripts/.*\.sh$
+
+  - repo: local
+    hooks:
+      - id: pytest-validators
+        name: pytest validators
+        entry: pytest modules/module-04-data-quality/labs/lab-4.1-quality-framework/tests/ -q
+        language: system
+        pass_filenames: false
+        files: ^(modules/module-04-data-quality/|infrastructure/modules/quality-validation/)

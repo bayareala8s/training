@@ -233,8 +233,10 @@ else
     --query 'JobRun.{State:JobRunState,Error:ErrorMessage}' >> "$REPORT" 2>&1
 fi
 
-if aws s3 ls "s3://${BUCKET}/cleaned/retail/orders/" --recursive | grep -q parquet; then
+GLUE_PARQUET_OK=false
+if aws s3 ls "s3://${BUCKET}/cleaned/retail/orders/" --recursive 2>/dev/null | grep -qiE '\.parquet'; then
   ok "M3 Lab 3.1: Cleaned Parquet output exists"
+  GLUE_PARQUET_OK=true
 else
   fail "M3 Lab 3.1: No Parquet in cleaned zone"
 fi
@@ -253,9 +255,13 @@ if [[ -n "$CRAWLER" ]]; then
   done
   TABLES=$(aws glue get-tables --database-name "$DB" --query 'length(TableList)' --output text 2>/dev/null || echo 0)
   if [[ "${TABLES}" == "None" || -z "${TABLES}" ]]; then TABLES=0; fi
+  HAS_PARQUET=false
+  if aws s3 ls "s3://${BUCKET}/cleaned/" --recursive 2>/dev/null | grep -qiE '\.parquet'; then
+    HAS_PARQUET=true
+  fi
   if [[ "${TABLES}" -gt 0 ]]; then
     ok "M3 Lab 3.2: Glue crawler cataloged ${TABLES} table(s)"
-  elif aws s3 ls "s3://${BUCKET}/cleaned/" --recursive | grep -q parquet; then
+  elif $HAS_PARQUET || $GLUE_PARQUET_OK; then
     ok "M3 Lab 3.2: Cleaned Parquet present (crawler catalog optional for lab verify)"
   else
     fail "M3 Lab 3.2: No tables in catalog after crawler"
@@ -284,6 +290,17 @@ else
   fail "M4 Lab 4.1: Quality report missing"
 fi
 
+# Lab 4.2: deployed quality validation Lambda
+QV="$(terraform -chdir="$TF_DIR" output -raw quality_validation_lambda 2>/dev/null || echo "")"
+if [[ -n "$QV" ]] && aws lambda invoke \
+  --function-name "$QV" \
+  --payload '{"dataset":"retail/orders","processing_date":"2024-01-15"}' \
+  --cli-binary-format raw-in-base64-out /tmp/lab42.json &>/dev/null; then
+  ok "M4 Lab 4.2: Quality validation Lambda invoked"
+else
+  fail "M4 Lab 4.2: Quality validation Lambda invoke failed"
+fi
+
 aws s3 cp /tmp/cnde-m4/quarantined_records.json \
   "s3://${BUCKET}/quarantine/retail/orders/test/quarantined_records.json" >> "$REPORT" 2>&1 && \
   ok "M4 Lab 4.3: Quarantine zone upload" || fail "M4 Lab 4.3: Quarantine upload failed"
@@ -295,38 +312,37 @@ log "Phase 5: Module 5 — Athena / Star Schema"
 aws s3api put-object --bucket "$BUCKET" --key "athena-results/" --content-length 0 >> "$REPORT" 2>&1 || true
 
 LAB5="${REPO_ROOT}/modules/module-05-modeling-analytics/labs/lab-5.1-star-schema/scripts"
-# Create external table over cleaned data if crawler didn't name it predictably
+
+glue_table_exists() {
+  aws glue get-table --database-name "$1" --name "$2" &>/dev/null
+}
+
 CLEANED_TABLE=$(aws glue get-tables --database-name "$DB" \
-  --query 'TableList[0].Name' --output text 2>/dev/null || echo "")
+  --query 'TableList[?contains(Name, `orders`) || contains(Name, `cleaned`)].Name | [0]' \
+  --output text 2>/dev/null || echo "")
 if [[ -z "$CLEANED_TABLE" || "$CLEANED_TABLE" == "None" ]]; then
   CLEANED_TABLE="orders_cleaned"
 fi
 
-if [[ -n "$CLEANED_TABLE" && "$CLEANED_TABLE" != "None" ]]; then
-  SQL="SELECT COUNT(*) AS row_count FROM ${DB}.${CLEANED_TABLE} LIMIT 10"
-  if athena_query "$SQL" "$DB" "$BUCKET"; then
-    ok "M5 Lab 5.1: Athena query on cleaned data (${CLEANED_TABLE})"
-  else
-    fail "M5 Lab 5.1: Athena query failed on ${CLEANED_TABLE}"
-  fi
-else
-  SQL="CREATE EXTERNAL TABLE IF NOT EXISTS ${DB}.orders_cleaned (
+if ! glue_table_exists "$DB" "$CLEANED_TABLE"; then
+  log "Creating Athena external table ${DB}.${CLEANED_TABLE}"
+  SQL="CREATE EXTERNAL TABLE IF NOT EXISTS ${DB}.${CLEANED_TABLE} (
     order_id STRING, customer_id STRING, product_category STRING,
     quantity INT, unit_price DOUBLE, total_amount DOUBLE,
-    order_status STRING, order_timestamp TIMESTAMP, region STRING
+    order_status STRING, order_timestamp TIMESTAMP, region STRING,
+    processed_at TIMESTAMP, source_file STRING
   ) PARTITIONED BY (year STRING, month STRING, day STRING)
   STORED AS PARQUET
   LOCATION 's3://${BUCKET}/cleaned/retail/orders/'"
-  if athena_query "$SQL" "$DB" "$BUCKET"; then
-    athena_query "MSCK REPAIR TABLE ${DB}.orders_cleaned" "$DB" "$BUCKET" || true
-    if athena_query "SELECT COUNT(*) FROM ${DB}.orders_cleaned" "$DB" "$BUCKET"; then
-      ok "M5 Lab 5.1: Athena query on cleaned orders"
-    else
-      fail "M5 Lab 5.1: COUNT query failed"
-    fi
-  else
-    fail "M5 Lab 5.1: Could not create/query cleaned table"
-  fi
+  athena_query "$SQL" "$DB" "$BUCKET" || true
+  athena_query "MSCK REPAIR TABLE ${DB}.${CLEANED_TABLE}" "$DB" "$BUCKET" || true
+  CLEANED_TABLE="orders_cleaned"
+fi
+
+if athena_query "SELECT COUNT(*) AS row_count FROM ${DB}.${CLEANED_TABLE}" "$DB" "$BUCKET"; then
+  ok "M5 Lab 5.1: Athena query on cleaned data (${CLEANED_TABLE})"
+else
+  fail "M5 Lab 5.1: Athena query failed on ${CLEANED_TABLE}"
 fi
 
 # Lab 5.2: simple optimized query

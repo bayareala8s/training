@@ -1,12 +1,12 @@
 {
   "dataset": "retail/orders",
   "version": "1.0",
-  "created_at": "2026-05-30T03:41:33.017928+00:00",
+  "created_at": "2026-08-11T23:36:02.679064+00:00",
   "source": {
     "filename": "orders_2024-01-15.csv",
     "format": "csv",
-    "size_bytes": 91649,
-    "checksum_sha256": "273e35aff04a4e96ec51fc5d13548f561bc722ee57348c36f0ad27ca144610f3",
+    "size_bytes": 91709,
+    "checksum_sha256": "01abf1590c5e9fea2ee9acf2b2569e31b755669d86392415fe54a9b68915e9b6",
     "record_count_estimate": 1000
   },
   "destination": {

@@ -57,7 +57,7 @@ Required tools:
 
 Labs are designed to minimize cost. Follow these rules:
 
-1. **Tag all resources** with `Project=cnde-course` and `Student=your-name`
+1. **Tag all resources** with `Project=cnde`, `Course=cloud-native-data-engineering`, and `Student=your-name`
 2. **Destroy resources** after each lab session: `terraform destroy`
 3. **Set a budget alert** at $20/month in AWS Budgets
 4. **Use `us-east-1`** unless instructed otherwise (lowest cost region)

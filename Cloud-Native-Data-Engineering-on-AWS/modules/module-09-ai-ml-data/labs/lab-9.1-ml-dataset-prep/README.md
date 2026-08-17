@@ -24,6 +24,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```text
@@ -194,6 +209,14 @@ Predict whether a customer will purchase again within 30 days.
 ## Owner
 <your name>
 ```
+
+---
+
+## Deliverables
+
+- [ ] ML dataset parquet files and `dataset_manifest.json` generated locally
+- [ ] Optional: dataset uploaded to `s3://$BUCKET/ml/training/customer-churn/v1/`
+- [ ] `DATASET-CARD.md` documenting features, label, splits, and limitations
 
 ---
 

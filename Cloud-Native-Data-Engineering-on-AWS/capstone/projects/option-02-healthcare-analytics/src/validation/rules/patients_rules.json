@@ -1,0 +1,60 @@
+{
+  "dataset": "healthcare/patients",
+  "version": "1.0",
+  "rules": [
+    {
+      "name": "patient_id_not_null",
+      "field": "patient_id",
+      "type": "not_null",
+      "severity": "error",
+      "message": "patient_id is required"
+    },
+    {
+      "name": "last_name_not_null",
+      "field": "last_name",
+      "type": "not_null",
+      "severity": "error",
+      "message": "last_name is required"
+    },
+    {
+      "name": "age_in_range",
+      "field": "age",
+      "type": "range",
+      "params": { "min": 0, "max": 120 },
+      "severity": "error",
+      "message": "age must be between 0 and 120"
+    },
+    {
+      "name": "sex_valid",
+      "field": "sex",
+      "type": "enum",
+      "params": { "values": ["F", "M", "X", "U"] },
+      "severity": "error",
+      "message": "sex must be F, M, X, or U"
+    },
+    {
+      "name": "patient_id_format",
+      "field": "patient_id",
+      "type": "regex",
+      "params": { "pattern": "^PAT-[0-9]{6}$" },
+      "severity": "error",
+      "message": "patient_id must match PAT-######"
+    },
+    {
+      "name": "ssn_format",
+      "field": "ssn",
+      "type": "regex",
+      "params": { "pattern": "^[0-9]{3}-[0-9]{2}-[0-9]{4}$" },
+      "severity": "error",
+      "message": "ssn must match ###-##-####"
+    },
+    {
+      "name": "email_format",
+      "field": "email",
+      "type": "regex",
+      "params": { "pattern": "^[\\w.+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$" },
+      "severity": "error",
+      "message": "email must be a valid address"
+    }
+  ]
+}

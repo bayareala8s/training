@@ -1,0 +1,182 @@
+[
+  {
+    "feed_id": "VF-00001",
+    "vendor_id": "VND-002",
+    "sku": "SKU-EL-0001",
+    "unit_cost": "51.46",
+    "feed_status": "accepted",
+    "lead_time_days": "10",
+    "received_at": "2024-01-15T09:00:00Z"
+  },
+  {
+    "feed_id": "VF-00002",
+    "vendor_id": "VND-003",
+    "sku": "SKU-AP-0002",
+    "unit_cost": "147.83",
+    "feed_status": "pending_review",
+    "lead_time_days": "37",
+    "received_at": "2024-01-15T10:00:00Z"
+  },
+  {
+    "feed_id": "VF-00003",
+    "vendor_id": "VND-004",
+    "sku": "SKU-HM-0003",
+    "unit_cost": "51.56",
+    "feed_status": "rejected",
+    "lead_time_days": "28",
+    "received_at": "2024-01-15T11:00:00Z"
+  },
+  {
+    "feed_id": "VF-00004",
+    "vendor_id": "VND-005",
+    "sku": "SKU-SP-0004",
+    "unit_cost": "177.59",
+    "feed_status": "stale",
+    "lead_time_days": "45",
+    "received_at": "2024-01-15T12:00:00Z"
+  },
+  {
+    "feed_id": "VF-00005",
+    "vendor_id": "VND-006",
+    "sku": "SKU-GR-0005",
+    "unit_cost": "159.39",
+    "feed_status": "accepted",
+    "lead_time_days": "16",
+    "received_at": "2024-01-15T13:00:00Z"
+  },
+  {
+    "feed_id": "VF-00006",
+    "vendor_id": "VND-001",
+    "sku": "SKU-EL-0006",
+    "unit_cost": "28.86",
+    "feed_status": "pending_review",
+    "lead_time_days": "13",
+    "received_at": "2024-01-15T14:00:00Z"
+  },
+  {
+    "feed_id": "VF-00007",
+    "vendor_id": "VND-002",
+    "sku": "SKU-AP-0007",
+    "unit_cost": "28.93",
+    "feed_status": "rejected",
+    "lead_time_days": "44",
+    "received_at": "2024-01-15T15:00:00Z"
+  },
+  {
+    "feed_id": "VF-00008",
+    "vendor_id": "VND-003",
+    "sku": "SKU-HM-0008",
+    "unit_cost": "43.53",
+    "feed_status": "stale",
+    "lead_time_days": "33",
+    "received_at": "2024-01-15T16:00:00Z"
+  },
+  {
+    "feed_id": "VF-00009",
+    "vendor_id": "VND-004",
+    "sku": "SKU-SP-0009",
+    "unit_cost": "149.93",
+    "feed_status": "accepted",
+    "lead_time_days": "13",
+    "received_at": "2024-01-15T17:00:00Z"
+  },
+  {
+    "feed_id": "VF-00010",
+    "vendor_id": "VND-005",
+    "sku": "SKU-GR-0010",
+    "unit_cost": "48.77",
+    "feed_status": "pending_review",
+    "lead_time_days": "2",
+    "received_at": "2024-01-15T08:00:00Z"
+  },
+  {
+    "feed_id": "VF-00011",
+    "vendor_id": "VND-006",
+    "sku": "SKU-EL-0011",
+    "unit_cost": "27.93",
+    "feed_status": "rejected",
+    "lead_time_days": "36",
+    "received_at": "2024-01-15T09:00:00Z"
+  },
+  {
+    "feed_id": "VF-00012",
+    "vendor_id": "VND-001",
+    "sku": "SKU-AP-0012",
+    "unit_cost": "67.73",
+    "feed_status": "stale",
+    "lead_time_days": "38",
+    "received_at": "2024-01-15T10:00:00Z"
+  },
+  {
+    "feed_id": "VF-00013",
+    "vendor_id": "VND-002",
+    "sku": "SKU-HM-0013",
+    "unit_cost": "58.71",
+    "feed_status": "accepted",
+    "lead_time_days": "10",
+    "received_at": "2024-01-15T11:00:00Z"
+  },
+  {
+    "feed_id": "VF-00014",
+    "vendor_id": "VND-003",
+    "sku": "SKU-SP-0014",
+    "unit_cost": "124.91",
+    "feed_status": "pending_review",
+    "lead_time_days": "34",
+    "received_at": "2024-01-15T12:00:00Z"
+  },
+  {
+    "feed_id": "VF-00015",
+    "vendor_id": "VND-004",
+    "sku": "SKU-GR-0015",
+    "unit_cost": "171.14",
+    "feed_status": "rejected",
+    "lead_time_days": "43",
+    "received_at": "2024-01-15T13:00:00Z"
+  },
+  {
+    "feed_id": "VF-00016",
+    "vendor_id": "VND-005",
+    "sku": "SKU-EL-0016",
+    "unit_cost": "122.36",
+    "feed_status": "stale",
+    "lead_time_days": "5",
+    "received_at": "2024-01-15T14:00:00Z"
+  },
+  {
+    "feed_id": "VF-00017",
+    "vendor_id": "VND-006",
+    "sku": "SKU-AP-0017",
+    "unit_cost": "83.28",
+    "feed_status": "accepted",
+    "lead_time_days": "45",
+    "received_at": "2024-01-15T15:00:00Z"
+  },
+  {
+    "feed_id": "",
+    "vendor_id": "VND-001",
+    "sku": "SKU-EL-0001",
+    "unit_cost": "10.00",
+    "feed_status": "accepted",
+    "lead_time_days": "5",
+    "received_at": "2024-01-15T09:00:00Z"
+  },
+  {
+    "feed_id": "VF-00991",
+    "vendor_id": "VND-002",
+    "sku": "SKU-EL-0002",
+    "unit_cost": "-1.00",
+    "feed_status": "pending_review",
+    "lead_time_days": "7",
+    "received_at": "2024-01-15T09:30:00Z"
+  },
+  {
+    "feed_id": "VF-BAD",
+    "vendor_id": "VND-003",
+    "sku": "SKU-AP-0003",
+    "unit_cost": "22.00",
+    "feed_status": "corrupted",
+    "lead_time_days": "3",
+    "received_at": "2024-01-15T10:00:00Z"
+  }
+]

@@ -281,10 +281,11 @@ flowchart LR
 | S3 Data Lake | `infrastructure/modules/s3-data-lake/` | Module 1 |
 | Lambda Ingestion | `infrastructure/modules/lambda-ingestion/` | Module 2 |
 | Glue ETL | `infrastructure/modules/glue-etl/` | Module 3 |
+| Quality Validation | `infrastructure/modules/quality-validation/` | Module 4 |
 | Step Functions | `infrastructure/modules/step-functions/` | Module 6 |
 | Monitoring | `infrastructure/modules/monitoring/` | Module 8 |
 
-**Deploy command:** `infrastructure/environments/dev/` via Terraform or `./scripts/start-labs.sh`
+**Deploy command:** `./scripts/lab-cycle.sh start` (or Terraform in `infrastructure/environments/dev/`)
 
 ---
 

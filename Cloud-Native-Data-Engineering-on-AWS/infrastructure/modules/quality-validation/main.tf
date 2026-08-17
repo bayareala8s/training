@@ -43,8 +43,9 @@ locals {
 
 data "archive_file" "validation_lambda" {
   type        = "zip"
-  source_file = "${path.module}/src/handler.py"
+  source_dir  = "${path.module}/src"
   output_path = "${path.module}/build/validation.zip"
+  excludes    = ["__pycache__", "*.pyc"]
 }
 
 data "aws_iam_policy_document" "lambda_assume" {
@@ -83,6 +84,7 @@ resource "aws_lambda_function" "validation" {
     variables = {
       DATA_LAKE_BUCKET = var.data_lake_bucket
       PASS_RATE        = "100"
+      PASS_RATE_SLO    = "0"
     }
   }
 

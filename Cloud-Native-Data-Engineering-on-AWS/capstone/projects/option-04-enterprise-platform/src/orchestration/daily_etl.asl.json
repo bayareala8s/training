@@ -1,0 +1,150 @@
+{
+  "Comment": "cnde-cap-enterprise daily ETL – Modules 5/6 orchestration pattern",
+  "StartAt": "IngestRawZones",
+  "States": {
+    "IngestRawZones": {
+      "Type": "Parallel",
+      "Comment": "Multi-ingest: file drop (orders/inventory) + API/event vendor feeds",
+      "Branches": [
+        {
+          "StartAt": "IngestOrders",
+          "States": {
+            "IngestOrders": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "REPLACE_WITH_INGEST_ORDERS_LAMBDA_ARN",
+                "Payload": {
+                  "dataset": "orders",
+                  "processing_date.$": "$.processing_date"
+                }
+              },
+              "ResultPath": "$.ingest.orders",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "IngestInventory",
+          "States": {
+            "IngestInventory": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "REPLACE_WITH_INGEST_INVENTORY_LAMBDA_ARN",
+                "Payload": {
+                  "dataset": "inventory",
+                  "processing_date.$": "$.processing_date"
+                }
+              },
+              "ResultPath": "$.ingest.inventory",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "IngestVendorFeeds",
+          "States": {
+            "IngestVendorFeeds": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "REPLACE_WITH_INGEST_VENDOR_LAMBDA_ARN",
+                "Payload": {
+                  "dataset": "vendor_feeds",
+                  "processing_date.$": "$.processing_date"
+                }
+              },
+              "ResultPath": "$.ingest.vendor_feeds",
+              "End": true
+            }
+          }
+        }
+      ],
+      "Next": "ValidateQuality",
+      "ResultPath": "$.ingest_results"
+    },
+    "ValidateQuality": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "REPLACE_WITH_QUALITY_LAMBDA_ARN",
+        "Payload": {
+          "processing_date.$": "$.processing_date",
+          "datasets": ["orders", "inventory", "vendor_feeds"]
+        }
+      },
+      "ResultPath": "$.quality",
+      "Next": "QualityGate"
+    },
+    "QualityGate": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.quality.Payload.pass_rate_pct",
+          "NumericGreaterThanEquals": 85,
+          "Next": "RunCuratedGlue"
+        }
+      ],
+      "Default": "QuarantineAlert"
+    },
+    "QuarantineAlert": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "REPLACE_WITH_SNS_ALERT_TOPIC_ARN",
+        "Subject": "cnde-cap-enterprise quality gate failed",
+        "Message.$": "States.Format('Pass rate below 85% for {}. See quarantine zone.', $.processing_date)"
+      },
+      "Next": "RunCuratedGlue",
+      "Comment": "Alert but continue so stewards still get partial curated KPIs when configured"
+    },
+    "RunCuratedGlue": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "REPLACE_WITH_GLUE_JOB_NAME",
+        "Arguments": {
+          "--processing_date.$": "$.processing_date",
+          "--raw_bucket": "REPLACE_WITH_BUCKET",
+          "--cleaned_bucket": "REPLACE_WITH_BUCKET",
+          "--curated_bucket": "REPLACE_WITH_BUCKET"
+        }
+      },
+      "ResultPath": "$.glue",
+      "Next": "PublishSuccess",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.glue_error",
+          "Next": "PipelineFailed"
+        }
+      ]
+    },
+    "PublishSuccess": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "REPLACE_WITH_SNS_ALERT_TOPIC_ARN",
+        "Subject": "cnde-cap-enterprise daily ETL succeeded",
+        "Message.$": "States.Format('enterprise_kpi_daily and customer_order_features ready for {}', $.processing_date)"
+      },
+      "End": true
+    },
+    "PipelineFailed": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "REPLACE_WITH_SNS_ALERT_TOPIC_ARN",
+        "Subject": "cnde-cap-enterprise daily ETL FAILED",
+        "Message.$": "States.JsonToString($.glue_error)"
+      },
+      "Next": "FailState"
+    },
+    "FailState": {
+      "Type": "Fail",
+      "Error": "EnterpriseEtlFailed",
+      "Cause": "Glue curated job failed – see SNS payload and CloudWatch logs"
+    }
+  }
+}

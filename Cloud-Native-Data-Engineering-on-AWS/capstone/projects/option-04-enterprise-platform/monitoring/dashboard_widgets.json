@@ -1,0 +1,132 @@
+{
+  "dashboard_name": "cnde-cap-enterprise-ops",
+  "description": "CloudWatch widgets for Enterprise Data Platform (Option 4) – Glue, Step Functions, quality, S3",
+  "period_seconds": 300,
+  "widgets": [
+    {
+      "type": "metric",
+      "title": "Glue Job Success / Failure",
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/Glue", "glue.driver.aggregate.numFailedTasks", "JobName", "REPLACE_WITH_GLUE_JOB_NAME", {"stat": "Sum", "label": "FailedTasks"}],
+          [".", "glue.driver.aggregate.numCompletedTasks", ".", ".", {"stat": "Sum", "label": "CompletedTasks"}]
+        ],
+        "view": "timeSeries",
+        "region": "us-east-1",
+        "annotations": {
+          "horizontal": [{ "label": "Investigate failures", "value": 1 }]
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "title": "Step Functions Executions",
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/States", "ExecutionsSucceeded", "StateMachineArn", "REPLACE_WITH_STATE_MACHINE_ARN", {"stat": "Sum"}],
+          [".", "ExecutionsFailed", ".", ".", {"stat": "Sum"}],
+          [".", "ExecutionsTimedOut", ".", ".", {"stat": "Sum"}]
+        ],
+        "view": "timeSeries",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "metric",
+      "title": "Quality Pass Rate (custom)",
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["cnde/capstone/enterprise", "QualityPassRatePct", "Dataset", "orders", {"stat": "Average"}],
+          ["...", "inventory", {"stat": "Average"}],
+          ["...", "vendor_feeds", {"stat": "Average"}]
+        ],
+        "view": "timeSeries",
+        "region": "us-east-1",
+        "yAxis": { "left": { "min": 0, "max": 100 } },
+        "annotations": {
+          "horizontal": [{ "label": "SLO 85%", "value": 85 }]
+        }
+      }
+    },
+    {
+      "type": "metric",
+      "title": "Quarantine Record Count",
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["cnde/capstone/enterprise", "QuarantineRecords", "Dataset", "orders", {"stat": "Sum"}],
+          ["...", "inventory", {"stat": "Sum"}],
+          ["...", "vendor_feeds", {"stat": "Sum"}]
+        ],
+        "view": "bar",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "metric",
+      "title": "S3 Bucket Size (data lake)",
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "metrics": [
+          ["AWS/S3", "BucketSizeBytes", "BucketName", "REPLACE_WITH_BUCKET", "StorageType", "StandardStorage", {"stat": "Average"}]
+        ],
+        "view": "timeSeries",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "log",
+      "title": "Glue / Quality recent errors",
+      "width": 24,
+      "height": 6,
+      "properties": {
+        "query": "SOURCE '/aws-glue/jobs/REPLACE_WITH_GLUE_JOB_NAME'\n| fields @timestamp, @message\n| filter @message like /(?i)(error|exception|failed)/\n| sort @timestamp desc\n| limit 50",
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "alarm_status",
+      "title": "Critical alarms",
+      "width": 24,
+      "height": 3,
+      "properties": {
+        "alarms": [
+          "REPLACE_WITH_GLUE_FAILURE_ALARM_ARN",
+          "REPLACE_WITH_SFN_FAILURE_ALARM_ARN",
+          "REPLACE_WITH_QUALITY_SLO_ALARM_ARN"
+        ]
+      }
+    }
+  ],
+  "suggested_alarms": [
+    {
+      "name": "cnde-cap-enterprise-glue-failures",
+      "metric": "glue.driver.aggregate.numFailedTasks",
+      "threshold": 1,
+      "comparison": "GreaterThanOrEqualToThreshold",
+      "sns_topic": "REPLACE_WITH_SNS_ALERT_TOPIC_ARN"
+    },
+    {
+      "name": "cnde-cap-enterprise-sfn-failures",
+      "metric": "ExecutionsFailed",
+      "threshold": 1,
+      "comparison": "GreaterThanOrEqualToThreshold",
+      "sns_topic": "REPLACE_WITH_SNS_ALERT_TOPIC_ARN"
+    },
+    {
+      "name": "cnde-cap-enterprise-quality-slo",
+      "metric": "QualityPassRatePct",
+      "threshold": 85,
+      "comparison": "LessThanThreshold",
+      "sns_topic": "REPLACE_WITH_SNS_ALERT_TOPIC_ARN"
+    }
+  ]
+}

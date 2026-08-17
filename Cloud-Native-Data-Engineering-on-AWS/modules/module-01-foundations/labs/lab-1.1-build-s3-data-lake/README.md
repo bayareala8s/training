@@ -23,6 +23,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```text
@@ -147,6 +162,14 @@ Attach S3 console screenshots.
 
 ---
 
+## Deliverables
+
+- [ ] S3 data lake deployed via Terraform with encryption and lifecycle rules
+- [ ] Zone prefixes (`raw/`, `cleaned/`, `curated/`, `quarantine/`, `metadata/`) verified in console
+- [ ] `LAB-REPORT.md` with bucket name, verification checklist, and screenshots
+
+---
+
 ## Troubleshooting
 
 | Issue | Solution |
@@ -164,8 +187,7 @@ Attach S3 console screenshots.
 After completing Module 1:
 
 ```bash
-cd infrastructure/environments/dev
-terraform destroy
+./scripts/lab-cycle.sh stop --yes    # when fully done with all modules
 ```
 
 ---

@@ -23,6 +23,21 @@
 
 ---
 
+
+## Platform Setup
+
+From the **repository root**, start the shared lab environment (once per session):
+
+```bash
+./scripts/lab-cycle.sh start
+source ./scripts/lab-env.sh
+```
+
+Stop when finished: `./scripts/lab-cycle.sh stop --yes` (avoids ongoing AWS charges).
+
+---
+
+
 ## Architecture
 
 ```text
@@ -295,6 +310,14 @@ Create `LAB-REPORT.md`:
 - [ ] AWS Budget created with 80% alert
 - [ ] `cost-summary.md` completed
 - [ ] Three optimization recommendations documented
+
+---
+
+## Deliverables
+
+- [ ] Cost allocation tags verified on S3 and compute resources
+- [ ] Cost Explorer export and AWS Budget with 80% alert configured
+- [ ] `LAB-REPORT.md` and `cost-summary.md` with three optimization recommendations
 
 ---
 

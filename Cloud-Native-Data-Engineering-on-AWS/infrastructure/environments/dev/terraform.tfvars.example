@@ -3,7 +3,7 @@
 
 aws_region  = "us-east-1"
 environment = "dev"
-project     = "cloud-native-data-engineering"
+project     = "cnde"
 student     = "your-name"
 
 # Optional: S3 bucket for Terraform state
