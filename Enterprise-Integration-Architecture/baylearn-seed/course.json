@@ -1,0 +1,14 @@
+{
+  "courseId": "enterprise-integration-architecture",
+  "slug": "enterprise-integration-architecture",
+  "title": "Enterprise Integration Architecture",
+  "subtitle": "Master APIs, Messaging, Events, File Transfers, ESB Modernization & AI-Agent Integration through Real-World Enterprise Architecture Labs.",
+  "category": "Enterprise Architecture",
+  "level": "Advanced",
+  "deliveryMode": "HYBRID",
+  "durationWeeks": 16,
+  "estimatedHours": 105,
+  "priceCents": 249900,
+  "status": "PUBLISHED",
+  "certificateName": "BayLearn Certificate of Completion: Enterprise Integration Architecture"
+}

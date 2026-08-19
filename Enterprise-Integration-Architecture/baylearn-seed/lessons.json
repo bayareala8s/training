@@ -1,0 +1,898 @@
+[
+  {
+    "id": "lesson-1.1",
+    "moduleId": "module-01",
+    "title": "What Is Enterprise Integration?",
+    "order": 1,
+    "path": "modules/01-fundamentals/lessons/lesson-1.1.md"
+  },
+  {
+    "id": "lesson-1.2",
+    "moduleId": "module-01",
+    "title": "Why Enterprise Integration Is Difficult",
+    "order": 2,
+    "path": "modules/01-fundamentals/lessons/lesson-1.2.md"
+  },
+  {
+    "id": "lesson-1.3",
+    "moduleId": "module-01",
+    "title": "Integration Styles",
+    "order": 3,
+    "path": "modules/01-fundamentals/lessons/lesson-1.3.md"
+  },
+  {
+    "id": "lesson-1.4",
+    "moduleId": "module-01",
+    "title": "Synchronous vs Asynchronous Integration",
+    "order": 4,
+    "path": "modules/01-fundamentals/lessons/lesson-1.4.md"
+  },
+  {
+    "id": "lesson-1.5",
+    "moduleId": "module-01",
+    "title": "Point-to-Point Integration",
+    "order": 5,
+    "path": "modules/01-fundamentals/lessons/lesson-1.5.md"
+  },
+  {
+    "id": "lesson-1.6",
+    "moduleId": "module-01",
+    "title": "Integration Architecture Decision Framework",
+    "order": 6,
+    "path": "modules/01-fundamentals/lessons/lesson-1.6.md"
+  },
+  {
+    "id": "lesson-2.1",
+    "moduleId": "module-02",
+    "title": "API Fundamentals",
+    "order": 1,
+    "path": "modules/02-api-integration/lessons/lesson-2.1.md"
+  },
+  {
+    "id": "lesson-2.2",
+    "moduleId": "module-02",
+    "title": "REST Architecture",
+    "order": 2,
+    "path": "modules/02-api-integration/lessons/lesson-2.2.md"
+  },
+  {
+    "id": "lesson-2.3",
+    "moduleId": "module-02",
+    "title": "HTTP Methods",
+    "order": 3,
+    "path": "modules/02-api-integration/lessons/lesson-2.3.md"
+  },
+  {
+    "id": "lesson-2.4",
+    "moduleId": "module-02",
+    "title": "API Contracts",
+    "order": 4,
+    "path": "modules/02-api-integration/lessons/lesson-2.4.md"
+  },
+  {
+    "id": "lesson-2.5",
+    "moduleId": "module-02",
+    "title": "JSON Schema",
+    "order": 5,
+    "path": "modules/02-api-integration/lessons/lesson-2.5.md"
+  },
+  {
+    "id": "lesson-2.6",
+    "moduleId": "module-02",
+    "title": "API Versioning",
+    "order": 6,
+    "path": "modules/02-api-integration/lessons/lesson-2.6.md"
+  },
+  {
+    "id": "lesson-2.7",
+    "moduleId": "module-02",
+    "title": "Authentication and Authorization",
+    "order": 7,
+    "path": "modules/02-api-integration/lessons/lesson-2.7.md"
+  },
+  {
+    "id": "lesson-2.8",
+    "moduleId": "module-02",
+    "title": "API Gateway Patterns",
+    "order": 8,
+    "path": "modules/02-api-integration/lessons/lesson-2.8.md"
+  },
+  {
+    "id": "lesson-2.9",
+    "moduleId": "module-02",
+    "title": "Rate Limiting",
+    "order": 9,
+    "path": "modules/02-api-integration/lessons/lesson-2.9.md"
+  },
+  {
+    "id": "lesson-2.10",
+    "moduleId": "module-02",
+    "title": "API Error Handling",
+    "order": 10,
+    "path": "modules/02-api-integration/lessons/lesson-2.10.md"
+  },
+  {
+    "id": "lesson-2.11",
+    "moduleId": "module-02",
+    "title": "API Idempotency",
+    "order": 11,
+    "path": "modules/02-api-integration/lessons/lesson-2.11.md"
+  },
+  {
+    "id": "lesson-3.1",
+    "moduleId": "module-03",
+    "title": "Messaging Fundamentals",
+    "order": 1,
+    "path": "modules/03-messaging/lessons/lesson-3.1.md"
+  },
+  {
+    "id": "lesson-3.2",
+    "moduleId": "module-03",
+    "title": "Queue Architecture",
+    "order": 2,
+    "path": "modules/03-messaging/lessons/lesson-3.2.md"
+  },
+  {
+    "id": "lesson-3.3",
+    "moduleId": "module-03",
+    "title": "Producer/Consumer Pattern",
+    "order": 3,
+    "path": "modules/03-messaging/lessons/lesson-3.3.md"
+  },
+  {
+    "id": "lesson-3.4",
+    "moduleId": "module-03",
+    "title": "Delivery Semantics",
+    "order": 4,
+    "path": "modules/03-messaging/lessons/lesson-3.4.md"
+  },
+  {
+    "id": "lesson-3.5",
+    "moduleId": "module-03",
+    "title": "Visibility Timeout",
+    "order": 5,
+    "path": "modules/03-messaging/lessons/lesson-3.5.md"
+  },
+  {
+    "id": "lesson-3.6",
+    "moduleId": "module-03",
+    "title": "Retry",
+    "order": 6,
+    "path": "modules/03-messaging/lessons/lesson-3.6.md"
+  },
+  {
+    "id": "lesson-3.7",
+    "moduleId": "module-03",
+    "title": "Dead Letter Queues",
+    "order": 7,
+    "path": "modules/03-messaging/lessons/lesson-3.7.md"
+  },
+  {
+    "id": "lesson-3.8",
+    "moduleId": "module-03",
+    "title": "Back Pressure",
+    "order": 8,
+    "path": "modules/03-messaging/lessons/lesson-3.8.md"
+  },
+  {
+    "id": "lesson-3.9",
+    "moduleId": "module-03",
+    "title": "FIFO Messaging",
+    "order": 9,
+    "path": "modules/03-messaging/lessons/lesson-3.9.md"
+  },
+  {
+    "id": "lesson-3.10",
+    "moduleId": "module-03",
+    "title": "Message Ordering",
+    "order": 10,
+    "path": "modules/03-messaging/lessons/lesson-3.10.md"
+  },
+  {
+    "id": "lesson-4.1",
+    "moduleId": "module-04",
+    "title": "Publisher and Subscriber",
+    "order": 1,
+    "path": "modules/04-pubsub/lessons/lesson-4.1.md"
+  },
+  {
+    "id": "lesson-4.2",
+    "moduleId": "module-04",
+    "title": "Fan-out",
+    "order": 2,
+    "path": "modules/04-pubsub/lessons/lesson-4.2.md"
+  },
+  {
+    "id": "lesson-4.3",
+    "moduleId": "module-04",
+    "title": "Topics",
+    "order": 3,
+    "path": "modules/04-pubsub/lessons/lesson-4.3.md"
+  },
+  {
+    "id": "lesson-4.4",
+    "moduleId": "module-04",
+    "title": "Filtering",
+    "order": 4,
+    "path": "modules/04-pubsub/lessons/lesson-4.4.md"
+  },
+  {
+    "id": "lesson-4.5",
+    "moduleId": "module-04",
+    "title": "Independent Consumers",
+    "order": 5,
+    "path": "modules/04-pubsub/lessons/lesson-4.5.md"
+  },
+  {
+    "id": "lesson-4.6",
+    "moduleId": "module-04",
+    "title": "Pub/Sub vs Event Bus vs Queue",
+    "order": 6,
+    "path": "modules/04-pubsub/lessons/lesson-4.6.md"
+  },
+  {
+    "id": "lesson-5.1",
+    "moduleId": "module-05",
+    "title": "Events vs Messages",
+    "order": 1,
+    "path": "modules/05-event-driven/lessons/lesson-5.1.md"
+  },
+  {
+    "id": "lesson-5.2",
+    "moduleId": "module-05",
+    "title": "Event Producers",
+    "order": 2,
+    "path": "modules/05-event-driven/lessons/lesson-5.2.md"
+  },
+  {
+    "id": "lesson-5.3",
+    "moduleId": "module-05",
+    "title": "Event Consumers",
+    "order": 3,
+    "path": "modules/05-event-driven/lessons/lesson-5.3.md"
+  },
+  {
+    "id": "lesson-5.4",
+    "moduleId": "module-05",
+    "title": "Event Schemas",
+    "order": 4,
+    "path": "modules/05-event-driven/lessons/lesson-5.4.md"
+  },
+  {
+    "id": "lesson-5.5",
+    "moduleId": "module-05",
+    "title": "EventBridge",
+    "order": 5,
+    "path": "modules/05-event-driven/lessons/lesson-5.5.md"
+  },
+  {
+    "id": "lesson-5.6",
+    "moduleId": "module-05",
+    "title": "Event Routing",
+    "order": 6,
+    "path": "modules/05-event-driven/lessons/lesson-5.6.md"
+  },
+  {
+    "id": "lesson-5.7",
+    "moduleId": "module-05",
+    "title": "Content-Based Filtering",
+    "order": 7,
+    "path": "modules/05-event-driven/lessons/lesson-5.7.md"
+  },
+  {
+    "id": "lesson-5.8",
+    "moduleId": "module-05",
+    "title": "Event Replay",
+    "order": 8,
+    "path": "modules/05-event-driven/lessons/lesson-5.8.md"
+  },
+  {
+    "id": "lesson-5.9",
+    "moduleId": "module-05",
+    "title": "Eventual Consistency",
+    "order": 9,
+    "path": "modules/05-event-driven/lessons/lesson-5.9.md"
+  },
+  {
+    "id": "lesson-5.10",
+    "moduleId": "module-05",
+    "title": "Event Versioning",
+    "order": 10,
+    "path": "modules/05-event-driven/lessons/lesson-5.10.md"
+  },
+  {
+    "id": "lesson-6.1",
+    "moduleId": "module-06",
+    "title": "Why Enterprises Still Use Files",
+    "order": 1,
+    "path": "modules/06-file-transfer/lessons/lesson-6.1.md"
+  },
+  {
+    "id": "lesson-6.2",
+    "moduleId": "module-06",
+    "title": "Batch Integration",
+    "order": 2,
+    "path": "modules/06-file-transfer/lessons/lesson-6.2.md"
+  },
+  {
+    "id": "lesson-6.3",
+    "moduleId": "module-06",
+    "title": "SFTP",
+    "order": 3,
+    "path": "modules/06-file-transfer/lessons/lesson-6.3.md"
+  },
+  {
+    "id": "lesson-6.4",
+    "moduleId": "module-06",
+    "title": "Managed File Transfer",
+    "order": 4,
+    "path": "modules/06-file-transfer/lessons/lesson-6.4.md"
+  },
+  {
+    "id": "lesson-6.5",
+    "moduleId": "module-06",
+    "title": "AWS Transfer Family",
+    "order": 5,
+    "path": "modules/06-file-transfer/lessons/lesson-6.5.md"
+  },
+  {
+    "id": "lesson-6.6",
+    "moduleId": "module-06",
+    "title": "Amazon S3",
+    "order": 6,
+    "path": "modules/06-file-transfer/lessons/lesson-6.6.md"
+  },
+  {
+    "id": "lesson-6.7",
+    "moduleId": "module-06",
+    "title": "Large Files",
+    "order": 7,
+    "path": "modules/06-file-transfer/lessons/lesson-6.7.md"
+  },
+  {
+    "id": "lesson-6.8",
+    "moduleId": "module-06",
+    "title": "File Naming Standards",
+    "order": 8,
+    "path": "modules/06-file-transfer/lessons/lesson-6.8.md"
+  },
+  {
+    "id": "lesson-6.9",
+    "moduleId": "module-06",
+    "title": "Metadata",
+    "order": 9,
+    "path": "modules/06-file-transfer/lessons/lesson-6.9.md"
+  },
+  {
+    "id": "lesson-6.10",
+    "moduleId": "module-06",
+    "title": "File Validation",
+    "order": 10,
+    "path": "modules/06-file-transfer/lessons/lesson-6.10.md"
+  },
+  {
+    "id": "lesson-6.11",
+    "moduleId": "module-06",
+    "title": "Checksums",
+    "order": 11,
+    "path": "modules/06-file-transfer/lessons/lesson-6.11.md"
+  },
+  {
+    "id": "lesson-6.12",
+    "moduleId": "module-06",
+    "title": "Encryption",
+    "order": 12,
+    "path": "modules/06-file-transfer/lessons/lesson-6.12.md"
+  },
+  {
+    "id": "lesson-6.13",
+    "moduleId": "module-06",
+    "title": "Duplicate Detection",
+    "order": 13,
+    "path": "modules/06-file-transfer/lessons/lesson-6.13.md"
+  },
+  {
+    "id": "lesson-6.14",
+    "moduleId": "module-06",
+    "title": "File Processing",
+    "order": 14,
+    "path": "modules/06-file-transfer/lessons/lesson-6.14.md"
+  },
+  {
+    "id": "lesson-6.15",
+    "moduleId": "module-06",
+    "title": "File Routing",
+    "order": 15,
+    "path": "modules/06-file-transfer/lessons/lesson-6.15.md"
+  },
+  {
+    "id": "lesson-6.16",
+    "moduleId": "module-06",
+    "title": "File Acknowledgements",
+    "order": 16,
+    "path": "modules/06-file-transfer/lessons/lesson-6.16.md"
+  },
+  {
+    "id": "lesson-6.17",
+    "moduleId": "module-06",
+    "title": "File Reprocessing",
+    "order": 17,
+    "path": "modules/06-file-transfer/lessons/lesson-6.17.md"
+  },
+  {
+    "id": "lesson-6.18",
+    "moduleId": "module-06",
+    "title": "File Archival",
+    "order": 18,
+    "path": "modules/06-file-transfer/lessons/lesson-6.18.md"
+  },
+  {
+    "id": "lesson-7.1",
+    "moduleId": "module-07",
+    "title": "Why Large Payloads Break Synchronous APIs",
+    "order": 1,
+    "path": "modules/07-large-files/lessons/lesson-7.1.md"
+  },
+  {
+    "id": "lesson-7.2",
+    "moduleId": "module-07",
+    "title": "Presigned Uploads and Claim Check",
+    "order": 2,
+    "path": "modules/07-large-files/lessons/lesson-7.2.md"
+  },
+  {
+    "id": "lesson-7.3",
+    "moduleId": "module-07",
+    "title": "Multipart, Streaming, and Worker Choice",
+    "order": 3,
+    "path": "modules/07-large-files/lessons/lesson-7.3.md"
+  },
+  {
+    "id": "lesson-7.4",
+    "moduleId": "module-07",
+    "title": "Asynchronous Status Patterns",
+    "order": 4,
+    "path": "modules/07-large-files/lessons/lesson-7.4.md"
+  },
+  {
+    "id": "lesson-7.5",
+    "moduleId": "module-07",
+    "title": "Integrity, Malware, and Poison Large Objects",
+    "order": 5,
+    "path": "modules/07-large-files/lessons/lesson-7.5.md"
+  },
+  {
+    "id": "lesson-7.6",
+    "moduleId": "module-07",
+    "title": "Cost and Performance at GB Scale",
+    "order": 6,
+    "path": "modules/07-large-files/lessons/lesson-7.6.md"
+  },
+  {
+    "id": "lesson-8.1",
+    "moduleId": "module-08",
+    "title": "What Is an ESB?",
+    "order": 1,
+    "path": "modules/08-esb/lessons/lesson-8.1.md"
+  },
+  {
+    "id": "lesson-8.2",
+    "moduleId": "module-08",
+    "title": "Enterprise Integration History",
+    "order": 2,
+    "path": "modules/08-esb/lessons/lesson-8.2.md"
+  },
+  {
+    "id": "lesson-8.3",
+    "moduleId": "module-08",
+    "title": "Routing on a Bus",
+    "order": 3,
+    "path": "modules/08-esb/lessons/lesson-8.3.md"
+  },
+  {
+    "id": "lesson-8.4",
+    "moduleId": "module-08",
+    "title": "Transformation",
+    "order": 4,
+    "path": "modules/08-esb/lessons/lesson-8.4.md"
+  },
+  {
+    "id": "lesson-8.5",
+    "moduleId": "module-08",
+    "title": "Protocol Mediation",
+    "order": 5,
+    "path": "modules/08-esb/lessons/lesson-8.5.md"
+  },
+  {
+    "id": "lesson-8.6",
+    "moduleId": "module-08",
+    "title": "Canonical Data Models",
+    "order": 6,
+    "path": "modules/08-esb/lessons/lesson-8.6.md"
+  },
+  {
+    "id": "lesson-8.7",
+    "moduleId": "module-08",
+    "title": "Service Orchestration on the Bus",
+    "order": 7,
+    "path": "modules/08-esb/lessons/lesson-8.7.md"
+  },
+  {
+    "id": "lesson-8.8",
+    "moduleId": "module-08",
+    "title": "Problems with Centralized ESB Architectures",
+    "order": 8,
+    "path": "modules/08-esb/lessons/lesson-8.8.md"
+  },
+  {
+    "id": "lesson-9.1",
+    "moduleId": "module-09",
+    "title": "From Hub to Distributed Cloud Integration",
+    "order": 1,
+    "path": "modules/09-esb-modernization/lessons/lesson-9.1.md"
+  },
+  {
+    "id": "lesson-9.2",
+    "moduleId": "module-09",
+    "title": "Strangler Fig for Integrations",
+    "order": 2,
+    "path": "modules/09-esb-modernization/lessons/lesson-9.2.md"
+  },
+  {
+    "id": "lesson-9.3",
+    "moduleId": "module-09",
+    "title": "What Stays, What Changes, Why",
+    "order": 3,
+    "path": "modules/09-esb-modernization/lessons/lesson-9.3.md"
+  },
+  {
+    "id": "lesson-9.4",
+    "moduleId": "module-09",
+    "title": "Migration Risks and Dual-Run",
+    "order": 4,
+    "path": "modules/09-esb-modernization/lessons/lesson-9.4.md"
+  },
+  {
+    "id": "lesson-9.5",
+    "moduleId": "module-09",
+    "title": "Lab 8 Preview \u2014 Redesign and ADR",
+    "order": 5,
+    "path": "modules/09-esb-modernization/lessons/lesson-9.5.md"
+  },
+  {
+    "id": "lesson-10.1",
+    "moduleId": "module-10",
+    "title": "Request/Reply",
+    "order": 1,
+    "path": "modules/10-patterns/lessons/lesson-10.1.md"
+  },
+  {
+    "id": "lesson-10.2",
+    "moduleId": "module-10",
+    "title": "Fire and Forget",
+    "order": 2,
+    "path": "modules/10-patterns/lessons/lesson-10.2.md"
+  },
+  {
+    "id": "lesson-10.3",
+    "moduleId": "module-10",
+    "title": "Queue-Based Load Leveling",
+    "order": 3,
+    "path": "modules/10-patterns/lessons/lesson-10.3.md"
+  },
+  {
+    "id": "lesson-10.4",
+    "moduleId": "module-10",
+    "title": "Publish/Subscribe",
+    "order": 4,
+    "path": "modules/10-patterns/lessons/lesson-10.4.md"
+  },
+  {
+    "id": "lesson-10.5",
+    "moduleId": "module-10",
+    "title": "Content-Based Router",
+    "order": 5,
+    "path": "modules/10-patterns/lessons/lesson-10.5.md"
+  },
+  {
+    "id": "lesson-10.6",
+    "moduleId": "module-10",
+    "title": "Message Filter",
+    "order": 6,
+    "path": "modules/10-patterns/lessons/lesson-10.6.md"
+  },
+  {
+    "id": "lesson-10.7",
+    "moduleId": "module-10",
+    "title": "Message Translator",
+    "order": 7,
+    "path": "modules/10-patterns/lessons/lesson-10.7.md"
+  },
+  {
+    "id": "lesson-10.8",
+    "moduleId": "module-10",
+    "title": "Aggregator",
+    "order": 8,
+    "path": "modules/10-patterns/lessons/lesson-10.8.md"
+  },
+  {
+    "id": "lesson-10.9",
+    "moduleId": "module-10",
+    "title": "Splitter",
+    "order": 9,
+    "path": "modules/10-patterns/lessons/lesson-10.9.md"
+  },
+  {
+    "id": "lesson-10.10",
+    "moduleId": "module-10",
+    "title": "Scatter/Gather",
+    "order": 10,
+    "path": "modules/10-patterns/lessons/lesson-10.10.md"
+  },
+  {
+    "id": "lesson-10.11",
+    "moduleId": "module-10",
+    "title": "Claim Check",
+    "order": 11,
+    "path": "modules/10-patterns/lessons/lesson-10.11.md"
+  },
+  {
+    "id": "lesson-10.12",
+    "moduleId": "module-10",
+    "title": "Saga",
+    "order": 12,
+    "path": "modules/10-patterns/lessons/lesson-10.12.md"
+  },
+  {
+    "id": "lesson-10.13",
+    "moduleId": "module-10",
+    "title": "Circuit Breaker",
+    "order": 13,
+    "path": "modules/10-patterns/lessons/lesson-10.13.md"
+  },
+  {
+    "id": "lesson-10.14",
+    "moduleId": "module-10",
+    "title": "Retry",
+    "order": 14,
+    "path": "modules/10-patterns/lessons/lesson-10.14.md"
+  },
+  {
+    "id": "lesson-10.15",
+    "moduleId": "module-10",
+    "title": "Dead Letter Queue",
+    "order": 15,
+    "path": "modules/10-patterns/lessons/lesson-10.15.md"
+  },
+  {
+    "id": "lesson-10.16",
+    "moduleId": "module-10",
+    "title": "Idempotent Consumer",
+    "order": 16,
+    "path": "modules/10-patterns/lessons/lesson-10.16.md"
+  },
+  {
+    "id": "lesson-10.17",
+    "moduleId": "module-10",
+    "title": "Compensating Transaction",
+    "order": 17,
+    "path": "modules/10-patterns/lessons/lesson-10.17.md"
+  },
+  {
+    "id": "lesson-11.1",
+    "moduleId": "module-11",
+    "title": "Timeouts",
+    "order": 1,
+    "path": "modules/11-resiliency/lessons/lesson-11.1.md"
+  },
+  {
+    "id": "lesson-11.2",
+    "moduleId": "module-11",
+    "title": "Retries, Exponential Backoff, and Jitter",
+    "order": 2,
+    "path": "modules/11-resiliency/lessons/lesson-11.2.md"
+  },
+  {
+    "id": "lesson-11.3",
+    "moduleId": "module-11",
+    "title": "Circuit Breakers and Bulkheads",
+    "order": 3,
+    "path": "modules/11-resiliency/lessons/lesson-11.3.md"
+  },
+  {
+    "id": "lesson-11.4",
+    "moduleId": "module-11",
+    "title": "Idempotency, Duplicates, and Partial Failure",
+    "order": 4,
+    "path": "modules/11-resiliency/lessons/lesson-11.4.md"
+  },
+  {
+    "id": "lesson-11.5",
+    "moduleId": "module-11",
+    "title": "Dependency and Regional Failure",
+    "order": 5,
+    "path": "modules/11-resiliency/lessons/lesson-11.5.md"
+  },
+  {
+    "id": "lesson-11.6",
+    "moduleId": "module-11",
+    "title": "Chaos Lab Playbook",
+    "order": 6,
+    "path": "modules/11-resiliency/lessons/lesson-11.6.md"
+  },
+  {
+    "id": "lesson-12.1",
+    "moduleId": "module-12",
+    "title": "Authn, Authz, IAM, Least Privilege",
+    "order": 1,
+    "path": "modules/12-security/lessons/lesson-12.1.md"
+  },
+  {
+    "id": "lesson-12.2",
+    "moduleId": "module-12",
+    "title": "Encryption, KMS, and Secrets",
+    "order": 2,
+    "path": "modules/12-security/lessons/lesson-12.2.md"
+  },
+  {
+    "id": "lesson-12.3",
+    "moduleId": "module-12",
+    "title": "API, SFTP, and Network Isolation",
+    "order": 3,
+    "path": "modules/12-security/lessons/lesson-12.3.md"
+  },
+  {
+    "id": "lesson-12.4",
+    "moduleId": "module-12",
+    "title": "Audit, Classification, and Cross-Account",
+    "order": 4,
+    "path": "modules/12-security/lessons/lesson-12.4.md"
+  },
+  {
+    "id": "lesson-12.5",
+    "moduleId": "module-12",
+    "title": "Security Lab Method",
+    "order": 5,
+    "path": "modules/12-security/lessons/lesson-12.5.md"
+  },
+  {
+    "id": "lesson-13.1",
+    "moduleId": "module-13",
+    "title": "Tracing a Transaction Across Styles",
+    "order": 1,
+    "path": "modules/13-observability/lessons/lesson-13.1.md"
+  },
+  {
+    "id": "lesson-13.2",
+    "moduleId": "module-13",
+    "title": "Structured Logs, Metrics, and Traces",
+    "order": 2,
+    "path": "modules/13-observability/lessons/lesson-13.2.md"
+  },
+  {
+    "id": "lesson-13.3",
+    "moduleId": "module-13",
+    "title": "Dashboards, Alerts, and SLOs",
+    "order": 3,
+    "path": "modules/13-observability/lessons/lesson-13.3.md"
+  },
+  {
+    "id": "lesson-13.4",
+    "moduleId": "module-13",
+    "title": "Business vs Technical Metrics",
+    "order": 4,
+    "path": "modules/13-observability/lessons/lesson-13.4.md"
+  },
+  {
+    "id": "lesson-13.5",
+    "moduleId": "module-13",
+    "title": "Integration Operations Dashboard Lab",
+    "order": 5,
+    "path": "modules/13-observability/lessons/lesson-13.5.md"
+  },
+  {
+    "id": "lesson-14.1",
+    "moduleId": "module-14",
+    "title": "From Requirement to ADR",
+    "order": 1,
+    "path": "modules/14-architecture-decisions/lessons/lesson-14.1.md"
+  },
+  {
+    "id": "lesson-14.2",
+    "moduleId": "module-14",
+    "title": "NFR Scoring",
+    "order": 2,
+    "path": "modules/14-architecture-decisions/lessons/lesson-14.2.md"
+  },
+  {
+    "id": "lesson-14.3",
+    "moduleId": "module-14",
+    "title": "Challenge: 20 GB \u00d7 50 Organizations Nightly",
+    "order": 3,
+    "path": "modules/14-architecture-decisions/lessons/lesson-14.3.md"
+  },
+  {
+    "id": "lesson-14.4",
+    "moduleId": "module-14",
+    "title": "Challenge: Balances within 300 ms",
+    "order": 4,
+    "path": "modules/14-architecture-decisions/lessons/lesson-14.4.md"
+  },
+  {
+    "id": "lesson-14.5",
+    "moduleId": "module-14",
+    "title": "Challenge: Twenty Systems Need Address Changes",
+    "order": 5,
+    "path": "modules/14-architecture-decisions/lessons/lesson-14.5.md"
+  },
+  {
+    "id": "lesson-15.1",
+    "moduleId": "module-15",
+    "title": "Chatbot vs Assistant vs Agent vs Workflow",
+    "order": 1,
+    "path": "modules/15-ai-agents/lessons/lesson-15.1.md"
+  },
+  {
+    "id": "lesson-15.2",
+    "moduleId": "module-15",
+    "title": "Agents as Integration Consumers",
+    "order": 2,
+    "path": "modules/15-ai-agents/lessons/lesson-15.2.md"
+  },
+  {
+    "id": "lesson-15.3",
+    "moduleId": "module-15",
+    "title": "Agents + APIs",
+    "order": 3,
+    "path": "modules/15-ai-agents/lessons/lesson-15.3.md"
+  },
+  {
+    "id": "lesson-15.4",
+    "moduleId": "module-15",
+    "title": "Agents + Messaging",
+    "order": 4,
+    "path": "modules/15-ai-agents/lessons/lesson-15.4.md"
+  },
+  {
+    "id": "lesson-15.5",
+    "moduleId": "module-15",
+    "title": "Agents + Events",
+    "order": 5,
+    "path": "modules/15-ai-agents/lessons/lesson-15.5.md"
+  },
+  {
+    "id": "lesson-15.6",
+    "moduleId": "module-15",
+    "title": "Agents + File Transfers",
+    "order": 6,
+    "path": "modules/15-ai-agents/lessons/lesson-15.6.md"
+  },
+  {
+    "id": "lesson-15.7",
+    "moduleId": "module-15",
+    "title": "MCP \u2014 Model Context Protocol",
+    "order": 7,
+    "path": "modules/15-ai-agents/lessons/lesson-15.7.md"
+  },
+  {
+    "id": "lesson-15.8",
+    "moduleId": "module-15",
+    "title": "Agent Security",
+    "order": 8,
+    "path": "modules/15-ai-agents/lessons/lesson-15.8.md"
+  },
+  {
+    "id": "lesson-15.9",
+    "moduleId": "module-15",
+    "title": "Human-in-the-Loop",
+    "order": 9,
+    "path": "modules/15-ai-agents/lessons/lesson-15.9.md"
+  },
+  {
+    "id": "lesson-15.10",
+    "moduleId": "module-15",
+    "title": "Agent Observability",
+    "order": 10,
+    "path": "modules/15-ai-agents/lessons/lesson-15.10.md"
+  }
+]

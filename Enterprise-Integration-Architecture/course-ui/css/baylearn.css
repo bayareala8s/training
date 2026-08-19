@@ -1,0 +1,171 @@
+/* BayLearn / BayAreaLa8s course player — Enterprise Integration Architecture */
+:root {
+  --ba-navy: #0a1f33;
+  --ba-navy-light: #12304d;
+  --ba-teal: #0d8fad;
+  --ba-teal-dark: #0a7289;
+  --ba-gold: #c9a227;
+  --ba-gold-hover: #b8921f;
+  --ba-slate: #5c6b7a;
+  --ba-border: #e2e8f0;
+  --ba-surface: #ffffff;
+  --ba-muted-bg: #f4f7fa;
+  --ba-fg: #0f1c2e;
+  --font: "DM Sans", system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--ba-muted-bg);
+  color: var(--ba-fg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+a { color: var(--ba-teal-dark); }
+a:hover { color: var(--ba-teal); }
+.ba-header {
+  background: var(--ba-navy);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.ba-brand { font-weight: 700; letter-spacing: 0.02em; text-decoration: none; color: #fff; }
+.ba-brand span { color: var(--ba-teal); }
+.ba-nav { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.ba-nav a {
+  color: #c5d4e0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+}
+.ba-nav a:hover, .ba-nav a.active { color: #fff; background: var(--ba-navy-light); }
+.ba-hero {
+  background: linear-gradient(135deg, var(--ba-navy) 0%, var(--ba-navy-light) 45%, #0d4a5c 100%);
+  color: #fff;
+  padding: 3.5rem 1.5rem 3rem;
+}
+.ba-hero h1 { margin: 0 0 0.75rem; font-size: clamp(1.6rem, 4vw, 2.4rem); max-width: 52rem; }
+.ba-hero .sub { max-width: 46rem; color: #a8d4e6; font-size: 1.1rem; line-height: 1.5; }
+.badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+.badge {
+  background: rgba(13, 143, 173, 0.25);
+  border: 1px solid rgba(13, 143, 173, 0.5);
+  color: #fff;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+.badge.gold { background: var(--ba-gold); color: var(--ba-navy); border: none; font-weight: 600; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 1.5rem; width: 100%; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+.card {
+  background: var(--ba-surface);
+  border: 1px solid var(--ba-border);
+  border-top: 4px solid var(--ba-teal);
+  border-radius: 6px;
+  padding: 1.1rem 1.15rem;
+}
+.card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+.card p { margin: 0; color: var(--ba-slate); font-size: 0.92rem; line-height: 1.45; }
+.btn {
+  display: inline-block;
+  background: var(--ba-teal);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.55rem 1rem;
+  border-radius: 4px;
+  border: 0;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { background: var(--ba-teal-dark); }
+.btn.gold { background: var(--ba-gold); color: var(--ba-navy); }
+.btn.gold:hover { background: var(--ba-gold-hover); }
+.btn.ghost { background: transparent; color: #fff; border: 1px solid #a8d4e6; }
+.progress-track { background: #d9e3ec; height: 12px; border-radius: 999px; overflow: hidden; }
+.progress-fill { background: var(--ba-teal); height: 100%; width: 0; }
+.layout { display: grid; grid-template-columns: 280px 1fr; gap: 1.25rem; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+}
+.sidebar {
+  background: var(--ba-surface);
+  border: 1px solid var(--ba-border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  max-height: calc(100vh - 6rem);
+  overflow: auto;
+  position: sticky;
+  top: 0.75rem;
+}
+.sidebar h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ba-slate); margin: 0.3rem 0 0.6rem; }
+.sidebar a { display: block; text-decoration: none; color: var(--ba-fg); font-size: 0.88rem; padding: 0.28rem 0.35rem; border-radius: 4px; }
+.sidebar a:hover, .sidebar a.active { background: #e7f4f8; color: var(--ba-teal-dark); }
+.lesson {
+  background: var(--ba-surface);
+  border: 1px solid var(--ba-border);
+  border-radius: 6px;
+  padding: 1.5rem 1.6rem 2rem;
+}
+.lesson h1 { margin-top: 0; }
+.lesson pre, .challenge pre {
+  background: #0a1f33;
+  color: #e8f4f8;
+  padding: 0.9rem;
+  overflow: auto;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.lesson code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; }
+.lesson table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
+.lesson th, .lesson td { border: 1px solid var(--ba-border); padding: 0.45rem 0.55rem; text-align: left; vertical-align: top; }
+.lesson th { background: #eef3f7; }
+.lesson blockquote {
+  border-left: 4px solid var(--ba-gold);
+  margin: 1rem 0;
+  padding: 0.2rem 0.9rem;
+  color: var(--ba-slate);
+}
+.actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.25rem; }
+.muted { color: var(--ba-slate); font-size: 0.9rem; }
+.footer {
+  margin-top: auto;
+  background: var(--ba-navy);
+  color: #9fb3c4;
+  padding: 1.25rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+.choice { display: block; margin: 0.4rem 0; padding: 0.55rem 0.7rem; border: 1px solid var(--ba-border); border-radius: 4px; background: #fff; cursor: pointer; }
+.choice:hover { border-color: var(--ba-teal); }
+.choice input { margin-right: 0.45rem; }
+.feedback { margin-top: 0.75rem; padding: 0.7rem; border-radius: 4px; }
+.feedback.ok { background: #e5f6ea; }
+.feedback.bad { background: #fdecea; }
+.cert {
+  background: #fff;
+  border: 8px solid var(--ba-navy);
+  outline: 2px solid var(--ba-gold);
+  outline-offset: -16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  max-width: 800px;
+  margin: 1.5rem auto;
+}
+.cert h1 { color: var(--ba-navy); }
+.mermaid { margin: 1rem 0; overflow: auto; background: #fff; padding: 0.5rem; border-radius: 4px; }
+@media print {
+  .ba-header, .ba-nav, .footer, .actions, button, .btn { display: none !important; }
+  .cert { outline-offset: -12px; }
+}
+.bar-label { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.3rem; }
+.stat { font-variant-numeric: tabular-nums; }

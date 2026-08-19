@@ -1,0 +1,8 @@
+{
+  "specversion": "1.0",
+  "type": "PaymentAuthorized",
+  "source": "eia.lab",
+  "id": "demo-1",
+  "correlationId": "corr-1",
+  "data": {"orderId": "o-1", "amount": 20}
+}

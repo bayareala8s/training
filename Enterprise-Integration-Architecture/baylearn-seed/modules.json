@@ -1,0 +1,152 @@
+[
+  {
+    "id": "module-01",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "01-fundamentals",
+    "title": "Enterprise Integration Fundamentals",
+    "order": 1,
+    "labId": "lab-01-classification",
+    "awsLab": false,
+    "path": "modules/01-fundamentals"
+  },
+  {
+    "id": "module-02",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "02-api-integration",
+    "title": "API-Based Integration",
+    "order": 2,
+    "labId": "lab-02-api",
+    "awsLab": true,
+    "path": "modules/02-api-integration"
+  },
+  {
+    "id": "module-03",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "03-messaging",
+    "title": "Enterprise Messaging",
+    "order": 3,
+    "labId": "lab-03-messaging",
+    "awsLab": true,
+    "path": "modules/03-messaging"
+  },
+  {
+    "id": "module-04",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "04-pubsub",
+    "title": "Pub/Sub Architecture",
+    "order": 4,
+    "labId": "lab-04-pubsub",
+    "awsLab": true,
+    "path": "modules/04-pubsub"
+  },
+  {
+    "id": "module-05",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "05-event-driven",
+    "title": "Event-Driven Architecture",
+    "order": 5,
+    "labId": "lab-05-events",
+    "awsLab": true,
+    "path": "modules/05-event-driven"
+  },
+  {
+    "id": "module-06",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "06-file-transfer",
+    "title": "Enterprise File Transfer",
+    "order": 6,
+    "labId": "lab-06-file-transfer",
+    "awsLab": true,
+    "path": "modules/06-file-transfer"
+  },
+  {
+    "id": "module-07",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "07-large-files",
+    "title": "Large File Architecture",
+    "order": 7,
+    "labId": "lab-07-large-files",
+    "awsLab": true,
+    "path": "modules/07-large-files"
+  },
+  {
+    "id": "module-08",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "08-esb",
+    "title": "ESB and Traditional Enterprise Integration",
+    "order": 8,
+    "labId": null,
+    "awsLab": false,
+    "path": "modules/08-esb"
+  },
+  {
+    "id": "module-09",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "09-esb-modernization",
+    "title": "ESB Modernization",
+    "order": 9,
+    "labId": "lab-08-esb-modernization",
+    "awsLab": false,
+    "path": "modules/09-esb-modernization"
+  },
+  {
+    "id": "module-10",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "10-patterns",
+    "title": "Enterprise Integration Patterns",
+    "order": 10,
+    "labId": null,
+    "awsLab": false,
+    "path": "modules/10-patterns"
+  },
+  {
+    "id": "module-11",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "11-resiliency",
+    "title": "Reliability and Resiliency",
+    "order": 11,
+    "labId": "lab-11-chaos",
+    "awsLab": true,
+    "path": "modules/11-resiliency"
+  },
+  {
+    "id": "module-12",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "12-security",
+    "title": "Security",
+    "order": 12,
+    "labId": "lab-12-security",
+    "awsLab": true,
+    "path": "modules/12-security"
+  },
+  {
+    "id": "module-13",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "13-observability",
+    "title": "Observability",
+    "order": 13,
+    "labId": "lab-13-observability",
+    "awsLab": true,
+    "path": "modules/13-observability"
+  },
+  {
+    "id": "module-14",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "14-architecture-decisions",
+    "title": "Architecture Decision Making",
+    "order": 14,
+    "labId": null,
+    "awsLab": false,
+    "path": "modules/14-architecture-decisions"
+  },
+  {
+    "id": "module-15",
+    "courseId": "enterprise-integration-architecture",
+    "slug": "15-ai-agents",
+    "title": "Integration Architecture for AI Agents",
+    "order": 15,
+    "labId": "lab-15-ai-agent",
+    "awsLab": true,
+    "path": "modules/15-ai-agents"
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "course": {
+    "id": "baylearn-eia-001",
+    "title": "Enterprise Integration Architecture",
+    "subtitle": "Master APIs, Messaging, Events, File Transfers, ESB Modernization & AI-Agent Integration through Real-World Enterprise Architecture Labs.",
+    "provider": "BayAreaLa8s",
+    "academy": "BayLearn",
+    "version": "1.0.0",
+    "duration_weeks": 16,
+    "effort_hours_min": 90,
+    "effort_hours_max": 120,
+    "level": "advanced",
+    "language": "en-US",
+    "certificate": "BayLearn Certificate of Completion: Enterprise Integration Architecture — APIs • Messaging • Events • File Transfers • ESB • AI Agents",
+    "master_document": "COURSE.md",
+    "player": "course-ui/index.html",
+    "tags": [
+      "Enterprise Architecture",
+      "Integration",
+      "API",
+      "SQS",
+      "EventBridge",
+      "SFTP",
+      "ESB",
+      "AI Agents",
+      "Terraform",
+      "AWS"
+    ]
+  }
+}
