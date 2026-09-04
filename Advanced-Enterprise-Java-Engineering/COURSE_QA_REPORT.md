@@ -2,8 +2,27 @@
 
 **Date:** 2026-09-04  
 **Catalog:** `baylearn-aeje-001` — Advanced Enterprise Java Engineering  
-**Latest stage:** 14 (final validation) + portal seed authored  
+**Latest stage:** 14 (final validation) + portal seed authored + runnable lab smoke  
 **BayLearn Portal:** AEJE synced to prod DynamoDB and frontend deployed. Existing seven courses unchanged.
+
+---
+
+# Runnable Java labs
+
+## Verdict
+
+Five BUILD/FIX labs now have Maven stubs and JUnit contracts. `qa/smoke_runnable_labs.py` compiles the stubs, overlays instructor sources in a temp tree, and runs the tests. Paper, WAS, OpenShift, and live `terraform apply` stay out of scope.
+
+| Check | Result |
+|---|---|
+| BUILD-101 / 102 / FIX-103 / CHALLENGE-104 / BREAKFIX-201 stubs compile | **PASS** |
+| Contract tests against `solutions/` | **PASS** |
+| LAB-701–703 + starter javac | **PASS** |
+| `terraform validate` (4 roots) | **PASS** |
+| `reference-apps/baypay ./mvnw test` | **PASS** (24 tests) |
+| Interview CLI `AEJE-IQ-012` | **PASS** |
+
+Checker: `qa/smoke_runnable_labs.py`. Student command: `cd labs && ../reference-apps/baypay/mvnw -pl BUILD-101 test`. Stubs fail tests until implemented. Instructor solutions are not copied into student `src/main`.
 
 ---
 

@@ -66,9 +66,11 @@ export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21}"
 cd labs/CHALLENGE-104
 javac --release 21 starter/NaivePostingLoop.java
 java -cp starter com.baypay.labs.challenge104.NaivePostingLoop
+cd ..
+../reference-apps/baypay/mvnw -pl CHALLENGE-104 test
 ```
 
-The starter’s `main` builds a synthetic workload and prints elapsed time. Use it as the baseline. Copy to your own class for the improved version; leave the starter naive.
+The starter’s `main` builds a synthetic workload and prints elapsed time. Use it as the baseline. Implement `src/main/java/.../FasterPostingLoop.java`; leave `NaivePostingLoop` naive.
 
 ---
 
@@ -84,7 +86,7 @@ The starter’s `main` builds a synthetic workload and prints elapsed time. Use 
 4. Increase payments to 50_000 if your machine allows; the starter may become painful — that is the point.
 5. Write two or three sentences on what you changed **without** turning this README into a spoiler for others.
 
-Do not expect an optimized listing in this folder.
+Do not expect an instructor-optimized listing in this folder. The Maven class is a stub until you write it.
 
 ---
 

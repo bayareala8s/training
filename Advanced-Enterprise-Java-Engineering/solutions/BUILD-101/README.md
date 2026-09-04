@@ -37,6 +37,8 @@ Students re-implement the BayPay transaction domain. Production truth is already
 
 Spec entity “Transaction” is `LedgerTransaction` in Java. Students who mention that in the worksheet get the production-awareness point.
 
+JPA-free instructor sources in this folder: `Money.java`, `PaymentStatus.java`, `PaymentStateMachine.java`, `Payment.java`. Contract tests live in `labs/BUILD-101/src/test` and are smoked with `qa/smoke_runnable_labs.py`.
+
 ## Reference files
 
 - `reference-apps/baypay/shared/src/main/java/com/baypay/shared/domain/Money.java`

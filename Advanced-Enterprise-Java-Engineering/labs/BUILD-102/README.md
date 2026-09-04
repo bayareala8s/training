@@ -82,11 +82,11 @@ Study:
 
 ```bash
 export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21}"
-cd reference-apps/baypay
-./mvnw -pl payment-service -am test
+cd labs
+../reference-apps/baypay/mvnw -pl BUILD-102 test
 ```
 
-Create `labs/BUILD-102/src/main/java/com/baypay/labs/build102/PaymentValidator.java` (and tests). You may copy `ErrorCode` names as an enum in the lab package if you are not compiling against `shared`.
+Implement `validate` in `src/main/java/com/baypay/labs/build102/PaymentValidator.java`. The records are the contract; contract tests live under `src/test/java`. Optional: `cd reference-apps/baypay && ./mvnw -pl payment-service -am test`.
 
 ---
 

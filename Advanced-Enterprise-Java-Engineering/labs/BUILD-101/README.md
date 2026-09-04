@@ -70,11 +70,11 @@ Also required: `VALIDATING → DECLINED`, `AUTHORIZED|PROCESSING → FAILED`, `C
 
 ```bash
 export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21}"
-cd reference-apps/baypay
-./mvnw -pl shared test
+cd labs
+../reference-apps/baypay/mvnw -pl BUILD-101 test
 ```
 
-Create a working tree for your own types, for example `labs/BUILD-101/src/main/java/com/baypay/labs/build101/` and matching tests under `src/test/java`. You may compile with `javac --release 21` or a small Maven/JUnit project. Do not modify the reference app unless you are exploring; revert any experiment before you finish.
+Stubs under `src/main/java/com/baypay/labs/build101/` compile and fail the contract tests until you implement them. Do not modify the reference app unless you are exploring; revert any experiment before you finish. Optional: `cd reference-apps/baypay && ./mvnw -pl shared test` still passes.
 
 ---
 
@@ -106,6 +106,8 @@ You pass when all of the following are true:
 - `transitionTo(COMPLETED)` from `RECEIVED` throws.
 - `VALIDATING → DECLINED` succeeds and stores a failure reason via `decline`.
 - Your tests run on JDK 21 without using raw types.
+
+- `../reference-apps/baypay/mvnw -pl BUILD-101 test` passes on your implementation.
 
 Optional: `./mvnw -pl shared test` still passes (you did not break the reference).
 

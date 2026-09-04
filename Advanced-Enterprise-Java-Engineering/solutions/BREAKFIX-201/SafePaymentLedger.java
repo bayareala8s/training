@@ -1,3 +1,5 @@
+package com.baypay.labs.breakfix201;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -8,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Instructor reference for BREAKFIX-201. Do not ship to students before the attempt.
  *
- *   javac SafePaymentLedger.java && java SafePaymentLedger
+ *   javac -d . SafePaymentLedger.java && java com.baypay.labs.breakfix201.SafePaymentLedger
  */
 public class SafePaymentLedger {
 

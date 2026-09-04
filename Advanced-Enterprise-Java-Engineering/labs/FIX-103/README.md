@@ -59,11 +59,12 @@ flowchart LR
 ```bash
 export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21}"
 cd labs/FIX-103
-# compile the starter to confirm it is valid (if ugly) Java
 javac --release 21 starter/MessyPaymentValidator.java
+cd ..
+../reference-apps/baypay/mvnw -pl FIX-103 test
 ```
 
-Copy the starter into your working file and refactor. Keep the original starter untouched so you can diff.
+Keep `starter/MessyPaymentValidator.java` untouched. Implement `CleanPaymentValidator` under `src/main/java`. Contract tests fail until the refactor is done.
 
 ---
 
@@ -80,7 +81,7 @@ Copy the starter into your working file and refactor. Keep the original starter 
 3. Cover Avery active approve, Avery frozen decline, mismatch, `JPY`, zero, null amount.
 4. Confirm the starter’s method can still be used as a foil: your tests should fail if you point them at the unfixed class for the null-amount case.
 
-Do not look for a clean file in this directory. There is not one.
+Do not look for an instructor solution in this directory. Implement `CleanPaymentValidator`; leave the messy starter as the foil.
 
 ---
 

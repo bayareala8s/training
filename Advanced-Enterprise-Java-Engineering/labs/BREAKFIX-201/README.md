@@ -51,9 +51,11 @@ export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21}"
 cd labs/BREAKFIX-201/starter
 javac UnsafePaymentLedger.java
 java UnsafePaymentLedger
+cd ../..
+../reference-apps/baypay/mvnw -pl BREAKFIX-201 test
 ```
 
-Record Case A and Case B actuals. Then open [INC-JVM-201](../../incidents/jvm/INC-JVM-201/README.md) and request evidence in the listed order. Fill [student-worksheet.md](../../incidents/jvm/INC-JVM-201/student-worksheet.md) as you go.
+Record Case A and Case B actuals from the starter. Implement `src/main/java/com/baypay/labs/breakfix201/SafePaymentLedger.java`. Then open [INC-JVM-201](../../incidents/jvm/INC-JVM-201/README.md) and request evidence in the listed order. Fill [student-worksheet.md](../../incidents/jvm/INC-JVM-201/student-worksheet.md) as you go.
 
 ## Challenge/tasks
 

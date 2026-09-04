@@ -7082,16 +7082,19 @@
       "no-confidential-enterprise-data",
       "existing-baylearn-courses-unbroken",
       "paks-links-valid",
-      "portal-seed-valid"
+      "portal-seed-valid",
+      "runnable-lab-smoke"
     ],
     "status": "complete",
     "orchestrator": "qa/run_stage14.py",
     "inventoryChecker": "qa/check_stage14.py",
+    "runnableLabSmoke": "qa/smoke_runnable_labs.py",
     "resultsPath": "qa/stage14-results.json",
     "notes": {
-      "portalSeed": "Deferred until a separate reviewer yes. Existing BayLearn courses unchanged.",
+      "portalSeed": "Synced to baylearn-prod in us-west-2. Existing BayLearn courses unchanged.",
       "kubernetesValidate": "Local YAML parse (apiVersion/kind). kubectl against a live cluster is not required.",
-      "javaTests": "reference-apps/baypay ./mvnw test passed"
+      "javaTests": "reference-apps/baypay ./mvnw test plus labs/ Maven contract tests (solutions overlaid)",
+      "runnableLabs": "BUILD-101, BUILD-102, FIX-103, CHALLENGE-104, BREAKFIX-201. BUILD-301-305 via reference app. Paper/WAS/OCP/live apply not in smoke."
     }
   },
   "openDecisions": [

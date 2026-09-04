@@ -69,6 +69,18 @@ These modules are **simulation-first**. You design topologies, read synthetic du
 
 Locked current-state names: [datasets/baypay-cell/TOPOLOGY.md](datasets/baypay-cell/TOPOLOGY.md). Traditional ND is the source estate to leave, not a greenfield target.
 
+## Runnable Java labs
+
+Five Module 1–2 labs have Maven stubs and JUnit contracts under [labs/](labs/README.md): BUILD-101, BUILD-102, FIX-103, CHALLENGE-104, BREAKFIX-201.
+
+```bash
+export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21}"
+cd labs
+../reference-apps/baypay/mvnw -pl BUILD-101 test
+```
+
+Stubs compile; tests fail until you implement the types. Instructor smoke overlays `solutions/` in a temp tree: `python3 qa/smoke_runnable_labs.py`. BUILD-301–305 use the reference app (`./mvnw test`). Paper, WAS, OpenShift, and live AWS apply are still out of scope.
+
 ## How to take a module
 
 1. Read the module `README.md`.
