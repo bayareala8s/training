@@ -1,0 +1,71 @@
+{
+  "id": "INC-AWS-1104",
+  "labId": "INCIDENT-1104",
+  "title": "ALB 502/503 while payment tasks stay RUNNING",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-1101-cluster",
+  "environment": "us-west-2-student",
+  "region": "us-west-2",
+  "startedAt": "2026-11-12T22:10:14Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "HTTP 502/503 on pay-alb-student.baypay.example; POST /api/v1/payments never reaches a healthy target",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1104c44-0000-4000-8000-111111111104",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/target-health.txt"],
+      "instruction": "Read this timeline and the target-health paste before requesting the task definition."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/task-def.json"],
+      "instruction": "Record a hypothesis on the student worksheet, then open the task-definition excerpt."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/alb-listener.txt"],
+      "instruction": "Open the listener/curl paste only after you write what the edge should show if every target is unhealthy."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-12T21:20:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Registered payment-service 3.9.2 on ECS/Fargate and attached the ALB target group from the BUILD-1101 starter. Ticket BAYPAY-11041. Said the tasks 'came up RUNNING' and the health check 'uses the default path'."
+    },
+    {
+      "at": "2026-11-12T21:55:11Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Tasks RUNNING, target group unhealthy. Asked for describe-target-health before blaming the security group."
+    },
+    {
+      "at": "2026-11-12T22:10:14Z",
+      "actor": "pager",
+      "summary": "SEV-2: pay-alb-student.baypay.example HTTP 502/503. payment-service targets unhealthy."
+    },
+    {
+      "at": "2026-11-12T22:11:40Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1104c44-0000-4000-8000-111111111104 HTTP 503. Same Idempotency-Key on retry. Some clients logged 502."
+    },
+    {
+      "at": "2026-11-12T22:13:02Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested target health (gate 1). Asked Sam not to open 8080 to 0.0.0.0/0 while tasks are RUNNING and the health check already has a reason code."
+    }
+  ]
+}

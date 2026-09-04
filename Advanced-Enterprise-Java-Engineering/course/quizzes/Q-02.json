@@ -1,0 +1,105 @@
+{
+  "id": "Q-02",
+  "moduleId": "module-02",
+  "title": "Module 2 quiz",
+  "questionCount": 8,
+  "includesExplanations": true,
+  "questions": [
+    {
+      "id": "Q-02-01",
+      "prompt": "Thread A sets a non-volatile boolean authorized = true. Thread B spins while (!authorized). Which statement is correct under the Java Memory Model?",
+      "choices": [
+        { "id": "a", "text": "B is guaranteed to see true because the heap is shared." },
+        { "id": "b", "text": "B may see false indefinitely; there is no happens-before edge." },
+        { "id": "c", "text": "B will see true after at most one context switch." },
+        { "id": "d", "text": "The read is a data race, so the JVM must throw ConcurrentModificationException." }
+      ],
+      "correct": "b",
+      "explanation": "A shared heap does not imply visibility. Without volatile, unlock/lock, or another happens-before edge, B may cache false forever. Visibility bugs do not throw."
+    },
+    {
+      "id": "Q-02-02",
+      "prompt": "BayPay stores availableCents as volatile long and two capture threads execute availableCents -= amount. What can happen?",
+      "choices": [
+        { "id": "a", "text": "Both captures always see the latest value, so funds cannot be double-spent." },
+        { "id": "b", "text": "Volatile makes the increment atomic, so this is safe." },
+        { "id": "c", "text": "Both threads can read the same starting value and both write a too-large remaining amount (lost update)." },
+        { "id": "d", "text": "The second thread is specified to wait for the first volatile write to complete the entire compound update." }
+      ],
+      "correct": "c",
+      "explanation": "volatile publishes a single write. It does not make read-modify-write atomic. Two captures can interleave and lose an update. Use a lock, AtomicLong, or merge on one structure."
+    },
+    {
+      "id": "Q-02-03",
+      "prompt": "An in-memory idempotency map is a ConcurrentHashMap. The code does if (!map.containsKey(key)) { map.put(key, id); post(); }. Why can Harbor Bike Co still be charged twice?",
+      "choices": [
+        { "id": "a", "text": "ConcurrentHashMap does not allow two threads to call put." },
+        { "id": "b", "text": "containsKey + put is two operations; both threads can observe absence and both post." },
+        { "id": "c", "text": "ConcurrentHashMap iteration is illegal and aborts one post." },
+        { "id": "d", "text": "The map is concurrent, so the second post is defined to become a replay." }
+      ],
+      "correct": "b",
+      "explanation": "Thread-safe single operations are not an atomic business method. putIfAbsent or computeIfAbsent is the in-memory verb. Production still needs a unique database key."
+    },
+    {
+      "id": "Q-02-04",
+      "prompt": "Which executor configuration is acceptable for parallel payment posting?",
+      "choices": [
+        { "id": "a", "text": "newCachedThreadPool() so the sale can scale without a cap." },
+        { "id": "b", "text": "ThreadPoolExecutor with a bounded queue and AbortPolicy, mapping rejection to a 503." },
+        { "id": "c", "text": "DiscardPolicy so a full queue never bothers the HTTP thread." },
+        { "id": "d", "text": "A single-thread executor that you also call get() on from the same thread." }
+      ],
+      "correct": "b",
+      "explanation": "Money work must be bounded and rejection must be visible. Cached pools and DiscardPolicy lose or explode capacity. get() on the same single-thread executor deadlocks."
+    },
+    {
+      "id": "Q-02-05",
+      "prompt": "A virtual thread calls a blocking HTTP authorizer inside synchronized (ledgerLock). What is the main risk?",
+      "choices": [
+        { "id": "a", "text": "Virtual threads cannot perform HTTP." },
+        { "id": "b", "text": "The carrier can remain pinned for the I/O wait, collapsing concurrency to roughly the carrier count." },
+        { "id": "c", "text": "synchronized is ignored on virtual threads, so the ledger corrupts silently." },
+        { "id": "d", "text": "The JVM converts the lock into a Semaphore automatically." }
+      ],
+      "correct": "b",
+      "explanation": "Java 21 intrinsic locks pin the carrier. Holding synchronized across I/O recreates a tiny platform pool. Keep I/O outside the lock; use a semaphore for admission control."
+    },
+    {
+      "id": "Q-02-06",
+      "prompt": "Completions for payments and refunds drop to zero, CPU is idle, health is UP, JDBC is idle, worker threads are still alive. Which investigation is the best next step after logs?",
+      "choices": [
+        { "id": "a", "text": "Increase the heap and assume GC thrash." },
+        { "id": "b", "text": "Capture a thread dump and see who owns which monitors." },
+        { "id": "c", "text": "Disable idempotency keys to improve throughput." },
+        { "id": "d", "text": "Add more worker threads until CPU rises." }
+      ],
+      "correct": "b",
+      "explanation": "Idle CPU plus no completions plus live workers is a waiting problem until proven otherwise. A dump shows BLOCKED/WAITING and lock owners. More threads will also wait. Health UP does not mean money is moving."
+    },
+    {
+      "id": "Q-02-07",
+      "prompt": "Which statement about BayPay idempotency under concurrency is correct?",
+      "choices": [
+        { "id": "a", "text": "An in-memory ConcurrentHashMap is sufficient once two JVM instances serve authorize." },
+        { "id": "b", "text": "A unique database constraint (plus a transactional post) is the multi-instance control; the heap map is at most a single-instance helper." },
+        { "id": "c", "text": "Idempotency-Key is optional if the client promise is 'at most once'." },
+        { "id": "d", "text": "Returning HTTP 201 twice for the same key is always correct as long as amounts match." }
+      ],
+      "correct": "b",
+      "explanation": "Two pods do not share a heap. BayPay’s reference app persists the key. Two 201s with two ledger rows is a duplicate debit, which is what BREAKFIX-201 showed."
+    },
+    {
+      "id": "Q-02-08",
+      "prompt": "A canary uses two locks. What policy prevents circular wait without requiring tryLock?",
+      "choices": [
+        { "id": "a", "text": "Document and enforce one acquisition order on every path, or collapse to a single money lock." },
+        { "id": "b", "text": "Take locks in whichever order the method reads first; order does not matter if locks are private." },
+        { "id": "c", "text": "Make both locks volatile." },
+        { "id": "d", "text": "Call notifyAll on each lock after acquire." }
+      ],
+      "correct": "a",
+      "explanation": "Circular wait is broken by a single lock or one global order. Privacy of the object does not prevent two methods from taking two locks in opposite orders. volatile and notify do not define acquisition order."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+# payment-service logs — pay-prod-east-2
+# Synthetic BayPay. Gate 2. Times in UTC.
+
+2026-10-06T23:10:18.004Z level=INFO  correlationId=none logger=c.b.payment.BayPayApplication msg=Started BayPayApplication version=3.8.2 instance=pay-prod-east-2
+2026-10-06T23:10:18.220Z level=INFO  correlationId=none logger=c.b.payment.idempotency.IdempotencyReplayCache msg=in-process replay cache enabled=true maxSize=-1 ttlSeconds=0 backingMap=ConcurrentHashMap
+2026-10-07T04:12:01.110Z level=INFO  correlationId=none logger=c.b.payment.idempotency.IdempotencyReplayCache msg=cache stats size=184220 estimatedBytes=94100480 hits=12044 misses=184220
+2026-10-07T16:12:01.108Z level=INFO  correlationId=none logger=c.b.payment.idempotency.IdempotencyReplayCache msg=cache stats size=401882 estimatedBytes=214088192 hits=28810 misses=401882
+2026-10-08T04:12:01.109Z level=INFO  correlationId=none logger=c.b.payment.idempotency.IdempotencyReplayCache msg=cache stats size=712440 estimatedBytes=388120064 hits=41002 misses=712440
+2026-10-08T16:12:01.111Z level=INFO  correlationId=none logger=c.b.payment.idempotency.IdempotencyReplayCache msg=cache stats size=988104 estimatedBytes=541002752 hits=55218 misses=988104
+2026-10-08T19:04:12.550Z level=WARN  correlationId=none logger=org.springframework.boot.actuate.health.HealthEndpointWebExtension msg=readiness failed reason=heap used 91 percent
+2026-10-08T20:51:03.002Z level=WARN  correlationId=none logger=org.springframework.boot.actuate.health.HealthEndpointWebExtension msg=readiness failed reason=heap used 93 percent
+2026-10-08T20:51:40.880Z level=INFO  correlationId=a8020001-1111-4000-8000-000000000101 logger=c.b.payment.api.PaymentController msg=POST /api/v1/payments accepted customer=11111111-1111-1111-1111-111111111111 paymentId=c802d222-0000-4000-8000-111111111802
+2026-10-08T20:51:44.019Z level=ERROR correlationId=a8020001-1111-4000-8000-000000000101 logger=c.b.payment.api.ApiExceptionHandler msg=payment create failed error=connection closed during replica recycle
+2026-10-08T21:42:08.100Z level=WARN  correlationId=none logger=c.b.payment.idempotency.IdempotencyReplayCache msg=cache stats size=1102880 estimatedBytes=612441088 hits=60110 misses=1102880
+2026-10-08T21:43:55.440Z level=INFO  correlationId=none logger=c.b.payment.config.BayPayConfig msg=feature idempotency-replay-cache enabled=true instance=pay-prod-east-2 version=3.8.2
+2026-10-08T21:44:12.008Z level=INFO  correlationId=none logger=c.b.shared.idempotency.IdempotencyService msg=db replay lookup ok table=idempotency_record keyHash=present customer=11111111-1111-1111-1111-111111111111

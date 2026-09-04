@@ -1,0 +1,61 @@
+{
+  "id": "INC-EE-403",
+  "labId": "INCIDENT-403",
+  "title": "Completed payment missing ledger row",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "pay-prod-east-1",
+  "environment": "prod-east",
+  "startedAt": "2026-08-21T18:22:00Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "Subset of COMPLETED payments have no ledger_transactions row; merchants received HTTP 201",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111"
+  },
+  "examplePaymentId": "7c2a9e10-4b55-4d21-9a0e-0f3c1b77a901",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Read this timeline and the logs before the dashboard."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Record a hypothesis, then open the dashboard."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/deployment-history.md"],
+      "instruction": "Open deployment history only after you write what a release record would confirm or refute."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-08-21T17:10:00Z",
+      "actor": "deploy",
+      "summary": "payment-service 3.5.5-baypay.184 marked healthy on prod-east."
+    },
+    {
+      "at": "2026-08-21T18:22:00Z",
+      "actor": "finance-recon",
+      "summary": "Recon job flagged COMPLETED payments with zero ledger rows in the last 70 minutes."
+    },
+    {
+      "at": "2026-08-21T18:24:30Z",
+      "actor": "pager",
+      "summary": "SEV-2: ledger coverage below 100% on payment creates after 17:10 UTC."
+    },
+    {
+      "at": "2026-08-21T18:28:00Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market confirms HTTP 201 for payment 7c2a9e10-4b55-4d21-9a0e-0f3c1b77a901. Settlement file will miss it."
+    }
+  ]
+}

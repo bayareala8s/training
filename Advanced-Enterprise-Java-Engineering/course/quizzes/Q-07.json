@@ -1,0 +1,104 @@
+{
+  "id": "Q-07",
+  "moduleId": "module-07",
+  "title": "Module 7 quiz — JVM Internals and Performance",
+  "description": "Eight questions on HotSpot memory, class loading, JIT, GC, allocation, and containers for BayPay’s Java 21 payment-service. Synthetic only.",
+  "questions": [
+    {
+      "id": "Q-07-01",
+      "prompt": "jcmd GC.heap_info on payment-service shows a 2g heap that is 40% used. RSS is 3.1g. What is the honest reading?",
+      "choices": [
+        "The process is leaking 1.1g of Java objects",
+        "Heap used is not RSS; stacks, metaspace, native, and GC overhead also live in the process",
+        "You must set -Xmx equal to RSS",
+        "G1 is broken because RSS exceeds -Xmx"
+      ],
+      "correctIndex": 1,
+      "explanation": "Heap is one region. RSS includes thread stacks, metaspace, code cache, native libraries, and allocator waste. NMT is how you name the rest."
+    },
+    {
+      "id": "Q-07-02",
+      "prompt": "Avery Chen’s payment request allocates a Money record and a Payment entity. Which statement is true?",
+      "choices": [
+        "Both always die in TLAB and never become heap objects",
+        "Money is a value object in the domain; the JVM may still allocate unless escape analysis proves otherwise",
+        "Records never allocate",
+        "-XX:+UseG1GC prevents allocation"
+      ],
+      "correctIndex": 1,
+      "explanation": "Domain immutability is not scalar replacement. Measure allocation. Escape analysis is a maybe, not a contract."
+    },
+    {
+      "id": "Q-07-03",
+      "prompt": "Why is -Xcomp a bad default on pay-prod-east-2?",
+      "choices": [
+        "Java 21 removed the JIT",
+        "It forces compilation of cold code, increases startup and code-cache pressure, and is not a substitute for a production profiler",
+        "It disables G1",
+        "It is required for Spring Boot 3.5"
+      ],
+      "correctIndex": 1,
+      "explanation": "C1/C2 need warmup and profiling. -Xcomp compiles everything early. Use it as a diagnostic curiosity, not a prod flag."
+    },
+    {
+      "id": "Q-07-04",
+      "prompt": "A GC log shows frequent young collections and rare mixed/old collections. p99 is fine. What have you established?",
+      "choices": [
+        "You must switch to SerialGC",
+        "Young-gen churn is happening; that is not automatically a pause incident",
+        "The heap is leaking IdempotencyRecord",
+        "Metaspace is exhausted"
+      ],
+      "correctIndex": 1,
+      "explanation": "Young GC is normal under allocation. An incident needs pause time, allocation rate, or old-gen growth — not ‘GC happened.’"
+    },
+    {
+      "id": "Q-07-05",
+      "prompt": "Native Memory Tracking summary shows Thread + Internal + GC far above the Java heap used. First question?",
+      "choices": [
+        "Raise -Xmx until RSS drops",
+        "How many threads, and what is the container/cgroup limit?",
+        "Disable NMT forever",
+        "Bounce Postgres"
+      ],
+      "correctIndex": 1,
+      "explanation": "Thread stacks and native grow with thread count. That is the container-OOM setup, not a reason to grow heap."
+    },
+    {
+      "id": "Q-07-06",
+      "prompt": "A 512Mi cgroup and -Xmx512m on payment-service is wrong because:",
+      "choices": [
+        "G1 cannot use 512Mi",
+        "The JVM needs headroom for metaspace, stacks, code cache, and native; the cgroup kills the process when RSS exceeds 512Mi",
+        "Spring Boot requires 8g",
+        "UseContainerSupport ignores -Xmx"
+      ],
+      "correctIndex": 1,
+      "explanation": "Heap = limit leaves no room for the rest of the process. Prefer MaxRAMPercentage < 100 or an explicit -Xmx below the cgroup."
+    },
+    {
+      "id": "Q-07-07",
+      "prompt": "Spring Boot’s LaunchedURLClassLoader loads payment-service classes. What still belongs in metaspace?",
+      "choices": [
+        "Avery Chen’s Money amounts",
+        "Class metadata for loaded classes and generated proxies",
+        "PostgreSQL row bytes",
+        "IHS plugin-cfg.xml"
+      ],
+      "correctIndex": 1,
+      "explanation": "Metaspace holds class metadata. Entity amounts are heap. Reloading class loaders without unloading is a metaspace-growth story."
+    },
+    {
+      "id": "Q-07-08",
+      "prompt": "LAB-702 keeps a List of 200_000 payment records vs dropping them each iteration. What should differ?",
+      "choices": [
+        "Nothing; the JIT erases all lists",
+        "Retained mode holds old-gen / used heap; transient mode shows allocation with objects becoming garbage",
+        "Transient mode always deadlocks",
+        "Retained mode disables GC"
+      ],
+      "correctIndex": 1,
+      "explanation": "Retention vs garbage is the point of the harness. Both allocate; only one keeps the objects live."
+    }
+  ]
+}

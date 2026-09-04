@@ -1,0 +1,26 @@
+# kubectl get endpoints payment-service -n baypay-prod -o yaml
+# Gate: 2
+# Synthetic BayPay. Captured 2026-11-10T17:44:00Z
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: payment-service
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+subsets: []
+
+# kubectl get endpoints payment-service -n baypay-prod
+# NAME              ENDPOINTS   AGE
+# payment-service   <none>      86d
+
+# kubectl describe endpoints payment-service
+# Name:         payment-service
+# Namespace:    baypay-prod
+# Subsets:      (none)
+# Events:       <none>
+
+# Service selector (for contrast, not a separate gate file): app=payment-service
+# Three Running pods carry label app=payment-service. None are Ready, so Endpoints stay empty.
+# Not a selector mismatch pack. Endpoints are empty because Ready is 0/1.

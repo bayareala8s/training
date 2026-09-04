@@ -1,0 +1,74 @@
+# kubectl describe pod — teaching paste
+# Namespace: baypay-prod
+# Gate: 1
+# Synthetic BayPay. Not a live cluster.
+
+Name:             payment-service-6c8d7f9b4-n2p8w
+Namespace:        baypay-prod
+Priority:         0
+Service Account:  default
+Node:             ip-10-8-4-21/10.8.4.21
+Start Time:       Tue, 03 Nov 2026 10:06:11 -0800
+Labels:           app=payment-service
+                  pod-template-hash=6c8d7f9b4
+Annotations:      <none>
+Status:           Running
+IP:               10.8.21.44
+IPs:
+  IP:           10.8.21.44
+Controlled By:  ReplicaSet/payment-service-6c8d7f9b4
+Containers:
+  payment:
+    Container ID:   cri-o://9f3e1c2a7b104d559c01a4e0b8c11220
+    Image:          registry.baypay.example/baypay/payment-service:3.9.1
+    Image ID:       registry.baypay.example/baypay/payment-service@sha256:c1001aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    1
+      Started:      Tue, 03 Nov 2026 10:18:02 -0800
+      Finished:     Tue, 03 Nov 2026 10:18:08 -0800
+    Ready:          False
+    Restart Count:  7
+    Limits:
+      cpu:     1
+      memory:  2Gi
+    Requests:
+      cpu:     250m
+      memory:  1Gi
+    Liveness:   http-get http://:8080/actuator/health/liveness delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:8080/actuator/health/readiness delay=15s timeout=1s period=5s #success=1 #failure=3
+    Environment Variables from:
+      payment-config  ConfigMap  Optional: false
+    Environment:
+      BAYPAY_DB_PASSWORD:  <set to the key 'BAYPAY_DB_PASSWORD' in secret 'baypay-db'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-7xq2p (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  kube-api-access-7xq2p:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                  From               Message
+  ----     ------     ----                 ----               -------
+  Normal   Scheduled  16m                  default-scheduler  Successfully assigned baypay-prod/payment-service-6c8d7f9b4-n2p8w to ip-10-8-4-21
+  Normal   Pulled     16m                  kubelet            Successfully pulled image "registry.baypay.example/baypay/payment-service:3.9.1" in 812ms
+  Normal   Created    16m (x8 over 16m)    kubelet            Created container payment
+  Normal   Started    16m (x8 over 16m)    kubelet            Started container payment
+  Warning  BackOff    14s (x42 over 15m)   kubelet            Back-off restarting failed container payment in pod payment-service-6c8d7f9b4-n2p8w_baypay-prod
+  Warning  Failed     14s (x8 over 15m)    kubelet            Error: crash loop detected, last exit 1
+
+# Same last State on payment-service-6c8d7f9b4-k8m1q and payment-service-6c8d7f9b4-t4r0c
+# Ready 0/1, Restart Count 6–8, Exit Code 1, Reason Error. Image pull succeeded.
+# Desired replicas: 3. Ready replicas: 0.

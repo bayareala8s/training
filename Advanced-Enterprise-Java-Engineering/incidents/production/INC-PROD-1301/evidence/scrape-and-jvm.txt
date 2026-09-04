@@ -1,0 +1,65 @@
+# Scrape target + JVM process — payment-service / pay-prod-west
+# Captured: 2026-12-18T18:10Z (3.9.0 just up) and 2026-12-18T18:22Z (pager)
+# Source: synthetic Prometheus target health + Micrometer /actuator/prometheus + OS process
+# Gate: 2
+# Not a live AMP workspace.
+
+job:     payment-service
+region:  us-west-2
+path:    /actuator/prometheus
+scrape:  15s interval, 10s timeout
+image:   3.9.0 (3.8.4 numbers from 18:05 UTC retained for compare)
+
+## Prometheus target health (paper)
+
+| Time (UTC) | scrape_duration_seconds | last scrape status | samples in scrape | notes |
+|---|---|---|---|---|
+| 18:05 | 0.187 | success | 12440 | 3.8.4, typical |
+| 18:08 | 0.204 | success | 12810 | roll starting |
+| 18:10 | 1.64 | success | 411208 | duration left the usual ~200 ms band |
+| 18:16 | 4.21 | success | 1844022 | Priya: scrape looking slow |
+| 18:21 | 7.88 | success | 2481090 | approaching timeout |
+| 18:22 | 10.00 | timeout | (incomplete) | target flapping; last success 18:21:44Z |
+| 18:24 | 10.00 | timeout | (incomplete) | second timeout in a row |
+
+scrape_timeout_seconds = 10
+scrape_duration ~0.20 s (18:05) → multi-second (18:16+) → timeout (18:22)
+
+## Series / sample count (job=payment-service)
+
+| Time (UTC) | time series (head) | samples this scrape |
+|---|---|---|
+| 18:05 | 12440 | 12440 |
+| 18:10 | 411208 | 411208 |
+| 18:16 | 1844022 | 1844022 |
+| 18:21 | 2611088 | 2481090 |
+| 18:22 | (target timeout; last head 2611088) | — |
+
+prometheus_target_interval_length_seconds still 15 s. The job is not keeping the interval.
+
+## JVM / process (same tasks)
+
+| Time (UTC) | heap used | heap max | process CPU | live threads | gc_pause_p99 (5m) |
+|---|---|---|---|---|---|
+| 18:05 | 1.08 G | 2.00 G | 0.17 | 89 | 14 ms |
+| 18:16 | 1.54 G | 2.00 G | 0.49 | 176 | 28 ms |
+| 18:22 | 1.71 G | 2.00 G | 0.68 | 214 | 41 ms |
+
+Heap and CPU are **up**. G1 pause p99 stayed tens of milliseconds (not the 420 ms / 640 ms story from the October canary pack). No `OutOfMemoryError`. Old-gen used 412 M → 448 M (flat-ish).
+
+## Servlet / request path (actuator extras)
+
+| Time (UTC) | tomcat busy / max | request queue | actuator scrape handler p99 |
+|---|---|---|---|
+| 18:05 | 18 / 200 | 0 | 22 ms |
+| 18:22 | 187 / 200 | 14 | 4.6 s |
+
+Request threads are busy. The scrape handler itself is slow.
+
+## What this file does not include
+
+Thread dump: omitted (see pack README).
+Heap dump: omitted.
+Postgres / Hikari wait histograms: omitted. RED board already showed Hikari pending = 0.
+
+Riley: quote scrape duration, series/sample count, heap, and CPU on the worksheet before opening gate 3.

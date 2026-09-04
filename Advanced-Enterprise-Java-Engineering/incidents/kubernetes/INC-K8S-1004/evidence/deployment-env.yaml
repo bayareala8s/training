@@ -1,0 +1,50 @@
+# Deployment env excerpt — payment-service / baypay-prod
+# Gate: 3
+# Teaching equivalent: kubectl get deploy payment-service -n baypay-prod -o yaml
+# Synthetic BayPay. Captured 2026-11-12T21:22:00Z
+# No Secret values.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment
+          image: registry.baypay.example/baypay/payment-service:3.9.1
+          envFrom:
+            - configMapRef:
+                name: payment-config
+          env:
+            - name: BAYPAY_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: baypay-db
+                  key: BAYPAY_DB_USER
+            - name: BAYPAY_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: baypay-db
+                  key: BAYPAY_DB_PASSWORD
+                  optional: true
+          ports:
+            - name: http
+              containerPort: 8080
+
+# Process env name: BAYPAY_DB_PASSWORD
+# secretKeyRef.key: BAYPAY_DB_PASSWORD
+# optional: true  — missing key does not block the pod; the process starts with a blank password
+# Compare secret-keys.txt key names to secretKeyRef.key
+# CLUSTER.md: Secret baypay-db keys BAYPAY_DB_USER, BAYPAY_DB_PASSWORD

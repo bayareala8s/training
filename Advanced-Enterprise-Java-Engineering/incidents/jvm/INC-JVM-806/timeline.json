@@ -1,0 +1,70 @@
+{
+  "id": "INC-JVM-806",
+  "labId": "INCIDENT-806",
+  "title": "Canary pod restarting",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "pay-prod-east-2",
+  "environment": "prod-east",
+  "startedAt": "2026-10-15T23:48:06Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "Intermittent 502 on POST /api/v1/payments when pay-prod-east-2 restarts. pay-prod-east-1 remains healthy.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c806d666-0000-4000-8000-111111111806",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting kube events."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/kube-events.md"],
+      "instruction": "Record a hypothesis on the student worksheet, then open kube events."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/jvm-flags.md"],
+      "instruction": "Open JVM flags only after you write what heap versus cgroup would confirm or refute."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-15T22:15:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Moved pay-prod-east-2 onto a smaller canary pod (memory 512Mi) to save cost. Set JAVA_TOOL_OPTIONS=-Xmx512m so the heap 'uses the limit'. Ticket BAYPAY-8066. pay-prod-east-1 unchanged (1536m heap, 2Gi)."
+    },
+    {
+      "at": "2026-10-15T23:12:40Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Noted east-2 restart count 2 in 40 minutes. Asked for events before changing the limit again."
+    },
+    {
+      "at": "2026-10-15T23:48:06Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service prod-east pay-prod-east-2 unavailable 3 times in 90 minutes. Load balancer 502 burst. east-1 error rate 0."
+    },
+    {
+      "at": "2026-10-15T23:49:22Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c806d666-0000-4000-8000-111111111806 HTTP 502 then HTTP 201 on retry to east-1. Same Idempotency-Key."
+    },
+    {
+      "at": "2026-10-15T23:51:10Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested dashboard (gate 1). Asked Jordan not to set -Xmx equal to a new limit without a headroom number."
+    }
+  ]
+}

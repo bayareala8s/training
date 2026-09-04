@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: payment-service
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+  annotations:
+    description: Kubernetes front door. OpenShift Route payment-route uses the same host.
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - payments.apps.baypay.example
+      secretName: payment-tls
+  rules:
+    - host: payments.apps.baypay.example
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-service
+                port:
+                  number: 8080

@@ -1,0 +1,357 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "BayPay payment-service operations home board (paper). RED + USE + 99.9% SLO and error-budget burn for POST /api/v1/payments. Labels limited to uri, method, outcome, status. Synthetic teaching metrics. Diagram AEJE-D-061.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "RED — POST /api/v1/payments",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Completions per second for the golden create. Not threads-busy.",
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\"}[5m]))",
+          "legendFormat": "POST /api/v1/payments rate",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Rate — POST /api/v1/payments",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Server failures on the golden URI. 5xx only. Ordinary 4xx are client and are not SLO burn by default. 429 may be treated as capacity if the cohort agrees.",
+      "fieldConfig": {
+        "defaults": { "unit": "reqps" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 1 },
+      "id": 2,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\",status=~\"5..\"}[5m]))",
+          "legendFormat": "5xx",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\",status=\"429\"}[5m]))",
+          "legendFormat": "429 (capacity, ticket unless cohort pages)",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Errors — 5xx (and 429) POST /api/v1/payments",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Teaching tail is P99 of the histogram, not average. Latency SLO: P99 < 400 ms on the happy path.",
+      "fieldConfig": {
+        "defaults": { "unit": "s" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 1 },
+      "id": 3,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(http_server_requests_seconds_bucket{uri=\"/api/v1/payments\",method=\"POST\"}[5m])))",
+          "legendFormat": "P99",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(http_server_requests_seconds_bucket{uri=\"/api/v1/payments\",method=\"POST\"}[5m])))",
+          "legendFormat": "P50 (context, not the page)",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Duration — P99 POST /api/v1/payments",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+      "id": 101,
+      "title": "SLO — 99.9% payment-create availability (not 99.99%)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "SLI = successful creates / (successful + server failures). Server failure = 5xx or timeout that becomes 5xx. Exclude ordinary 4xx. Target 99.9% over 30d. Error budget ≈ 43 minutes / 30-day month. Do not silently upgrade to 99.99%.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 3,
+          "max": 1,
+          "min": 0.99,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.999 },
+              { "color": "green", "value": 0.9995 }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 10 },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "1 - (sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\",status=~\"5..\"}[30d])) / clamp_min(sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\"}[30d])), 1e-9))",
+          "legendFormat": "SLI 30d",
+          "refId": "A"
+        }
+      ],
+      "title": "SLI — availability vs 99.9% target",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Remaining error budget at 99.9% (1 - 0.999 = 0.001). ~43 minutes equivalent downtime per 30-day month. Page when burn consumes the budget too fast.",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "max": 1,
+          "min": 0,
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 10 },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "1 - ((sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\",status=~\"5..\"}[30d])) / clamp_min(sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\"}[30d])), 1e-9)) / 0.001)",
+          "legendFormat": "error budget remaining",
+          "refId": "A"
+        }
+      ],
+      "title": "Error budget remaining — 99.9% / 30d",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Burn = observed server-error ratio / 0.001 (the 99.9% allowance). Fast window 5m and slow window 1h. Page on sustained burn, not on CPU > 80%.",
+      "fieldConfig": {
+        "defaults": { "decimals": 2, "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 10 },
+      "id": 6,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "(sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\",status=~\"5..\"}[5m])) / clamp_min(sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\"}[5m])), 1e-9)) / 0.001",
+          "legendFormat": "burn 5m (fast)",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "(sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\",status=~\"5..\"}[1h])) / clamp_min(sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\"}[1h])), 1e-9)) / 0.001",
+          "legendFormat": "burn 1h (slow)",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "SLO burn — 99.9% allowance (error ratio / 0.001)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 },
+      "id": 102,
+      "title": "USE — heap, Hikari jdbc/baypay, servlet threads",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Utilization = used / max. Saturation signals: old-gen near full, allocation rate. Errors: OOM / allocation failure. Do not page on heap % alone.",
+      "fieldConfig": {
+        "defaults": { "unit": "bytes" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 19 },
+      "id": 7,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "sum(jvm_memory_used_bytes{area=\"heap\",job=\"payment-service\"})",
+          "legendFormat": "heap used",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "sum(jvm_memory_max_bytes{area=\"heap\",job=\"payment-service\"})",
+          "legendFormat": "heap max",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "JVM heap — used / max",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Hikari pool jdbc/baypay. Utilization = active / max. Saturation = pending threads. Errors = connection timeout. Pending > 0 is a page-predicting saturation signal.",
+      "fieldConfig": {
+        "defaults": { "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 19 },
+      "id": 8,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "hikaricp_connections_active{pool=\"jdbc/baypay\",job=\"payment-service\"}",
+          "legendFormat": "active",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "hikaricp_connections_pending{pool=\"jdbc/baypay\",job=\"payment-service\"}",
+          "legendFormat": "pending",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "hikaricp_connections_max{pool=\"jdbc/baypay\",job=\"payment-service\"}",
+          "legendFormat": "max",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "Hikari jdbc/baypay — active / pending / max",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Tomcat / servlet threads. Utilization = busy / max. Saturation = queue depth. Errors = reject / 503. A maxed pool predicts SLO burn.",
+      "fieldConfig": {
+        "defaults": { "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 19 },
+      "id": 9,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "tomcat_threads_busy_threads{job=\"payment-service\"}",
+          "legendFormat": "busy",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "tomcat_threads_config_max_threads{job=\"payment-service\"}",
+          "legendFormat": "max",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Servlet / Tomcat threads — busy / max",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["baypay", "payment-service", "ops", "aeje-d-061", "slo-99.9"],
+  "templating": {
+    "list": [
+      {
+        "current": { "text": "payment-service", "value": "payment-service" },
+        "hide": 0,
+        "label": "job",
+        "name": "job",
+        "query": "payment-service",
+        "type": "constant"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "BayPay payment-service operations",
+  "uid": "baypay-ops-1300",
+  "version": 2
+}

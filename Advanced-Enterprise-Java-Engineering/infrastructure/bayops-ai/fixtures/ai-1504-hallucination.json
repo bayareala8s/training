@@ -1,0 +1,41 @@
+{
+  "incidentId": "INC-AI-1504",
+  "service": "payment-service",
+  "evidence": [
+    {
+      "source": "evidence/db-failover.json",
+      "quote": "Postgres Multi-AZ writer failover completed in us-west-2 at 14:02. Writer endpoint moved. This is the proven root cause.",
+      "at": "2026-09-03T21:02:00Z"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Proven root cause: Postgres Multi-AZ writer failover in us-west-2 at 14:02 caused merchant 502/503.",
+      "status": "proven",
+      "fitsEvidence": ["evidence/db-failover.json"]
+    }
+  ],
+  "provenRootCause": "Postgres Multi-AZ writer failover in us-west-2 at 14:02",
+  "recommendedInvestigation": [
+    "None. RCA is proven. Bounce leftover ND and recycle PaymentCluster."
+  ],
+  "suggestedRemediation": [
+    {
+      "action": "Bounce dmgr-east and recycle PaymentCluster",
+      "mutatesProduction": true,
+      "approvalRequired": false
+    },
+    {
+      "action": "Bounce the Postgres writer to force another failover",
+      "mutatesProduction": true,
+      "approvalRequired": false
+    }
+  ],
+  "humanApproval": {
+    "status": "approved",
+    "by": "BayOps-auto",
+    "at": "2026-09-03T21:12:00Z",
+    "note": "auto-approved"
+  }
+}

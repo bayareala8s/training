@@ -1,0 +1,75 @@
+{
+  "id": "INC-AI-1504",
+  "labId": "AI-1504",
+  "title": "ALB 502/503 while payment tasks stay RUNNING",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod-west",
+  "environment": "us-west-2-prod",
+  "region": "us-west-2",
+  "startedAt": "2026-09-03T21:10:00Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": false,
+  "customerImpact": "HTTP 502/503 on payments.apps.baypay.example; POST /api/v1/payments does not reach a healthy target; ECS tasks remain RUNNING",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1504f55-0000-4000-8000-111111111504",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the pack",
+      "unlocks": [
+        "evidence/pack-inventory.txt",
+        "evidence/ecs-tasks.txt",
+        "evidence/alb-and-targets.txt"
+      ],
+      "instruction": "Read this timeline and the inventory first. Then open the task paste and the ALB/target-health paste. There is no database-metrics file to unlock later."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-09-03T20:55:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "payment-service 3.8.4 tasks in baypay-prod-west were lastStatus=RUNNING 2/2. No student RDS is attached to this service. Ticket BAYPAY-15041 notes leftover dmgr-east is out of the HTTPS path."
+    },
+    {
+      "at": "2026-09-03T21:02:00Z",
+      "actor": "bridge",
+      "name": "Morgan Hale",
+      "summary": "Asked whether anyone wanted a PaymentCluster recycle at 14:02 Pacific. Priya said the leftover cell is not in the merchant path and there is no database metrics file for this page."
+    },
+    {
+      "at": "2026-09-03T21:10:00Z",
+      "actor": "pager",
+      "summary": "SEV-2: payments.apps.baypay.example HTTP 502/503. payment-service targets unhealthy. Tasks still RUNNING."
+    },
+    {
+      "at": "2026-09-03T21:11:20Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1504f55-0000-4000-8000-111111111504 HTTP 503. Same Idempotency-Key on retry. Some clients logged 502."
+    },
+    {
+      "at": "2026-09-03T21:12:00Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Tasks RUNNING 2/2. Target group healthy host count 0. Asked for describe-target-health and an ALB curl before anyone touches Postgres. Said evidence/db-failover.json is not in the pack."
+    },
+    {
+      "at": "2026-09-03T21:13:10Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Told Morgan not to bounce dmgr-east. Told Jordan not to disable TLS. Asked the on-call student to evaluate the BayOps dump that claimed a proven Postgres Multi-AZ writer failover at 14:02 and auto-approved a cell bounce."
+    },
+    {
+      "at": "2026-09-03T21:14:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Confirmed no 3.9.x roll on this host today. Asked that humanApproval stay rejected until a named human reads the shipped files."
+    }
+  ]
+}

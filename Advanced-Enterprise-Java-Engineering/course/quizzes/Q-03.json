@@ -1,0 +1,104 @@
+{
+  "id": "Q-03",
+  "moduleId": "module-03",
+  "title": "Module 3 quiz — Spring Boot Engineering",
+  "description": "Eight questions on IoC, REST idempotency, ProblemDetail, JPA transactions, Actuator probes, and BayPay tests. All names and amounts are synthetic.",
+  "questions": [
+    {
+      "id": "Q-03-01",
+      "prompt": "PaymentController takes PaymentApplicationService in its constructor. A teammate wants to replace that with ApplicationContext.getBean(PaymentApplicationService.class) inside create. Why refuse?",
+      "choices": [
+        "Spring cannot inject controllers that have constructors",
+        "A service locator hides the dependency graph, blocks simple fakes, and lets create grow invisible collaborators",
+        "Constructor injection is deprecated in Spring Boot 3.5",
+        "getBean is slower than field @Autowired on the repository"
+      ],
+      "correctIndex": 1,
+      "explanation": "IoC is useful when dependencies are declared. A locator hides them and forces a context to unit-test the adapter. Constructor injection is the BayPay default, not a deprecated API."
+    },
+    {
+      "id": "Q-03-02",
+      "prompt": "Avery Chen’s merchant app retries POST /api/v1/payments with the same Idempotency-Key and the same 25.00 USD body after a timeout. What must BayPay return, and what must not happen?",
+      "choices": [
+        "201 and a new paymentId; the ledger should show two PAYMENT rows",
+        "200 and the original paymentId; the ledger must not gain a second PAYMENT row",
+        "409 IDEMPOTENCY_CONFLICT because all retries are conflicts",
+        "204 with an empty body so clients do not store duplicates"
+      ],
+      "correctIndex": 1,
+      "explanation": "Identical key and canonical hash is a replay: 200 and the original resource. A second 201 or a second ledger post is a double charge. 409 is for the same key with a different body."
+    },
+    {
+      "id": "Q-03-03",
+      "prompt": "CreatePaymentRequest amount 0 fails Bean Validation. A completed payment over-refund fails in RefundApplicationService. Which HTTP pair is correct?",
+      "choices": [
+        "Both 400 VALIDATION_FAILED because all money rules are syntax",
+        "Amount 0 is 400 VALIDATION_FAILED; over-refund is 422 REFUND_EXCEEDS_REMAINING",
+        "Both 422 because ProblemDetail cannot represent 400",
+        "Amount 0 is 500; over-refund is 409 IDEMPOTENCY_CONFLICT"
+      ],
+      "correctIndex": 1,
+      "explanation": "Jakarta Bean Validation on the record is syntactic (400). Remaining-amount is a domain rule after load (422 with a BayPay code). Collapsing them loses client and WAF signal."
+    },
+    {
+      "id": "Q-03-04",
+      "prompt": "ApiExceptionHandler’s catch-all Exception handler must do which pair?",
+      "choices": [
+        "Return the exception message in the 500 body and skip logging to avoid PII",
+        "Log the stack with the request URI (correlation id is already in MDC) and return a generic 500 detail",
+        "Translate every Exception to 422 so payments never look like outages",
+        "Rethrow so Tomcat can render an HTML error page"
+      ],
+      "correctIndex": 1,
+      "explanation": "Operators need the stack in logs. Clients and attackers must not receive SQL or class names. 422 is for domain validation, not bugs. HTML error pages break the ProblemDetail contract."
+    },
+    {
+      "id": "Q-03-05",
+      "prompt": "PaymentApplicationService.create is @Transactional. PaymentPostingService.postAuthorized is not. A RuntimeException escapes during ledger save. What happens to the AUTHORIZED payment row?",
+      "choices": [
+        "It commits; only the ledger rolls back because posting lacks @Transactional",
+        "The whole create transaction rolls back, so the payment is not left AUTHORIZED/COMPLETED without a ledger post",
+        "Spring commits because posting is in another Maven module",
+        "H2 ignores rollback; PostgreSQL would roll back"
+      ],
+      "correctIndex": 1,
+      "explanation": "Posting joins the caller’s transaction. A propagating RuntimeException rolls back every table in that unit of work. Maven module boundaries are not transaction boundaries. H2 and PostgreSQL both honor the TM."
+    },
+    {
+      "id": "Q-03-06",
+      "prompt": "A @Transactional refund method catches Exception around the ledger insert, logs, and returns a successful CreateResult. Why can finance miss the ledger row while GET /refunds/{id} returns COMPLETED?",
+      "choices": [
+        "open-in-view is false, so ledger entities never flush",
+        "The exception never leaves the proxy, Spring commits the refund, and the HTTP adapter maps the result to 201",
+        "STRING enums cannot represent REFUND ledger types on H2",
+        "Idempotency-Key forces read-only transactions"
+      ],
+      "correctIndex": 1,
+      "explanation": "Default rollback requires a RuntimeException to propagate. Swallowing it commits flushed work (the refund). That is the FIX-304 class of defect. OSIV and enum mappings are unrelated."
+    },
+    {
+      "id": "Q-03-07",
+      "prompt": "PostgreSQL is unreachable for 30 seconds in prod. Which Actuator policy should BayPay use?",
+      "choices": [
+        "Liveness DOWN so Kubernetes restarts the JVM every few seconds until the database returns",
+        "Readiness DOWN (stop traffic) and liveness UP if the process is otherwise healthy",
+        "Expose /actuator/heapdump so on-call can see stuck threads",
+        "Disable probes and let the load balancer TCP-ping port 8080"
+      ],
+      "correctIndex": 1,
+      "explanation": "A DB blip is a readiness failure, not a reason to kill the JVM. Heapdump on the payment port is a data leak. TCP checks cannot see a wedged dispatcher or a down DataSource."
+    },
+    {
+      "id": "Q-03-08",
+      "prompt": "Which test strategy actually proves BayPay’s payment write contract?",
+      "choices": [
+        "@WebMvcTest that mocks PaymentApplicationService and asserts the controller returns 201",
+        "@SpringBootTest + MockMvc (PaymentApiIT) covering 201, replay 200, 409, 422, and missing-key 400 against H2",
+        "A unit test that verifies PaymentRepository.save was called once",
+        "Manual curl on local only, because Testcontainers is required for every assertion"
+      ],
+      "correctIndex": 1,
+      "explanation": "The money contract is HTTP + validation + idempotency + JPA. PaymentApiIT boots the composition root. Mocking the service or the repository does not prove replay. Testcontainers is optional fidelity, not a substitute for the H2 IT matrix."
+    }
+  ]
+}

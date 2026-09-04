@@ -1,0 +1,70 @@
+{
+  "id": "INC-JVM-805",
+  "labId": "INCIDENT-805",
+  "title": "Long GC pauses on canary",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "pay-prod-east-2",
+  "environment": "prod-east",
+  "startedAt": "2026-10-14T22:33:10Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /api/v1/payments p99 hundreds of milliseconds on pay-prod-east-2 during long G1 pauses. pay-prod-east-1 remains healthy.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c805d555-0000-4000-8000-111111111805",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting the GC log."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/gc.log"],
+      "instruction": "Record a hypothesis on the student worksheet, then open the GC log excerpt."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/heap-histogram.md"],
+      "instruction": "Request a heap histogram only after you write the question it should answer."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-14T21:50:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Set logging.level.com.baypay=DEBUG on pay-prod-east-2 only to trace Avery Chen payment c805d555-0000-4000-8000-111111111805. Ticket BAYPAY-8055. pay-prod-east-1 stays INFO."
+    },
+    {
+      "at": "2026-10-14T22:10:00Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Log volume on east-2 rose from ~40 lines/s to several thousand lines/s. Allocation rate not yet paged."
+    },
+    {
+      "at": "2026-10-14T22:33:10Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service prod-east G1 pause p99 420ms on pay-prod-east-2. POST /api/v1/payments p99 890ms (SLO 1.5s still met on paper; Harbor Market feels stalls)."
+    },
+    {
+      "at": "2026-10-14T22:34:40Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen creates feel stuck for almost a second, then succeed. Same Idempotency-Key not duplicated."
+    },
+    {
+      "at": "2026-10-14T22:36:18Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested pause dashboard (gate 1). Confirmed east-1 pause p99 16ms. Asked Jordan not to set DEBUG on east-1."
+    }
+  ]
+}

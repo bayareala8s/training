@@ -1,0 +1,1 @@
+Diagram AEJE-D-024: Liberty features and server.xml. Left-to-right labeled boxes: featureManager, servlet-6.0, jdbc-4.3, isolated DataSource. BayPay is a fictional payment platform used for instruction.

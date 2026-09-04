@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="BayPay payment Liberty — isolated jdbc/baypay-payment">
+
+    <featureManager>
+        <feature>servlet-6.0</feature>
+        <feature>jdbc-4.3</feature>
+        <feature>jndi-1.0</feature>
+        <feature>persistence-3.1</feature>
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+                  httpPort="9080"
+                  httpsPort="9443"/>
+
+    <library id="PostgresLib">
+        <fileset dir="${shared.resource.dir}/jdbc" includes="postgresql-*.jar"/>
+    </library>
+
+    <dataSource id="BayPayPaymentDS" jndiName="jdbc/baypay-payment">
+        <jdbcDriver libraryRef="PostgresLib"/>
+        <connectionManager id="BayPayPaymentPool" maxPoolSize="20"/>
+        <properties.postgresql
+            serverName="${env.BAYPAY_DB_HOST}"
+            portNumber="${env.BAYPAY_DB_PORT}"
+            databaseName="${env.BAYPAY_DB_NAME}"
+            user="${env.BAYPAY_DB_USER}"
+            password="${env.BAYPAY_DB_PASSWORD}"/>
+    </dataSource>
+
+    <webApplication id="payment-service"
+                    location="payment-service.war"
+                    contextRoot="/payment"/>
+
+</server>

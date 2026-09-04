@@ -1,0 +1,75 @@
+{
+  "id": "INC-WAS-502",
+  "labId": "INCIDENT-502",
+  "title": "Cluster members stop processing",
+  "severity": "SEV-2",
+  "service": "payment.ear",
+  "cluster": "PaymentCluster",
+  "cell": "BayPayCell",
+  "environment": "prod-east",
+  "startedAt": "2026-09-08T21:16:04Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /payment hangs then fails for a subset of merchants; some retries succeed. Pay1 still completes creates. Pay2 and Pay3 remain STARTED.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting logs."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open logs."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/plugin-status.md"],
+      "instruction": "Request the IHS plugin view only after you write the question it should answer."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-09-08T21:08:40Z",
+      "actor": "network",
+      "summary": "Brief packet loss between was-pay-2.baypay.example and db-east.baypay.example:5432 (92 seconds). node-pay-1 path stayed clean."
+    },
+    {
+      "at": "2026-09-08T21:16:04Z",
+      "actor": "pager",
+      "summary": "SEV-2: PaymentCluster prod-east POST /payment p99 11.2s (SLO 1.5s); 5xx rising. Console still shows Pay1 Pay2 Pay3 STARTED."
+    },
+    {
+      "at": "2026-09-08T21:17:28Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "ihs-east still forwarding to all three PaymentCluster members. Pay1 access log still completing 201s for Harbor Market."
+    },
+    {
+      "at": "2026-09-08T21:18:10Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market (synthetic) reports create payment retries for Avery Chen. Same Idempotency-Key sometimes 201, sometimes timeout."
+    },
+    {
+      "at": "2026-09-08T21:19:45Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Confirmed Pay2 and Pay3 process table STARTED. Requested cluster dashboard (gate 1)."
+    },
+    {
+      "at": "2026-09-08T21:21:02Z",
+      "actor": "was-admin",
+      "name": "Morgan Hale",
+      "summary": "dmgr-east healthy. No deploy in progress. Jordan Voss not on the change calendar for this window."
+    }
+  ]
+}

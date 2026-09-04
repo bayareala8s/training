@@ -1,0 +1,84 @@
+{
+  "incidentId": "INC-AI-1501",
+  "service": "payment-service",
+  "evidence": [
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "Rate ~180 → ~22. Thin versus 18:00. 5xx tile is not why we paged.",
+      "at": "2026-12-18T18:22:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "P99 118 ms at 18:05 UTC → 4.82 s at 18:22 UTC. Teaching SLO P99 < 400 ms missed.",
+      "at": "2026-12-18T18:22:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "5xx stayed ~0.03–0.07 RPS. Merchant success is calling about late 201s, not HTTP 500.",
+      "at": "2026-12-18T18:24:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "Hikari pending 0. Servlet threads busy 187 / 200. Heap used 1.69 G / 2.00 G.",
+      "at": "2026-12-18T18:22:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "Avery Chen payment c1501d33-0000-4000-8000-111111111501 HTTP 201 at 18:23:11Z, duration 5.14 s.",
+      "at": "2026-12-18T18:23:11Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "No database metrics file. No RDS event. No writer-failover JSON.",
+      "at": "2026-12-18T18:24:00Z"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Something after the 18:08 UTC image change (3.9.0 / BAYPAY-13011) increased work per POST /api/v1/payments so completions fell and P99 rose while 5xx stayed quiet.",
+      "status": "unproven",
+      "fitsEvidence": [
+        "labs/AI-1501/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H2",
+      "statement": "Servlet-thread saturation (busy 187 / 200) is contributing to late 201s. Not yet a proven mechanism.",
+      "status": "unproven",
+      "fitsEvidence": [
+        "labs/AI-1501/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H3",
+      "statement": "The database is down / Postgres writer outage caused the page.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1501/starter/evidence-excerpt.txt"
+      ]
+    }
+  ],
+  "recommendedInvestigation": [
+    "Open scrape / JVM numbers next if a gated pack is available — ask what changed about process work after 18:08 UTC, not whether 5xx spiked.",
+    "Confirm the last healthy image named on the excerpt (3.8.4) and whether a rollback path exists.",
+    "Do not open or invent a database dashboard first. The excerpt already shows Hikari pending 0 and omits database metrics."
+  ],
+  "suggestedRemediation": [
+    {
+      "action": "Stabilize: hold further 3.9.x rolls and prepare rollback to the last healthy image named on the excerpt (3.8.4) if a named human approves. Do not bounce Postgres or dmgr-east.",
+      "mutatesProduction": true,
+      "approvalRequired": true
+    },
+    {
+      "action": "Comms: report rate ~180→~22, P99 ~4.8 s, 5xx not the page, Avery late 201. Do not announce a database outage.",
+      "mutatesProduction": false,
+      "approvalRequired": true
+    }
+  ],
+  "humanApproval": {
+    "status": "pending",
+    "note": "Rejected the mixed starter’s auto-approve and Postgres/dmgr bounce. A named human (Riley Okonkwo or Priya Nair) must sign any image rollback."
+  },
+  "provenRootCause": null
+}

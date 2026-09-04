@@ -1,0 +1,27 @@
+# GC log excerpt — pay-prod-east-2
+# Synthetic BayPay. Gate 2.
+# Flags (teaching): -Xlog:gc*:file=gc.log:time,uptime,level,tags
+# Times in UTC. Not a full day of logs.
+
+[2026-10-14T21:48:02.110+0000][info][gc,heap] Heap: 1536M  used 498M  old 221M
+[2026-10-14T21:48:02.118+0000][info][gc     ] GC(4412) Pause Young (Normal) (G1 Evacuation Pause) 22M->18M(1536M) 14.208ms
+[2026-10-14T21:48:06.002+0000][info][gc     ] GC(4413) Pause Young (Normal) (G1 Evacuation Pause) 24M->19M(1536M) 15.110ms
+
+# --- 21:50 UTC: see dashboard overlay / change ticket; GC shape changes after this line ---
+
+[2026-10-14T22:10:14.008+0000][info][gc     ] GC(5104) Pause Young (Normal) (G1 Evacuation Pause) 410M->28M(1536M) 188.440ms
+[2026-10-14T22:10:14.201+0000][info][gc,cpu ] GC(5104) User=0.62s Sys=0.04s Real=0.19s
+[2026-10-14T22:10:14.330+0000][info][gc     ] GC(5105) Pause Young (Normal) (G1 Evacuation Pause) 388M->31M(1536M) 210.002ms
+[2026-10-14T22:10:14.548+0000][info][gc     ] GC(5106) Pause Young (Normal) (G1 Evacuation Pause) 402M->29M(1536M) 241.880ms
+[2026-10-14T22:33:08.100+0000][info][gc     ] GC(6021) Pause Young (Normal) (G1 Evacuation Pause) 520M->34M(1536M) 398.115ms
+[2026-10-14T22:33:08.502+0000][info][gc,cpu ] GC(6021) User=1.41s Sys=0.08s Real=0.40s
+[2026-10-14T22:33:08.640+0000][info][gc     ] GC(6022) Pause Young (Normal) (G1 Evacuation Pause) 498M->36M(1536M) 420.008ms
+[2026-10-14T22:33:09.070+0000][info][gc     ] GC(6023) Pause Young (Normal) (G1 Evacuation Pause) 505M->33M(1536M) 455.220ms
+[2026-10-14T22:33:09.530+0000][info][gc     ] GC(6024) Pause Young (Concurrent Start) (G1 Evacuation Pause) 512M->40M(1536M) 510.440ms
+[2026-10-14T22:33:10.050+0000][info][gc     ] GC(6025) Pause Remark 18.002ms
+[2026-10-14T22:33:12.880+0000][info][gc     ] GC(6026) Pause Young (Normal) (G1 Evacuation Pause) 488M->35M(1536M) 640.110ms
+[2026-10-14T22:33:13.530+0000][info][gc,heap] Heap: 1536M  used 980M  old 228M
+[2026-10-14T22:34:01.004+0000][info][gc     ] GC(6108) Pause Young (Normal) (G1 Evacuation Pause) 501M->37M(1536M) 402.008ms
+
+# Old generation after these collections remains ~228M (see heap line).
+# No humongous-object storm. No Full GC in this excerpt.

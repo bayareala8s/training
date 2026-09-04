@@ -1,0 +1,104 @@
+{
+  "id": "Q-14",
+  "moduleId": "module-14",
+  "title": "Module 14 quiz — Security, HA and DR",
+  "description": "Eight questions on TLS/PKI, IAM/secrets, encryption, DNS/LB, 99.99% failure domains, RTO/RPO, HA capacity. Synthetic BayPay.",
+  "questions": [
+    {
+      "id": "Q-14-01",
+      "prompt": "Merchants fail HTTPS to payments.apps.baypay.example while a jump box can GET :8080 on a RUNNING task. What have you proven so far?",
+      "choices": [
+        "Postgres is down",
+        "Edge TLS (or DNS to the edge) is in the suspect set; the process may still be healthy",
+        "The Kubernetes tls Secret from Module 10 is the only possible cause",
+        "You should disable TLS to restore payments"
+      ],
+      "correctIndex": 1,
+      "explanation": "HTTP-healthy tasks plus merchant handshake failure is a symptom class. Quote the cert/ACM/DNS files before you name a cause."
+    },
+    {
+      "id": "Q-14-02",
+      "prompt": "Which IAM split is required for a Fargate payment task?",
+      "choices": [
+        "One AdministratorAccess role for everything",
+        "Execution role pulls image/secrets; task role is the app’s AWS API identity — neither is AdministratorAccess",
+        "The DMGR identity is reused",
+        "Access keys committed in task-def JSON"
+      ],
+      "correctIndex": 1,
+      "explanation": "TRUST.md: task role ≠ execution role."
+    },
+    {
+      "id": "Q-14-03",
+      "prompt": "Where may BAYPAY_DB_PASSWORD live in production?",
+      "choices": [
+        "Git next to the Terraform root",
+        "A KMS-backed secret store (or equivalent), never in git or a dashboard JSON",
+        "A Micrometer label named password",
+        "The leftover PaymentCluster custom service as the long-term home"
+      ],
+      "correctIndex": 1,
+      "explanation": "Encryption at rest of the secret + TLS in transit. No changeme."
+    },
+    {
+      "id": "Q-14-04",
+      "prompt": "A 99.99% design for payment create is roughly how much unavailability per year, and what is not automatic?",
+      "choices": [
+        "52 seconds; you must add a second region",
+        "About 52 minutes; multi-region is a DR choice, not a free upgrade from multi-AZ",
+        "Zero minutes; 99.99% means never fail",
+        "43 minutes; that is the Module 13 99.9% monthly budget reused as yearly"
+      ],
+      "correctIndex": 1,
+      "explanation": "ARCHITECT-1401: single-region multi-AZ can be a 99.99% design. DR-1403 is the region-loss tabletop."
+    },
+    {
+      "id": "Q-14-05",
+      "prompt": "What is RPO versus RTO for a us-west-2 regional outage?",
+      "choices": [
+        "RPO is how fast DNS flips; RTO is the TLS expiry window",
+        "RPO is how much payment intent you can lose; RTO is how long until you take new POSTs again",
+        "They are the same number as the 99.9% error budget",
+        "RPO is the number of AZs; RTO is the number of tasks"
+      ],
+      "correctIndex": 1,
+      "explanation": "L-14.6 / DR-1403. Payments vs reporting may have different pairs."
+    },
+    {
+      "id": "Q-14-06",
+      "prompt": "Which leftover object is not a DR target when us-west-2 is gone?",
+      "choices": [
+        "Encrypted payment backups and the idempotency store",
+        "BayPayCell / dmgr-east / PaymentCluster",
+        "A paper warm standby in us-east-1",
+        "Route 53 failover records you designed on paper"
+      ],
+      "correctIndex": 1,
+      "explanation": "Traditional ND is the source estate. Do not fail over to the cell."
+    },
+    {
+      "id": "Q-14-07",
+      "prompt": "Module 14 capacity planning is mainly which question?",
+      "choices": [
+        "What P99 is on a single happy-path POST in H2",
+        "How much unused N+1 / failover / DR capacity you pay for so a domain can die",
+        "Whether to set -Xmx equal to the task memory limit",
+        "How many NAT Gateways a 90-minute lab should apply"
+      ],
+      "correctIndex": 1,
+      "explanation": "L-14.7 is HA/DR headroom. L-13.5 is SLO-driven pool/RPS headroom."
+    },
+    {
+      "id": "Q-14-08",
+      "prompt": "A threat model for POST /api/v1/payments must include which item?",
+      "choices": [
+        "A working exploit payload against a live bank",
+        "Idempotency-Key replay, frozen-account bypass, and secret leakage — as STRIDE notes, not as attack scripts",
+        "A new WebSphere cell in Docker",
+        "AdministratorAccess as the recommended task role"
+      ],
+      "correctIndex": 1,
+      "explanation": "SECURITY-1404 is architecture notes. No exploit PoCs."
+    }
+  ]
+}

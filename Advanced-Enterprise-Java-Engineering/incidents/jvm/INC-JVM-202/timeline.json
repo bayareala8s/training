@@ -1,0 +1,59 @@
+{
+  "incidentId": "INC-JVM-202",
+  "title": "Payment and refund workers not completing",
+  "severity": "SEV-2",
+  "service": "baypay-payment-canary",
+  "environment": "sale-canary-1",
+  "region": "us-west-2-sim",
+  "startedAt": "2026-08-21T15:04:00Z",
+  "detectedAt": "2026-08-21T15:09:20Z",
+  "synthetic": true,
+  "actors": [
+    { "id": "pager", "role": "alert" },
+    { "id": "riley-okonkwo", "role": "on-call" },
+    { "id": "jordan-hale", "role": "SRE" },
+    { "id": "merchant-harbor-bike", "role": "merchant support ticket" }
+  ],
+  "events": [
+    {
+      "at": "2026-08-21T14:40:00Z",
+      "actor": "traffic",
+      "summary": "Weekday catch-up: leftover sale captures plus refunds for weekend duplicate-charge tickets."
+    },
+    {
+      "at": "2026-08-21T15:04:12Z",
+      "actor": "metrics",
+      "summary": "payment_completed_rps and refund_completed_rps fall together over ~90 seconds."
+    },
+    {
+      "at": "2026-08-21T15:06:00Z",
+      "actor": "merchant-harbor-bike",
+      "summary": "Refund for invoice-8841 remains In progress in the merchant dashboard. Checkout for a new Harbor Bike order sits on AUTHORIZED."
+    },
+    {
+      "at": "2026-08-21T15:09:20Z",
+      "actor": "pager",
+      "summary": "Alert PaymentCompletionsLow: payment_completed_rps < 1 for 5 minutes. Second alert RefundCompletionsLow 20s later."
+    },
+    {
+      "at": "2026-08-21T15:10:02Z",
+      "actor": "riley-okonkwo",
+      "summary": "Ack. Health UP. Canary process pid 4412 still running. HTTP request threads accept connections; several /payments and /refunds calls older than 30s."
+    },
+    {
+      "at": "2026-08-21T15:12:40Z",
+      "actor": "jordan-hale",
+      "summary": "Joins. Asks for dashboard, then logs, then a thread dump of pid 4412. Notes CPU is low."
+    },
+    {
+      "at": "2026-08-21T15:18:00Z",
+      "actor": "riley-okonkwo",
+      "summary": "Stabilization options discussed: drain LB, bounce canary, pause refunds. Not executed in this teaching timeline — student decides."
+    }
+  ],
+  "openQuestions": [
+    "Are workers blocked, spinning, or just starved of tasks?",
+    "Is JDBC or an outbound HTTP call involved?",
+    "Did both payment and refund stop because they share a dependency?"
+  ]
+}

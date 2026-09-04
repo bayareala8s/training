@@ -1,0 +1,70 @@
+{
+  "id": "INC-K8S-1003",
+  "labId": "INCIDENT-1003",
+  "title": "Ingress 503 while payment pods stay Running",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod",
+  "environment": "prod-east",
+  "startedAt": "2026-11-10T17:40:09Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "HTTP 503 on payments.apps.baypay.example; POST /api/v1/payments never reaches a Ready pod",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1003c33-0000-4000-8000-111111111003",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/describe.txt"],
+      "instruction": "Read this timeline and the describe paste before requesting Endpoints."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/endpoints.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open Endpoints."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/curl-ingress.txt"],
+      "instruction": "Open the Ingress curl paste only after you write what the edge should show if Endpoints are empty."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-10T16:55:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Rolled payment-service 3.9.1-slim and left readinessProbe on the BUILD-305 path. Ticket BAYPAY-10033. Said the image 'still has Actuator'."
+    },
+    {
+      "at": "2026-11-10T17:18:27Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Pods Running, Ready 0/1. Asked for describe probe lines before blaming the database."
+    },
+    {
+      "at": "2026-11-10T17:40:09Z",
+      "actor": "pager",
+      "summary": "SEV-2: payments.apps.baypay.example HTTP 503. payment-service Ready 0."
+    },
+    {
+      "at": "2026-11-10T17:41:33Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1003c33-0000-4000-8000-111111111003 HTTP 503. Same Idempotency-Key on retry."
+    },
+    {
+      "at": "2026-11-10T17:43:02Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested describe (gate 1). Asked Sam not to bounce Postgres while Ready is 0/1 and the process is Running."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "id": "Q-15",
+  "moduleId": "module-15",
+  "title": "Module 15 quiz — BayOps AI",
+  "description": "Eight questions on summarization, evidence vs hypothesis, runbooks, human approval, hallucination. Synthetic BayPay.",
+  "questions": [
+    {
+      "id": "Q-15-01",
+      "prompt": "Which four sections must every BayOps response contain?",
+      "choices": [
+        "Severity, owner, Slack channel, and Jira key",
+        "Evidence, hypotheses, recommended investigation, and suggested remediation",
+        "Proven RCA, blast radius, customer list, and a force-push",
+        "Bedrock model id, token count, cost, and region"
+      ],
+      "correctIndex": 1,
+      "explanation": "BAYOPS.md locks the four buckets. A proven RCA field fails the contract."
+    },
+    {
+      "id": "Q-15-02",
+      "prompt": "A hypothesis that fits the opened files should be marked how?",
+      "choices": [
+        "proven",
+        "unproven (until more gates confirm or weaken it)",
+        "auto-approved",
+        "rootCause=true"
+      ],
+      "correctIndex": 1,
+      "explanation": "AI is an investigator. Status stays unproven, weakened, or withdrawn."
+    },
+    {
+      "id": "Q-15-03",
+      "prompt": "What must happen before a mutating remediation runs?",
+      "choices": [
+        "The model sets humanApproval to approved by itself",
+        "A named human (Riley or Priya in the teaching story) writes approved or rejected",
+        "Lambda retries three times",
+        "Someone force-pushes main"
+      ],
+      "correctIndex": 1,
+      "explanation": "Human approval is first-class. Auto-approve is a failed lab."
+    },
+    {
+      "id": "Q-15-04",
+      "prompt": "A BayOps JSON cites evidence/db-failover.json, but that file is not in the pack. What is that?",
+      "choices": [
+        "A successful retrieval-augmented generation",
+        "An unsupported / hallucinated citation — fail the output",
+        "Proof that Postgres failed over",
+        "A reason to bounce dmgr-east"
+      ],
+      "correctIndex": 1,
+      "explanation": "AI-1504 class: invented files are not evidence."
+    },
+    {
+      "id": "Q-15-05",
+      "prompt": "Which runbook action should Priya reject on sight for payment-service on Fargate?",
+      "choices": [
+        "Open the next gated evidence file",
+        "Bounce dmgr-east / PaymentCluster or disable TLS to restore merchants",
+        "Leave humanApproval pending while quoting ALB health",
+        "Ask Jordan not to push another tag"
+      ],
+      "correctIndex": 1,
+      "explanation": "Leftover ND is not the estate. Disabling TLS is not a stabilize."
+    },
+    {
+      "id": "Q-15-06",
+      "prompt": "Is a live Amazon Bedrock call required to pass Module 15?",
+      "choices": [
+        "Yes; otherwise the schema is invalid",
+        "No; paper fixtures and the JSON contract are the grade bar",
+        "Yes; and you must apply EKS for the vector store",
+        "Yes; NAT Gateway is required for Lambda"
+      ],
+      "correctIndex": 1,
+      "explanation": "Live model is optional extra credit with cost and cleanup."
+    },
+    {
+      "id": "Q-15-07",
+      "prompt": "What must never be sent to a model or stored in a BayOps fixture?",
+      "choices": [
+        "correlationId and paymentId",
+        "PAN, CVV, or BAYPAY_DB_PASSWORD",
+        "The word unproven",
+        "The service name payment-service"
+      ],
+      "correctIndex": 1,
+      "explanation": "Synthetic ops data only. Secrets and card data stay out."
+    },
+    {
+      "id": "Q-15-08",
+      "prompt": "Staff scoring: a student writes “the AI is wrong” with no quotes. What happens to Diagnostic method?",
+      "choices": [
+        "It maxes because the title said hallucination",
+        "It does not max — they must quote the invented file and the proven-RCA field",
+        "They automatically pass if Bedrock was down",
+        "They must bounce Postgres to confirm"
+      ],
+      "correctIndex": 1,
+      "explanation": "Lucky label is not method. AI-1504 rubric."
+    }
+  ]
+}

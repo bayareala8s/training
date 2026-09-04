@@ -1,0 +1,64 @@
+# kubectl describe pod — teaching paste
+# Namespace: baypay-prod
+# Gate: 1
+# Synthetic BayPay. Not a live cluster.
+
+Name:             payment-service-5b7e2d1a9-h4w2n
+Namespace:        baypay-prod
+Priority:         0
+Service Account:  default
+Node:             ip-10-8-5-18/10.8.5.18
+Start Time:       Tue, 10 Nov 2026 08:56:40 -0800
+Labels:           app=payment-service
+                  pod-template-hash=5b7e2d1a9
+Status:           Running
+IP:               10.8.22.63
+Controlled By:    ReplicaSet/payment-service-5b7e2d1a9
+Containers:
+  payment:
+    Container ID:   cri-o://c1003c33111140008000111111111003
+    Image:          registry.baypay.example/baypay/payment-service:3.9.1-slim
+    Image ID:       registry.baypay.example/baypay/payment-service@sha256:c1003ccccccccccccccccccccccccccccccccccccccccccccccccccc
+    Port:           8080/TCP
+    State:          Running
+      Started:      Tue, 10 Nov 2026 08:57:02 -0800
+    Last State:     Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Tue, 10 Nov 2026 08:10:11 -0800
+      Finished:     Tue, 10 Nov 2026 08:56:38 -0800
+    Ready:          False
+    Restart Count:  1
+    Limits:
+      cpu:     1
+      memory:  2Gi
+    Requests:
+      cpu:     250m
+      memory:  1Gi
+    Liveness:   http-get http://:8080/actuator/health delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:8080/actuator/health/readiness delay=15s timeout=1s period=5s #success=1 #failure=3
+    Environment Variables from:
+      payment-config  ConfigMap  Optional: false
+    Environment:
+      BAYPAY_DB_PASSWORD:  <set to the key 'BAYPAY_DB_PASSWORD' in secret 'baypay-db'>  Optional: false
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  44m                 default-scheduler  Successfully assigned baypay-prod/payment-service-5b7e2d1a9-h4w2n to ip-10-8-5-18
+  Normal   Pulled     44m                 kubelet            Successfully pulled image "registry.baypay.example/baypay/payment-service:3.9.1-slim"
+  Normal   Created    44m                 kubelet            Created container payment
+  Normal   Started    44m                 kubelet            Started container payment
+  Normal   Probe      43m                 kubelet            Liveness probe succeeded: HTTP 200 on /actuator/health
+  Warning  Unhealthy  12s (x88 over 43m)  kubelet            Readiness probe failed: HTTP probe failed with statuscode: 404
+  Warning  Unhealthy  12s (x88 over 43m)  kubelet            Readiness probe failed: Get "http://10.8.22.63:8080/actuator/health/readiness": HTTP 404
+
+# Ready 0/1. Status Running. Restart Count 1 (roll, not CrashLoop).
+# Same Ready 0/1 and readiness 404 on payment-service-5b7e2d1a9-j9k2m and payment-service-5b7e2d1a9-p1q8t
+# Desired replicas: 3. Ready replicas: 0.
+# Liveness path /actuator/health returns 200. Readiness path /actuator/health/readiness returns 404.

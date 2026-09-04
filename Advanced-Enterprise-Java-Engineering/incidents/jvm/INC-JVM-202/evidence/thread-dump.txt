@@ -1,0 +1,136 @@
+2026-08-21 15:13:07
+Full thread dump OpenJDK 64-Bit Server VM (21.0.4+7-LTS mixed mode, sharing)
+# Synthetic dump for INC-JVM-202. Fictional BayPay canary pid 4412.
+# Captured with a teaching jstack equivalent. Not a real employer artifact.
+
+Threads class SMR info:
+_java_thread_list=0x000000012a00b800, length=64
+
+"payment-worker-3" #31 prio=5 os_prio=0 cpu=182.41ms elapsed=4120.11s tid=0x000000012b110000 nid=0x9f03 waiting for monitor entry  [0x0000000172aee000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockLedger(InMemoryLockManager.java:48)
+	- waiting to lock <0x00000000f0ae1110> (a java.lang.Object)
+	at com.baypay.canary.PaymentWorker.postAuthorized(PaymentWorker.java:77)
+	at com.baypay.canary.PaymentWorker.run(PaymentWorker.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+   Locked ownable synchronizers:
+	- None
+	- locked <0x00000000f0acc001> (a java.lang.Object)
+
+"refund-worker-1" #44 prio=5 os_prio=0 cpu=96.02ms elapsed=4120.08s tid=0x000000012b118800 nid=0x9f11 waiting for monitor entry  [0x0000000172c12000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockAccount(InMemoryLockManager.java:33)
+	- waiting to lock <0x00000000f0acc001> (a java.lang.Object)
+	at com.baypay.canary.RefundWorker.reverse(RefundWorker.java:64)
+	at com.baypay.canary.RefundWorker.run(RefundWorker.java:38)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+   Locked ownable synchronizers:
+	- None
+	- locked <0x00000000f0ae1110> (a java.lang.Object)
+
+"payment-worker-0" #28 prio=5 os_prio=0 cpu=1404.88ms elapsed=4120.20s tid=0x000000012b10a000 nid=0x9f00 waiting for monitor entry  [0x0000000172ab8000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockAccount(InMemoryLockManager.java:33)
+	- waiting to lock <0x00000000f0acc001> (a java.lang.Object)
+	at com.baypay.canary.PaymentWorker.postAuthorized(PaymentWorker.java:71)
+	at com.baypay.canary.PaymentWorker.run(PaymentWorker.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"payment-worker-1" #29 prio=5 os_prio=0 cpu=1388.10ms elapsed=4120.18s tid=0x000000012b10c000 nid=0x9f01 waiting for monitor entry  [0x0000000172ac9000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockAccount(InMemoryLockManager.java:33)
+	- waiting to lock <0x00000000f0acc001> (a java.lang.Object)
+	at com.baypay.canary.PaymentWorker.postAuthorized(PaymentWorker.java:71)
+	at com.baypay.canary.PaymentWorker.run(PaymentWorker.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"payment-worker-2" #30 prio=5 os_prio=0 cpu=1299.44ms elapsed=4120.16s tid=0x000000012b10e000 nid=0x9f02 waiting for monitor entry  [0x0000000172add000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockAccount(InMemoryLockManager.java:33)
+	- waiting to lock <0x00000000f0acc001> (a java.lang.Object)
+	at com.baypay.canary.PaymentWorker.postAuthorized(PaymentWorker.java:71)
+	at com.baypay.canary.PaymentWorker.run(PaymentWorker.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"refund-worker-0" #43 prio=5 os_prio=0 cpu=410.22ms elapsed=4120.09s tid=0x000000012b116000 nid=0x9f10 waiting for monitor entry  [0x0000000172c01000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockLedger(InMemoryLockManager.java:48)
+	- waiting to lock <0x00000000f0ae1110> (a java.lang.Object)
+	at com.baypay.canary.RefundWorker.reverse(RefundWorker.java:58)
+	at com.baypay.canary.RefundWorker.run(RefundWorker.java:38)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"refund-worker-2" #45 prio=5 os_prio=0 cpu=388.90ms elapsed=4120.07s tid=0x000000012b11a000 nid=0x9f12 waiting for monitor entry  [0x0000000172c23000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockLedger(InMemoryLockManager.java:48)
+	- waiting to lock <0x00000000f0ae1110> (a java.lang.Object)
+	at com.baypay.canary.RefundWorker.reverse(RefundWorker.java:58)
+	at com.baypay.canary.RefundWorker.run(RefundWorker.java:38)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"refund-worker-3" #46 prio=5 os_prio=0 cpu=201.03ms elapsed=4120.06s tid=0x000000012b11c000 nid=0x9f13 waiting for monitor entry  [0x0000000172c34000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.canary.InMemoryLockManager.lockLedger(InMemoryLockManager.java:48)
+	- waiting to lock <0x00000000f0ae1110> (a java.lang.Object)
+	at com.baypay.canary.RefundWorker.reverse(RefundWorker.java:58)
+	at com.baypay.canary.RefundWorker.run(RefundWorker.java:38)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-11" #18 prio=5 os_prio=0 cpu=88.10ms elapsed=8800.02s tid=0x000000012a880000 nid=0x9e20 waiting on condition  [0x00000001728aa000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	- parking to wait for  <0x00000000f0b70001> (a java.util.concurrent.CompletableFuture$Signaller)
+	at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base/java.util.concurrent.CompletableFuture$Signaller.block(CompletableFuture.java:1898)
+	at java.base/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3780)
+	at java.base/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3725)
+	at java.base/java.util.concurrent.CompletableFuture.waitingGet(CompletableFuture.java:1925)
+	at java.base/java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2117)
+	at com.baypay.payment.api.PaymentController.create(PaymentController.java:54)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+
+"http-nio-8080-exec-18" #25 prio=5 os_prio=0 cpu=64.02ms elapsed=8799.40s tid=0x000000012a88e000 nid=0x9e27 waiting on condition  [0x0000000172912000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	- parking to wait for  <0x00000000f0b70088> (a java.util.concurrent.CompletableFuture$Signaller)
+	at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base/java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2117)
+	at com.baypay.refund.api.RefundController.create(RefundController.java:47)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+
+"http-nio-8080-exec-2" #9 prio=5 os_prio=0 cpu=210.55ms elapsed=8801.00s tid=0x000000012a870000 nid=0x9e11 runnable  [0x00000001727e0000]
+   java.lang.Thread.State: RUNNABLE
+	at com.baypay.payment.config.HealthIndicator.health(HealthIndicator.java:22)
+	at org.springframework.boot.actuate.health.HealthEndpointWebExtension.health(HealthEndpointWebExtension.java:91)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.11ms elapsed=9001.00s tid=0x000000012a001000 nid=0x9e02 waiting on condition
+   java.lang.Thread.State: RUNNABLE
+
+"VM Periodic Task Thread" os_prio=0 cpu=88.00ms elapsed=9001.00s tid=0x000000012a00a000 nid=0x9e06 waiting on condition
+
+JNI global refs: 31, weak refs: 0
+
+Found one Java-level deadlock:
+=============================
+"payment-worker-3":
+  waiting to lock monitor 0x000000012c001100 (object 0x00000000f0ae1110, a java.lang.Object),
+  which is held by "refund-worker-1"
+
+"refund-worker-1":
+  waiting to lock monitor 0x000000012c001080 (object 0x00000000f0acc001, a java.lang.Object),
+  which is held by "payment-worker-3"
+
+Java stack information for the threads listed above:
+===================================================
+"payment-worker-3":
+	at com.baypay.canary.InMemoryLockManager.lockLedger(InMemoryLockManager.java:48)
+	- waiting to lock <0x00000000f0ae1110> (a java.lang.Object)
+	- locked <0x00000000f0acc001> (a java.lang.Object)
+	at com.baypay.canary.PaymentWorker.postAuthorized(PaymentWorker.java:77)
+"refund-worker-1":
+	at com.baypay.canary.InMemoryLockManager.lockAccount(InMemoryLockManager.java:33)
+	- waiting to lock <0x00000000f0acc001> (a java.lang.Object)
+	- locked <0x00000000f0ae1110> (a java.lang.Object)
+	at com.baypay.canary.RefundWorker.reverse(RefundWorker.java:64)
+
+Found 1 deadlock.

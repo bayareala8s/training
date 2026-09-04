@@ -1,0 +1,18 @@
+# Synthetic GitHub Actions log — workflow baypay — run 8841205
+# Cluster notes: us-west-2 / teaching registry baypay/payment-service
+# Not a real Actions run.
+
+2026-12-03T21:49:01Z  Job test skipped (workflow has no test job; publish is the only job)
+2026-12-03T21:49:02Z  Job publish started on ubuntu-latest
+2026-12-03T21:49:08Z  Checkout ref=main sha=c0ffee1205deadbeef1205cafebabef00d1205
+2026-12-03T21:50:44Z  docker build -t baypay/payment-service:3.8.9-debug -t baypay/payment-service:latest reference-apps/baypay
+2026-12-03T21:53:10Z  Build succeeded. Digest sha256:aa1205bbccddeeff00112233445566778899aabbccddeeff0011223344556677
+2026-12-03T21:53:12Z  docker push baypay/payment-service:3.8.9-debug
+2026-12-03T21:54:01Z  docker push baypay/payment-service:latest
+2026-12-03T21:54:40Z  Skipping image smoke — no step configured (comment in workflow: "Harbor Market wants this tag now")
+2026-12-03T21:54:41Z  Deploying image baypay/payment-service:3.8.9-debug to ECS
+2026-12-03T21:54:42Z    cluster=baypay-prod-west region=us-west-2 service=payment-service
+2026-12-03T21:54:43Z    register-task-definition family=payment-service revision=88
+2026-12-03T21:55:10Z    update-service --task-definition payment-service:88
+2026-12-03T21:56:22Z  Job publish completed with conclusion=success
+2026-12-03T21:56:22Z  Workflow baypay completed with conclusion=success

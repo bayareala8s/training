@@ -1,0 +1,31 @@
+# curl TLS — teaching paste
+# Gate: 3
+# Host: payments.apps.baypay.example
+# Synthetic BayPay. Captured 2026-11-17T16:11:40Z
+# Not a live cluster.
+
+$ curl -vI https://payments.apps.baypay.example/api/v1/payments \
+    -H 'Host: payments.apps.baypay.example' \
+    --resolve payments.apps.baypay.example:443:10.8.0.20
+*   Trying 10.8.0.20:443...
+* Connected to payments.apps.baypay.example (10.8.0.20) port 443
+* ALPN: curl offers h2,http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* SSL certificate problem: certificate has expired
+* Closing connection
+curl: (60) SSL certificate problem: certificate has expired
+More details here: https://curl.se/docs/sslcerts.html
+
+# Verbose subject line from the same handshake:
+# subject: C=US; O=BayPay Financial Services (fictional); CN=*.baypay.internal
+# expire date: Oct 15 23:59:59 2026 GMT
+# SSL: no alternative certificate subject name matches target host name 'payments.apps.baypay.example'
+
+$ echo | openssl s_client -connect 10.8.0.20:443 -servername payments.apps.baypay.example 2>/dev/null | openssl x509 -noout -dates -subject
+notBefore=Aug  1 00:00:00 2025 GMT
+notAfter=Oct 15 23:59:59 2026 GMT
+subject=CN = *.baypay.internal
+
+# HTTP status was never returned. Avery Chen payment c1005e55-0000-4000-8000-111111111005 stayed in the browser.
+# Pods Ready (timeline). This is not a CrashLoop and not an Ingress 503 after a completed handshake.

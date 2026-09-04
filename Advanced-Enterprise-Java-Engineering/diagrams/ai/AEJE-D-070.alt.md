@@ -1,0 +1,1 @@
+Diagram AEJE-D-070: Human approval and hallucination detection. Left-to-right labeled boxes: four buckets, cite check, human approval, reject. BayPay is a fictional payment platform used for instruction.

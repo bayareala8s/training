@@ -1,0 +1,38 @@
+# payment-service logs — payment-service-4a1c9e2b7-r8v3k
+# Synthetic BayPay. Gate 2. Times in UTC.
+# Teaching equivalent: kubectl logs
+
+Picked up JAVA_TOOL_OPTIONS: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75
+2026-11-12T21:02:11.088Z level=INFO  correlationId=none logger=o.s.b.StartupInfoLogger msg=Starting BayPayApplication using Java 21.0.8
+2026-11-12T21:02:13.441Z level=INFO  correlationId=none logger=o.s.b.w.e.tomcat.TomcatWebServer msg=Tomcat initialized with port 8080
+2026-11-12T21:02:16.902Z level=WARN  correlationId=none logger=o.s.b.a.j.DataSourceAutoConfiguration$PooledDataSourceConfiguration msg=spring.datasource.password is empty; BAYPAY_DB_PASSWORD was not bound from the environment
+2026-11-12T21:02:17.118Z level=ERROR correlationId=none logger=com.zaxxer.hikari.pool.HikariPool msg=HikariPool-1 - Exception during pool initialization
+org.postgresql.util.PSQLException: FATAL: password authentication failed for user "baypay_app"
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:698)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:213)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:268)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:422)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:614)
+2026-11-12T21:02:17.130Z level=ERROR correlationId=none logger=o.s.b.d.LoggingFailureAnalysisReporter msg=
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: Hikari fail-fast could not obtain a connection.
+Auth failed for user baypay_app. spring.datasource.password is empty (BAYPAY_DB_PASSWORD missing or blank).
+
+Action:
+
+ApplicationContext failed to refresh. Check env injection for BAYPAY_DB_PASSWORD.
+
+2026-11-12T21:02:17.141Z level=ERROR correlationId=none logger=o.s.boot.SpringApplication msg=Application run failed
+org.springframework.context.ApplicationContextException: Failed to initialize DataSource
+	at org.springframework.boot.autoconfigure.jdbc.DataSourceInitializationConfiguration.init(DataSourceInitializationConfiguration.java:0)
+	at com.baypay.payment.BayPayApplication.main(BayPayApplication.java:14)
+
+# Container may restart (Exit 1) after fail-fast. Some rolls stay Running with repeated auth errors if fail-fast is off.
+# This paste is fail-fast after empty password. Secret object exists. Values are not in this file.
+# Avery Chen payment c1004d44-0000-4000-8000-111111111004 never reached AUTHORIZED.

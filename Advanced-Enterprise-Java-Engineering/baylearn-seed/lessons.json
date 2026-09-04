@@ -1,0 +1,1662 @@
+[
+  {
+    "id": "L-1.1",
+    "moduleId": "module-01",
+    "title": "Modern Java, JDK and JVM overview",
+    "kind": "lesson",
+    "path": "course/modules/01-enterprise-java-engineering/lessons/L-1.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-1.2",
+    "moduleId": "module-01",
+    "title": "Object design, SOLID and immutability",
+    "kind": "lesson",
+    "path": "course/modules/01-enterprise-java-engineering/lessons/L-1.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-1.3",
+    "moduleId": "module-01",
+    "title": "Collections and generics",
+    "kind": "lesson",
+    "path": "course/modules/01-enterprise-java-engineering/lessons/L-1.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-1.4",
+    "moduleId": "module-01",
+    "title": "Exceptions, records, streams and Optional",
+    "kind": "lesson",
+    "path": "course/modules/01-enterprise-java-engineering/lessons/L-1.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-1.5",
+    "moduleId": "module-01",
+    "title": "Enterprise coding practices",
+    "kind": "lesson",
+    "path": "course/modules/01-enterprise-java-engineering/lessons/L-1.5.md",
+    "order": 5
+  },
+  {
+    "id": "BUILD-101",
+    "moduleId": "module-01",
+    "title": "Build BayPay transaction domain model",
+    "kind": "lab",
+    "path": "labs/BUILD-101/README.md",
+    "order": 6,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "BUILD-102",
+    "moduleId": "module-01",
+    "title": "Implement payment validation",
+    "kind": "lab",
+    "path": "labs/BUILD-102/README.md",
+    "order": 7,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "FIX-103",
+    "moduleId": "module-01",
+    "title": "Refactor deliberately poor Java code",
+    "kind": "lab",
+    "path": "labs/FIX-103/README.md",
+    "order": 8,
+    "labType": "BREAK/FIX",
+    "awsLab": false
+  },
+  {
+    "id": "CHALLENGE-104",
+    "moduleId": "module-01",
+    "title": "Optimize transaction processing",
+    "kind": "lab",
+    "path": "labs/CHALLENGE-104/README.md",
+    "order": 9,
+    "labType": "PERFORMANCE",
+    "awsLab": false
+  },
+  {
+    "id": "Q-01",
+    "moduleId": "module-01",
+    "title": "Module 1 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-01.md",
+    "order": 10
+  },
+  {
+    "id": "L-2.1",
+    "moduleId": "module-02",
+    "title": "Threads and Java memory visibility",
+    "kind": "lesson",
+    "path": "course/modules/02-advanced-java-concurrency/lessons/L-2.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-2.2",
+    "moduleId": "module-02",
+    "title": "synchronized, volatile, locks and atomics",
+    "kind": "lesson",
+    "path": "course/modules/02-advanced-java-concurrency/lessons/L-2.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-2.3",
+    "moduleId": "module-02",
+    "title": "Concurrent collections",
+    "kind": "lesson",
+    "path": "course/modules/02-advanced-java-concurrency/lessons/L-2.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-2.4",
+    "moduleId": "module-02",
+    "title": "Executors and CompletableFuture",
+    "kind": "lesson",
+    "path": "course/modules/02-advanced-java-concurrency/lessons/L-2.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-2.5",
+    "moduleId": "module-02",
+    "title": "Virtual threads",
+    "kind": "lesson",
+    "path": "course/modules/02-advanced-java-concurrency/lessons/L-2.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-2.6",
+    "moduleId": "module-02",
+    "title": "Race conditions and deadlocks",
+    "kind": "lesson",
+    "path": "course/modules/02-advanced-java-concurrency/lessons/L-2.6.md",
+    "order": 6
+  },
+  {
+    "id": "BREAKFIX-201",
+    "moduleId": "module-02",
+    "title": "Duplicate Payment Incident",
+    "kind": "lab",
+    "path": "labs/BREAKFIX-201/README.md",
+    "order": 7,
+    "labType": "BREAK/FIX",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-202",
+    "moduleId": "module-02",
+    "title": "Deadlocked Payment Workers",
+    "kind": "lab",
+    "path": "labs/INCIDENT-202/README.md",
+    "order": 8,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "ARCHITECT-203",
+    "moduleId": "module-02",
+    "title": "Safe concurrent payment processing",
+    "kind": "lab",
+    "path": "labs/ARCHITECT-203/README.md",
+    "order": 9,
+    "labType": "ARCHITECT",
+    "awsLab": false
+  },
+  {
+    "id": "Q-02",
+    "moduleId": "module-02",
+    "title": "Module 2 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-02.md",
+    "order": 10
+  },
+  {
+    "id": "L-3.1",
+    "moduleId": "module-03",
+    "title": "IoC and dependency injection",
+    "kind": "lesson",
+    "path": "course/modules/03-spring-boot-engineering/lessons/L-3.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-3.2",
+    "moduleId": "module-03",
+    "title": "REST APIs and validation",
+    "kind": "lesson",
+    "path": "course/modules/03-spring-boot-engineering/lessons/L-3.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-3.3",
+    "moduleId": "module-03",
+    "title": "Exception handling and configuration",
+    "kind": "lesson",
+    "path": "course/modules/03-spring-boot-engineering/lessons/L-3.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-3.4",
+    "moduleId": "module-03",
+    "title": "JPA and transaction management",
+    "kind": "lesson",
+    "path": "course/modules/03-spring-boot-engineering/lessons/L-3.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-3.5",
+    "moduleId": "module-03",
+    "title": "Actuator and production health",
+    "kind": "lesson",
+    "path": "course/modules/03-spring-boot-engineering/lessons/L-3.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-3.6",
+    "moduleId": "module-03",
+    "title": "Testing",
+    "kind": "lesson",
+    "path": "course/modules/03-spring-boot-engineering/lessons/L-3.6.md",
+    "order": 6
+  },
+  {
+    "id": "BUILD-301",
+    "moduleId": "module-03",
+    "title": "Payment REST API",
+    "kind": "lab",
+    "path": "labs/BUILD-301/README.md",
+    "order": 7,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "BUILD-302",
+    "moduleId": "module-03",
+    "title": "Refund API",
+    "kind": "lab",
+    "path": "labs/BUILD-302/README.md",
+    "order": 8,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "BUILD-303",
+    "moduleId": "module-03",
+    "title": "Persistence",
+    "kind": "lab",
+    "path": "labs/BUILD-303/README.md",
+    "order": 9,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "FIX-304",
+    "moduleId": "module-03",
+    "title": "Transaction rollback bug",
+    "kind": "lab",
+    "path": "labs/FIX-304/README.md",
+    "order": 10,
+    "labType": "BREAK/FIX",
+    "awsLab": false
+  },
+  {
+    "id": "BUILD-305",
+    "moduleId": "module-03",
+    "title": "Health and readiness endpoints",
+    "kind": "lab",
+    "path": "labs/BUILD-305/README.md",
+    "order": 11,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "Q-03",
+    "moduleId": "module-03",
+    "title": "Module 3 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-03.md",
+    "order": 12
+  },
+  {
+    "id": "L-4.1",
+    "moduleId": "module-04",
+    "title": "Servlet and Jakarta EE model",
+    "kind": "lesson",
+    "path": "course/modules/04-jakarta-ee-enterprise-runtime/lessons/L-4.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-4.2",
+    "moduleId": "module-04",
+    "title": "JPA, JTA, JMS and JNDI",
+    "kind": "lesson",
+    "path": "course/modules/04-jakarta-ee-enterprise-runtime/lessons/L-4.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-4.3",
+    "moduleId": "module-04",
+    "title": "DataSources and connection pools",
+    "kind": "lesson",
+    "path": "course/modules/04-jakarta-ee-enterprise-runtime/lessons/L-4.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-4.4",
+    "moduleId": "module-04",
+    "title": "Sessions and class loading",
+    "kind": "lesson",
+    "path": "course/modules/04-jakarta-ee-enterprise-runtime/lessons/L-4.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-4.5",
+    "moduleId": "module-04",
+    "title": "Application server fundamentals",
+    "kind": "lesson",
+    "path": "course/modules/04-jakarta-ee-enterprise-runtime/lessons/L-4.5.md",
+    "order": 5
+  },
+  {
+    "id": "ARCHITECT-401",
+    "moduleId": "module-04",
+    "title": "Map Spring to Jakarta concepts",
+    "kind": "lab",
+    "path": "labs/ARCHITECT-401/README.md",
+    "order": 6,
+    "labType": "ARCHITECT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-402",
+    "moduleId": "module-04",
+    "title": "Connection pool exhaustion",
+    "kind": "lab",
+    "path": "labs/INCIDENT-402/README.md",
+    "order": 7,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-403",
+    "moduleId": "module-04",
+    "title": "Transaction boundary failure",
+    "kind": "lab",
+    "path": "labs/INCIDENT-403/README.md",
+    "order": 8,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "Q-04",
+    "moduleId": "module-04",
+    "title": "Module 4 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-04.md",
+    "order": 9
+  },
+  {
+    "id": "L-5.1",
+    "moduleId": "module-05",
+    "title": "Cell, DMGR, node, node agent and server",
+    "kind": "lesson",
+    "path": "course/modules/05-websphere-network-deployment/lessons/L-5.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-5.2",
+    "moduleId": "module-05",
+    "title": "Clusters and deployments",
+    "kind": "lesson",
+    "path": "course/modules/05-websphere-network-deployment/lessons/L-5.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-5.3",
+    "moduleId": "module-05",
+    "title": "JDBC, JNDI and JMS",
+    "kind": "lesson",
+    "path": "course/modules/05-websphere-network-deployment/lessons/L-5.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-5.4",
+    "moduleId": "module-05",
+    "title": "JVM configuration and pools",
+    "kind": "lesson",
+    "path": "course/modules/05-websphere-network-deployment/lessons/L-5.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-5.5",
+    "moduleId": "module-05",
+    "title": "Security, SSL and sessions",
+    "kind": "lesson",
+    "path": "course/modules/05-websphere-network-deployment/lessons/L-5.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-5.6",
+    "moduleId": "module-05",
+    "title": "Operations and troubleshooting",
+    "kind": "lesson",
+    "path": "course/modules/05-websphere-network-deployment/lessons/L-5.6.md",
+    "order": 6
+  },
+  {
+    "id": "ARCHITECT-501",
+    "moduleId": "module-05",
+    "title": "Design WebSphere ND BayPay",
+    "kind": "lab",
+    "path": "labs/ARCHITECT-501/README.md",
+    "order": 7,
+    "labType": "ARCHITECT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-502",
+    "moduleId": "module-05",
+    "title": "Cluster members stop processing",
+    "kind": "lab",
+    "path": "labs/INCIDENT-502/README.md",
+    "order": 8,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-503",
+    "moduleId": "module-05",
+    "title": "JDBC pool exhaustion",
+    "kind": "lab",
+    "path": "labs/INCIDENT-503/README.md",
+    "order": 9,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-504",
+    "moduleId": "module-05",
+    "title": "Deployment failure",
+    "kind": "lab",
+    "path": "labs/INCIDENT-504/README.md",
+    "order": 10,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "Q-05",
+    "moduleId": "module-05",
+    "title": "Module 5 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-05.md",
+    "order": 11
+  },
+  {
+    "id": "L-6.1",
+    "moduleId": "module-06",
+    "title": "Traditional WebSphere vs Liberty",
+    "kind": "lesson",
+    "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-6.2",
+    "moduleId": "module-06",
+    "title": "Liberty features and server.xml",
+    "kind": "lesson",
+    "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-6.3",
+    "moduleId": "module-06",
+    "title": "Compatibility assessment",
+    "kind": "lesson",
+    "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-6.4",
+    "moduleId": "module-06",
+    "title": "Configuration externalization",
+    "kind": "lesson",
+    "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-6.5",
+    "moduleId": "module-06",
+    "title": "Migration strategy and rollback",
+    "kind": "lesson",
+    "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.5.md",
+    "order": 5
+  },
+  {
+    "id": "MODERNIZE-601",
+    "moduleId": "module-06",
+    "title": "WebSphere-to-Liberty assessment",
+    "kind": "lab",
+    "path": "labs/MODERNIZE-601/README.md",
+    "order": 6,
+    "labType": "MODERNIZE",
+    "awsLab": false
+  },
+  {
+    "id": "MODERNIZE-602",
+    "moduleId": "module-06",
+    "title": "Adapt BayPay for Liberty",
+    "kind": "lab",
+    "path": "labs/MODERNIZE-602/README.md",
+    "order": 7,
+    "labType": "MODERNIZE",
+    "awsLab": false
+  },
+  {
+    "id": "MODERNIZE-603",
+    "moduleId": "module-06",
+    "title": "Externalize configuration",
+    "kind": "lab",
+    "path": "labs/MODERNIZE-603/README.md",
+    "order": 8,
+    "labType": "MODERNIZE",
+    "awsLab": false
+  },
+  {
+    "id": "ARCHITECT-604",
+    "moduleId": "module-06",
+    "title": "Migration waves and rollback",
+    "kind": "lab",
+    "path": "labs/ARCHITECT-604/README.md",
+    "order": 9,
+    "labType": "ARCHITECT",
+    "awsLab": false
+  },
+  {
+    "id": "Q-06",
+    "moduleId": "module-06",
+    "title": "Module 6 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-06.md",
+    "order": 10
+  },
+  {
+    "id": "L-7.1",
+    "moduleId": "module-07",
+    "title": "Heap, stacks, metaspace and native memory",
+    "kind": "lesson",
+    "path": "course/modules/07-jvm-internals-performance/lessons/L-7.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-7.2",
+    "moduleId": "module-07",
+    "title": "Class loading",
+    "kind": "lesson",
+    "path": "course/modules/07-jvm-internals-performance/lessons/L-7.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-7.3",
+    "moduleId": "module-07",
+    "title": "JIT compilation",
+    "kind": "lesson",
+    "path": "course/modules/07-jvm-internals-performance/lessons/L-7.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-7.4",
+    "moduleId": "module-07",
+    "title": "Garbage collection",
+    "kind": "lesson",
+    "path": "course/modules/07-jvm-internals-performance/lessons/L-7.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-7.5",
+    "moduleId": "module-07",
+    "title": "Allocation behavior",
+    "kind": "lesson",
+    "path": "course/modules/07-jvm-internals-performance/lessons/L-7.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-7.6",
+    "moduleId": "module-07",
+    "title": "JVM in containers",
+    "kind": "lesson",
+    "path": "course/modules/07-jvm-internals-performance/lessons/L-7.6.md",
+    "order": 6
+  },
+  {
+    "id": "LAB-701",
+    "moduleId": "module-07",
+    "title": "Observe JVM memory",
+    "kind": "lab",
+    "path": "labs/LAB-701/README.md",
+    "order": 7,
+    "labType": "PERFORMANCE",
+    "awsLab": false
+  },
+  {
+    "id": "LAB-702",
+    "moduleId": "module-07",
+    "title": "Controlled object allocation",
+    "kind": "lab",
+    "path": "labs/LAB-702/README.md",
+    "order": 8,
+    "labType": "PERFORMANCE",
+    "awsLab": false
+  },
+  {
+    "id": "LAB-703",
+    "moduleId": "module-07",
+    "title": "Observe GC",
+    "kind": "lab",
+    "path": "labs/LAB-703/README.md",
+    "order": 9,
+    "labType": "PERFORMANCE",
+    "awsLab": false
+  },
+  {
+    "id": "LAB-704",
+    "moduleId": "module-07",
+    "title": "JVM and container memory experiment",
+    "kind": "lab",
+    "path": "labs/LAB-704/README.md",
+    "order": 10,
+    "labType": "PERFORMANCE",
+    "awsLab": false
+  },
+  {
+    "id": "Q-07",
+    "moduleId": "module-07",
+    "title": "Module 7 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-07.md",
+    "order": 11
+  },
+  {
+    "id": "L-8.1",
+    "moduleId": "module-08",
+    "title": "Thread-dump analysis",
+    "kind": "lesson",
+    "path": "course/modules/08-jvm-troubleshooting/lessons/L-8.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-8.2",
+    "moduleId": "module-08",
+    "title": "Heap-dump reasoning",
+    "kind": "lesson",
+    "path": "course/modules/08-jvm-troubleshooting/lessons/L-8.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-8.3",
+    "moduleId": "module-08",
+    "title": "CPU saturation",
+    "kind": "lesson",
+    "path": "course/modules/08-jvm-troubleshooting/lessons/L-8.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-8.4",
+    "moduleId": "module-08",
+    "title": "Memory leaks",
+    "kind": "lesson",
+    "path": "course/modules/08-jvm-troubleshooting/lessons/L-8.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-8.5",
+    "moduleId": "module-08",
+    "title": "GC pauses",
+    "kind": "lesson",
+    "path": "course/modules/08-jvm-troubleshooting/lessons/L-8.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-8.6",
+    "moduleId": "module-08",
+    "title": "Thread starvation",
+    "kind": "lesson",
+    "path": "course/modules/08-jvm-troubleshooting/lessons/L-8.6.md",
+    "order": 6
+  },
+  {
+    "id": "L-8.7",
+    "moduleId": "module-08",
+    "title": "Container OOM",
+    "kind": "lesson",
+    "path": "course/modules/08-jvm-troubleshooting/lessons/L-8.7.md",
+    "order": 7
+  },
+  {
+    "id": "INCIDENT-801",
+    "moduleId": "module-08",
+    "title": "CPU 98 percent",
+    "kind": "lab",
+    "path": "labs/INCIDENT-801/README.md",
+    "order": 8,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-802",
+    "moduleId": "module-08",
+    "title": "Memory leak",
+    "kind": "lab",
+    "path": "labs/INCIDENT-802/README.md",
+    "order": 9,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-803",
+    "moduleId": "module-08",
+    "title": "Deadlock",
+    "kind": "lab",
+    "path": "labs/INCIDENT-803/README.md",
+    "order": 10,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-804",
+    "moduleId": "module-08",
+    "title": "Thread-pool exhaustion",
+    "kind": "lab",
+    "path": "labs/INCIDENT-804/README.md",
+    "order": 11,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-805",
+    "moduleId": "module-08",
+    "title": "Excessive GC",
+    "kind": "lab",
+    "path": "labs/INCIDENT-805/README.md",
+    "order": 12,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-806",
+    "moduleId": "module-08",
+    "title": "Container OOM",
+    "kind": "lab",
+    "path": "labs/INCIDENT-806/README.md",
+    "order": 13,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "Q-08",
+    "moduleId": "module-08",
+    "title": "Module 8 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-08.md",
+    "order": 14
+  },
+  {
+    "id": "L-9.1",
+    "moduleId": "module-09",
+    "title": "OCI and container concepts",
+    "kind": "lesson",
+    "path": "course/modules/09-containers-for-java/lessons/L-9.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-9.2",
+    "moduleId": "module-09",
+    "title": "Docker and Podman",
+    "kind": "lesson",
+    "path": "course/modules/09-containers-for-java/lessons/L-9.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-9.3",
+    "moduleId": "module-09",
+    "title": "Images and registries",
+    "kind": "lesson",
+    "path": "course/modules/09-containers-for-java/lessons/L-9.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-9.4",
+    "moduleId": "module-09",
+    "title": "Networking and volumes",
+    "kind": "lesson",
+    "path": "course/modules/09-containers-for-java/lessons/L-9.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-9.5",
+    "moduleId": "module-09",
+    "title": "Secrets and configuration",
+    "kind": "lesson",
+    "path": "course/modules/09-containers-for-java/lessons/L-9.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-9.6",
+    "moduleId": "module-09",
+    "title": "Java resource sizing",
+    "kind": "lesson",
+    "path": "course/modules/09-containers-for-java/lessons/L-9.6.md",
+    "order": 6
+  },
+  {
+    "id": "L-9.7",
+    "moduleId": "module-09",
+    "title": "Container security",
+    "kind": "lesson",
+    "path": "course/modules/09-containers-for-java/lessons/L-9.7.md",
+    "order": 7
+  },
+  {
+    "id": "BUILD-901",
+    "moduleId": "module-09",
+    "title": "Containerize BayPay",
+    "kind": "lab",
+    "path": "labs/BUILD-901/README.md",
+    "order": 8,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "FIX-902",
+    "moduleId": "module-09",
+    "title": "Repair poor Dockerfile",
+    "kind": "lab",
+    "path": "labs/FIX-902/README.md",
+    "order": 9,
+    "labType": "BREAK/FIX",
+    "awsLab": false
+  },
+  {
+    "id": "SECURITY-903",
+    "moduleId": "module-09",
+    "title": "Harden container",
+    "kind": "lab",
+    "path": "labs/SECURITY-903/README.md",
+    "order": 10,
+    "labType": "SECURITY",
+    "awsLab": false
+  },
+  {
+    "id": "PERFORMANCE-904",
+    "moduleId": "module-09",
+    "title": "Optimize Java container",
+    "kind": "lab",
+    "path": "labs/PERFORMANCE-904/README.md",
+    "order": 11,
+    "labType": "PERFORMANCE",
+    "awsLab": false
+  },
+  {
+    "id": "Q-09",
+    "moduleId": "module-09",
+    "title": "Module 9 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-09.md",
+    "order": 12
+  },
+  {
+    "id": "L-10.1",
+    "moduleId": "module-10",
+    "title": "Pods, Deployments and ReplicaSets",
+    "kind": "lesson",
+    "path": "course/modules/10-kubernetes-and-openshift/lessons/L-10.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-10.2",
+    "moduleId": "module-10",
+    "title": "Services, Ingress and OpenShift Routes",
+    "kind": "lesson",
+    "path": "course/modules/10-kubernetes-and-openshift/lessons/L-10.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-10.3",
+    "moduleId": "module-10",
+    "title": "ConfigMaps and Secrets",
+    "kind": "lesson",
+    "path": "course/modules/10-kubernetes-and-openshift/lessons/L-10.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-10.4",
+    "moduleId": "module-10",
+    "title": "RBAC and networking",
+    "kind": "lesson",
+    "path": "course/modules/10-kubernetes-and-openshift/lessons/L-10.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-10.5",
+    "moduleId": "module-10",
+    "title": "Probes and resources",
+    "kind": "lesson",
+    "path": "course/modules/10-kubernetes-and-openshift/lessons/L-10.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-10.6",
+    "moduleId": "module-10",
+    "title": "Autoscaling and rollout / rollback",
+    "kind": "lesson",
+    "path": "course/modules/10-kubernetes-and-openshift/lessons/L-10.6.md",
+    "order": 6
+  },
+  {
+    "id": "INCIDENT-1001",
+    "moduleId": "module-10",
+    "title": "CrashLoopBackOff",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1001/README.md",
+    "order": 7,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1002",
+    "moduleId": "module-10",
+    "title": "OOMKilled",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1002/README.md",
+    "order": 8,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1003",
+    "moduleId": "module-10",
+    "title": "Readiness failure",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1003/README.md",
+    "order": 9,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1004",
+    "moduleId": "module-10",
+    "title": "Bad Secret",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1004/README.md",
+    "order": 10,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1005",
+    "moduleId": "module-10",
+    "title": "TLS / certificate issue",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1005/README.md",
+    "order": 11,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1006",
+    "moduleId": "module-10",
+    "title": "Service routing failure",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1006/README.md",
+    "order": 12,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "Q-10",
+    "moduleId": "module-10",
+    "title": "Module 10 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-10.md",
+    "order": 13
+  },
+  {
+    "id": "L-11.1",
+    "moduleId": "module-11",
+    "title": "Amazon ECR",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-11.2",
+    "moduleId": "module-11",
+    "title": "Amazon ECS and Fargate",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-11.3",
+    "moduleId": "module-11",
+    "title": "Amazon EKS",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-11.4",
+    "moduleId": "module-11",
+    "title": "ALB, NLB and Route 53",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-11.5",
+    "moduleId": "module-11",
+    "title": "IAM, Secrets Manager and KMS",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-11.6",
+    "moduleId": "module-11",
+    "title": "Amazon CloudWatch",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.6.md",
+    "order": 6
+  },
+  {
+    "id": "L-11.7",
+    "moduleId": "module-11",
+    "title": "Amazon RDS and S3",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.7.md",
+    "order": 7
+  },
+  {
+    "id": "L-11.8",
+    "moduleId": "module-11",
+    "title": "Autoscaling and cost",
+    "kind": "lesson",
+    "path": "course/modules/11-aws-container-platforms/lessons/L-11.8.md",
+    "order": 8
+  },
+  {
+    "id": "BUILD-1101",
+    "moduleId": "module-11",
+    "title": "Deploy BayPay on ECS/Fargate",
+    "kind": "lab",
+    "path": "labs/BUILD-1101/README.md",
+    "order": 9,
+    "labType": "BUILD",
+    "awsLab": true
+  },
+  {
+    "id": "ARCHITECT-1102",
+    "moduleId": "module-11",
+    "title": "ECS vs EKS vs OpenShift",
+    "kind": "lab",
+    "path": "labs/ARCHITECT-1102/README.md",
+    "order": 10,
+    "labType": "ARCHITECT",
+    "awsLab": false
+  },
+  {
+    "id": "SECURITY-1103",
+    "moduleId": "module-11",
+    "title": "IAM, secrets and KMS",
+    "kind": "lab",
+    "path": "labs/SECURITY-1103/README.md",
+    "order": 11,
+    "labType": "SECURITY",
+    "awsLab": true
+  },
+  {
+    "id": "INCIDENT-1104",
+    "moduleId": "module-11",
+    "title": "Unhealthy ALB target",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1104/README.md",
+    "order": 12,
+    "labType": "INCIDENT",
+    "awsLab": true
+  },
+  {
+    "id": "COST-1105",
+    "moduleId": "module-11",
+    "title": "Cost optimization",
+    "kind": "lab",
+    "path": "labs/COST-1105/README.md",
+    "order": 13,
+    "labType": "COST",
+    "awsLab": true
+  },
+  {
+    "id": "Q-11",
+    "moduleId": "module-11",
+    "title": "Module 11 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-11.md",
+    "order": 14
+  },
+  {
+    "id": "L-12.1",
+    "moduleId": "module-12",
+    "title": "Git workflow",
+    "kind": "lesson",
+    "path": "course/modules/12-terraform-ansible-cicd/lessons/L-12.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-12.2",
+    "moduleId": "module-12",
+    "title": "CI build and test",
+    "kind": "lesson",
+    "path": "course/modules/12-terraform-ansible-cicd/lessons/L-12.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-12.3",
+    "moduleId": "module-12",
+    "title": "Container publishing",
+    "kind": "lesson",
+    "path": "course/modules/12-terraform-ansible-cicd/lessons/L-12.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-12.4",
+    "moduleId": "module-12",
+    "title": "Terraform foundations and modules",
+    "kind": "lesson",
+    "path": "course/modules/12-terraform-ansible-cicd/lessons/L-12.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-12.5",
+    "moduleId": "module-12",
+    "title": "Configuration automation",
+    "kind": "lesson",
+    "path": "course/modules/12-terraform-ansible-cicd/lessons/L-12.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-12.6",
+    "moduleId": "module-12",
+    "title": "Deployment validation and rollback",
+    "kind": "lesson",
+    "path": "course/modules/12-terraform-ansible-cicd/lessons/L-12.6.md",
+    "order": 6
+  },
+  {
+    "id": "BUILD-1201",
+    "moduleId": "module-12",
+    "title": "Terraform AWS environment",
+    "kind": "lab",
+    "path": "labs/BUILD-1201/README.md",
+    "order": 7,
+    "labType": "BUILD",
+    "awsLab": true
+  },
+  {
+    "id": "BUILD-1202",
+    "moduleId": "module-12",
+    "title": "Reusable Terraform modules",
+    "kind": "lab",
+    "path": "labs/BUILD-1202/README.md",
+    "order": 8,
+    "labType": "BUILD",
+    "awsLab": true
+  },
+  {
+    "id": "BUILD-1203",
+    "moduleId": "module-12",
+    "title": "Configuration automation",
+    "kind": "lab",
+    "path": "labs/BUILD-1203/README.md",
+    "order": 9,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "BUILD-1204",
+    "moduleId": "module-12",
+    "title": "CI/CD pipeline",
+    "kind": "lab",
+    "path": "labs/BUILD-1204/README.md",
+    "order": 10,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1205",
+    "moduleId": "module-12",
+    "title": "Failed deployment and rollback",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1205/README.md",
+    "order": 11,
+    "labType": "INCIDENT",
+    "awsLab": true
+  },
+  {
+    "id": "Q-12",
+    "moduleId": "module-12",
+    "title": "Module 12 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-12.md",
+    "order": 12
+  },
+  {
+    "id": "L-13.1",
+    "moduleId": "module-13",
+    "title": "Logs, metrics and traces",
+    "kind": "lesson",
+    "path": "course/modules/13-production-engineering-observability/lessons/L-13.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-13.2",
+    "moduleId": "module-13",
+    "title": "RED and USE concepts",
+    "kind": "lesson",
+    "path": "course/modules/13-production-engineering-observability/lessons/L-13.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-13.3",
+    "moduleId": "module-13",
+    "title": "SLIs and SLOs",
+    "kind": "lesson",
+    "path": "course/modules/13-production-engineering-observability/lessons/L-13.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-13.4",
+    "moduleId": "module-13",
+    "title": "Alerting and dashboards",
+    "kind": "lesson",
+    "path": "course/modules/13-production-engineering-observability/lessons/L-13.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-13.5",
+    "moduleId": "module-13",
+    "title": "Capacity planning",
+    "kind": "lesson",
+    "path": "course/modules/13-production-engineering-observability/lessons/L-13.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-13.6",
+    "moduleId": "module-13",
+    "title": "Incident response and RCA",
+    "kind": "lesson",
+    "path": "course/modules/13-production-engineering-observability/lessons/L-13.6.md",
+    "order": 6
+  },
+  {
+    "id": "L-13.7",
+    "moduleId": "module-13",
+    "title": "Change management",
+    "kind": "lesson",
+    "path": "course/modules/13-production-engineering-observability/lessons/L-13.7.md",
+    "order": 7
+  },
+  {
+    "id": "BUILD-1300",
+    "moduleId": "module-13",
+    "title": "BayPay operations dashboard",
+    "kind": "lab",
+    "path": "labs/BUILD-1300/README.md",
+    "order": 8,
+    "labType": "BUILD",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1301",
+    "moduleId": "module-13",
+    "title": "Throughput collapse and P99 latency spike",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1301/README.md",
+    "order": 9,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "Q-13",
+    "moduleId": "module-13",
+    "title": "Module 13 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-13.md",
+    "order": 10
+  },
+  {
+    "id": "L-14.1",
+    "moduleId": "module-14",
+    "title": "TLS and PKI",
+    "kind": "lesson",
+    "path": "course/modules/14-security-ha-dr/lessons/L-14.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-14.2",
+    "moduleId": "module-14",
+    "title": "IAM and secrets",
+    "kind": "lesson",
+    "path": "course/modules/14-security-ha-dr/lessons/L-14.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-14.3",
+    "moduleId": "module-14",
+    "title": "Encryption",
+    "kind": "lesson",
+    "path": "course/modules/14-security-ha-dr/lessons/L-14.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-14.4",
+    "moduleId": "module-14",
+    "title": "Networking, DNS and load balancing",
+    "kind": "lesson",
+    "path": "course/modules/14-security-ha-dr/lessons/L-14.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-14.5",
+    "moduleId": "module-14",
+    "title": "HA and failure domains",
+    "kind": "lesson",
+    "path": "course/modules/14-security-ha-dr/lessons/L-14.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-14.6",
+    "moduleId": "module-14",
+    "title": "RTO, RPO and DR",
+    "kind": "lesson",
+    "path": "course/modules/14-security-ha-dr/lessons/L-14.6.md",
+    "order": 6
+  },
+  {
+    "id": "L-14.7",
+    "moduleId": "module-14",
+    "title": "Capacity planning",
+    "kind": "lesson",
+    "path": "course/modules/14-security-ha-dr/lessons/L-14.7.md",
+    "order": 7
+  },
+  {
+    "id": "ARCHITECT-1401",
+    "moduleId": "module-14",
+    "title": "Design BayPay for 99.99 percent",
+    "kind": "lab",
+    "path": "labs/ARCHITECT-1401/README.md",
+    "order": 8,
+    "labType": "ARCHITECT",
+    "awsLab": false
+  },
+  {
+    "id": "INCIDENT-1402",
+    "moduleId": "module-14",
+    "title": "Certificate expiration",
+    "kind": "lab",
+    "path": "labs/INCIDENT-1402/README.md",
+    "order": 9,
+    "labType": "INCIDENT",
+    "awsLab": false
+  },
+  {
+    "id": "DR-1403",
+    "moduleId": "module-14",
+    "title": "Regional outage tabletop",
+    "kind": "lab",
+    "path": "labs/DR-1403/README.md",
+    "order": 10,
+    "labType": "ARCHITECT",
+    "awsLab": false
+  },
+  {
+    "id": "SECURITY-1404",
+    "moduleId": "module-14",
+    "title": "Threat model BayPay",
+    "kind": "lab",
+    "path": "labs/SECURITY-1404/README.md",
+    "order": 11,
+    "labType": "SECURITY",
+    "awsLab": false
+  },
+  {
+    "id": "Q-14",
+    "moduleId": "module-14",
+    "title": "Module 14 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-14.md",
+    "order": 12
+  },
+  {
+    "id": "L-15.1",
+    "moduleId": "module-15",
+    "title": "Incident summarization",
+    "kind": "lesson",
+    "path": "course/modules/15-bayops-ai/lessons/L-15.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-15.2",
+    "moduleId": "module-15",
+    "title": "Evidence vs hypothesis",
+    "kind": "lesson",
+    "path": "course/modules/15-bayops-ai/lessons/L-15.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-15.3",
+    "moduleId": "module-15",
+    "title": "RCA hypothesis generation",
+    "kind": "lesson",
+    "path": "course/modules/15-bayops-ai/lessons/L-15.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-15.4",
+    "moduleId": "module-15",
+    "title": "Runbook recommendations",
+    "kind": "lesson",
+    "path": "course/modules/15-bayops-ai/lessons/L-15.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-15.5",
+    "moduleId": "module-15",
+    "title": "Human approval",
+    "kind": "lesson",
+    "path": "course/modules/15-bayops-ai/lessons/L-15.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-15.6",
+    "moduleId": "module-15",
+    "title": "AI evaluation and hallucination detection",
+    "kind": "lesson",
+    "path": "course/modules/15-bayops-ai/lessons/L-15.6.md",
+    "order": 6
+  },
+  {
+    "id": "AI-1501",
+    "moduleId": "module-15",
+    "title": "Incident summarization",
+    "kind": "lab",
+    "path": "labs/AI-1501/README.md",
+    "order": 7,
+    "labType": "AI",
+    "awsLab": false
+  },
+  {
+    "id": "AI-1502",
+    "moduleId": "module-15",
+    "title": "RCA hypotheses",
+    "kind": "lab",
+    "path": "labs/AI-1502/README.md",
+    "order": 8,
+    "labType": "AI",
+    "awsLab": false
+  },
+  {
+    "id": "AI-1503",
+    "moduleId": "module-15",
+    "title": "Runbook recommendation",
+    "kind": "lab",
+    "path": "labs/AI-1503/README.md",
+    "order": 9,
+    "labType": "AI",
+    "awsLab": false
+  },
+  {
+    "id": "AI-1504",
+    "moduleId": "module-15",
+    "title": "Evaluate hallucinated diagnosis",
+    "kind": "lab",
+    "path": "labs/AI-1504/README.md",
+    "order": 10,
+    "labType": "AI",
+    "awsLab": false
+  },
+  {
+    "id": "Q-15",
+    "moduleId": "module-15",
+    "title": "Module 15 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-15.md",
+    "order": 11
+  },
+  {
+    "id": "L-16.1",
+    "moduleId": "module-16",
+    "title": "Java / JVM round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.1.md",
+    "order": 1
+  },
+  {
+    "id": "L-16.2",
+    "moduleId": "module-16",
+    "title": "Spring / Jakarta round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.2.md",
+    "order": 2
+  },
+  {
+    "id": "L-16.3",
+    "moduleId": "module-16",
+    "title": "WebSphere / Liberty round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.3.md",
+    "order": 3
+  },
+  {
+    "id": "L-16.4",
+    "moduleId": "module-16",
+    "title": "Containers / Kubernetes round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.4.md",
+    "order": 4
+  },
+  {
+    "id": "L-16.5",
+    "moduleId": "module-16",
+    "title": "AWS round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.5.md",
+    "order": 5
+  },
+  {
+    "id": "L-16.6",
+    "moduleId": "module-16",
+    "title": "Automation round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.6.md",
+    "order": 6
+  },
+  {
+    "id": "L-16.7",
+    "moduleId": "module-16",
+    "title": "Production incident round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.7.md",
+    "order": 7
+  },
+  {
+    "id": "L-16.8",
+    "moduleId": "module-16",
+    "title": "System design round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.8.md",
+    "order": 8
+  },
+  {
+    "id": "L-16.9",
+    "moduleId": "module-16",
+    "title": "Leadership / architecture round",
+    "kind": "lesson",
+    "path": "course/modules/16-advanced-engineer-interview-simulator/lessons/L-16.9.md",
+    "order": 9
+  },
+  {
+    "id": "INTERVIEW-1601",
+    "moduleId": "module-16",
+    "title": "Practice mode",
+    "kind": "lab",
+    "path": "labs/INTERVIEW-1601/README.md",
+    "order": 10,
+    "labType": "INTERVIEW",
+    "awsLab": false
+  },
+  {
+    "id": "INTERVIEW-1602",
+    "moduleId": "module-16",
+    "title": "Rapid fire",
+    "kind": "lab",
+    "path": "labs/INTERVIEW-1602/README.md",
+    "order": 11,
+    "labType": "INTERVIEW",
+    "awsLab": false
+  },
+  {
+    "id": "INTERVIEW-1603",
+    "moduleId": "module-16",
+    "title": "Troubleshooting interview",
+    "kind": "lab",
+    "path": "labs/INTERVIEW-1603/README.md",
+    "order": 12,
+    "labType": "INTERVIEW",
+    "awsLab": false
+  },
+  {
+    "id": "INTERVIEW-1604",
+    "moduleId": "module-16",
+    "title": "System design",
+    "kind": "lab",
+    "path": "labs/INTERVIEW-1604/README.md",
+    "order": 13,
+    "labType": "INTERVIEW",
+    "awsLab": false
+  },
+  {
+    "id": "INTERVIEW-1605",
+    "moduleId": "module-16",
+    "title": "Full mock loop",
+    "kind": "lab",
+    "path": "labs/INTERVIEW-1605/README.md",
+    "order": 14,
+    "labType": "INTERVIEW",
+    "awsLab": false
+  },
+  {
+    "id": "Q-16",
+    "moduleId": "module-16",
+    "title": "Module 16 quiz",
+    "kind": "quiz",
+    "path": "course/quizzes/Q-16.md",
+    "order": 15
+  },
+  {
+    "id": "CAPSTONE-1",
+    "moduleId": "capstones",
+    "title": "Build BayPay",
+    "kind": "capstone",
+    "path": "capstones/01-build-baypay/README.md",
+    "order": 1,
+    "labType": "CAPSTONE"
+  },
+  {
+    "id": "CAPSTONE-2",
+    "moduleId": "capstones",
+    "title": "Modernize BayPay",
+    "kind": "capstone",
+    "path": "capstones/02-modernize-baypay/README.md",
+    "order": 2,
+    "labType": "CAPSTONE"
+  },
+  {
+    "id": "CAPSTONE-3",
+    "moduleId": "capstones",
+    "title": "Cloud BayPay",
+    "kind": "capstone",
+    "path": "capstones/03-cloud-baypay/README.md",
+    "order": 3,
+    "labType": "CAPSTONE"
+  },
+  {
+    "id": "CAPSTONE-4",
+    "moduleId": "capstones",
+    "title": "BayPay Production Crisis",
+    "kind": "capstone",
+    "path": "capstones/04-production-crisis/README.md",
+    "order": 4,
+    "labType": "CAPSTONE"
+  }
+]

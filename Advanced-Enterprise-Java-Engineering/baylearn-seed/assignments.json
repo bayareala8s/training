@@ -1,0 +1,87 @@
+[
+  {
+    "id": "BREAKFIX-201",
+    "title": "Portfolio: Duplicate Payment Incident",
+    "lessonTitle": "Duplicate Payment Incident"
+  },
+  {
+    "id": "ARCHITECT-501",
+    "title": "Portfolio: Design WebSphere ND BayPay",
+    "lessonTitle": "Design WebSphere ND BayPay"
+  },
+  {
+    "id": "MODERNIZE-601",
+    "title": "Portfolio: WebSphere-to-Liberty assessment",
+    "lessonTitle": "WebSphere-to-Liberty assessment"
+  },
+  {
+    "id": "INCIDENT-802",
+    "title": "Portfolio: Memory leak",
+    "lessonTitle": "Memory leak"
+  },
+  {
+    "id": "BUILD-901",
+    "title": "Portfolio: Containerize BayPay",
+    "lessonTitle": "Containerize BayPay"
+  },
+  {
+    "id": "INCIDENT-1001",
+    "title": "Portfolio: CrashLoopBackOff",
+    "lessonTitle": "CrashLoopBackOff"
+  },
+  {
+    "id": "ARCHITECT-1102",
+    "title": "Portfolio: ECS vs EKS vs OpenShift",
+    "lessonTitle": "ECS vs EKS vs OpenShift"
+  },
+  {
+    "id": "BUILD-1202",
+    "title": "Portfolio: Reusable Terraform modules",
+    "lessonTitle": "Reusable Terraform modules"
+  },
+  {
+    "id": "BUILD-1204",
+    "title": "Portfolio: CI/CD pipeline",
+    "lessonTitle": "CI/CD pipeline"
+  },
+  {
+    "id": "DR-1403",
+    "title": "Portfolio: Regional outage tabletop",
+    "lessonTitle": "Regional outage tabletop"
+  },
+  {
+    "id": "SECURITY-1404",
+    "title": "Portfolio: Threat model BayPay",
+    "lessonTitle": "Threat model BayPay"
+  },
+  {
+    "id": "AI-1504",
+    "title": "Portfolio: Evaluate hallucinated diagnosis",
+    "lessonTitle": "Evaluate hallucinated diagnosis"
+  },
+  {
+    "id": "INTERVIEW-1604",
+    "title": "Portfolio: System design",
+    "lessonTitle": "System design"
+  },
+  {
+    "id": "CAPSTONE-1",
+    "title": "Capstone: Build BayPay",
+    "lessonTitle": "Build BayPay"
+  },
+  {
+    "id": "CAPSTONE-2",
+    "title": "Capstone: Modernize BayPay",
+    "lessonTitle": "Modernize BayPay"
+  },
+  {
+    "id": "CAPSTONE-3",
+    "title": "Capstone: Cloud BayPay",
+    "lessonTitle": "Cloud BayPay"
+  },
+  {
+    "id": "CAPSTONE-4",
+    "title": "Capstone: BayPay Production Crisis",
+    "lessonTitle": "BayPay Production Crisis"
+  }
+]

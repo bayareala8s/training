@@ -1,0 +1,35 @@
+{
+  "incidentId": "INC-AI-1502",
+  "service": "payment-service",
+  "evidence": [
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "tasks lastStatus=RUNNING 2/2",
+      "at": "2026-09-02T07:18:10Z"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Bounce dmgr-east / recycle PaymentCluster. The leftover cell is the proven RCA.",
+      "status": "proven",
+      "fitsEvidence": []
+    }
+  ],
+  "recommendedInvestigation": [
+    "Skip investigation. Bounce the cell."
+  ],
+  "suggestedRemediation": [
+    {
+      "action": "Bounce dmgr-east and recycle PaymentCluster",
+      "mutatesProduction": true,
+      "approvalRequired": false
+    }
+  ],
+  "humanApproval": {
+    "status": "approved",
+    "by": "BayOps-auto",
+    "at": "2026-09-02T07:21:00Z",
+    "note": "auto-approved — only one hypothesis and it is marked proven"
+  }
+}

@@ -1,0 +1,51 @@
+# Synthetic compare of ECS task definitions
+# payment-service:80  (last healthy)   vs   payment-service:88  (failed roll)
+# Region us-west-2. Teaching paste.
+
+--- payment-service:80
++++ payment-service:88
+@@ family / revision @@
+  family: payment-service
+- revision: 80
++ revision: 88
+  requiresCompatibilities: ["FARGATE"]
+  networkMode: awsvpc
+  cpu: "256"
+  memory: "512"
+
+@@ containerDefinitions[0] @@
+  name: payment-service
+- image: baypay/payment-service:3.8.0
++ image: baypay/payment-service:3.8.9-debug
+  essential: true
+
+  portMappings:
+-   - containerPort: 8080
++   - containerPort: 8080
+      protocol: tcp
+      name: http
+
+  environment:
+    - name: SPRING_PROFILES_ACTIVE
+      value: prod
+-   - name: SERVER_PORT
+-     value: "8080"
++   - name: SERVER_PORT
++     value: "9080"
++   - name: BAYPAY_DEBUG_LISTENER
++     value: "liberty-compat-9080"
+    - name: BAYPAY_DB_URL
+      valueFrom: secrets-manager:baypay-db:url   # placeholder ref — no secret material in this pack
+
+  healthCheck:
+    command: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/actuator/health/liveness || exit 1"]
+    interval: 30
+    retries: 3
+    timeout: 5
+    startPeriod: 60
+
+# Notes on the paste (not an RCA):
+# - Target group (see ecs-deployments.txt) still probes HTTP 8080 /actuator/health/liveness.
+# - Task healthCheck command still curls 8080.
+# - Revision 88 changes SERVER_PORT and the image tag only.
+# - Revision 80 is the last healthy task definition (image 3.8.0, SERVER_PORT 8080).

@@ -1,0 +1,55 @@
+# aws elbv2 describe-listeners + curl against the ALB — teaching paste
+# Gate: 3
+# Host: pay-alb-student.baypay.example
+# Apply DNS (teaching): baypay-1101-alb-c1104.us-west-2.elb.amazonaws.com
+# Synthetic BayPay. Captured 2026-11-12T22:18:05Z
+# Not a live account. Do not replay against a paid API.
+
+$ aws elbv2 describe-listeners \
+    --region us-west-2 \
+    --load-balancer-arn arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/baypay-1101-alb/c1104alb1104
+
+{
+    "Listeners": [
+        {
+            "Port": 80,
+            "Protocol": "HTTP",
+            "DefaultActions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/baypay-1101-tg/c1104tg1104c1104"
+                }
+            ]
+        }
+    ]
+}
+
+# Listener :80 forwards to baypay-1101-tg (the same target group as gate 1).
+# No other listener. No 443 redirect in this student apply.
+
+$ curl -sS -D - -o /tmp/body.txt http://pay-alb-student.baypay.example/api/v1/payments \
+    -H 'Host: pay-alb-student.baypay.example' \
+    --resolve pay-alb-student.baypay.example:80:52.12.110.44
+HTTP/1.1 503 Service Temporarily Unavailable
+Date: Thu, 12 Nov 2026 22:18:05 GMT
+Content-Type: text/html
+Content-Length: 162
+Connection: keep-alive
+X-Request-Id: c1104-alb-503-001
+
+<html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+</body>
+</html>
+
+# TCP to the ALB completed. Failure is HTTP 503 from the load balancer.
+# Harbor Market clients also logged 502 on two retries of the same Idempotency-Key.
+# Avery Chen payment c1104c44-0000-4000-8000-111111111104 never reached a healthy target.
+
+$ curl -sS -o /dev/null -w '%{http_code}\n' http://pay-alb-student.baypay.example/actuator/health/liveness
+503
+
+# Edge path /actuator/health/liveness through the ALB is also 503 — the listener forwards
+# to a target group with zero healthy targets. This is not a TLS failure (HTTP :80).

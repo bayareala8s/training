@@ -1,0 +1,56 @@
+# aws ecs describe-tasks — teaching paste
+# Region: us-west-2
+# Cluster: baypay-prod-west
+# Service: payment-service
+# Synthetic BayPay. Captured 2026-09-03T21:13:40Z
+# Not a live account. Do not replay against a paid API.
+
+$ aws ecs describe-tasks \
+    --region us-west-2 \
+    --cluster baypay-prod-west \
+    --tasks \
+      arn:aws:ecs:us-west-2:123456789012:task/baypay-prod-west/t1504a \
+      arn:aws:ecs:us-west-2:123456789012:task/baypay-prod-west/t1504b \
+    --query 'tasks[].{taskArn:taskArn,lastStatus:lastStatus,desiredStatus:desiredStatus,startedAt:startedAt,stopCode:stopCode,containers:containers[].{name:name,lastStatus:lastStatus,exitCode:exitCode,reason:reason}}'
+
+[
+  {
+    "taskArn": "arn:aws:ecs:us-west-2:123456789012:task/baypay-prod-west/t1504a",
+    "lastStatus": "RUNNING",
+    "desiredStatus": "RUNNING",
+    "startedAt": "2026-09-03T18:40:11Z",
+    "stopCode": null,
+    "containers": [
+      {
+        "name": "payment-service",
+        "lastStatus": "RUNNING",
+        "exitCode": null,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "taskArn": "arn:aws:ecs:us-west-2:123456789012:task/baypay-prod-west/t1504b",
+    "lastStatus": "RUNNING",
+    "desiredStatus": "RUNNING",
+    "startedAt": "2026-09-03T18:40:18Z",
+    "stopCode": null,
+    "containers": [
+      {
+        "name": "payment-service",
+        "lastStatus": "RUNNING",
+        "exitCode": null,
+        "reason": null
+      }
+    ]
+  }
+]
+
+# Desired count: 2. Running: 2. Pending: 0. Stopped: 0.
+# Both tasks were RUNNING before 21:02 UTC (14:02 Pacific) and stayed RUNNING after.
+# No task replacement, no stopCode, no exit at 14:02.
+# Image: baypay/payment-service:3.8.4
+# Container port 8080. No student RDS attached to this service (Sam Okada, timeline).
+
+# Contrast — leftover cell is not in this describe:
+# dmgr-east / PaymentCluster do not appear. Morgan Hale's cell is out of path.

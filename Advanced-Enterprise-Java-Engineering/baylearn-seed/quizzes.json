@@ -1,0 +1,82 @@
+[
+  {
+    "id": "Q-01",
+    "title": "Module 1 quiz",
+    "path": "course/quizzes/Q-01.md"
+  },
+  {
+    "id": "Q-02",
+    "title": "Module 2 quiz",
+    "path": "course/quizzes/Q-02.md"
+  },
+  {
+    "id": "Q-03",
+    "title": "Module 3 quiz",
+    "path": "course/quizzes/Q-03.md"
+  },
+  {
+    "id": "Q-04",
+    "title": "Module 4 quiz",
+    "path": "course/quizzes/Q-04.md"
+  },
+  {
+    "id": "Q-05",
+    "title": "Module 5 quiz",
+    "path": "course/quizzes/Q-05.md"
+  },
+  {
+    "id": "Q-06",
+    "title": "Module 6 quiz",
+    "path": "course/quizzes/Q-06.md"
+  },
+  {
+    "id": "Q-07",
+    "title": "Module 7 quiz",
+    "path": "course/quizzes/Q-07.md"
+  },
+  {
+    "id": "Q-08",
+    "title": "Module 8 quiz",
+    "path": "course/quizzes/Q-08.md"
+  },
+  {
+    "id": "Q-09",
+    "title": "Module 9 quiz",
+    "path": "course/quizzes/Q-09.md"
+  },
+  {
+    "id": "Q-10",
+    "title": "Module 10 quiz",
+    "path": "course/quizzes/Q-10.md"
+  },
+  {
+    "id": "Q-11",
+    "title": "Module 11 quiz",
+    "path": "course/quizzes/Q-11.md"
+  },
+  {
+    "id": "Q-12",
+    "title": "Module 12 quiz",
+    "path": "course/quizzes/Q-12.md"
+  },
+  {
+    "id": "Q-13",
+    "title": "Module 13 quiz",
+    "path": "course/quizzes/Q-13.md"
+  },
+  {
+    "id": "Q-14",
+    "title": "Module 14 quiz",
+    "path": "course/quizzes/Q-14.md"
+  },
+  {
+    "id": "Q-15",
+    "title": "Module 15 quiz",
+    "path": "course/quizzes/Q-15.md"
+  },
+  {
+    "id": "Q-16",
+    "title": "Module 16 quiz",
+    "path": "course/quizzes/Q-16.md"
+  }
+]

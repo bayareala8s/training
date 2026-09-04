@@ -1,0 +1,1082 @@
+[
+  {
+    "id": "AEJE-IQ-031",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "advanced",
+    "topic": "cell, DMGR, node agent and application server",
+    "question": "BayPay Financial Services still runs its source estate on traditional WebSphere ND cell BayPayCell. Explain the cell, dmgr-east, a node agent such as nodeagent-pay-2, and an application server such as Pay1. What still serves Harbor Bike Co if dmgr-east is down? This is not a greenfield design.",
+    "followUps": [
+      "What can Morgan Hale no longer do if nodeagent-pay-2 is down while Pay2 and Pay3 stay STARTED?",
+      "Why is ihs-east not a federated WAS node, and why would you refuse a second cell for a new FX quote service?"
+    ],
+    "expectedConcepts": [
+      "BayPayCell is a management domain, not a serving JVM",
+      "dmgr-east owns the master repository and console; it does not run payment.ear",
+      "node agent syncs and starts/stops servers; application servers serve /payment",
+      "Traditional ND is source estate to operate and leave"
+    ],
+    "engineerAnswer": "The cell is the admin unit. dmgr-east on was-dmgr-east.baypay.example hosts the console and master config. node-pay-1 and node-pay-2 are federated machines with nodeagent-pay-1 and nodeagent-pay-2. Pay1, Pay2, and Pay3 are the JVMs that run payment.ear. Merchants hit those members through ihs-east, never the DMGR. If dmgr-east is down, already-started Pay members keep serving Avery Chen.",
+    "seniorAnswer": "I separate management from traffic. Killing dmgr-east does not stop POST /payment if PaymentCluster is already up. A down nodeagent-pay-2 means Morgan cannot reliably sync, start, or stop Pay2 and Pay3 from the cell, but those JVMs can keep running. I would not bounce dmgr-east to fix a merchant 500 on Pay2. I read node-agent health and member state first. ihs-east is IBM HTTP Server plus the plugin, not a federated node. This topology is what we inherited, not what I would draw for a new service.",
+    "staffAnswer": "On a page I name the process that can actually change Avery Chen's outcome. Riley owns Pay1–Pay3. Morgan owns cell documents and sync. Priya cares whether plugin rotation still lists healthy members. A DMGR outage is an admin outage; a Pay2 hang is a payment outage. I will not treat a down node agent as 'the cell is dead' while Pay1 is still posting. I also will not propose stuffing this cell into Docker. I operate BayPayCell until cutover and I keep the exit (Liberty or Boot) on the table instead of growing another Deployment Manager.",
+    "principalAnswer": "BayPayCell is a shrinking source estate. I will fund runbooks and diagnostics so we do not bounce the wrong JVM, and I will not fund a second ND cell for greenfield work. The architectural control is: serving processes are disposable members; the DMGR is a config authority we intend to retire. If someone asks for a new payment product on a new cell, I send them to Spring Boot 3.5.5 or Liberty server.xml. I will not accept 'rebuild BayPayCell in Kubernetes' as modernization. Paper topology is enough; no live cell is required to answer this.",
+    "commonMistakes": [
+      "Bouncing dmgr-east to fix a merchant failure on Pay2",
+      "Treating a down node agent as proof that application servers have stopped",
+      "Recommending a new traditional ND cell as the greenfield payment platform"
+    ],
+    "scoreRubric": "Engineer: names cell, DMGR, node agent, and serving JVM with locked BayPayCell names and says merchants do not hit dmgr-east. Senior: predicts dmgr-down versus node-agent-down behavior and refuses a DMGR bounce as stabilize. Staff: assigns Riley/Morgan/Priya ownership and treats ND as operated source estate, not a Docker project. Principal: refuses a second cell for greenfield and frames Liberty/Boot as the exit."
+  },
+  {
+    "id": "AEJE-IQ-032",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "advanced",
+    "topic": "plugin-cfg and web server routing to a cluster",
+    "question": "Harbor Bike Co reaches payment.ear through ihs-east.baypay.example. How does plugin-cfg.xml decide which PaymentCluster member receives /payment, and what goes wrong if Jordan Voss adds Pay3 but nobody propagates the plugin?",
+    "followUps": [
+      "How do you drain Pay2 before a rolling EAR update using the plugin rather than hoping TCP health is enough?",
+      "What is the difference between cluster membership Morgan sees and the rotation file Priya reads on ihs-east?"
+    ],
+    "expectedConcepts": [
+      "plugin-cfg.xml lists clusters, member host/port, and URI groups",
+      "Regenerate and propagate is a separate step from adding a cluster member",
+      "Stale plugin sends traffic to drained JVMs or never hits new members",
+      "Drain via plugin before stopping a member"
+    ],
+    "engineerAnswer": "ihs-east reads plugin-cfg.xml. That file lists PaymentCluster transports and URI groups such as /payment/*. The plugin is not the cell. After Morgan adds Pay3, someone must regenerate the plugin and copy it to ihs-east. If that step is skipped, Pay3 is in the cluster and never receives merchant traffic.",
+    "seniorAnswer": "I treat plugin-cfg.xml as the merchant rotation file. Cluster membership in the console can disagree with what ihs-east actually routes. A quiet miss is install success plus no propagate: capacity planning that counted three members is fiction. Before I stop Pay2 I remove it from the plugin or mark it down, wait for in-flight work, then bounce that JVM. I put it back only after a synthetic /payment check I trust, not after TCP accept alone.",
+    "staffAnswer": "On an intermittent 50/50 merchant failure I compare plugin membership to STARTED members and to node sync, not just 'the cluster is up.' Wrong ports, a missing Pay3, or a leftover host after a drain are first-class evidence. I will not ripple-stop PaymentCluster to 'refresh the plugin.' I regenerate, propagate, and prove ihs-east has the new file. This is source-estate operations. I do not invent a live generate on a laptop cell to answer the question.",
+    "principalAnswer": "Routing truth for traditional WAS sits at the edge file, not in the admin console screenshot. I want a release contract: membership change, plugin regenerate, propagate, prove, then serve. That contract is why we are leaving for an ALB or Ingress that is declared in git — but until cutover, plugin drift is a payment incident class. I will not dual-home merchants to the leftover IHS path as 'HA' once Boot is the front door.",
+    "commonMistakes": [
+      "Assuming a STARTED cluster member is in rotation because the console shows three members",
+      "Restarting Pay1 to fix a stale plugin-cfg.xml on ihs-east",
+      "Treating TCP accept on the member port as proof the plugin should keep sending POSTs"
+    ],
+    "scoreRubric": "Engineer: describes plugin-cfg.xml as the IHS rotation file and names regenerate/propagate. Senior: drains via plugin before stop and distrusts TCP-only health. Staff: diagnoses console-versus-plugin drift without a cluster bounce. Principal: makes edge-file truth a release contract and refuses leftover IHS as HA after cutover."
+  },
+  {
+    "id": "AEJE-IQ-033",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "senior",
+    "topic": "JNDI DataSource vs Spring datasource on ND",
+    "question": "payment.ear on PaymentCluster looks up jdbc/baypay from cell JNDI. The teaching runtime payment-service on Spring Boot 3.5.5 uses Hikari through BAYPAY_DB_* . Compare those two datasource models. What breaks if someone tries to run the Boot app as another ear that still expects the cell-scoped name?",
+    "followUps": [
+      "Why is a shared cell-scoped jdbc/baypay a modernization smell for payment versus refund?",
+      "Where would Liberty bind jdbc/baypay-payment instead, and why not reuse the historic name?"
+    ],
+    "expectedConcepts": [
+      "WAS JNDI DataSource is cell-owned; Spring datasource is process-owned",
+      "jdbc/baypay shared across ears is a smell",
+      "Liberty/Boot isolate jdbc/baypay-payment and BAYPAY_DB_*",
+      "NameNotFoundException versus silent wrong-pool success"
+    ],
+    "engineerAnswer": "On ND, Morgan defines jdbc/baypay in the cell and payment.ear looks it up. The pool lives in the WAS JDBC provider, historically maxConnections 50 on PaymentCluster. Boot does not ask the cell. It builds Hikari from environment variables. If I deploy the Boot JAR as if it were payment.ear and leave a lookup for jdbc/baypay, I either get NameNotFoundException or I attach to the leftover shared pool.",
+    "seniorAnswer": "The operational difference is ownership. On the cell, a pool change is a cell document plus sync. On Boot, a pool change is application config and a new revision. I will not point Spring at the cell JNDI 'to reuse connections.' That couples a disposable process to BayPayCell. Shared jdbc/baypay also means a refund report can starve authorize. Isolated names jdbc/baypay-payment and jdbc/baypay-refund exist so those teams cannot share a max. jdbc/baypayXA is not even on every node today — cloning that hole is not compatibility.",
+    "staffAnswer": "I treat the two models as different estates. INCIDENT-shaped pool pain on ND is PMI on jdbc/baypay. On Boot it is Hikari USE on the task. Dual-writing those graphs is a method fail. A 'temporary' JNDI lookup from Boot to the cell is how leftover Morgan Hale operations become a production dependency again. I will fail a design review that keeps one cell-wide pool 'until Liberty features are done.' Isolation is the first cut, not a later cleanup. No live cell is required to say that; TOPOLOGY.md already names the smell.",
+    "principalAnswer": "Datasource scope is an architecture control. Cell JNDI made thin ears possible and made blast radius cell-wide. The exit is process-owned pools with secrets outside the repo, whether Liberty server.xml or Spring Boot. I will not accept a hybrid where new Java 21 services look up WebSphere:cell/... names. That is not a migration; it is a new coupling. Greenfield BayPay work does not get a DataSource in BayPayCell.",
+    "commonMistakes": [
+      "Reusing jdbc/baypay from Boot or Liberty so 'the name stays familiar'",
+      "Assuming Spring can bind to WAS cell JNDI without taking a hard dependency on the leftover estate",
+      "Treating jdbc/baypayXA as a required Liberty feature because it existed on some nodes"
+    ],
+    "scoreRubric": "Engineer: contrasts cell JNDI lookup with Spring/Hikari env config. Senior: isolates payment vs refund pools and rejects Boot-on-cell JNDI. Staff: refuses dual-writing ND PMI and Boot Hikari as one graph. Principal: treats datasource scope as an estate decision and forbids new cell bindings."
+  },
+  {
+    "id": "AEJE-IQ-034",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "senior",
+    "topic": "session affinity vs stateless payment APIs",
+    "question": "Morgan Hale offers to enable session affinity on ihs-east so Harbor Bike Co 'stays on Pay2' during a PaymentCluster rollout. Should the BayPay payment API be sticky? How does that interact with a stateless POST /payment and Idempotency-Key?",
+    "followUps": [
+      "Where might leftover HttpSession or LTPA still appear on the cell, and why is that not a reason to pin payment POSTs?",
+      "What fails for Avery Chen if Pay2 dies and affinity still points at it?"
+    ],
+    "expectedConcepts": [
+      "Payment API is sessionless; sticky sessions are a smell",
+      "Idempotency-Key must work on any healthy member",
+      "Affinity turns a member death into a pinned outage",
+      "LTPA/IHS SSL are not reasons to store payment state in the JVM"
+    ],
+    "engineerAnswer": "The payment API should stay sessionless. A create is a POST with an Idempotency-Key, not a shopping-cart HttpSession. If ihs-east pins Harbor Bike Co to Pay2, a hung Pay2 becomes that merchant's only path. Any healthy Pay member should be able to see the same idempotency record and return the same paymentId.",
+    "seniorAnswer": "I refuse sticky sessions for /payment. Affinity is a workaround for server-side session state we should not have. During a rolling EAR update I drain via plugin, I do not enable affinity 'so the browser finishes.' If we still have LTPA for some leftover UI on the cell, that is a different URI group. I will not let that policy cover the payment API. Stateless members plus a shared store for idempotency is how we survive Pay2 dying mid-rollout.",
+    "staffAnswer": "I ask what state the affinity is protecting. If the answer is 'in-memory authorize progress,' that is a defect, not a plugin setting. I want evidence: session cookies on /payment, or none. PMI session counts on Pay2 after a drain are a smell. Staff-level stabilize is remove affinity if it was added as a hotfix, fail the bad member out of the plugin, and keep idempotency on a store every member can read. I will not recommend sticky sessions as the path to Liberty or Boot either — those runtimes should stay sessionless too.",
+    "principalAnswer": "Session affinity on a payment API is an architecture smell I will not standardize. It couples merchant success to one JVM and fights every rolling deploy. The platform contract is: any replica may accept the POST; exactly-once business effect is the idempotency store, not the plugin cookie. I will allow affinity only for a named leftover UI with an exit date, never for authorize. This answer does not require a live cell; it is a design refusal.",
+    "commonMistakes": [
+      "Enabling IHS sticky sessions so a rollout 'does not break in-flight browsers'",
+      "Storing authorize progress in HttpSession on Pay2",
+      "Assuming LTPA cookies mean the payment API must be sticky"
+    ],
+    "scoreRubric": "Engineer: states the payment API is sessionless and affinity pins outages. Senior: drains without sticky sessions and keeps idempotency member-independent. Staff: treats affinity as a defect signal and refuses it on the Liberty/Boot exit. Principal: makes sessionless replicas a platform contract with a dated exception only for leftover UI."
+  },
+  {
+    "id": "AEJE-IQ-035",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "senior",
+    "topic": "classloader policy parent-first vs parent-last",
+    "question": "payment.ear on BayPayCell is set to PARENT_LAST / application-first because an older SLF4J and a JDBC driver in the EAR disagree with the server. Explain parent-first versus parent-last, and what that policy means when we move toward Liberty or Spring Boot.",
+    "followUps": [
+      "What happens if Pay1 is parent-first and Pay2 is parent-last after a partial sync?",
+      "Why is a WAS shared library not a Liberty feature you enable to 'keep compatibility'?"
+    ],
+    "expectedConcepts": [
+      "Parent-first prefers server classes; parent-last prefers the application",
+      "PARENT_LAST hides version conflicts instead of fixing the classpath",
+      "Liberty/Boot need an honest dependency set, not a loader trick",
+      "Partial sync can make members disagree on which class wins"
+    ],
+    "engineerAnswer": "Parent-first means the WAS server classloader wins; the ear sees IBM and server copies first. Parent-last / application-first means the ear's JARs win, which is how teams hide a different slf4j or driver from the parent. That flag is cell policy. Liberty's default is simpler and app-owned. Boot is a fat JAR with one classpath. The trick does not travel.",
+    "seniorAnswer": "I treat PARENT_LAST as a finding, not a portable setting. If payment.ear only starts because it hid a driver, the assessment is 'fix the classpath,' not 'set the same flag on Liberty.' A worse production case is mixed policy after a bad sync: Pay1 and Pay2 resolve different classes for the same Idempotency-Key path. I would rather pin one driver in the ear and go parent-first, or isolate the library properly, than keep application-first as folklore.",
+    "staffAnswer": "Classloader policy is how WAS made shared server libraries survivable. It is also how we get NoClassDefFoundError that only happens on Pay3. In a compatibility review I score PARENT_LAST and server-scoped shared libraries as cannot-lift-and-shift. I will not accept 'enable a classloading feature' as the Liberty plan. I want a dependency inventory and a single winner for JDBC and logging. No live cell is required; the ear's ibm binding and loader setting on paper is enough.",
+    "principalAnswer": "Loader tricks are technical debt with an operational tax. I will not carry WAS PARENT_LAST into the target estate as a control. The architecture rule is: one process, one declared classpath, features or Spring starters named in git. If an ear cannot start without hiding server classes, it is a rewrite candidate, not a wave-2 canary. I fund the classpath cleanup in wave 0 so we do not discover it on Avery Chen.",
+    "commonMistakes": [
+      "Copying PARENT_LAST onto Liberty as the compatibility plan",
+      "Leaving mixed loader policies across PaymentCluster members after a partial deploy",
+      "Using a server-scoped shared library to 'solve' a Boot or Liberty conflict"
+    ],
+    "scoreRubric": "Engineer: defines parent-first vs parent-last and says the trick does not travel. Senior: treats PARENT_LAST as a classpath finding and flags mixed-member policy. Staff: scores loader tricks as cannot-lift-and-shift in the assessment. Principal: refuses loader policy as a target-estate control and funds wave-0 cleanup."
+  },
+  {
+    "id": "AEJE-IQ-036",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "staff",
+    "topic": "why one cluster member stops consuming JMS",
+    "question": "Priya Nair pages that Pay2 is STARTED but has stopped consuming jms/paymentEvents on SIBus BayPayBus, while Pay1 and Pay3 still drain the queue. How do you investigate one cluster member that stopped consuming JMS? Give a method, not a lucky root cause.",
+    "followUps": [
+      "What evidence would tell you the listener is hung versus the member never joined the bus destination?",
+      "Why is recycling PaymentCluster the wrong first move?"
+    ],
+    "expectedConcepts": [
+      "Per-member JMS listener state versus bus destination state",
+      "Hung consumer, paused MDB, or connection-factory failure as symptom classes",
+      "Preserve stacks; do not ripple-stop the cluster",
+      "SIBus does not lift-and-shift; this is source-estate ops"
+    ],
+    "engineerAnswer": "I would look at Pay2 only first: MDB or listener status, JMS connection factory, and whether that JVM still has a consumer on jms/paymentEvents. I would compare PMI or FFDC on Pay2 to Pay1. A STARTED JVM can still have a dead listener. I would not restart the whole PaymentCluster and I would not touch dmgr-east.",
+    "seniorAnswer": "Method: prove the symptom is member-local. If the bus still has depth and Pay1/Pay3 consume, the destination is not 'down.' Classes I rank unproven: hung listener thread, exhausted JMS session pool on Pay2, destination not activated after a sync, or a stuck transaction holding the consumer. First stabilize is keep Pay1/Pay3 serving and consuming; drain Pay2 from the plugin if HTTP is also sick. I take a thread dump on Pay2 before anyone recycles it. A bounce without stacks loses the only evidence.",
+    "staffAnswer": "Staff work is to keep HTTP authorize and async consume as separate questions. A member can serve /payment and still starve events, or the reverse. I ask Morgan for bus membership and activation on Pay2, Riley for listener/MDB config that last synced, and Priya for queue depth plus per-member consume rates. I will not declare a root cause from the title 'stopped consuming.' I will not enable a JMS feature on Liberty as the hotfix. If we stabilize by leaving Pay2 out of the plugin and out of the consumer set, that is an explicit degrade, not a silent hope.",
+    "principalAnswer": "This incident class is why BayPayBus is on the cannot-lift-and-shift list. I will pay for source-estate diagnostics, and I will not grow more MDBs on the cell. The strategic question after stabilize is whether eventing should already be off SIBus for the Boot path. I will not accept 'restart the cluster' as culture, and I will not accept a new ear on PaymentCluster as the fix. The spoken answer is a method; a live bus is not required.",
+    "commonMistakes": [
+      "Ripple-stopping PaymentCluster or bouncing dmgr-east as the first action",
+      "Declaring a single root cause from the queue name without per-member evidence",
+      "Treating 'STARTED' as proof the JMS listener is consuming"
+    ],
+    "scoreRubric": "Engineer: compares Pay2 listener state to other members and avoids a cluster bounce. Senior: ranks unproven symptom classes and dumps threads before recycle. Staff: splits HTTP vs consume, assigns owners, and states an explicit degrade. Principal: ties the class to leaving SIBus and refuses new MDBs on the cell."
+  },
+  {
+    "id": "AEJE-IQ-037",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "staff",
+    "topic": "JDBC pool exhaustion vs database saturation",
+    "question": "Harbor Bike Co sees slow POST /payment. Morgan Hale says jdbc/baypay is at maxConnections 50. Sam's DBA chat says db-east.baypay.example is 'busy.' How do you tell WAS JDBC pool exhaustion from database saturation, and what do you refuse to do first?",
+    "followUps": [
+      "What PMI or thread-dump signals point at waiters in the pool versus waiters inside PostgreSQL?",
+      "Why is raising maxConnections without looking at in-flight work a dangerous 'fix'?"
+    ],
+    "expectedConcepts": [
+      "Pool waiters vs database CPU/locks/connections",
+      "Hung threads holding checkouts",
+      "Shared jdbc/baypay can couple refund reporting to authorize",
+      "Do not bounce the cell or set -Xmx to a cgroup as capacity"
+    ],
+    "engineerAnswer": "Pool exhaustion means threads are waiting for a connection from jdbc/baypay while active equals max. Database saturation means connections that did check out are slow or blocked in SQL. I look at pool waiting versus active, and at whether db-east sessions are running or idle-in-transaction. I do not recycle PaymentCluster as the first step.",
+    "seniorAnswer": "I split the graphs. If PMI shows waiters and active=50, the next question is who holds the 50. A thread dump with many threads parked on getConnection is pool wait. Stacks in the driver on a query, plus db-east wait events, is database saturation that happens to fill the pool. Raising maxConnections can make a saturated database worse. I stabilize by shedding work or failing a sick member out of the plugin, not by opening more sessions. I also check whether refund reporting is on the same jdbc/baypay — that shared pool is a known smell.",
+    "staffAnswer": "Staff diagnosis is two clocks: application checkout wait and database execution. I will not accept 'the database is down' or 'the pool is the RCA' without both. I keep hypotheses unproven. I will not dual-write leftover cell PMI onto a Boot Hikari incident later. Remediation that needs approval: isolate reporting, lower inbound via plugin, fix the holder leak if dumps show it. I refuse ND-in-Docker, a leftover cell bounce as capacity, and any suggestion that heap should equal a container limit — that is the wrong estate and the wrong knob.",
+    "principalAnswer": "This class is why I will not keep one cell-scoped pool. Isolation and backpressure are cheaper than another 50 connections. I want a written rule: pool max is sized from in-flight work, not from fear, and it is never a substitute for database capacity. After the incident I fund the Liberty/Boot isolated DataSources, not a larger shared jdbc/baypay. Lucky 'it's the database' without method does not pass staff.",
+    "commonMistakes": [
+      "Raising maxConnections immediately or bouncing PaymentCluster to 'free the pool'",
+      "Treating pool waiters as proof the database is down, or the reverse, without both signals",
+      "Using a leftover dmgr-east bounce or -Xmx equal to a memory limit as a capacity move"
+    ],
+    "scoreRubric": "Engineer: defines pool wait vs SQL wait and avoids a cluster recycle. Senior: uses PMI plus stacks and refuses a blind maxConnections raise. Staff: keeps dual hypotheses, names shared-pool smell, and refuses wrong-estate knobs. Principal: converts the incident into isolated pools and a sizing rule."
+  },
+  {
+    "id": "AEJE-IQ-038",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "staff",
+    "topic": "rollout that failed after EAR update",
+    "question": "Jordan Voss updated payment.ear on PaymentCluster. The console shows STARTED on members, but Harbor Bike Co now sees intermittent failures for the same Idempotency-Key. How do you work a rollout that failed after an EAR update? Use symptom classes, not a memorized instructor RCA.",
+    "followUps": [
+      "What is the difference between a completed node sync and a member that merely reports STARTED?",
+      "How would you roll back one member without ripple-stopping the cluster?"
+    ],
+    "expectedConcepts": [
+      "STARTED is not same-version",
+      "Sync, plugin membership, and class/binding mismatch as classes",
+      "Drain, compare bits, roll back a member",
+      "Do not bounce dmgr-east"
+    ],
+    "engineerAnswer": "I would not trust STARTED. I would ask which edition each of Pay1, Pay2, and Pay3 actually has, and whether node sync finished on node-pay-2. Intermittent same-key failures sound like members disagree. I would drain a suspect member at ihs-east and compare logs, not restart dmgr-east.",
+    "seniorAnswer": "Classes I rank: incomplete sync, plugin still routing to a drained or old transport, failed partial activate, or mixed class/bindings across members. Stabilize is stop sending new POSTs to the bad member via plugin-cfg, keep the last known good member in rotation, and do not ripple-stop. Rollback is re-target the previous ear on that member after a sync you can prove, then put it back in the plugin. I will not call this 'fine' because the application state is STARTED.",
+    "staffAnswer": "Staff method is a version matrix: ear file name, node repository generation, plugin file timestamp on ihs-east, and one successful synthetic /payment on each member. I assign Jordan the change window, Morgan the sync, Priya the plugin, Riley the member logs. Lucky 'it was the plugin' or 'it was sync' without those four columns does not close the incident. I communicate intermittent as mixed estate, not as random network. I refuse a new ear on PaymentCluster as the greenfield path; this is how we leave, not how we grow.",
+    "principalAnswer": "A payment platform cannot have 'probably the same bits.' I want immutable artifacts and an edge that is declared, which is why Boot on ECS or Kubernetes is the target. Until then the rollout contract on the cell is: one edition, proven sync, proven plugin, member-by-member drain. I will not accept console STARTED as the release gate. I also will not let this incident become a reason to keep investing in ND instead of finishing wave 2.",
+    "commonMistakes": [
+      "Treating STARTED as proof every member runs the new ear",
+      "Ripple-stopping PaymentCluster or bouncing dmgr-east after a bad deploy",
+      "Naming a single instructor-lab root cause instead of working version/sync/plugin classes"
+    ],
+    "scoreRubric": "Engineer: distrusts STARTED and compares members. Senior: drains via plugin and rolls back one member with a proven sync. Staff: uses a version matrix across roles and refuses a lucky RCA word. Principal: turns the miss into an immutable-artifact contract and keeps the exit funded."
+  },
+  {
+    "id": "AEJE-IQ-039",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "principal",
+    "topic": "Liberty feature set as an architecture control",
+    "question": "Jordan Voss wants to enable 'whatever Liberty features payment.ear might need' on the wave-2 canary so the assessment goes faster. Why is the Liberty feature set an architecture control for BayPay, not a compatibility checklist?",
+    "followUps": [
+      "Which four teaching features does BayPay write first, and what does adding a JMS or WS feature imply?",
+      "How do features compare to Spring Boot starters as a surface-area decision?"
+    ],
+    "expectedConcepts": [
+      "featureManager is an explicit runtime surface",
+      "servlet-6.0 jdbc-4.3 jndi-1.0 persistence-3.1 as the teaching set",
+      "Enabling JMS/WS recreates cell coupling",
+      "Smaller feature set is a security and ops control"
+    ],
+    "engineerAnswer": "Liberty starts with the features you list in server.xml. BayPay's teaching set is servlet-6.0, jdbc-4.3, jndi-1.0, and persistence-3.1. If I enable extra features 'just in case,' I grow the runtime I have to patch and understand. A JMS feature does not recreate BayPayBus.",
+    "seniorAnswer": "I treat each feature as a dependency we now own. jdbc-4.3 plus isolated jdbc/baypay-payment is enough for the war path. Adding messaging or WS features because the old ear had admin-console bindings is how we drag SIBus and WS-* into the target. I would rather fail the assessment honestly and keep the ear on ND than enable a kitchen-sink featureManager on the canary.",
+    "staffAnswer": "Staff review looks at featureManager the way we look at Spring starters: every enabled API is attack surface, thread pools, and an ops manual. I want a written allow-list. A PR that adds a feature to 'make the ear start' needs the same bar as a new production dependency. I also want refund and payment Liberty processes to declare their own features, not inherit a cell-shaped supermodule. Paper server.xml is enough; I do not need a live Liberty JVM to reject kitchen-sink features.",
+    "principalAnswer": "Features are how Liberty encodes architecture. I use them to forbid a second cell: the target is a small, named runtime, not 'WAS without the DMGR.' I will not sign a wave-2 canary whose featureManager is an inventory of every IBM API payment.ear ever touched. If the business still needs SIBus semantics, that is a broker decision or a stay-on-ND decision, not a feature checkbox. The same control applies to Boot: I will not add starters that recreate cell services either.",
+    "commonMistakes": [
+      "Enabling every possible Liberty feature so the ear starts",
+      "Believing a JMS feature is a lift-and-shift of SIBus BayPayBus",
+      "Sharing one kitchen-sink server.xml across payment and refund"
+    ],
+    "scoreRubric": "Engineer: names the teaching feature set and says extras have cost. Senior: refuses kitchen-sink features as a fake assessment pass. Staff: treat features as an allow-listed production dependency. Principal: uses featureManager as the anti-cell control and keeps SIBus off the canary."
+  },
+  {
+    "id": "AEJE-IQ-040",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "principal",
+    "topic": "migration waves and rollback for a bank platform",
+    "question": "Design migration waves and rollback for BayPay leaving BayPayCell. The locked teaching waves are inventory, refund on Liberty, payment canary, then decommission ND after an SLO hold. How do you roll back a bank platform without a second DMGR?",
+    "followUps": [
+      "Why is refund wave 1 even when refund.ear may be 'harder' on SIBus?",
+      "What does dual-run mean for jdbc/baypay versus isolated Liberty pools?"
+    ],
+    "expectedConcepts": [
+      "Waves 0–3: inventory, refund, payment canary, decommission",
+      "Rollback is edge plus artifact, not a new cell",
+      "Dual-run and SLO hold before killing ND",
+      "Wave 0 has no runtime rollback because nothing moved"
+    ],
+    "engineerAnswer": "Wave 0 is inventory only. Wave 1 moves refund to Liberty first because volume is lower, not because refund is simple. Wave 2 canaries payment. Wave 3 decommissions ND after we hold the SLO. Rollback is send traffic back to the previous estate or previous revision, not stand up dmgr-west.",
+    "seniorAnswer": "Each wave has an edge switch and a proven last-good. For Liberty that is ihs-east URI groups or a later ALB rule. For Boot it is a previous ECS revision or Deployment. Dual-run means both estates can complete a refund or a payment without sharing jdbc/baypay. Isolated pools, separate logs, same Idempotency-Key store or a carefully mapped one. I will not roll back by federating a new node. I will not mark wave 3 done because the console is quiet.",
+    "staffAnswer": "Staff rollback is a written matrix: who flips the edge, how long dual-run lasts, what SLO we hold, and what we do with in-flight SIBus messages that the Liberty war does not consume. Wave 0 has no runtime rollback — if the assessment is wrong we have not moved traffic. That is why honesty in the assessment is the control. I keep BayPayCell read-only for new features during wave 2. Jordan does not ship new ears 'while we canary.' Comms name the estate merchants are on. I will not fail over to the leftover cell after Boot is the front door.",
+    "principalAnswer": "A bank platform rollback is a product contract: time to reverse the edge, data compatibility, and a freeze on the estate we are leaving. I sequence refund first to learn Liberty ops at lower authorize risk, even if refund messaging is ugly — ugly stays or gets a broker, it does not become a silent feature. I will not buy a second traditional cell as a bunker, and I will not call Kubernetes-shaped ND a wave. Decommission is a dated decision after the SLO hold, not an infinite dual-run that becomes the new production.",
+    "commonMistakes": [
+      "Standing up a second DMGR or 'ND in Kubernetes' as the rollback bunker",
+      "Moving payment first because it is the 'real' app, or skipping wave-0 inventory",
+      "Sharing jdbc/baypay during dual-run and calling that isolation"
+    ],
+    "scoreRubric": "Engineer: recites waves 0–3 and rollback-to-previous-estate. Senior: names edge switch, dual-run isolation, and last-good artifacts. Staff: writes in-flight messaging and freeze rules; no leftover-cell failover after Boot. Principal: treats rollback as a product contract and dates decommission after an SLO hold."
+  },
+  {
+    "id": "AEJE-IQ-041",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "advanced",
+    "topic": "server.xml vs traditional admin console",
+    "question": "Contrast Liberty server.xml on disk with the traditional BayPayCell admin console. Who can change jdbc/baypay-payment in each world, and how would Riley Okonkwo see that change in an incident?",
+    "followUps": [
+      "Where do server.env and variables fit so secrets are not committed in XML?",
+      "Why is 'we can still click the Liberty admin center like the DMGR' a smell?"
+    ],
+    "expectedConcepts": [
+      "server.xml is process-owned, reviewable config",
+      "Admin console is cell documents plus sync",
+      "server.env / variables for BAYPAY_DB_*",
+      "Git history versus console folklore"
+    ],
+    "engineerAnswer": "On ND, Morgan changes a DataSource in the admin console and syncs the node. The file of record is the cell repository. On Liberty, jdbc/baypay-payment lives in server.xml next to featureManager and the war. Riley can open the XML and server.env in the change ticket. He does not need the DMGR to see what should be running.",
+    "seniorAnswer": "The console is a UI over a master repository. That is powerful and opaque. Two Pay members can disagree until sync finishes. server.xml is the desired state of one process. I review it like application-prod.yml. Secrets stay in server.env or the platform secret store, not in committed XML. If someone uses a Liberty admin center as a second DMGR, we have reproduced the folklore problem. I want the file in git.",
+    "staffAnswer": "Staff incident method changes with the config model. On the cell I ask for sync generation and console history. On Liberty I ask for the git SHA and the rendered server.env on that host or container. I will not accept 'Morgan clicked it' as a change record for a payment canary. I also will not run a live console to answer an interview; paper XML is the artifact.",
+    "principalAnswer": "Config-as-files is why Liberty is an exit and ND is not. I will not invest in making the admin console prettier. The control is: every production process can be explained from a reviewed file plus an external secret. Teams that recreate a cell by putting twenty Liberty servers behind an unofficial console have failed the migration. Boot remains the teaching greenfield; Liberty is the ear-compatible file-based path.",
+    "commonMistakes": [
+      "Treating the Liberty admin center as a replacement Deployment Manager",
+      "Committing BAYPAY_DB_PASSWORD in server.xml",
+      "Assuming a console click is already live on every PaymentCluster member"
+    ],
+    "scoreRubric": "Engineer: contrasts console-plus-sync with server.xml on disk. Senior: keeps secrets in server.env and wants XML in git. Staff: changes incident evidence to SHA versus sync generation. Principal: forbids unofficial Liberty cells and keeps Boot as greenfield."
+  },
+  {
+    "id": "AEJE-IQ-042",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "senior",
+    "topic": "externalizing secrets off the WAS cell",
+    "question": "jdbc/baypay on BayPayCell still uses J2C alias baypayDbAlias. How do you externalize secrets off the WAS cell for Liberty or Boot without putting BAYPAY_DB_PASSWORD in git or in a leftover cell document?",
+    "followUps": [
+      "What is wrong with copying the J2C alias into a ConfigMap or a committed server.xml?",
+      "How does this map to Secrets Manager in us-west-2 or a Kubernetes Secret later?"
+    ],
+    "expectedConcepts": [
+      "J2C aliases are cell secrets",
+      "server.env / platform secret store / Secrets Manager",
+      "Never commit BAYPAY_DB_*",
+      "Rotate without a cell sync as the only path"
+    ],
+    "engineerAnswer": "I would stop storing the database password in baypayDbAlias as the target design. Liberty reads BAYPAY_DB_USER and BAYPAY_DB_PASSWORD from server.env or the process environment. Boot does the same. Those values never go in server.xml, application-prod.yml, or a git ticket.",
+    "seniorAnswer": "Externalizing means the process receives secrets at start from a store we can rotate. On a laptop that is a local env file that is gitignored. In baypay-prod it is a Secret or CSI. On ECS in us-west-2 it is Secrets Manager. I will not copy the J2C alias into a ConfigMap. I will not leave the cell alias as the production credential for the Liberty canary. Rotation is a new secret version plus a rolling restart, not a Morgan Hale console password change plus hope sync.",
+    "staffAnswer": "Staff concern is blast radius and audit. A cell J2C alias is readable to anyone with cell admin. A dedicated secret for payment-service is grantable to one role. I want different credentials for refund and payment as soon as pools split. I will not apply NAT or EKS 'so we can use Secrets Manager' in a lab answer. Paper plus the store we already have is enough. I also refuse pasting the password into a chat with Priya to 'debug the DataSource.'",
+    "principalAnswer": "Secrets leaving the cell is a control-plane decision: the cell is no longer allowed to be the vault. I will fund one pattern — env from a real secret store — across Liberty and Boot so we do not run three folklore paths. I will not accept 'the alias is fine until decommission' if wave 2 is already serving Avery Chen. Always-on vault appliances for a student lab are also a refuse; production gets a managed store in us-west-2.",
+    "commonMistakes": [
+      "Putting BAYPAY_DB_PASSWORD in server.xml, a ConfigMap, or the admin-console screenshot in git",
+      "Reusing baypayDbAlias as the Liberty canary credential",
+      "Applying EKS or NAT so the interview answer can name Secrets Manager"
+    ],
+    "scoreRubric": "Engineer: moves BAYPAY_DB_* to env/server.env and out of XML. Senior: names rotation without cell sync and forbids ConfigMap passwords. Staff: splits credentials per app and refuses lab apply of EKS/NAT for secrets. Principal: makes the cell illegal as a vault and standardizes one store pattern."
+  },
+  {
+    "id": "AEJE-IQ-043",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "senior",
+    "topic": "SSL handshake failure between plugin and member",
+    "question": "On BayPayCell, ihs-east.baypay.example terminates Harbor Bike Co TLS, then the WAS plugin opens SSL to PaymentCluster member Pay2 and the handshake fails. How do you diagnose an SSL handshake failure between the plugin and a cluster member? Talk in symptom classes. Do not make a Kubernetes Secret common-name story the only answer.",
+    "followUps": [
+      "What do you compare on ihs-east versus the Pay2 personal certificate and signer?",
+      "When is 'disable SSL to the member' an unacceptable workaround?"
+    ],
+    "expectedConcepts": [
+      "Plugin-to-member TLS is a second hop, not the merchant handshake",
+      "Trust, signer, hostname, and protocol mismatch as classes",
+      "Do not disable TLS",
+      "Not the kube TLS Secret CN lecture"
+    ],
+    "engineerAnswer": "Merchants can succeed to ihs-east and still fail on the plugin-to-member hop. I would look at IHS error logs and WAS SSL traces for handshake alerts, then compare the plugin's trusted signers to Pay2's personal cert. I would not turn SSL off to 'get payments through.'",
+    "seniorAnswer": "Classes: expired or replaced member cert, missing signer on the plugin side, hostname mismatch against the transport host, protocol/cipher mismatch after a Java or IHS patch, or a plugin that still points at an old port. I compare plugin-cfg transports to the SSL repertoire on Pay2. I do not assume the merchant-facing IHS certificate is the same object. Stabilize is take Pay2 out of the plugin if other members handshake, not disable TLS on the cluster. A Kubernetes TLS Secret CN mismatch is a different estate and not this story.",
+    "staffAnswer": "Staff method keeps two TLS stories separate: edge-to-merchant and plugin-to-JVM. Mixing them wastes the first hour. I want a cert inventory with not-after dates and who owns the trust store on ihs-east versus the node. I will not accept a jumphost HTTP 8080 success as proof merchants or the plugin are healthy. Rotation later needs overlap; a sudden replace without updating signers is how this class repeats.",
+    "principalAnswer": "I will not run a payment platform where plugin-to-member TLS is folklore in a cell trust store. That is one reason the target front door is an ALB or Route with a declared certificate object. Until cutover I fund a dated inventory and I forbid 'disable SSL between IHS and WAS' as an emergency pattern. Interview answers that only recite a kube secret CN have studied the wrong hop.",
+    "commonMistakes": [
+      "Disabling plugin-to-member SSL to restore traffic",
+      "Debugging only the merchant-facing IHS certificate",
+      "Lecturing a Kubernetes TLS Secret CN mismatch as the only handshake story"
+    ],
+    "scoreRubric": "Engineer: separates merchant TLS from plugin-to-member TLS and refuses to disable SSL. Senior: lists handshake symptom classes and drains the bad member. Staff: inventories two trust stores and rejects jump-box HTTP as customer proof. Principal: funds leaving cell folklore TLS and forbids emergency SSL-off."
+  },
+  {
+    "id": "AEJE-IQ-044",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "staff",
+    "topic": "compatibility assessment that is honest about APIs",
+    "question": "You are doing a WebSphere-to-Liberty compatibility assessment for payment.ear and refund.ear. What does an honest API assessment contain, and what must you refuse to call 'portable'?",
+    "followUps": [
+      "How do you score SIBus, WS-* console bindings, PARENT_LAST, and javax versus jakarta?",
+      "Why must you not use the Spring Boot teaching app as proof the ears are ready?"
+    ],
+    "expectedConcepts": [
+      "Score contracts: packaging, JNDI, SIBus, WS-*, loaders, namespace",
+      "Cannot lift-and-shift list is required",
+      "Isolated JDBC names after rename",
+      "Boot proof is not ear proof"
+    ],
+    "engineerAnswer": "I would list what each ear looks up and which EE namespace it compiles. Servlets can move after jakarta and a war. jdbc/baypay must be renamed and isolated. BayPayBus, WS-* admin bindings, PARENT_LAST tricks, and javax EE 8 packages cannot lift-and-shift. The Boot fat JAR is a different packaging path.",
+    "seniorAnswer": "Honest means a verdict per API: Liberty this quarter, Boot rewrite, or stay on ND until X. I will not mark JMS portable because a feature exists. I will not mark XA portable because jdbc/baypayXA appeared on some nodes. Refund can stay while a boring servlet refund moves — volume is why refund is wave 1, not 'simple APIs.' I write resource-refs I will change, not a slogan that 'Jakarta is compatible.'",
+    "staffAnswer": "Staff assessment is a table other teams can challenge. Columns: URI, JNDI, messaging, WS endpoints, loader policy, EE namespace, verdict. I invite Morgan for cell bindings, Riley for code lookups, Jordan for ear contents. I fail the review if someone pastes the Boot module list as ear evidence. I also fail it if every row says 'enable a feature.' Wave 0 has no traffic rollback, so a polite lie here becomes a production incident in wave 2.",
+    "principalAnswer": "I use honesty as a risk control. I would rather keep an ear on BayPayCell for a quarter than ship a fake portable stamp. The assessment is how I decide whether Liberty is the ear path or whether we skip to Boot. I will not fund a program whose success metric is 'features enabled.' Success is isolated pools, named APIs, and a dated stay-or-go. No live cell is required to be honest.",
+    "commonMistakes": [
+      "Calling SIBus, cell JNDI, WS-* bindings, or PARENT_LAST portable because Liberty has features",
+      "Using reference-apps/baypay as proof payment.ear is ready",
+      "A verdict of 'move everything this sprint' with no stay-on-ND rows"
+    ],
+    "scoreRubric": "Engineer: lists can-move vs cannot-lift-and-shift items by name. Senior: gives per-API verdicts and refuses feature-checkbox portability. Staff: publishes a challengeable table and separates Boot evidence from ears. Principal: accepts stay-on-ND as a valid quarter and funds honesty over speed."
+  },
+  {
+    "id": "AEJE-IQ-045",
+    "domain": "WebSphere/Liberty",
+    "difficulty": "principal",
+    "topic": "when not to leave WebSphere yet",
+    "question": "A vendor slide says BayPay should leave WebSphere this quarter. When do you refuse to leave BayPayCell yet, and what do you still refuse to do while you stay?",
+    "followUps": [
+      "Which dependencies make a stay cheaper than a dishonest Liberty canary?",
+      "What new work is still forbidden on the cell during a stay?"
+    ],
+    "expectedConcepts": [
+      "Stay when APIs cannot move safely",
+      "Stay is not a new ND investment",
+      "No new ears as greenfield",
+      "SLO and regulator evidence may force a hold"
+    ],
+    "engineerAnswer": "I would stay if payment.ear still needs SIBus, WS-* cell bindings, or javax APIs we have not migrated, and we cannot dual-run safely. Staying means we keep operating Pay1–Pay3. It does not mean we build a new cluster for a new product. Greenfield still goes to Boot.",
+    "seniorAnswer": "I stay when rollback is a story, not a switch: no isolated pool, no idempotency store both estates share, or no edge rule to send /payment back. I also stay if the assessment is unfinished. A canary that is really an experiment on Avery Chen is not leaving; it is gambling. While we stay I still externalize what we can and I still refuse sticky sessions and shared jdbc/baypay growth.",
+    "staffAnswer": "Staff stay criteria are written: open cannot-lift rows, missing SLO hold plan, regulator change window, or eventing we cannot drain. I will communicate stay as a dated decision with owners, not as loyalty to WAS. I will not use a stay to staff a bigger cell, hire more node agents, or put ND in Docker for 'cloud.' I will keep incident method on the cell sharp so the stay is operable.",
+    "principalAnswer": "I refuse to leave when leaving is a slide. I also refuse to stay as a career for the cell. The principal job is to pick the cheaper honest risk: operate ND for a dated quarter, or move a thin war with a real rollback. I will not decommission under a sales deadline, and I will not open a second region of BayPayCell as DR. New value ships on Boot or a small Liberty process. The cell gets fixes, not features.",
+    "commonMistakes": [
+      "Leaving this quarter because a slide said so, with no rollback or honest assessment",
+      "Using a stay as permission to build a new ND cell or ND-in-Docker",
+      "Shipping new products onto PaymentCluster while calling that modernization"
+    ],
+    "scoreRubric": "Engineer: names API blockers and still sends greenfield to Boot. Senior: stays when rollback or assessment is missing, and still stops smell growth. Staff: dates the stay with owners and keeps the cell operable, not larger. Principal: chooses honest risk, forbids cell DR/expansion, and puts new value off the cell."
+  },
+  {
+    "id": "AEJE-IQ-046",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "advanced",
+    "topic": "image layers and a fat vs layered JRE",
+    "question": "Jordan Voss is packaging BayPay payment-service (Java 21, Spring Boot 3.5.5) as registry.baypay.example/baypay/payment-service:<tag>. Explain image layers and when you want a fat JAR on a slim JRE versus a more layered JRE/app split. Production must not depend on :latest.",
+    "followUps": [
+      "Why is a full JDK in the final stage the wrong default?",
+      "Why is volume-mounting the fat JAR over the image a habit you refuse?"
+    ],
+    "expectedConcepts": [
+      "Layers cache; app layer changes more than the JRE",
+      "eclipse-temurin:21-jre in the final stage",
+      "Fat JAR is the teaching artifact; pin tags not :latest",
+      "Not ND in Docker"
+    ],
+    "engineerAnswer": "Each Dockerfile instruction is a layer. I want the JRE and OS layers stable and the application layer last so code changes rebuild little. Teaching image is eclipse-temurin:21-jre plus the Boot fat JAR on port 8080. I pin a digest or an immutable tag. I never ship :latest. I do not put dmgr-east in the image.",
+    "seniorAnswer": "A fat JAR on a slim JRE is the honest default for this monolith: one artifact, one classpath, fast enough rebuilds. A layered Spring image or a jlink JRE can shrink pull time when the JAR changes often and the runtime does not. That is an optimization after the contract is right. A full JDK in the final stage is extra attack surface. Mounting a JAR over the image means we no longer know what is running. I rebuild when the base digest moves for CVEs, not by retagging :latest.",
+    "staffAnswer": "Staff cares about rebuild provenance and pull cost in baypay-prod. I will pay for a layered build if Priya can show pull latency on three replicas, not because a blog likes layers. I want SBOM and pin of eclipse-temurin. I reject 'just use latest Temurin so we stay patched' without a digest bump pipeline. I also reject a fat traditional WAS profile layered 'like an app.' Containers package payment-service, not BayPayCell.",
+    "principalAnswer": "Image shape is a supply-chain control. I standardize on a slim JRE, non-root, pinned tags, and an app layer we can rebuild in CI without a laptop daemon. I will fund layering when it is a pull-SLO problem. I will not fund a custom JRE project that delays leaving the cell. No live cluster is required to choose the Dockerfile.",
+    "commonMistakes": [
+      "Shipping :latest or a full JDK in the final stage",
+      "Volume-mounting the fat JAR so the image is not the artifact",
+      "Containerizing dmgr-east or a traditional WAS profile"
+    ],
+    "scoreRubric": "Engineer: explains layers, slim JRE, fat JAR, and no :latest. Senior: treats extra layering as an optimization and refuses JDK/mount habits. Staff: ties layering to pull evidence and pinned base digests. Principal: standardizes supply-chain shape and will not delay the cell exit for a custom JRE."
+  },
+  {
+    "id": "AEJE-IQ-047",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "advanced",
+    "topic": "read-only root filesystem for a payment container",
+    "question": "Sam Okada wants payment-service in baypay-prod to run with a read-only root filesystem. What must you still make writable for a Java 21 Spring Boot process, and what do you refuse to leave writable?",
+    "followUps": [
+      "Where do you put tmp, logs, and the Hibernate or Tomcat scratch dirs?",
+      "Why is --privileged or writing the fat JAR at runtime a fail?"
+    ],
+    "expectedConcepts": [
+      "readOnlyRootFilesystem with explicit emptyDir mounts",
+      "Non-root UID",
+      "No secrets or JAR writes on the rootfs",
+      "Writable tmp only"
+    ],
+    "engineerAnswer": "I set the container read-only and mount emptyDir on the paths Java needs: /tmp and any logging or Tomcat work directory we actually use. The fat JAR and the JRE stay read-only. The process runs as a numeric non-root UID such as 10001. I do not write BAYPAY_DB_PASSWORD onto the filesystem.",
+    "seniorAnswer": "Read-only rootfs is a exploit-cost control. Spring Boot still needs temp space for uploads, Tomcat native scratch, or JVM attach files if we allow them. I declare those mounts. I do not discover them by watching CrashLoopBackOff. I refuse privileged, writable Docker.sock, and a writable / where a bad dependency can drop a binary. Logs go to stdout, not a growing file on the rootfs.",
+    "staffAnswer": "Staff review checks the Pod spec: readOnlyRootFilesystem true, drop ALL caps, emptyDir for tmp, no hostPath. If Riley says 'the JVM cannot start,' we add the specific mount, we do not flip the rootfs back to writable. OpenShift SCCs may already forbid writable root; I align the Deployment rather than asking for a privileged SCC. Paper YAML is enough; I do not need a live cluster to review it.",
+    "principalAnswer": "I make read-only rootfs part of the golden payment Pod, not an optional hardening ticket. Exceptions are named mounts with owners. A team that needs a writable root to unpack WAS has the wrong packaging. This control travels to Fargate as well: the task should not need a writable image layer.",
+    "commonMistakes": [
+      "Leaving the root filesystem writable because 'Java needs tmp' without an emptyDir",
+      "Running privileged or as root so the process can write the JAR",
+      "Writing secrets or logs onto the container rootfs"
+    ],
+    "scoreRubric": "Engineer: sets read-only rootfs and names tmp mounts plus non-root. Senior: declares mounts up front and keeps logs on stdout. Staff: reviews SCC/caps/hostPath and will not revert the control. Principal: makes the pattern golden across kube and Fargate and rejects WAS-unpack images."
+  },
+  {
+    "id": "AEJE-IQ-048",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "senior",
+    "topic": "requests/limits vs JVM heap and container OOM",
+    "question": "In baypay-prod, payment-service has a memory limit and a Java 21 heap. How do requests, limits, and -Xmx relate, and why must you never set -Xmx equal to the container memory limit?",
+    "followUps": [
+      "What does UseContainerSupport see, and what lives outside the heap?",
+      "What is the difference between a Java heap OutOfMemoryError and a kube OOMKilled?"
+    ],
+    "expectedConcepts": [
+      "requests place the Pod; memory limit is the cgroup",
+      "Heap is only part of RSS",
+      "Never -Xmx equal to the cgroup / Fargate memory",
+      "UseContainerSupport / MaxRAMPercentage with headroom"
+    ],
+    "engineerAnswer": "requests tell the scheduler how much to reserve. The memory limit is the cgroup. -Xmx is only the heap. Metaspace, stacks, code cache, and native buffers sit outside it. If I set -Xmx equal to the limit, the kernel can OOMKill the container while the heap still looks fine. I leave headroom. Teaching picture is like 1024m heap on a 2048Mi limit.",
+    "seniorAnswer": "Java 21 UseContainerSupport sees the cgroup limit. MaxRAMPercentage can size the heap from that limit, but I still want explicit headroom I can explain. CPU limits throttle; memory limits kill (exit 137). I will not 'use all the memory' as a performance tip. A Java heap OOME is a JVM event. OOMKilled is a kernel event. I will ask for both artifacts before I change flags. The same rule applies on Fargate in us-west-2: never -Xmx equal to task memory.",
+    "staffAnswer": "Staff sizing starts from in-flight work, then heap, then native, then limit. I reject PRs that set -Xmx to the limit to 'stop wasting RAM.' I also reject limit-less Pods in baypay-prod; that is noisy-neighbor risk, not generosity. If we are OOMKilled I will not first raise heap to the ceiling. I will ask what native consumer grew. No live cluster is required to refuse the forbidden pattern.",
+    "principalAnswer": "Heap-equals-cgroup is a platform defect I will fail in review every time. It is in the same refuse list as ND-in-Docker. I want a published ratio for payment-service and I want it identical in kube YAML and ECS task memory. Capacity is replica count and pool size, not a bigger -Xmx jammed into the cgroup.",
+    "commonMistakes": [
+      "Setting -Xmx equal to the container or Fargate memory limit",
+      "Treating a Java heap OOME and a kernel OOMKilled as the same event",
+      "Raising heap to 'use all the RAM' as a performance fix"
+    ],
+    "scoreRubric": "Engineer: explains requests vs limit vs heap and states the never-equal rule. Senior: distinguishes OOME vs OOMKilled and applies the rule on Fargate too. Staff: sizes from in-flight work and rejects limit-less or ceiling-heap PRs. Principal: standardizes the ratio and treats heap-equals-cgroup as a fail."
+  },
+  {
+    "id": "AEJE-IQ-049",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "senior",
+    "topic": "liveness vs readiness for a slow-starting JVM",
+    "question": "payment-service is Java 21 / Spring Boot 3.5.5 and is slow to class-load on a cold Pod in baypay-prod. How do you set liveness versus readiness (and startup) so Harbor Bike Co is not sent to a half-up JVM and so the kubelet does not restart a healthy boot?",
+    "followUps": [
+      "Why must liveness not include a Postgres ping?",
+      "What path do you use instead of the aggregate /actuator/health?"
+    ],
+    "expectedConcepts": [
+      "startupProbe covers cold JVM",
+      "liveness is /actuator/health/liveness and restart-worthy only",
+      "readiness is /actuator/health/readiness and Endpoints",
+      "Do not live-probe the database"
+    ],
+    "engineerAnswer": "I point liveness at /actuator/health/liveness and readiness at /actuator/health/readiness on port 8080. I add a startup probe so the other probes stay off until the JVM has finished coming up. I do not use the aggregate /actuator/health for liveness. I do not need a live cluster to write those YAML fields.",
+    "seniorAnswer": "A slow Boot process without startup will fail liveness during class-load and CrashLoop. That is a probe bug, not a bad image. Liveness must be cheap and lock-free. A database blip must not restart three replicas. That belongs on readiness, bounded. Readiness false removes the Pod from the Service so Avery Chen is not POSTed to a warming JVM. initialDelaySeconds alone is a weaker substitute; startup exists for this runtime.",
+    "staffAnswer": "Staff review fails a chart that live-checks jdbc/baypay from liveness, or that uses / as the probe because 'ALB does that.' I want failureThreshold and timeout numbers that survive a GC pause without hiding a deadlock forever. I treat readiness 503 and CrashLoopBackOff as different classes. I will not bounce leftover dmgr-east because a Pod is not Ready.",
+    "principalAnswer": "Probes are the payment admission contract. I standardize Actuator paths across kube and ECS health checks so we do not invent a third meaning of healthy. I will not accept a platform default that restarts JVMs on dependency blips. The spoken design does not require applying a cluster.",
+    "commonMistakes": [
+      "Pointing liveness at Postgres or at aggregate /actuator/health",
+      "Omitting startupProbe so a cold JVM is killed",
+      "Using / or TCP as the only readiness signal for POST /api/v1/payments"
+    ],
+    "scoreRubric": "Engineer: maps the two Actuator paths and mentions startup. Senior: explains CrashLoop from early liveness and keeps DB off liveness. Staff: fails charts with / or JDBC liveness and splits symptom classes. Principal: standardizes health meaning across kube and ECS."
+  },
+  {
+    "id": "AEJE-IQ-050",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "senior",
+    "topic": "CrashLoopBackOff from a bad Spring profile",
+    "question": "The payment-service Deployment in baypay-prod is CrashLoopBackOff after Jordan Voss changed environment. How do you investigate a CrashLoop that might be a bad Spring profile? Stay on symptom classes; do not recite a lab's planted tag or port as the only story.",
+    "followUps": [
+      "What log lines tell you the process never reached Tomcat on 8080 versus the kubelet killing it?",
+      "How do you stabilize without editing production by hand forever?"
+    ],
+    "expectedConcepts": [
+      "CrashLoopBackOff is a restart loop class",
+      "Wrong SPRING_PROFILES_ACTIVE / missing application-prod",
+      "Config versus image versus probe",
+      "Roll back the Deployment revision"
+    ],
+    "engineerAnswer": "CrashLoopBackOff means the container keeps exiting. I would read the previous Pod logs for a Spring failure to start — unknown profile, missing BAYPAY_DB_URL, or a failed DataSource on the prod profile. I would compare the env on the Pod to the profile the JAR actually contains. I would not delete the Deployment to 'clear it.'",
+    "seniorAnswer": "Classes: process exits on bad config, liveness kills a slow start, OOMKilled, or a command that is wrong. A bad Spring profile is the first class if logs show the wrong application-*.yml or H2 defaults in prod. I check SPRING_PROFILES_ACTIVE, ConfigMap payment-config, and whether the image tag actually packaged application-prod. Stabilize is roll back to the last Ready revision or fix the env via the same pipeline. I do not kubectl edit forever. A debug tag or an unexpected listen port can be a member of this class; it is not the required answer.",
+    "staffAnswer": "Staff method: previous logs, exit code, events, then the change list. I keep 'bad profile' unproven until the log names the active profiles. I will not bounce dmgr-east. I will not apply a new cluster to 'reset CrashLoop.' I communicate that Ready replica count is zero, so the Service has no Endpoints, so merchants fail at the front door. Remediation is a reviewed env change or a pin of the last good image.",
+    "principalAnswer": "I want profiles to be boring: prod is explicit, default is fail-fast, and CI boots the JAR with the same env keys. A culture that debugs CrashLoop by shipping a special tag is a release-process bug. The platform should make the last-good revision one command, on paper or in Argo, without a live classroom cluster.",
+    "commonMistakes": [
+      "Deleting the Deployment or bouncing leftover WAS to clear CrashLoopBackOff",
+      "Declaring a planted debug tag or port as the only correct story",
+      "kubectl-editing env in prod without a rollback path"
+    ],
+    "scoreRubric": "Engineer: reads previous logs and compares profile env to the JAR. Senior: ranks start-failure classes and rolls back a revision. Staff: keeps the profile hypothesis unproven and comms Endpoints=0. Principal: makes fail-fast prod profiles and last-good rollback the contract."
+  },
+  {
+    "id": "AEJE-IQ-051",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "staff",
+    "topic": "OOMKilled with 'plenty of heap' left",
+    "question": "Riley Okonkwo says the heap chart still had room when the payment-service Pod went OOMKilled. How can that happen, and what do you look at next? Do not set -Xmx equal to the limit as the fix.",
+    "followUps": [
+      "Which native consumers are plausible on a Spring Boot payment JVM?",
+      "How would you change the limit versus the heap versus the code?"
+    ],
+    "expectedConcepts": [
+      "OOMKilled is cgroup RSS, not Java heap space",
+      "Direct memory, metaspace, threads, native libs",
+      "Never raise -Xmx to the limit",
+      "NMT / thread count / buffer leaks as classes"
+    ],
+    "engineerAnswer": "OOMKilled means the kernel hit the memory limit. Heap used is only part of RSS. Plenty of heap left is consistent with native growth: threads, metaspace, direct ByteBuffers, or a native library. I would not set -Xmx to the container limit. That makes the next kill more likely.",
+    "seniorAnswer": "I ask for the limit, RSS, heap after GC, thread count, and whether NMT or a heap dump was taken after a non-prod reproduce. Classes: thread explosion from a connector or Hikari mis-size, direct memory, inflated metaspace from class generation, or a sidecar sharing the cgroup. Stabilize is add a replica or fail readiness on the dying Pod, then raise the limit only if native room was actually too small — while keeping heap below the new limit. I will not treat this as INCIDENT-1002's closed RCA; it is the same symptom class.",
+    "staffAnswer": "Staff work is to stop the 'just give it more heap' reflex. I put heap, native, and limit on one diagram for Priya and Riley. I want a published headroom number for payment-service and a check in CI that rejects -Xmx equal to resources.limits.memory or Fargate memory. If dumps show a leak, we fix the leak. If they show legitimate native, we size the cgroup. Those are different tickets. No live cluster required; the exit 137 event plus heap chart is the teaching evidence shape.",
+    "principalAnswer": "I will fail a platform that teaches engineers to fill the cgroup with heap. The payment JVM is a native process first. Capacity planning includes thread stacks and off-heap, then replica count. I will not accept OOMKilled-with-free-heap as a mystery more than once without NMT in the toolbox.",
+    "commonMistakes": [
+      "Setting -Xmx equal to the memory limit because the heap looked empty",
+      "Treating OOMKilled as Java heap space",
+      "Raising heap as the first and only change"
+    ],
+    "scoreRubric": "Engineer: explains cgroup RSS vs heap and refuses heap-equals-limit. Senior: lists native classes and sizes limit with heap still below it. Staff: splits leak vs sizing tickets and adds a CI reject for the forbidden pattern. Principal: makes native-aware sizing a platform rule."
+  },
+  {
+    "id": "AEJE-IQ-052",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "staff",
+    "topic": "OpenShift Route vs Ingress vs mesh",
+    "question": "BayPay presents payments.apps.baypay.example in front of Service payment-service on 8080. Compare an OpenShift Route, a Kubernetes Ingress, and a service mesh. When is a mesh optional or the wrong next spend?",
+    "followUps": [
+      "What job do Route and Ingress share that ClusterIP does not?",
+      "Why must you not treat Route and Ingress as different products that happen to share a hostname?"
+    ],
+    "expectedConcepts": [
+      "ClusterIP is east-west; Route/Ingress are L7 front doors",
+      "Route is the OpenShift overlay for the same job as Ingress",
+      "Mesh is optional; NetworkPolicy literacy first",
+      "Do not invent an employer mesh"
+    ],
+    "engineerAnswer": "The Service ClusterIP load-balances Pods on 8080. Ingress on Kubernetes and Route payment-route on OpenShift both terminate TLS and pick that Service for host payments.apps.baypay.example. A mesh is a sidecar or waypoint data plane for more east-west policy. We do not need one to expose payment-service.",
+    "seniorAnswer": "I pick Ingress or Route based on the cluster we actually have, not on which YAML I memorized. Same host, same Service, same readiness. A mesh can add mTLS and retries. It can also add a second timeout story and another cert rotation. I will not install one to look modern. NetworkPolicy is the first blast-radius tool. IHS leftover on PaymentCluster is not an Ingress alternative.",
+    "staffAnswer": "Staff decision is operational cost. If Sam already runs OpenShift, we use a Route and SCCs. If we are on generic kube, Ingress. If we are on ECS in us-west-2, this question becomes an ALB — we do not apply EKS just to have Ingress. I will not run Route and Ingress for the same host 'for HA.' I will not dual-home merchants to the cell plugin. Mesh is a platform product with an owner. Without that owner it is pager debt.",
+    "principalAnswer": "Front-door API is one contract: TLS, host, Service, health. Route and Ingress are implementations. Mesh is a later control plane I buy only for a written east-west threat model. I refuse mesh as a substitute for leaving WebSphere, and I refuse EKS apply as the way to obtain Ingress. The spoken answer is paper architecture.",
+    "commonMistakes": [
+      "Treating Route and Ingress as unrelated products or running both for HA",
+      "Installing a mesh to expose a ClusterIP Service",
+      "Applying EKS to get Ingress when ECS/Fargate or existing OpenShift already serves"
+    ],
+    "scoreRubric": "Engineer: maps Service vs Route/Ingress vs optional mesh. Senior: chooses the overlay you have and prefers NetworkPolicy first. Staff: will not dual-home or apply EKS for a front door you already have. Principal: one front-door contract; mesh only with an owner and a threat model."
+  },
+  {
+    "id": "AEJE-IQ-053",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "staff",
+    "topic": "RBAC that lets a pipeline deploy BayPay only",
+    "question": "Jordan Voss wants the CI pipeline to deploy payment-service in namespace baypay-prod and nowhere else. Design RBAC that lets that pipeline deploy BayPay only. What do you refuse to grant?",
+    "followUps": [
+      "Why is cluster-admin on a deploy robot a fail even in a student cluster story?",
+      "How do Role versus ClusterRole and a dedicated ServiceAccount change blast radius?"
+    ],
+    "expectedConcepts": [
+      "ServiceAccount + Role + RoleBinding in baypay-prod",
+      "Least privilege on Deployment, Service, ConfigMap, Secret",
+      "No cluster-admin, no other namespaces",
+      "Pipeline identity separate from human admins"
+    ],
+    "engineerAnswer": "I would create a ServiceAccount for the pipeline in baypay-prod and a Role that can get/patch/update the payment-service Deployment, Service, and maybe ConfigMap. I bind only that ServiceAccount in that namespace. I would not give cluster-admin. I would not let that account deploy into kube-system.",
+    "seniorAnswer": "Least privilege is verbs and resources, not 'edit.' If the pipeline does not create Namespaces or ClusterRoles, those verbs stay off. Secrets: I prefer the pipeline not to get Secret contents if a controller injects them. If it must apply Secret objects, that is still namespace-scoped and audited. Human break-glass is a different account. I will not reuse Morgan Hale's leftover cell admin story as kube RBAC.",
+    "staffAnswer": "Staff RBAC is a threat model: a stolen pipeline token should not read every Secret in the cluster or schedule to other teams' Projects. On OpenShift I use a Project and SCC that already constrain the SA. I review RoleBindings quarterly. I refuse a ClusterRole with * on * 'until we know the verbs.' Paper YAML is the review artifact; applying a live cluster is optional and not required to pass the design.",
+    "principalAnswer": "Pipeline identity is part of the payment control plane. I will not sign cluster-admin bots. I want one SA per app or per team, admission that blocks privileged Pods, and a path to break-glass that is human and logged. This is the same least-privilege idea as an ECS task role that is nearly empty.",
+    "commonMistakes": [
+      "Granting cluster-admin or *.* to the deploy robot",
+      "Binding a ClusterRole that can mutate every namespace",
+      "Reusing a human admin kubeconfig in CI"
+    ],
+    "scoreRubric": "Engineer: names SA + namespaced Role for payment-service. Senior: limits verbs and separates human break-glass. Staff: threat-models a stolen token and uses Project/SCC constraints. Principal: treats pipeline identity as payment control plane, aligned with empty task roles."
+  },
+  {
+    "id": "AEJE-IQ-054",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "principal",
+    "topic": "platform golden path vs team-owned charts",
+    "question": "Sam Okada offers a golden-path Helm chart for payment-service. Riley's team wants their own charts so they can 'move faster.' How do you decide platform golden path versus team-owned charts for BayPay?",
+    "followUps": [
+      "Which knobs must stay golden (probes, heap-versus-limit, secrets, non-root)?",
+      "When is a team chart an acceptable exception with an expiry?"
+    ],
+    "expectedConcepts": [
+      "Golden path encodes probes, resources, identity",
+      "Team charts for app-specific env only",
+      "Exceptions are dated",
+      "Do not require a live cluster to decide"
+    ],
+    "engineerAnswer": "A golden path is a chart or template that already has port 8080, Actuator probes, non-root, read-only rootfs, and heap below the limit. The team should still own application env and the image tag. I would not copy the whole chart just to change one JVM flag.",
+    "seniorAnswer": "I fork when the golden path cannot express a real need, and I upstream the need. I do not fork to disable readiness or to set -Xmx to the cgroup. Those PRs fail even in a team chart. Team-owned values for feature flags and replica count are fine. Team-owned security context is not.",
+    "staffAnswer": "Staff looks at review load. Ten snowflake charts means Priya cannot tell which Pods violate the memory rule. I measure golden-path adoption, not chart count. I will provide an override file, not a fork, for SPRING_PROFILES_ACTIVE. OpenShift and generic kube should consume the same contract even if the front door object differs (Route vs Ingress).",
+    "principalAnswer": "The golden path is how I scale a payment platform without hiring a platform engineer per squad. Teams own product config; the platform owns the pavement: identity, secrets, probes, resources, rollout hooks. I allow a dated exception for a migration wave, then I merge or I sunset. I will not accept team charts that recreate BayPayCell patterns — sticky sessions, writable root, kitchen-sink sidecars — as innovation.",
+    "commonMistakes": [
+      "Forking the chart to disable probes or to set -Xmx equal to the limit",
+      "Forcing every team to invent RBAC, TLS, and resource math",
+      "Treating golden path as optional folklore with no review"
+    ],
+    "scoreRubric": "Engineer: splits golden pavement vs team env/tag. Senior: allows forks only for real gaps and still fails unsafe overrides. Staff: measures adoption and keeps Route/Ingress implementations behind one contract. Principal: dates exceptions and forbids cell-shaped snowflakes."
+  },
+  {
+    "id": "AEJE-IQ-055",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "principal",
+    "topic": "rollout/rollback contract for payment APIs",
+    "question": "Write the rollout and rollback contract for BayPay POST /api/v1/payments on Kubernetes or OpenShift. Harbor Bike Co retries. Idempotency-Key exists. What must be true before you call a revision good, and how do you undo?",
+    "followUps": [
+      "How do maxUnavailable and readiness interact with in-flight authorizes?",
+      "What is different if the same contract is implemented as an ECS deployment in us-west-2?"
+    ],
+    "expectedConcepts": [
+      "Rolling update only after Ready",
+      "Rollback is previous revision, not a cell bounce",
+      "Idempotency across mixed versions",
+      "Canary then SLO, then 100%"
+    ],
+    "engineerAnswer": "A rolling update should only send traffic to Pods that pass readiness. I watch that the new image tag is on Ready replicas. Rollback is kubectl rollout undo or the GitOps revert to the last good tag — not a bounce of dmgr-east. Idempotency-Key must still work while two versions are up.",
+    "seniorAnswer": "The contract is: canary a fraction, prove readiness and a synthetic POST, hold error rate and P99 against the teaching SLO, then continue. maxUnavailable stays low so we keep N+1 Ready capacity. I will not surge so hard that Hikari and the database are the rollout. Undo is the previous Deployment revision or ECS task definition in us-west-2 — same idea, different API. If mixed versions cannot honor the same Idempotency-Key, I stop the rollout. That is a compatibility fail, not a kube fail.",
+    "staffAnswer": "Staff writes the gates: who watches RED, who can halt, how long we hold, and how merchants hear 'retry with the same key.' I will not call a revision good because the rollout object is Complete while readiness was a TCP probe. I keep a last-good pin in the change ticket. I refuse leftover IHS or BayPayCell as the rollback bunker. A wrong canary Service selector is a routing class I rehearse before the sale event, not during it.",
+    "principalAnswer": "Rollout/rollback is a product SLA: time to halt, time to reverse, and data compatibility. I fund one contract that ECS, EKS, and OpenShift can all implement so the app team does not learn three cultures. I will not accept 'forward fix only' on authorize. I will not accept a hope DNS flip to a paper secondary as undo. No live cluster is required to write the contract.",
+    "commonMistakes": [
+      "Calling the rollout done because replicas are STARTED/Running without Ready",
+      "Rolling back by bouncing dmgr-east or failing over to BayPayCell",
+      "Shipping a version that breaks Idempotency-Key during the mixed window"
+    ],
+    "scoreRubric": "Engineer: Ready-only traffic and undo to last tag, not the cell. Senior: canary plus SLO hold and mixed-version idempotency. Staff: names halt owners and refuses leftover IHS as bunker. Principal: one cross-platform contract with a time-to-reverse SLA."
+  },
+  {
+    "id": "AEJE-IQ-056",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "advanced",
+    "topic": "ConfigMap vs Secret vs CSI secret store",
+    "question": "BayPay injects payment-config and database credentials into payment-service in baypay-prod. When do you use a ConfigMap, a Kubernetes Secret, and a CSI secret store? Where must BAYPAY_DB_PASSWORD never live?",
+    "followUps": [
+      "Why is a Secret still not a vault by itself?",
+      "How does this compare to ECS Secrets Manager injection in us-west-2?"
+    ],
+    "expectedConcepts": [
+      "ConfigMap is non-secret config",
+      "Secret is namespaced encoded credentials, not a vault",
+      "CSI/external store for rotation and least privilege",
+      "Never image, git, or ConfigMap for passwords"
+    ],
+    "engineerAnswer": "payment-config ConfigMap holds non-secret settings such as feature flags or log level. Secret baypay-db holds BAYPAY_DB_USER and BAYPAY_DB_PASSWORD as env. Those values never go in the image, the Dockerfile, or git. A CSI driver can mount the same keys from a real store if the platform has one.",
+    "seniorAnswer": "etcd Secrets are base64, namespaced, and readable to anyone with get secrets. That is better than a ConfigMap and not enough for a payment vault. I use CSI or an external store when we need rotation, audit, and IAM-style grant. On ECS in us-west-2 the analog is Secrets Manager plus the execution role. I still keep the env names identical: BAYPAY_DB_*. I do not invent BAYPAY_DB_PASS. I will not put the password in payment-config 'just for the lab.'",
+    "staffAnswer": "Staff picks the store from blast radius. A stolen kubeconfig that can get secrets in baypay-prod is already a SEV. CSI plus short-lived mounts reduces lingering env copies. I will not apply EKS only to get CSI. If we are on OpenShift or Fargate, we use the store that platform already has. Rotation is a new version plus rolling restart. I document whether the process re-reads or only reads at start.",
+    "principalAnswer": "I want one secret contract for the app: env names and rotation SLA. The backing store can be kube Secret, CSI, or Secrets Manager. I will not run three different key names across estates. I will not treat etcd as the long-term home for card-adjacent keys. Paper YAML plus ACCOUNT.md is enough to say that; applying CSI is not the interview.",
+    "commonMistakes": [
+      "Putting BAYPAY_DB_PASSWORD in a ConfigMap, image layer, or git",
+      "Treating a Kubernetes Secret as a hardware vault",
+      "Applying EKS/CSI as the only acceptable answer when Fargate Secrets Manager already exists"
+    ],
+    "scoreRubric": "Engineer: splits ConfigMap vs Secret and forbids passwords in git/image. Senior: names Secret limits and maps to Secrets Manager. Staff: chooses store by blast radius and will not apply EKS just for CSI. Principal: one env contract; etcd is not the long-term payment vault."
+  },
+  {
+    "id": "AEJE-IQ-057",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "senior",
+    "topic": "TLS certificate rotation without downtime",
+    "question": "payments.apps.baypay.example needs a certificate rotation without downtime. How do you rotate TLS in front of payment-service? Give a method that works for Ingress, an OpenShift Route, or an ALB in us-west-2. Do not make a Kubernetes Secret common-name mismatch the only story.",
+    "followUps": [
+      "What overlap must old and new certificates share?",
+      "What else besides the edge cert can break after a rotation?"
+    ],
+    "expectedConcepts": [
+      "Overlapping validity and dual-serve or atomic listener swap",
+      "Edge cert vs app trust store as separate classes",
+      "No downtime means no disable-TLS",
+      "CN/SAN is one class, not the only class"
+    ],
+    "engineerAnswer": "I install the new certificate before the old one expires and only then remove the old one. On Ingress or Route that is a new Secret or cert object, then the front door reloads. On an ALB in us-west-2 it is a listener certificate add-then-remove. I do not turn TLS off for the rotation window.",
+    "seniorAnswer": "No-downtime means overlap: new cert is valid, hostname SAN still matches payments.apps.baypay.example, clients that cached the old chain still work until expiry. Classes if it fails: expired object, SAN/host mismatch, incomplete chain, front door still serving the old secret, or the app trust store not updated for a mutual-TLS hop. A kube Secret CN mistake is one member of the SAN/host class. It is not the only TLS story, and it is the wrong hop if we are talking about an ALB. I verify with a handshake to the public host, not with curl to Pod 8080.",
+    "staffAnswer": "Staff rotation has an owner, a not-after page at seven days, and a ticket at thirty. I rehearse add-then-remove. I keep merchant TLS separate from plugin-to-member or mesh mTLS if those exist. I will not apply ACM in a student account as the interview proof. Paper dates plus the swap order are the answer. If rotation breaks only a canary, I halt the canary; I do not disable TLS platform-wide.",
+    "principalAnswer": "Certificate rotation is a reliability feature I will staff. I want one hostname, a dated inventory, and a forbid on emergency TLS-off. I will not accept folklore trust stores on leftover IHS as the long-term path. The platform contract is overlapping certs and a handshake check that matches what Harbor Bike Co uses.",
+    "commonMistakes": [
+      "Disabling TLS to rotate",
+      "Treating a Kubernetes Secret CN mismatch as the only possible TLS failure",
+      "Proving rotation with jump-box HTTP :8080 instead of the merchant hostname"
+    ],
+    "scoreRubric": "Engineer: add-then-remove overlap and no TLS-off. Senior: lists handshake classes and will not reduce them to one kube CN story. Staff: dates the inventory and keeps hops separate. Principal: staffs rotation as reliability and leaves leftover IHS trust folklore."
+  },
+  {
+    "id": "AEJE-IQ-058",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "staff",
+    "topic": "service routing to the wrong canary",
+    "question": "Jordan Voss launched a payment-service canary. Priya Nair says Harbor Bike Co traffic is hitting the wrong Pods. How do you diagnose Service routing to the wrong canary? Use selector and Endpoints classes, not a single memorized label RCA.",
+    "followUps": [
+      "What do you compare among Deployment labels, Pod labels, and the Service selector?",
+      "How do you stabilize without deleting the production Service?"
+    ],
+    "expectedConcepts": [
+      "Service selector vs Pod labels vs Endpoints",
+      "Canary and stable must not share a selector by accident",
+      "Ingress/Route target Service is a second hop",
+      "Stabilize by selector or weight, not a cluster wipe"
+    ],
+    "engineerAnswer": "I would look at the Service selector and the Endpoints. If the canary Pods match the production Service labels, they will eat traffic. I would also check that the Route or Ingress points at the Service I think it does. I would not delete the production Service to 'reset routing.'",
+    "seniorAnswer": "Classes: overlapping labels so both ReplicaSets land in one Endpoints list, a canary Service unused because the Route still targets production, a wrong weight, or a leftover selector from a copy-paste chart. I print labels on Pods and the selector on each Service. I do not guess from Deployment names. Stabilize is fix the selector or send the Route back to the stable Service. I keep production Endpoints non-empty while I do it.",
+    "staffAnswer": "Staff method is three objects: front door, Service, Pods. I will not close on 'wrong canary' until Endpoints and a request id show which ReplicaSet served Avery Chen. I want canary labels in the golden path so this class is hard to recreate. I will not bounce leftover PaymentCluster. I will not apply a mesh to 'fix' a selector. Comms say whether merchants are on stable, mixed, or canary-only.",
+    "principalAnswer": "Canary routing is part of the rollout contract. I will not allow two Deployments to share app=payment-service without a distinct track label and two Services. I fund that in the golden chart so Jordan cannot copy-paste this incident. Lucky 'it was the label' without Endpoints evidence does not max method.",
+    "commonMistakes": [
+      "Deleting the production Service or the namespace to reset routing",
+      "Assuming Deployment name equals who receives traffic",
+      "Declaring one planted label typo as the only correct RCA"
+    ],
+    "scoreRubric": "Engineer: checks Service selector vs Endpoints. Senior: lists overlap/wrong-target classes and keeps prod Endpoints. Staff: requires request-id evidence and forbids mesh/cell as the fix. Principal: encodes track labels in the golden path."
+  },
+  {
+    "id": "AEJE-IQ-059",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "staff",
+    "topic": "HPA on CPU vs SLO-based scaling for payments",
+    "question": "Priya Nair proposes an HPA on CPU for payment-service. Harbor Bike Co load is bursty and the SLO is latency and success on POST /api/v1/payments. When is CPU autoscaling the wrong primary signal, and what would SLO-based scaling look like on paper?",
+    "followUps": [
+      "What happens if you scale on CPU while the JVM is GC-bound or pool-bound?",
+      "How do you keep scale-up from exhausting jdbc/baypay or Hikari?"
+    ],
+    "expectedConcepts": [
+      "CPU HPA is literacy, not the payment SLO",
+      "Scale on in-flight, latency, or queue, with caps",
+      "Pool and DB headroom cap replicas",
+      "No live metrics-server required to reason"
+    ],
+    "engineerAnswer": "CPU HPA adds replicas when Pod CPU is high. A payment JVM can miss SLO while CPU is low if it is waiting on Hikari or the database. I would rather scale on something closer to the SLO, and I would cap replicas so we cannot stampede db-east. I can say that without a running metrics-server.",
+    "seniorAnswer": "CPU is a useful ceiling signal and a bad sole signal. GC, lock wait, and pool wait do not always look like CPU. SLO-based scaling uses P99 or in-flight POSTs, with a max replica count derived from pool size and database connections. Scale-down is slow so we do not flap. I will not HPA on heap usage as a substitute for fixing a leak.",
+    "staffAnswer": "Staff writes the cap first: max replicas times Hikari max must stay under the database budget. I will not enable HPA in production without that math and a load test on paper. On ECS in us-west-2 the same contract is service autoscaling on ALB request count or P99, not 'CPU because it is easy.' I refuse scale-to-zero for authorize.",
+    "principalAnswer": "Autoscaling is an SLO feature with a budget, not a kube checkbox. I will fund custom metrics when CPU has already failed us, and I will not fund replica storms that DDoS our own ledger. HPA literacy is required; HPA-on-CPU-as-the-architecture is not.",
+    "commonMistakes": [
+      "Using CPU as the only scale signal for a payment SLO",
+      "Unbounded HPA that exhausts the database pool",
+      "Requiring a live metrics-server to have an opinion"
+    ],
+    "scoreRubric": "Engineer: names CPU vs wait-bound SLO miss and wants a replica cap. Senior: proposes latency/in-flight signals and slow scale-down. Staff: does pool-times-replica math and applies it to ECS too. Principal: treats autoscaling as a budgeted SLO feature."
+  },
+  {
+    "id": "AEJE-IQ-060",
+    "domain": "Containers/Kubernetes/OpenShift",
+    "difficulty": "principal",
+    "topic": "when Kubernetes is optional for this workload",
+    "question": "A principal interview asks whether BayPay payment-service must run on Kubernetes. When is Kubernetes optional for this workload, and what remains true on ECS/Fargate or OpenShift instead?",
+    "followUps": [
+      "When would you stay on OpenShift you already have rather than applying EKS?",
+      "When is a single-process Liberty or even staying on ND for a dated quarter still the cheaper honest home?"
+    ],
+    "expectedConcepts": [
+      "ECS/Fargate is the student apply default",
+      "EKS/OpenShift are valid homes, not mandatory applies",
+      "App contract: 8080, probes, secrets, heap headroom",
+      "K8s optional when the platform you have already meets the contract"
+    ],
+    "engineerAnswer": "Kubernetes is one scheduler. The workload is still a Java 21 process on 8080 with Actuator probes and BAYPAY_DB_* from a secret store. On ECS Fargate in us-west-2 that contract is a task definition and an ALB. We do not have to apply EKS. If the company already has OpenShift, we use a Route instead of inventing a cluster.",
+    "seniorAnswer": "I choose kube when we already operate it, or when we need its objects — Jobs, NetworkPolicy, many services — and we have owners. I choose Fargate when we want tasks without a cluster control plane, especially for a lab or a thin service. I choose stay-on-ND only as a dated source-estate hold, never as greenfield. I will not apply NAT plus EKS in a 90-minute lab to make the answer look cloud-native.",
+    "staffAnswer": "Staff decision is operating cost and skills. A second control plane is an incident class. If Sam's team is OpenShift-strong, payment-service lives there. If the AWS landing is ECS-first, we do not create EKS 'for Kubernetes literacy in prod.' Literacy happens on paper and optional kind. Prod gets one home with a rollback contract. I still refuse ND-in-a-Pod as a compromise.",
+    "principalAnswer": "Kubernetes is optional when it does not buy a control we will staff. I will sign ECS/Fargate, EKS, or OpenShift as valid homes. I will not sign 'apply EKS' as modernization. The non-optional pieces are the app contract, secret hygiene, heap-versus-cgroup, and a front door with health that matches Actuator. I will also say kube is the wrong spend while BayPayCell still has no honest exit plan — fix the assessment first. No live cluster is required for that decision.",
+    "commonMistakes": [
+      "Treating EKS apply as the only correct home",
+      "Putting traditional WAS ND into a Pod to 'use Kubernetes'",
+      "Applying NAT/EKS in a lab so the interview can name kube objects"
+    ],
+    "scoreRubric": "Engineer: restates the app contract on Fargate vs kube. Senior: picks the platform you can operate and refuses lab EKS/NAT. Staff: avoids a second control plane and ND-in-a-Pod. Principal: signs multiple valid homes and will not buy kube as a slide."
+  },
+  {
+    "id": "AEJE-IQ-061",
+    "domain": "AWS",
+    "difficulty": "advanced",
+    "topic": "ECR scan findings you will block on",
+    "question": "Jordan Voss pushes baypay/payment-service:<tag> to ECR in us-west-2 with scan-on-push. Which scan findings will you block a payment image on, and which will you ticket instead of stopping the train?",
+    "followUps": [
+      "How do you treat a critical CVE in the JRE base versus a low finding in a test-only layer?",
+      "Why is :latest plus 'we will rescan tomorrow' not a control?"
+    ],
+    "expectedConcepts": [
+      "Scan-on-push in us-west-2, immutable tags",
+      "Block exploitable criticals on the runtime JRE/app",
+      "Ticket noise and unreachable findings with owners",
+      "No :latest"
+    ],
+    "engineerAnswer": "I block critical or high findings that sit in the runtime JRE or in a library payment-service actually loads. I ticket scanner noise and findings only in a discarded build stage. I will not promote :latest. I pin the tag that was scanned.",
+    "seniorAnswer": "Block means the image does not become the ECS service or the baypay-prod Deployment. I care about exploitability on 8080 and about secrets accidentally left in a layer — that is a block even if the CVE score is low. A critical in an unused RPM I can remove by shrinking to eclipse-temurin:21-jre is a rebuild, not a waiver. I will not waive 'because the sale is tomorrow' without a dated exception and a rebuild plan.",
+    "staffAnswer": "Staff policy is written: which severities, which packages, who may waive, how long. Priya and Sam share the waiver, not Jordan alone. I want scan findings attached to the tag in the change ticket. I will not apply extra AWS products to 'get a better scanner' for a lab. ECR scan-on-push in us-west-2 is enough to talk about the control.",
+    "principalAnswer": "Supply chain is a payment control. I will stop a release for a reachable critical in Temurin or Spring. I will not stop the company for a noisy informational finding. I fund digest pins and rebuilds when the base moves. I refuse a culture of permanent waivers. The spoken policy does not require a live ECR apply.",
+    "commonMistakes": [
+      "Shipping :latest or promoting an unscanned tag",
+      "Waiving a reachable JRE critical because a sale is tomorrow, with no date",
+      "Blocking the train on every informational finding with no policy"
+    ],
+    "scoreRubric": "Engineer: blocks runtime criticals and pins the scanned tag. Senior: includes secrets-in-layers and dated waivers. Staff: writes shared waiver policy without extra AWS apply. Principal: funds pin/rebuild and refuses permanent waivers."
+  },
+  {
+    "id": "AEJE-IQ-062",
+    "domain": "AWS",
+    "difficulty": "senior",
+    "topic": "ECS Fargate task role vs execution role",
+    "question": "On ECS Fargate in us-west-2, payment-service has an execution role and a task role. What does each one do, and what happens if you copy the execution role onto the task role 'to be safe'?",
+    "followUps": [
+      "Who needs secretsmanager:GetSecretValue for BAYPAY_DB_* at start?",
+      "What should the task role be if the JVM only talks JDBC?"
+    ],
+    "expectedConcepts": [
+      "Execution role: pull image, logs, fetch secrets at start",
+      "Task role: the JVM's AWS SDK identity",
+      "Least privilege; teaching task role near-empty",
+      "Do not attach AdministratorAccess"
+    ],
+    "engineerAnswer": "The execution role is for the ECS agent before my process exists: ECR pull in us-west-2, CloudWatch log streams, and GetSecretValue if secrets are injected at start. The task role is what the container assumes. Teaching payment-service only uses JDBC, so that role can be empty or near-empty. I do not copy the execution role onto the task role.",
+    "seniorAnswer": "If I attach the execution role to the task, a compromised JVM can pull every image secret it could fetch and write logs as the agent. That is extra blast radius for no feature. If we later put receipts on S3, I add s3:PutObject on one prefix to the task role, not s3:*. KMS decrypt belongs with whoever actually unwraps the secret — usually the execution role at injection. AdministratorAccess 'so the lab works' is a fail.",
+    "staffAnswer": "Staff review is two IAM policies with comments. I want the secret ARN scoped, not secretsmanager:*. I keep human deploy roles separate from both. A pipeline does not need the task role. I will not apply NAT or EKS to demonstrate IAM. Paper policies in us-west-2 are the artifact.",
+    "principalAnswer": "Role split is the AWS version of pipeline SA versus app identity. I will fail a landing zone that merges them. I want the default task role empty so new AWS calls are explicit product decisions. That is how a payment platform stays least-privilege as features grow.",
+    "commonMistakes": [
+      "Copying the execution role onto the task role or using AdministratorAccess",
+      "Putting GetSecretValue on the task role 'because the app might need it' when injection already happened",
+      "Scoping secretsmanager:* or s3:* for convenience"
+    ],
+    "scoreRubric": "Engineer: defines both roles and keeps the task role empty for JDBC. Senior: explains blast radius of a merge and scopes future S3. Staff: reviews ARN-scoped policies without extra apply. Principal: treats the split as a landing-zone control."
+  },
+  {
+    "id": "AEJE-IQ-063",
+    "domain": "AWS",
+    "difficulty": "senior",
+    "topic": "ALB target unhealthy after a Java deploy",
+    "question": "After a Java deploy, the ALB in us-west-2 marks payment-service Fargate targets unhealthy. Tasks show RUNNING. How do you work that symptom class? Do not treat a single memorized health-path RCA as the only correct story.",
+    "followUps": [
+      "What must the ALB health check match on a Spring Boot 3.5.5 process?",
+      "What else besides path can make a RUNNING task fail the target group?"
+    ],
+    "expectedConcepts": [
+      "RUNNING is not healthy",
+      "Health check must match Actuator readiness, port 8080",
+      "Path, port, matcher, grace, security group as classes",
+      "Not Path=/ as the required answer"
+    ],
+    "engineerAnswer": "RUNNING means the task process was started. Unhealthy means the ALB health check is failing. I would compare the target-group path, port, and success codes to /actuator/health/readiness on 8080. I would also read the task logs to see if Spring finished starting. I would not bounce dmgr-east.",
+    "seniorAnswer": "Classes: health path or port mismatch, matcher that does not accept 200 from Actuator, grace period shorter than a cold JVM, security group that blocks the ALB, or the app listening but readiness false. A check on / that 404s is one member of the path class — it is not the required interview RCA. Stabilize is keep the last healthy tasks in service if the service still has them, or roll back the task definition. I will not point the health check at /health or / unless we proved that path.",
+    "staffAnswer": "Staff method: target health reason, security-group pair, task logs, change list. I keep each class unproven until quoted. I will not apply a new NAT or EKS to 'see targets better.' CloudWatch logs plus the target-group settings are enough. I communicate that merchants fail at the ALB while operators may still curl localhost 8080 on a jump path — that is not customer health.",
+    "principalAnswer": "I standardize health on Actuator readiness across ALB, Ingress, and Route so this class shrinks. I will not accept a platform default of Path=/ for Java apps. I also will not grade interviews on reciting one lab's planted path. The contract is: the front door asks the same question kube readiness asks.",
+    "commonMistakes": [
+      "Treating task RUNNING as healthy or bouncing leftover WAS",
+      "Declaring Path=/ as the only correct RCA",
+      "Proving health with jump-box HTTP while the ALB still fails merchants"
+    ],
+    "scoreRubric": "Engineer: separates RUNNING from ALB health and checks Actuator on 8080. Senior: lists path/port/matcher/grace/SG classes without requiring one planted path. Staff: quotes evidence and refuses extra apply. Principal: standardizes readiness as the front-door question."
+  },
+  {
+    "id": "AEJE-IQ-064",
+    "domain": "AWS",
+    "difficulty": "staff",
+    "topic": "ECS vs EKS vs OpenShift for BayPay",
+    "question": "Choose ECS on Fargate, EKS, or OpenShift for BayPay payment-service this quarter. The teaching apply default is ECS/Fargate in us-west-2. When does each win, and what do you refuse to apply just to have an opinion?",
+    "followUps": [
+      "What skills and control-plane cost change the answer?",
+      "When is 'stay where we are' the staff answer?"
+    ],
+    "expectedConcepts": [
+      "Fargate default apply; EKS literacy",
+      "OpenShift valid if already operated",
+      "Stay is allowed",
+      "No NAT/EKS apply as the decision"
+    ],
+    "engineerAnswer": "If we are learning AWS with a thin Java service, I pick ECS Fargate in us-west-2: task definition, ALB, no cluster nodes. If the company already runs OpenShift, I keep a Route in baypay-prod. EKS wins when we already need Kubernetes APIs and we will staff the control plane. I do not apply EKS to decide.",
+    "seniorAnswer": "I score owners, existing pavement, and how many services share the home. One payment process does not justify a new EKS estate. OpenShift brings SCCs and Routes we already taught. EKS brings upstream kube plus AWS IAM. Fargate brings less kube surface. I map the same app contract onto all three. I refuse ND-in-Docker as a fourth option.",
+    "staffAnswer": "Staff writes ARCHITECT-1102 style: current skills, incident owners, secret store, front door, and cost of idle control plane. Stay on OpenShift is a first-class outcome. Stay on Fargate is too. I will not apply NAT Gateway or EKS 'for realism' in a lab or as the production answer when Fargate already serves. I will not run two front doors to the same merchants.",
+    "principalAnswer": "I pick the home we will still operate at 3 a.m. I will sign any of the three. I will not sign a tourism cluster. The strategic fail is collecting platforms: cell plus OpenShift plus EKS plus Fargate for one URI. Modernization is leaving BayPayCell, not applying EKS.",
+    "commonMistakes": [
+      "Applying EKS or NAT to make the choice look complete",
+      "Declaring Kubernetes the only correct home",
+      "Keeping BayPayCell as a fourth active front door"
+    ],
+    "scoreRubric": "Engineer: names Fargate default and when OpenShift/EKS win. Senior: scores owners and maps one app contract. Staff: allows stay and refuses NAT/EKS apply as the answer. Principal: refuses platform tourism and keeps leaving the cell as the goal."
+  },
+  {
+    "id": "AEJE-IQ-065",
+    "domain": "AWS",
+    "difficulty": "staff",
+    "topic": "Secrets Manager + KMS envelope for payment keys",
+    "question": "Design Secrets Manager plus KMS envelope encryption for BayPay payment keys and BAYPAY_DB_* in us-west-2. Who decrypts what, and what never appears in task-definition JSON in git?",
+    "followUps": [
+      "When do you want a CMK versus the AWS-managed Secrets Manager key?",
+      "How is envelope encryption different from 'put the password in KMS'?"
+    ],
+    "expectedConcepts": [
+      "Secrets Manager holds the payload; KMS encrypts it",
+      "Execution role decrypts at injection",
+      "ARN in task def, never the secret string",
+      "Separate CMK for payment keys vs lab convenience"
+    ],
+    "engineerAnswer": "I store BAYPAY_DB_* in a Secrets Manager secret such as baypay/payment-service/db in us-west-2. The task definition references the ARN. Secrets Manager encrypts that payload with KMS. The execution role may kms:Decrypt and GetSecretValue at start. The password string is never in git.",
+    "seniorAnswer": "Envelope encryption means KMS protects a data key, and that data key encrypts the secret bytes. I do not paste the password into KMS as if KMS were a file. A CMK lets me separate who may decrypt payment keys from who may decrypt a lab secret. Student apply may use the AWS-managed key and must say so. The task role stays off this path unless the JVM fetches at runtime, which teaching payment-service does not need.",
+    "staffAnswer": "Staff splits DB credentials from any card-adjacent or signing keys: different secrets, different CMKs, different grants. Rotation is a new secret version and a rolling ECS deploy. I want CloudTrail on Decrypt. I will not create three extra CMKs in a 90-minute lab 'for realism,' and I will not apply NAT to reach Secrets Manager if the task already can. I refuse changeme in task-def JSON.",
+    "principalAnswer": "Key hierarchy is a regulatory story I will keep boring: envelope with a CMK, scoped IAM, rotation SLA, no secret in git. I will not run a self-managed HSM in a student account, and I will not leave the cell J2C alias as a second vault. Payment keys do not share a decrypt grant with a shared platform sandbox.",
+    "commonMistakes": [
+      "Committing the password in task-definition JSON",
+      "Treating KMS as a place to paste the raw password without Secrets Manager",
+      "One account-wide decrypt grant for every secret"
+    ],
+    "scoreRubric": "Engineer: ARN reference, SM plus KMS, execution role fetch. Senior: explains envelope vs file and when a CMK is worth it. Staff: splits key classes, rotation, and refuses lab CMK sprawl. Principal: boring hierarchy, no second cell vault, scoped grants."
+  },
+  {
+    "id": "AEJE-IQ-066",
+    "domain": "AWS",
+    "difficulty": "principal",
+    "topic": "multi-account landing for a payment platform",
+    "question": "Sketch a multi-account landing for the BayPay payment platform in us-west-2. What lives in which account, and what do you refuse to share with a student sandbox or a leftover cell admin?",
+    "followUps": [
+      "Where do ECR, the ECS prod service, and logs go?",
+      "Why is a single account with AdministratorAccess not a landing zone?"
+    ],
+    "expectedConcepts": [
+      "Separate prod, nonprod, and shared services",
+      "us-west-2 as the teaching region",
+      "Least-privilege cross-account pull/deploy",
+      "No NAT/EKS required to draw the landing"
+    ],
+    "engineerAnswer": "I would keep a prod account for the ECS service and ALB, a nonprod account for student and QA, and maybe a shared account for ECR. Region is us-west-2. I would not put production BAYPAY_DB_* in the sandbox account. I can draw that without applying Organizations.",
+    "seniorAnswer": "Shared services own the scanned ECR repo and maybe a log archive. Prod owns the Fargate service, prod secrets, and prod KMS. Nonprod can pull a promoted tag, not a floating :latest. Deploy roles are assumed from CI, not long-lived keys on laptops. I will not give Morgan Hale cell-admin equivalent in the prod AWS account.",
+    "staffAnswer": "Staff landing includes SCPs that forbid leaving untagged ALBs and forbid creating NAT or EKS in the student OU. CloudTrail and GuardDuty-style audit live outside the app account. I will not put prod and sandbox in one account 'until we are bigger.' Blast radius is why we split early on paper. OpenShift-on-prem can still be a home; this landing is for the AWS slice, not a mandate to move everything.",
+    "principalAnswer": "A payment landing zone is an OU design, not a VPC art project. I separate prod from playgrounds, I pin us-west-2, and I refuse always-on tourist control planes. I will not open us-east-1 as a hope DR in the same breath as the landing. DR is a dated plan, not a second account we forget to destroy. The cell is not an AWS account. I will not federate BayPayCell into the landing as 'hybrid HA.'",
+    "commonMistakes": [
+      "One account, AdministratorAccess, prod secrets next to student labs",
+      "Applying NAT/EKS in every account to complete the diagram",
+      "Treating BayPayCell as a failover account"
+    ],
+    "scoreRubric": "Engineer: splits prod/nonprod/shared in us-west-2. Senior: scoped pull/deploy and no laptop long-lived keys. Staff: SCPs against tourist NAT/EKS and early blast-radius split. Principal: OU design, dated DR, cell is not hybrid HA."
+  },
+  {
+    "id": "AEJE-IQ-067",
+    "domain": "AWS",
+    "difficulty": "advanced",
+    "topic": "CloudWatch logs vs traces for a refund timeout",
+    "question": "A Harbor Bike Co refund times out. Someone pastes a CloudWatch Logs Insights search from us-west-2 and calls it a trace. How do you use CloudWatch logs versus traces for a refund timeout, and what identifiers do you require?",
+    "followUps": [
+      "When is a metric alarm enough, and when do you still need the refund.ear or refund-service log line?",
+      "Why is a leftover PaymentCluster PMI graph the wrong estate?"
+    ],
+    "expectedConcepts": [
+      "Logs are lines; Insights is a search, not a trace",
+      "correlationId / paymentId / traceparent",
+      "Traces need instrumentation and context propagation",
+      "CloudWatch is the AWS signal layer, not RCA by itself"
+    ],
+    "engineerAnswer": "I would search logs for the refund's paymentId or correlationId in the us-west-2 log group. That tells me which lines exist. A trace is a connected span tree if we actually instrumented and passed context. Insights is not that. I would not open dmgr-east PMI for a Fargate refund.",
+    "seniorAnswer": "Timeout classes: client gave up, ALB idle timeout, app waited on JDBC, or a downstream refund path never answered. Logs show the last outcome line. Traces show where time was spent if spans exist. If there is no traceparent in the log, I will not invent a trace. I will ask for the next log line and the ALB access log. I keep refund-service and payment-service correlation ids aligned so a timeout can be followed without a cell dump.",
+    "staffAnswer": "Staff method: evidence first. A CloudWatch alarm is a symptom. A search is a search. A trace is only a trace with spans. I will not apply X-Ray or OpenSearch in a lab to 'prove' the timeout. Paper logs plus optional trace files are enough. I refuse dual-writing leftover WAS logs into the Boot incident because both say refund.",
+    "principalAnswer": "I fund correlation ids as the cheap contract and traces as a sampled product, not as a bill surprise. I will not accept Insights screenshots as RCA in an interview or an incident review. The platform must say which signal is authoritative for timeouts: log outcome versus span duration.",
+    "commonMistakes": [
+      "Calling Logs Insights a trace",
+      "Bouncing leftover PaymentCluster for a Fargate refund timeout",
+      "Applying OpenSearch or X-Ray to manufacture evidence in a lab"
+    ],
+    "scoreRubric": "Engineer: searches by id and does not call Insights a trace. Senior: splits timeout classes and will not invent spans. Staff: keeps estates separate and refuses extra apply. Principal: funds ids first and forbids screenshot RCA."
+  },
+  {
+    "id": "AEJE-IQ-068",
+    "domain": "AWS",
+    "difficulty": "senior",
+    "topic": "RDS failover vs application retry semantics",
+    "question": "Sam Okada mentions Multi-AZ RDS failover in us-west-2 as a reason Harbor Bike Co saw payment errors. How should payment-service retry during a writer failover, and what must stay true for Idempotency-Key? This is literacy — you do not apply RDS.",
+    "followUps": [
+      "What is unsafe about retrying a POST that already authorized?",
+      "Why is 'the database failed over' not proven RCA from a timeout alone?"
+    ],
+    "expectedConcepts": [
+      "Failover is a writer blip; retries must be idempotent",
+      "Do not blindly replay authorize",
+      "Pool recovery vs application semantics",
+      "No RDS apply in the student path"
+    ],
+    "engineerAnswer": "If the writer fails over, connections die and Hikari must reconnect. I would retry only operations that are safe, using the same Idempotency-Key for the merchant POST. I would not fire a second authorize to the card side without knowing the first outcome. I do not need to create RDS to say that.",
+    "seniorAnswer": "Failover semantics: DNS or the driver moves to the new writer; in-flight transactions abort. The app sees connection errors, not a clean 200. Retries at the HTTP edge must not create duplicate money. Idempotency-Key plus a persisted intent is the control. A timeout alone does not prove failover. I want RDS events or an equivalent signal before I use that word. I will not bounce the ECS service as a substitute for pool reconnect, and I will not set -Xmx to task memory as 'capacity during failover.'",
+    "staffAnswer": "Staff splits stabilize from story. Stabilize is fail readiness on tasks that cannot check out, keep last-good capacity, and tell merchants to retry the same key. The failover hypothesis stays unproven until we have a writer-change event. Lucky 'Multi-AZ' from a prior lab is not method. I will not apply multi-AZ RDS in a student account to rehearse this. Paper plus the retry contract is the bar.",
+    "principalAnswer": "I treat database HA as a product that the application must be written for. Multi-AZ is not a cloak for non-idempotent POSTs. I will not buy RDS in every lab, and I will not fail the platform review if the retry story is missing even when Multi-AZ is on. DR to another region is a different conversation from failover in us-west-2.",
+    "commonMistakes": [
+      "Blindly retrying authorize and creating duplicate money",
+      "Declaring RDS failover proven from a timeout or a prior lab",
+      "Applying multi-AZ RDS or bouncing the cell as the rehearsal"
+    ],
+    "scoreRubric": "Engineer: reconnects the pool and retries only with Idempotency-Key. Senior: needs a writer-change signal and refuses heap/cgroup 'capacity.' Staff: keeps the hypothesis unproven and will not apply RDS. Principal: makes idempotent POSTs the HA contract; region DR is separate."
+  },
+  {
+    "id": "AEJE-IQ-069",
+    "domain": "AWS",
+    "difficulty": "staff",
+    "topic": "cost of NAT, ALB and idle Fargate",
+    "question": "Priya Nair asks why last month's student AWS bill hurt. Talk through the cost of NAT Gateway, ALB, and idle Fargate for BayPay in us-west-2. What do you refuse to apply, and what do you destroy the same day?",
+    "followUps": [
+      "Why is a public-subnet Fargate plus IGW the teaching apply, and what security trade-off must you say out loud?",
+      "What still costs money if the service desired count is zero?"
+    ],
+    "expectedConcepts": [
+      "ALB is dollars/day; Fargate is hourly; NAT is expensive",
+      "Do not apply NAT as the answer",
+      "Destroy ALB same day; tag Expiration",
+      "Empty ECR still has storage"
+    ],
+    "engineerAnswer": "ALB costs about dollars per day even with little traffic. Fargate costs while tasks run. NAT Gateway is an hourly plus data charge and is the usual bill shock. Student apply uses public subnets and an IGW instead of NAT. I destroy the ALB the same day. I do not apply NAT to make the VPC look 'real.'",
+    "seniorAnswer": "Idle Fargate at desired count two still burns. Idle ALB burns more over a weekend. NAT burns whether the app is clever or not. I estimate before apply. If I cannot spend, I terraform validate on paper. Security trade-off of public Fargate: tasks are in public subnets with tight security groups, not a private-plus-NAT design. I say that out loud. ECR storage remains after I stop the service.",
+    "staffAnswer": "Staff FinOps is tags Course=AEJE, Module, Lab, Environment=student, Expiration, plus a destroy checklist: ALB, service, cluster, images. I will fail a PR that adds NAT, EKS, or multi-AZ RDS 'for realism' in a 90-minute lab. I also fail leaving an ALB overnight. Prod is different: we pay for N+1 and an ALB on purpose, and we still do not pay for tourist NAT in every VPC.",
+    "principalAnswer": "I treat NAT as a product we buy when private subnets are required and someone owns the bill — not as a default. Labs refuse it. Prod may still refuse it if public-plus-SG is the signed design. I will not let idle ALBs become shadow production. Expiration tags are a control, not decoration.",
+    "commonMistakes": [
+      "Applying NAT Gateway or EKS so the lab looks production-like",
+      "Leaving an ALB up overnight",
+      "Forgetting ECR storage after desired count goes to zero"
+    ],
+    "scoreRubric": "Engineer: prices ALB vs Fargate vs NAT and destroys the ALB. Senior: estimates first and states the public-subnet trade-off. Staff: tags, checklist, and fails tourist NAT/EKS/RDS. Principal: NAT is a bought product; idle ALB is a control failure."
+  },
+  {
+    "id": "AEJE-IQ-070",
+    "domain": "AWS",
+    "difficulty": "principal",
+    "topic": "what you refuse to run always-on for a lab or prod",
+    "question": "As a principal, what do you refuse to run always-on for a BayPay student lab, and what do you also refuse to run always-on in production even if someone else will pay?",
+    "followUps": [
+      "Which leftover WebSphere processes are never 'spare capacity'?",
+      "What AWS objects must have an Expiration tag or a destroy owner?"
+    ],
+    "expectedConcepts": [
+      "Lab refuse: NAT, EKS, RDS, leftover ALB, always-on EC2",
+      "Prod refuse: ND-in-Docker, heap-equals-cgroup, tourist control planes",
+      "us-west-2; destroy same day for labs",
+      "Cell is not spare HA"
+    ],
+    "engineerAnswer": "For a lab I refuse always-on NAT, EKS, multi-AZ RDS, and an ALB I forget to destroy. I use paper plus terraform validate if I cannot spend. I also refuse always-on EC2 when Fargate or nothing will do. Region is us-west-2. I tag Expiration.",
+    "seniorAnswer": "Labs: no NAT/EKS/RDS apply, no overnight ALB, no :latest, no AdministratorAccess leftover. Prod: I still refuse ND-in-Docker, -Xmx equal to the Fargate or cgroup limit, and a second hope region we do not operate. I refuse to keep dmgr-east running as spare payment capacity. That JVM does not serve Harbor Bike Co. I will run an ALB and N+1 tasks in prod on purpose — those are not tourist objects.",
+    "staffAnswer": "Staff refuse list is written in ACCOUNT.md language: student OU cannot create NAT or EKS; prod can, but only with an owner and a bill. I refuse always-on OpenSearch or a mesh we do not staff. I refuse a leftover IHS in front of Boot as 'extra HA.' I schedule destroy jobs and I page on untagged ALBs. I will not keep a classroom kind cluster implied as production.",
+    "principalAnswer": "Always-on is a privilege for objects that serve Avery Chen or protect the ledger. Everything else is on-demand or off. I refuse tourist control planes in lab and in prod: EKS we will not page, NAT we applied for a diagram, a cell we already left, a region we will not staff. I will pay for scanned ECR, Secrets Manager, N+1 Fargate, and a dated DR rehearsal. I will not pay for folklore. That refusal is the job. No live cluster is required to make it.",
+    "commonMistakes": [
+      "Applying NAT/EKS/RDS so the lab looks complete and leaving the ALB up",
+      "Keeping dmgr-east or IHS as always-on spare HA for Boot",
+      "Setting -Xmx equal to task memory as always-on 'capacity'"
+    ],
+    "scoreRubric": "Engineer: refuses lab NAT/EKS/RDS/overnight ALB. Senior: adds prod refusals for ND-in-Docker, heap-equals-cgroup, leftover DMGR. Staff: encodes refuses in OU/tags and pages untagged ALBs. Principal: always-on only for merchant-serving or ledger-protecting objects."
+  }
+]

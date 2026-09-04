@@ -1,0 +1,7 @@
+---
+baypay_db_host: db-east.baypay.example
+baypay_db_port: 5432
+baypay_db_name: baypay
+baypay_db_user: baypay
+baypay_db_password: "{{ lookup('env', 'BAYPAY_DB_PASSWORD') | default('', true) }}"
+baypay_listen_port: 8080

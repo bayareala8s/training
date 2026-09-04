@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: baypay-prod
+  labels:
+    app.kubernetes.io/part-of: baypay
+    environment: prod
+  annotations:
+    description: Synthetic BayPay teaching namespace. Not a live cluster.

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://baypay.example/interview-bank/question.schema.json",
+  "title": "AEJE interview question",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "domain",
+    "difficulty",
+    "question",
+    "followUps",
+    "expectedConcepts",
+    "seniorAnswer",
+    "staffAnswer",
+    "principalAnswer",
+    "commonMistakes",
+    "scoreRubric"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^AEJE-IQ-[0-9]{3}$" },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "Java/JVM",
+        "Spring/Jakarta",
+        "WebSphere/Liberty",
+        "Containers/Kubernetes/OpenShift",
+        "AWS",
+        "Automation",
+        "Linux/Networking/TLS",
+        "Production Engineering",
+        "HA/Security",
+        "Leadership/Architecture"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["advanced", "senior", "staff", "principal"]
+    },
+    "topic": { "type": "string" },
+    "question": { "type": "string", "minLength": 40 },
+    "followUps": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "type": "string" }
+    },
+    "expectedConcepts": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string" }
+    },
+    "engineerAnswer": { "type": "string", "minLength": 40 },
+    "seniorAnswer": { "type": "string", "minLength": 80 },
+    "staffAnswer": { "type": "string", "minLength": 80 },
+    "principalAnswer": { "type": "string", "minLength": 80 },
+    "commonMistakes": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "type": "string" }
+    },
+    "scoreRubric": { "type": "string", "minLength": 40 }
+  }
+}

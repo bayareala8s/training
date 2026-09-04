@@ -1,0 +1,39 @@
+name: baypay
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: reference-apps/baypay
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Unit and module tests
+        run: ./mvnw -B -pl payment-service -am test
+
+  publish:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t baypay/payment-service:${{ github.sha }} reference-apps/baypay
+      - name: Push immutable tag
+        run: |
+          echo "Push baypay/payment-service:${{ github.sha }}"
+          echo "Registry login would use secrets.REGISTRY_USERNAME / secrets.REGISTRY_PASSWORD"
+          echo "Do not tag :latest. Smoke GET /actuator/health/liveness on port 8080 before ECS."

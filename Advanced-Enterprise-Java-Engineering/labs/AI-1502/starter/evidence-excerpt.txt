@@ -1,0 +1,46 @@
+# Evidence excerpt — INC-AI-1502 (self-contained)
+# Symptom class: merchant HTTPS fails; ECS tasks stay RUNNING; HTTP :8080 answers
+# Synthetic BayPay. Not a live ACM or Route 53 session. Not a proven RCA.
+# Optional prior pack for the same symptom class: incidents/production/INC-SEC-1402
+# This excerpt is enough to finish AI-1502. Do not invent a cell bounce.
+
+Captured: 2026-09-02T07:20:18Z
+Service: payment-service (ECS/Fargate)
+Region:  us-west-2
+Host:    payments.apps.baypay.example:443
+URI:     POST /api/v1/payments
+
+## Merchant path (HTTPS)
+
+Harbor Market cannot complete HTTPS to payments.apps.baypay.example.
+Pager names payment-service in us-west-2. Riley Okonkwo is on call.
+
+$ echo | openssl s_client -connect payments.apps.baypay.example:443 \
+    -servername payments.apps.baypay.example 2>&1 | head -20
+
+CONNECTED(00000005)
+verify error:num=10:certificate has expired
+notAfter=Sep  1 00:00:00 2026 GMT
+curl: (60) SSL certificate problem: certificate has expired
+
+HTTP status was never returned from Spring. Avery Chen payment
+c1502e44-0000-4000-8000-111111111502 stayed in the browser.
+customerId 11111111-1111-1111-1111-111111111111
+account …221 (22222222-2222-2222-2222-222222222221)
+
+## Task path (not the merchant check)
+
+Priya Nair: tasks lastStatus=RUNNING 2/2 in baypay-prod-west.
+
+$ curl -sS -o /dev/null -w '%{http_code}\n' \
+    http://10.0.14.22:8080/actuator/health/liveness
+200
+
+Jump-box HTTP to the container port answers. Merchants fail the handshake on :443.
+
+## What this excerpt does not contain
+
+No ACM describe paste. No Route 53 zone dump. No private key.
+No Postgres metrics. No dmgr-east cell dump.
+Sam Okada mentioned a recent DNS cleanup ticket on the bridge; that is a rumor until a file you open supports it.
+Do not mark a hypothesis proven from this excerpt alone.

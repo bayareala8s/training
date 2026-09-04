@@ -1,0 +1,1 @@
+Diagram AEJE-D-027: Migration waves and rollback. Left-to-right labeled boxes: Wave 0, Wave 1 refund, Wave 2 canary, Wave 3 exit, rollback to ND. BayPay is a fictional payment platform used for instruction.

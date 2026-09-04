@@ -1,0 +1,92 @@
+{
+  "incidentId": "INC-AI-1502",
+  "service": "payment-service",
+  "evidence": [
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "verify error:num=10:certificate has expired notAfter=Sep  1 00:00:00 2026 GMT",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "curl: (60) SSL certificate problem: certificate has expired",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "HTTP status was never returned from Spring. Avery Chen payment c1502e44-0000-4000-8000-111111111502 stayed in the browser.",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "Priya Nair: tasks lastStatus=RUNNING 2/2 in baypay-prod-west.",
+      "at": "2026-09-02T07:18:10Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "curl http://10.0.14.22:8080/actuator/health/liveness → 200",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "No ACM describe paste. No Route 53 zone dump. No Postgres metrics. No dmgr-east cell dump.",
+      "at": "2026-09-02T07:20:18Z"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Merchants fail because the leaf presented on payments.apps.baypay.example:443 does not complete a trusted handshake. Mechanism (expiry only vs renewal/validation/DNS) is not proven from this excerpt.",
+      "status": "unproven",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H2",
+      "statement": "payment-service tasks are down or Actuator is failing, so Harbor Market cannot pay.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H3",
+      "statement": "Leftover dmgr-east / PaymentCluster is the path and should be bounced as proven RCA.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H4",
+      "statement": "Postgres is down and that is why HTTPS fails.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    }
+  ],
+  "recommendedInvestigation": [
+    "Describe the certificate at the edge (ACM or equivalent paper describe) — status of the in-use leaf and of any replacement. This excerpt does not include that file.",
+    "List DNS records for the payments host and any names the certificate workflow would need. Do not edit Route 53.",
+    "Do not skip to bounce, disable TLS, or request a paid ACM certificate to pass this lab."
+  ],
+  "suggestedRemediation": [
+    {
+      "action": "Stabilize intent: restore HTTPS on payments.apps.baypay.example:443 after a named human approves an edge/cert change. Do not disable TLS. Do not bounce dmgr-east or Postgres.",
+      "mutatesProduction": true,
+      "approvalRequired": true
+    },
+    {
+      "action": "Comms: merchants fail the handshake; tasks RUNNING; jump-box :8080 returns 200. Next check is cert/ACM/DNS class. No proven RCA.",
+      "mutatesProduction": false,
+      "approvalRequired": true
+    }
+  ],
+  "humanApproval": {
+    "status": "pending",
+    "note": "Rejected the starter’s proven cell bounce and auto-approve. Investigation is cert/ACM/DNS class. No mutate until Riley Okonkwo or Priya Nair signs."
+  },
+  "provenRootCause": null
+}

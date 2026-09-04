@@ -1,0 +1,25 @@
+---
+- name: Render BayPay payment and Liberty env files
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    output_dir: ./rendered
+  tasks:
+    - name: Ensure output directory exists
+      ansible.builtin.file:
+        path: "{{ output_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Template payment-service.env
+      ansible.builtin.template:
+        src: payment-service.env.j2
+        dest: "{{ output_dir }}/payment-service.env"
+        mode: "0640"
+
+    - name: Template Liberty server.env
+      ansible.builtin.template:
+        src: server.env.j2
+        dest: "{{ output_dir }}/server.env"
+        mode: "0640"

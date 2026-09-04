@@ -1,0 +1,20 @@
+# Evidence excerpt — INC-AI-1503 (same symptom class as AI-1502)
+# Merchant HTTPS fails; tasks RUNNING; HTTP :8080 OK.
+# Synthetic BayPay. Use this if you did not keep the AI-1502 excerpt.
+
+Host: payments.apps.baypay.example:443
+Region: us-west-2
+Service: payment-service
+
+Merchant handshake: verify error:num=10:certificate has expired
+notAfter=Sep  1 00:00:00 2026 GMT
+curl: (60) SSL certificate problem: certificate has expired
+
+Priya Nair: tasks lastStatus=RUNNING 2/2.
+Jump box: HTTP :8080 /actuator/health/liveness → 200.
+
+Avery Chen payment c1502e44-0000-4000-8000-111111111502 never left the browser.
+
+Riley Okonkwo: do not disable TLS to "restore HTTP."
+Morgan Hale offered to bounce dmgr-east; leftover ND is not on this path.
+No Postgres metrics shipped. No private key shipped.

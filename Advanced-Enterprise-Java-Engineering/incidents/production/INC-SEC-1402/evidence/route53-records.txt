@@ -1,0 +1,73 @@
+# aws route53 list-resource-record-sets — teaching paste
+# Gate: 3
+# Hosted zone: baypay.example (Z1402BAYPAYEXAMPLE)
+# Synthetic BayPay. Captured 2026-09-02T07:28:44Z
+# Not a live account. Do not change-resource-record-sets against a paid API.
+
+$ aws route53 list-resource-record-sets \
+    --hosted-zone-id Z1402BAYPAYEXAMPLE
+
+{
+    "ResourceRecordSets": [
+        {
+            "Name": "baypay.example.",
+            "Type": "NS",
+            "TTL": 172800,
+            "ResourceRecords": [
+                { "Value": "ns-1402.awsdns-14.org." }
+            ]
+        },
+        {
+            "Name": "baypay.example.",
+            "Type": "SOA",
+            "TTL": 900,
+            "ResourceRecords": [
+                { "Value": "ns-1402.awsdns-14.org. awsdns-hostmaster.amazon.com. 14021 7200 900 1209600 86400" }
+            ]
+        },
+        {
+            "Name": "apps.baypay.example.",
+            "Type": "A",
+            "AliasTarget": {
+                "HostedZoneId": "Z1H1FL5HABSF5",
+                "DNSName": "baypay-apps-alias.example.",
+                "EvaluateTargetHealth": false
+            }
+        },
+        {
+            "Name": "payments.apps.baypay.example.",
+            "Type": "A",
+            "AliasTarget": {
+                "HostedZoneId": "Z1H1FL5HABSF5",
+                "DNSName": "pay-alb-prod-1402.us-west-2.elb.amazonaws.com.",
+                "EvaluateTargetHealth": false
+            }
+        },
+        {
+            "Name": "_health.payments.apps.baypay.example.",
+            "Type": "TXT",
+            "TTL": 300,
+            "ResourceRecords": [
+                { "Value": "\"baypay-prod-west\"" }
+            ]
+        }
+    ]
+}
+
+# Dig of the ACM validation name from Gate 2 (same capture window):
+
+$ dig +norecurse _2f91d4c0.payments.apps.baypay.example. CNAME
+
+; <<>> DiG 9.18 <<>> +norecurse _2f91d4c0.payments.apps.baypay.example. CNAME
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 14021
+;; QUESTION SECTION:
+;_2f91d4c0.payments.apps.baypay.example. IN CNAME
+
+;; AUTHORITY SECTION:
+baypay.example.        900  IN  SOA  ns-1402.awsdns-14.org. awsdns-hostmaster.amazon.com. 14021 7200 900 1209600 86400
+
+# payments.apps.baypay.example ALIAS to the us-west-2 ALB is present.
+# _health.payments TXT is present.
+# _2f91d4c0.payments.apps.baypay.example CNAME is not in the zone list
+# and does not resolve (NXDOMAIN).
+# No other _*.payments CNAMEs appear in this paste.

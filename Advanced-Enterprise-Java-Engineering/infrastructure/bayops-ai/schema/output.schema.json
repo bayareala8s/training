@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://baypay.example/bayops/output.schema.json",
+  "title": "BayOps AI output contract",
+  "description": "Teaching schema. Synthetic BayPay only. Never mark a hypothesis as proven RCA.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "incidentId",
+    "service",
+    "evidence",
+    "hypotheses",
+    "recommendedInvestigation",
+    "suggestedRemediation",
+    "humanApproval"
+  ],
+  "properties": {
+    "incidentId": { "type": "string", "minLength": 1 },
+    "service": { "type": "string", "const": "payment-service" },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source", "quote"],
+        "properties": {
+          "source": { "type": "string" },
+          "quote": { "type": "string" },
+          "at": { "type": "string" }
+        }
+      }
+    },
+    "hypotheses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "statement": { "type": "string" },
+          "status": { "type": "string", "enum": ["unproven", "weakened", "withdrawn"] },
+          "fitsEvidence": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "recommendedInvestigation": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "suggestedRemediation": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action", "mutatesProduction", "approvalRequired"],
+        "properties": {
+          "action": { "type": "string" },
+          "mutatesProduction": { "type": "boolean" },
+          "approvalRequired": { "type": "boolean", "const": true }
+        }
+      }
+    },
+    "humanApproval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "by": { "type": "string" },
+        "at": { "type": "string" },
+        "note": { "type": "string" }
+      }
+    },
+    "provenRootCause": {
+      "description": "Forbidden on teaching outputs. If present, the response fails the contract.",
+      "type": "null"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-config
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+data:
+  SPRING_PROFILES_ACTIVE: prod
+  BAYPAY_DB_URL: jdbc:postgresql://db-east.baypay.example:5432/baypay
+  BAYPAY_DB_USER: baypay_app
+  JAVA_TOOL_OPTIONS: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75

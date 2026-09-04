@@ -1,0 +1,60 @@
+{
+  "incidentId": "INC-JVM-201",
+  "title": "Duplicate payments under concurrency",
+  "severity": "SEV-2",
+  "service": "baypay-payment-canary",
+  "environment": "sale-canary-1",
+  "region": "us-west-2-sim",
+  "startedAt": "2026-08-18T18:12:00Z",
+  "detectedAt": "2026-08-18T18:16:40Z",
+  "timezoneNote": "times are UTC; sale ran afternoon Pacific",
+  "synthetic": true,
+  "actors": [
+    { "id": "pager", "role": "alert" },
+    { "id": "riley-okonkwo", "role": "on-call" },
+    { "id": "samir-patel", "role": "payments engineer" },
+    { "id": "merchant-harbor-bike", "role": "merchant support ticket" }
+  ],
+  "events": [
+    {
+      "at": "2026-08-18T17:55:00Z",
+      "actor": "deploy",
+      "summary": "Canary worker 1.8.14 promoted to 10% sale traffic. Change ticket BAY-1844. No config change to idempotency headers."
+    },
+    {
+      "at": "2026-08-18T18:12:00Z",
+      "actor": "traffic",
+      "summary": "Flash-sale checkout rate rises. Merchant Harbor Bike Co clients begin retrying after 2000ms client timeout."
+    },
+    {
+      "at": "2026-08-18T18:16:40Z",
+      "actor": "pager",
+      "summary": "Alert DuplicatePaymentRateHigh: duplicate_payment_ratio > 0.5% for 3 minutes on sale-canary-1."
+    },
+    {
+      "at": "2026-08-18T18:18:05Z",
+      "actor": "riley-okonkwo",
+      "summary": "Ack page. Health endpoint UP. Error rate not in the paging path. Requests still returning 201."
+    },
+    {
+      "at": "2026-08-18T18:21:12Z",
+      "actor": "merchant-harbor-bike",
+      "summary": "Support ticket: customer Avery Chen charged 84.00 USD twice for invoice-8841. Idempotency-Key reported as harbor-8841 on both receipts."
+    },
+    {
+      "at": "2026-08-18T18:24:00Z",
+      "actor": "samir-patel",
+      "summary": "Joins bridge. Asks for dashboard then logs. Notes production JPA path not yet receiving this canary’s traffic."
+    },
+    {
+      "at": "2026-08-18T18:31:00Z",
+      "actor": "riley-okonkwo",
+      "summary": "Stabilization proposed: remove sale-canary-1 from the load balancer. Not executed in this teaching timeline — student decides."
+    }
+  ],
+  "openQuestions": [
+    "Are duplicates only on retries of the same key, or also on distinct keys?",
+    "Does the HTTP 201 pair share one correlation id or two?",
+    "Is the unique database key in play on this canary?"
+  ]
+}

@@ -1,0 +1,33 @@
+# INTERVIEW-1603 — Symptom class A (HTTPS fail / tasks healthy)
+# Synthetic BayPay. Not an instructor RCA. Not a live account.
+
+When: 2026-09-03 00:20 Pacific (07:20 UTC)
+Host: payments.apps.baypay.example
+Customer: Avery Chen 11111111-1111-1111-1111-111111111111
+Account: 22222222-2222-2222-2222-222222222221
+Example payment (client never sent): c1603c33-0000-4000-8000-111111111603
+Process: payment-service Java 21 / Spring Boot 3.5.5 :8080
+Region named only: us-west-2 / cluster baypay-prod-west / service payment-service
+
+What Harbor Market reports
+- Browser cannot complete HTTPS to the teaching host.
+- Merchant app retries; no 201; not a domain decline.
+
+What Priya Nair already said
+- ECS/Fargate tasks lastStatus: RUNNING, desired 2, running 2.
+- Jump box HTTP GET http://<task-ip>:8080/actuator/health/liveness returns 200.
+
+What is omitted on purpose
+- No certificate dump.
+- No ACM / Route 53 apply output.
+- No leftover-cell metrics. Morgan named dmgr-east; Riley said it is out of path.
+
+What you must not do
+- Do not bounce dmgr-east, PaymentCluster, or Postgres.
+- Do not disable TLS to "restore HTTP."
+- Do not name a prior lab's instructor RCA as proven.
+- Do not apply aws acm or aws route53.
+
+Next-gate hint (not an answer): say what evidence class you would request first
+(handshake / leaf / SNI / protocol / DNS) and why RUNNING + :8080 200 can be true
+while merchants fail. Keep every hypothesis unproven.

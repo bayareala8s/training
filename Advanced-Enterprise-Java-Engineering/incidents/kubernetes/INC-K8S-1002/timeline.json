@@ -1,0 +1,70 @@
+{
+  "id": "INC-K8S-1002",
+  "labId": "INCIDENT-1002",
+  "title": "Payment pods OOMKilled after memory change",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod",
+  "environment": "prod-east",
+  "startedAt": "2026-11-05T23:10:33Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "Intermittent 502 on POST /api/v1/payments when payment-service pods restart in baypay-prod",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1002b22-0000-4000-8000-111111111002",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/describe.txt"],
+      "instruction": "Read this timeline and the describe paste before requesting events."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/events.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open kube events."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/jvm-flags.txt"],
+      "instruction": "Open JVM flags only after you write what heap versus cgroup would confirm or refute."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-05T21:20:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Right-sized payment-service memory in baypay-prod to 512Mi. Set JAVA_TOOL_OPTIONS so the heap 'uses the limit'. Ticket BAYPAY-10022. Same class of change as the Module 8 canary, different estate."
+    },
+    {
+      "at": "2026-11-05T22:31:18Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Noted restart count 2 in 50 minutes. Asked for describe and events before raising the limit again."
+    },
+    {
+      "at": "2026-11-05T23:10:33Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service baypay-prod unavailable 3 times in 90 minutes. Ingress 502 burst."
+    },
+    {
+      "at": "2026-11-05T23:12:01Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1002b22-0000-4000-8000-111111111002 HTTP 502 then HTTP 201 on retry. Same Idempotency-Key."
+    },
+    {
+      "at": "2026-11-05T23:13:44Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested describe (gate 1). Asked Sam not to set -Xmx equal to a new limit without a headroom number."
+    }
+  ]
+}

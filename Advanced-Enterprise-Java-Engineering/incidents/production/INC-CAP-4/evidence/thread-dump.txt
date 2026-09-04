@@ -1,0 +1,83 @@
+2026-12-22 19:16:08
+Full thread dump OpenJDK 64-Bit Server VM (21.0.4+7-LTS mixed mode, sharing)
+# Synthetic dump for INC-CAP-4. Fictional BayPay canary pay-prod-west-c pid 18442.
+# Captured with a teaching jstack equivalent. Not a real employer artifact.
+# Gate: 4
+# Task image: baypay/payment-service:3.10.0
+# Host seen on outbound frames: fraud.baypay.example
+
+Threads class SMR info:
+_java_thread_list=0x000000012c00b800, length=274
+
+"http-nio-8080-exec-3" #20 prio=5 os_prio=0 cpu=91.20ms elapsed=1422.08s tid=0x000000012c880000 nid=0xb103 waiting on condition  [0x00000001738aa000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	- parking to wait for  <0x00000000f1c80011> (a java.util.concurrent.CompletableFuture$Signaller)
+	at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base/java.util.concurrent.CompletableFuture$Signaller.block(CompletableFuture.java:1898)
+	at java.base/java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2117)
+	at com.baypay.payment.fraud.FraudClient.score(FraudClient.java:66)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:84)
+	at com.baypay.payment.api.PaymentController.create(PaymentController.java:54)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-11" #28 prio=5 os_prio=0 cpu=70.14ms elapsed=1401.22s tid=0x000000012c88e000 nid=0xb10b waiting on condition  [0x0000000173912000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base/java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2117)
+	at com.baypay.payment.fraud.FraudClient.score(FraudClient.java:66)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:84)
+	at com.baypay.payment.api.PaymentController.create(PaymentController.java:54)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-47" #64 prio=5 os_prio=0 cpu=55.08ms elapsed=980.40s tid=0x000000012d210000 nid=0xb12f waiting on condition  [0x0000000173a12000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base/java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2117)
+	at com.baypay.payment.fraud.FraudClient.score(FraudClient.java:66)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:84)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-88" #105 prio=5 os_prio=0 cpu=48.02ms elapsed=640.11s tid=0x000000012d280000 nid=0xb158 waiting on condition  [0x0000000173c12000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:40)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1041)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-2" #19 prio=5 os_prio=0 cpu=188.40ms elapsed=8801.00s tid=0x000000012c870000 nid=0x9e11 runnable  [0x00000001727e0000]
+   java.lang.Thread.State: RUNNABLE
+	at com.baypay.payment.config.HealthIndicator.health(HealthIndicator.java:22)
+	at org.springframework.boot.actuate.health.HealthEndpointWebExtension.health(HealthEndpointWebExtension.java:91)
+
+"fraud-client-1" #90 prio=5 os_prio=0 cpu=14.02ms elapsed=1422.00s tid=0x000000012d300000 nid=0xc001 runnable  [0x0000000174012000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:191)
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:280)
+	at java.net.http.HttpClientImpl.send(HttpClientImpl.java:0)
+	at com.baypay.payment.fraud.FraudClient.doPost(FraudClient.java:91)
+	at com.baypay.payment.fraud.FraudClient.score(FraudClient.java:58)
+
+"fraud-client-2" #91 prio=5 os_prio=0 cpu=13.88ms elapsed=1418.00s tid=0x000000012d302000 nid=0xc002 runnable  [0x0000000174023000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:191)
+	at com.baypay.payment.fraud.FraudClient.doPost(FraudClient.java:91)
+
+"hikari-pool-1 housekeeper" #40 daemon prio=5 os_prio=0 cpu=8.10ms elapsed=8801.00s tid=0x000000012c400000 nid=0x9f20 waiting on condition
+   java.lang.Thread.State: TIMED_WAITING (parking)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.11ms elapsed=9001.00s tid=0x000000012c001000 nid=0x9e02 waiting on condition
+   java.lang.Thread.State: RUNNABLE
+
+"VM Periodic Task Thread" os_prio=0 cpu=88.00ms elapsed=9001.00s tid=0x000000012c00a000 nid=0x9e06 waiting on condition
+
+JNI global refs: 44, weak refs: 0
+
+# Teaching summary (not a root-cause lecture)
+# Counted ~190 http-nio-8080-exec threads in WAITING with FraudClient.score on the stack.
+# Hikari housekeeper is idle. Liveness thread is RUNNABLE.
+# pay-prod-west-a and pay-prod-west-b were not dumped (3.8.4).

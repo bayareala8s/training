@@ -1,0 +1,44 @@
+# payment-service logs — payment-service-6c8d7f9b4-n2p8w
+# Synthetic BayPay. Gate 2. Times in UTC.
+# Teaching equivalent: kubectl logs --previous
+
+Picked up JAVA_TOOL_OPTIONS: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75
+2026-11-03T18:18:03.104Z level=INFO  correlationId=none logger=o.s.b.StartupInfoLogger msg=Starting BayPayApplication using Java 21.0.8
+2026-11-03T18:18:04.881Z level=INFO  correlationId=none logger=o.s.b.w.e.tomcat.TomcatWebServer msg=Tomcat initialized with port 8080
+2026-11-03T18:18:06.220Z level=ERROR correlationId=none logger=o.s.b.d.LoggingFailureAnalysisReporter msg=
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to bind properties under 'spring.datasource.url' to java.lang.String:
+
+    Property: spring.datasource.url
+    Value: ""
+    Origin: System Environment Property "BAYPAY_DB_URL"
+    Reason: Binding failed because BAYPAY_DB_URL is not set (empty). Prod profile refuses the localhost default.
+
+Action:
+
+Update your application's configuration. ApplicationContext failed to refresh.
+
+
+2026-11-03T18:18:06.228Z level=ERROR correlationId=none logger=o.s.boot.SpringApplication msg=Application run failed
+org.springframework.context.ApplicationContextException: Failed to start bean 'dataSourceScriptDatabaseInitializer'; nested exception is org.springframework.boot.context.properties.bind.BindException: Failed to bind properties under 'spring.datasource.url'
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:984)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.finishRefresh(ServletWebServerApplicationContext.java:166)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318)
+	at com.baypay.payment.BayPayApplication.main(BayPayApplication.java:14)
+Caused by: org.springframework.boot.context.properties.bind.BindException: Failed to bind properties under 'spring.datasource.url'
+	at org.springframework.boot.context.properties.bind.Binder.handleBindError(Binder.java:387)
+	at org.springframework.boot.context.properties.bind.Binder.bind(Binder.java:355)
+	... 12 more
+
+# Container exited. Last State Reason=Error Exit Code=1. No HTTP listen on 8080 after 10:18:06 Pacific.
+# Same bind error on the other two pods (previous logs).

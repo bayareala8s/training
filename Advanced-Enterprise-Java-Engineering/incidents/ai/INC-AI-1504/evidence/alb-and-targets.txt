@@ -1,0 +1,66 @@
+# ALB merchant curl + target health — teaching paste
+# Host: payments.apps.baypay.example
+# Region: us-west-2
+# Synthetic BayPay. Captured 2026-09-03T21:14:20Z
+# Not a live account. Do not replay against a paid API.
+
+$ curl -sS -D - -o /tmp/body-1504.txt \
+    https://payments.apps.baypay.example/api/v1/payments \
+    -H 'Host: payments.apps.baypay.example' \
+    --resolve payments.apps.baypay.example:443:52.12.15.04
+HTTP/1.1 503 Service Temporarily Unavailable
+Date: Thu, 03 Sep 2026 21:14:20 GMT
+Content-Type: text/html
+Content-Length: 162
+Connection: keep-alive
+X-Request-Id: c1504-alb-503-001
+Server: awselb/2.0
+
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+
+# Harbor Market clients also logged HTTP 502 on two retries of the same
+# Idempotency-Key for Avery Chen payment c1504f55-0000-4000-8000-111111111504.
+# TCP to the ALB completed. The body is the load-balancer error page, not Spring JSON.
+
+$ aws elbv2 describe-target-health \
+    --region us-west-2 \
+    --target-group-arn arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/baypay-pay-tg/c1504tg1504
+
+{
+    "TargetHealthDescriptions": [
+        {
+            "Target": {
+                "Id": "10.20.15.11",
+                "Port": 8080,
+                "AvailabilityZone": "us-west-2a"
+            },
+            "HealthCheckPort": "8080",
+            "TargetHealth": {
+                "State": "unhealthy",
+                "Reason": "Target.FailedHealthChecks",
+                "Description": "Health checks failed"
+            }
+        },
+        {
+            "Target": {
+                "Id": "10.20.15.22",
+                "Port": 8080,
+                "AvailabilityZone": "us-west-2b"
+            },
+            "HealthCheckPort": "8080",
+            "TargetHealth": {
+                "State": "unhealthy",
+                "Reason": "Target.FailedHealthChecks",
+                "Description": "Health checks failed"
+            }
+        }
+    ]
+}
+
+# Healthy host count: 0. Unhealthy: 2. Registered: 2.
+# Tasks can be RUNNING (see ecs-tasks.txt) while the target group has nobody healthy.
+# This paste is the ALB / health symptom class. It is not a database metrics file.
+# There is no RDS event, no writer failover, and no evidence/db-failover.json beside this file.
+
+# Riley: do not disable TLS on the listener to "restore HTTP."
+# Morgan: do not bounce dmgr-east from a 503 HTML page.

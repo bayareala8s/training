@@ -1,0 +1,140 @@
+[
+  {
+    "name": "qa/check_stage3.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 3 inventory and headings\n"
+  },
+  {
+    "name": "qa/check_stage4.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 4 inventory and headings\n"
+  },
+  {
+    "name": "qa/check_stage5.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 5 inventory and headings\n"
+  },
+  {
+    "name": "qa/check_stage6.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 6 inventory and headings\n"
+  },
+  {
+    "name": "qa/check_stage7.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 7 inventory and headings\n"
+  },
+  {
+    "name": "qa/check_stage8.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 8 inventory and headings\n"
+  },
+  {
+    "name": "qa/check_stage9.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 9 inventory and headings\n"
+  },
+  {
+    "name": "qa/check_stage10.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 10 inventory, headings, and interview bank\n"
+  },
+  {
+    "name": "qa/check_stage11.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 11 capstones\n"
+  },
+  {
+    "name": "qa/check_diagram_library.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 12 diagram library (72)\n"
+  },
+  {
+    "name": "qa/check_paks_links.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 13 PAKS links (23 unique paths, 102 lessons)\n"
+  },
+  {
+    "name": "qa/check_stage14.py",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS Stage 14 inventory (102 lessons, 68 labs, 4 capstones)\n"
+  },
+  {
+    "name": "mvn test",
+    "exit": 0,
+    "ok": true,
+    "tail": "ae2cf94-876b-4303-8d22-743763cf0316 logger=o.s.api.AbstractOpenApiResource msg=Init duration for springdoc-openapi is: 572 ms\n2026-09-04 10:52:09,180 level=INFO  correlationId=it-pay-1 logger=c.b.n.NotificationListener msg=Notification 083e70e6-a0b2-4a64-b6e5-2fe210cacb5d sent template=payment-completed customer=11111111-1111-1111-1111-111111111111\n2026-09-04 10:52:09,180 level=INFO  correlationId=it-pay-1 logger=c.b.worker.PaymentPostingService msg=Posted payment b7086069-9187-4dad-9128-9987349a178f as ledger fa967747-3ad2-4ab8-9e4f-4305ec5001e2\n2026-09-04 10:52:09,247 level=INFO  correlationId=none logger=o.s.t.c.s.AnnotationConfigContextLoaderUtils msg=Could not detect default configuration classes for test class [com.baypay.payment.api.HealthApiIT]: HealthApiIT does not declare any static, non-private, non-final, nested classes annotated with @Configuration.\n2026-09-04 10:52:09,283 level=INFO  correlationId=none logger=o.s.b.t.c.SpringBootTestContextBootstrapper msg=Found @SpringBootConfiguration com.baypay.payment.BayPayApplication for test class com.baypay.payment.api.HealthApiIT\nMockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3\nOpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended\nWARNING: A Java agent has been loaded dynamically (/Users/hbhadra/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.7/byte-buddy-agent-1.17.7.jar)\nWARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning\nWARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information\nWARNING: Dynamic loading of agents will be disallowed by default in a future release\n"
+  },
+  {
+    "name": "terraform init solutions/BUILD-1101",
+    "exit": 0,
+    "ok": true,
+    "tail": "Initializing provider plugins...\n- Reusing previous version of hashicorp/aws from the dependency lock file\n- Using previously-installed hashicorp/aws v6.26.0\n\nTerraform has been successfully initialized!\n\nYou may now begin working with Terraform. Try running \"terraform plan\" to see\nany changes that are required for your infrastructure. All Terraform commands\nshould now work.\n\nIf you ever set or change modules or backend configuration for Terraform,\nrerun this command to reinitialize your working directory. If you forget, other\ncommands will detect it and remind you to do so if necessary.\n"
+  },
+  {
+    "name": "terraform validate solutions/BUILD-1101",
+    "exit": 0,
+    "ok": true,
+    "tail": "Success! The configuration is valid.\n\n"
+  },
+  {
+    "name": "terraform init solutions/BUILD-1201",
+    "exit": 0,
+    "ok": true,
+    "tail": "Initializing provider plugins...\n- Reusing previous version of hashicorp/aws from the dependency lock file\n- Using previously-installed hashicorp/aws v6.26.0\n\nTerraform has been successfully initialized!\n\nYou may now begin working with Terraform. Try running \"terraform plan\" to see\nany changes that are required for your infrastructure. All Terraform commands\nshould now work.\n\nIf you ever set or change modules or backend configuration for Terraform,\nrerun this command to reinitialize your working directory. If you forget, other\ncommands will detect it and remind you to do so if necessary.\n"
+  },
+  {
+    "name": "terraform validate solutions/BUILD-1201",
+    "exit": 0,
+    "ok": true,
+    "tail": "Success! The configuration is valid.\n\n"
+  },
+  {
+    "name": "terraform init solutions/BUILD-1202",
+    "exit": 0,
+    "ok": true,
+    "tail": "Initializing modules...\nInitializing provider plugins...\n- Reusing previous version of hashicorp/aws from the dependency lock file\n- Using previously-installed hashicorp/aws v6.26.0\n\nTerraform has been successfully initialized!\n\nYou may now begin working with Terraform. Try running \"terraform plan\" to see\nany changes that are required for your infrastructure. All Terraform commands\nshould now work.\n\nIf you ever set or change modules or backend configuration for Terraform,\nrerun this command to reinitialize your working directory. If you forget, other\ncommands will detect it and remind you to do so if necessary.\n"
+  },
+  {
+    "name": "terraform validate solutions/BUILD-1202",
+    "exit": 0,
+    "ok": true,
+    "tail": "Success! The configuration is valid.\n\n"
+  },
+  {
+    "name": "terraform init infrastructure/terraform/baypay-ecs",
+    "exit": 0,
+    "ok": true,
+    "tail": "Initializing provider plugins...\n- Reusing previous version of hashicorp/aws from the dependency lock file\n- Using previously-installed hashicorp/aws v6.26.0\n\nTerraform has been successfully initialized!\n\nYou may now begin working with Terraform. Try running \"terraform plan\" to see\nany changes that are required for your infrastructure. All Terraform commands\nshould now work.\n\nIf you ever set or change modules or backend configuration for Terraform,\nrerun this command to reinitialize your working directory. If you forget, other\ncommands will detect it and remind you to do so if necessary.\n"
+  },
+  {
+    "name": "terraform validate infrastructure/terraform/baypay-ecs",
+    "exit": 0,
+    "ok": true,
+    "tail": "Success! The configuration is valid.\n\n"
+  },
+  {
+    "name": "k8s yaml parse",
+    "exit": 0,
+    "ok": true,
+    "tail": "PASS k8s yaml parse (6 files)\nLocal parse only; kubectl against a live cluster is not required.\n"
+  },
+  {
+    "name": "interview simulator smoke",
+    "exit": 0,
+    "ok": true,
+    "tail": "AEJE-IQ-012  [Java/JVM]  principal\nA principal candidate interview at BayPay: Jordan Voss wants to split payment-service, refund-service, and transaction-worker into separately deployed JVMs because 'that is what a payments platform looks like.' Production today is a Java 21 / Spring Boot 3.5.5 modular monolith. When do you keep one JVM, what evidence would make you extract, and what answers will fail this question?\nFollow-ups:\n  - Which failure domains actually improve if posting stays in-process?\n  - What operational cost does a second JVM add before any code is 'cleaner'?\n\n(Write your answer. Re-run with --reveal after you stop talking.)\n"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "RoleName": "baypay-payment-combined",
+  "Description": "One role used as both execution and task. Attaches AdministratorAccess. Students split and tighten.",
+  "AssumeRolePolicyDocument": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ecs-tasks.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "ManagedPolicyArns": [
+    "arn:aws:iam::aws:policy/AdministratorAccess"
+  ]
+}

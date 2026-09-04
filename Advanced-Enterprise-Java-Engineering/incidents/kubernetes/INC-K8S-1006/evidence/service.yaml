@@ -1,0 +1,27 @@
+# Service — payment-service / baypay-prod
+# Gate: 1
+# Teaching equivalent: kubectl get svc payment-service -n baypay-prod -o yaml
+# Synthetic BayPay. Captured 2026-11-19T19:37:00Z
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+  annotations:
+    baypay.example/note: selector not in the Deployment label-cleanup PR
+spec:
+  type: ClusterIP
+  clusterIP: 10.8.200.41
+  selector:
+    app: payment
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+
+# spec.selector.app = payment
+# CLUSTER.md intended pod labels: app=payment-service
+# Compare this selector to deploy-labels.yaml (gate 2).

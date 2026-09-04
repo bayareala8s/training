@@ -1,0 +1,36 @@
+# SystemOut excerpts — PaymentCluster
+# Synthetic BayPay. Gate 2. WAS stamps in PDT.
+
+----- Pay1 / node-pay-1 / SystemOut.log  (edition 4.12) -----
+
+[9/22/26 15:46:12:004 PDT] 00000031 ApplicationMg A   WSVR0221I: Application started: payment.ear
+[9/22/26 15:46:12:088 PDT] 00000031 ApplicationMg I   payment.ear version=4.12.0 module=payment-web.war
+[9/22/26 15:46:12:140 PDT] 00000031 ResourceSpec  I   payment.ear 4.12 resource-ref jdbc/baypayXA (required)
+[9/22/26 16:08:14:220 PDT] 00000077 NamingService E   NMSV0612E: A NameNotFoundException occurred when accessing the context for jdbc/baypayXA.  Name jdbc/baypayXA not found in context "java:comp/env".
+[9/22/26 16:08:14:228 PDT] 00000077 WebContainer  E   POST /payment failed customer=11111111-1111-1111-1111-111111111111 paymentId=c504d333-0000-4000-8000-111111111504
+javax.naming.NameNotFoundException: Name "jdbc/baypayXA" not found in context "java:comp/env".
+	at com.ibm.ws.naming.jndicos.CNContextImpl.doLookup
+	at com.baypay.payment.ejb.PaymentBean.lookupDataSource
+	at com.baypay.payment.ejb.PaymentBean.create
+[9/22/26 16:09:01:550 PDT] 00000078 NamingService E   NMSV0612E: A NameNotFoundException occurred when accessing the context for jdbc/baypayXA.
+[9/22/26 16:11:40:003 PDT] 0000007a WebContainer  E   POST /payment failed customer=11111111-1111-1111-1111-111111111111 error=NameNotFoundException name=jdbc/baypayXA server=Pay1 edition=4.12
+
+----- Pay2 / node-pay-2 / SystemOut.log  (edition 4.11) -----
+
+[9/22/26 15:47:20:100 PDT] 00000011 NodeAgent     W   nodeagent-pay-2 restarting; file transfer interrupted
+[9/22/26 15:51:40:008 PDT] 00000012 NodeAgent     I   nodeagent-pay-2 STARTED; node repository generation still listed as incomplete
+[9/22/26 16:00:00:220 PDT] 00000044 ApplicationMg I   payment.ear version=4.11.3 module=payment-web.war (still running; no 4.12 binary on this node)
+[9/22/26 16:00:00:231 PDT] 00000044 ResourceSpec  I   payment.ear 4.11 resource-ref jdbc/baypay
+[9/22/26 16:10:22:440 PDT] 00000050 WebContainer  I   POST /payment status=201 paymentId=c504d333-0000-4000-8000-111111111504 customer=11111111-1111-1111-1111-111111111111 server=Pay2 edition=4.11 (retry)
+[9/22/26 16:12:15:018 PDT] 00000051 ClassLoad     W   CWOWB1000W: class com.baypay.payment.ejb.PaymentBean on Pay2 is 4.11.3; client previously spoke to a 4.12 member (response fields differ)
+
+----- Pay3 / node-pay-2 / SystemOut.log  (edition 4.11) -----
+
+[9/22/26 15:47:21:004 PDT] 00000008 NodeAgent     W   sync from dmgr-east aborted: nodeagent-pay-2 not reachable
+[9/22/26 16:05:33:100 PDT] 00000022 ApplicationMg I   payment.ear version=4.11.3 server=Pay3
+[9/22/26 16:11:02:880 PDT] 00000023 WebContainer  I   POST /payment status=201 server=Pay3 edition=4.11 jdbc=jdbc/baypay
+[9/22/26 16:11:02:881 PDT] 00000023 NamingService I   lookup jdbc/baypayXA skipped (4.11 code path)
+
+----- FFDC index (filenames only) -----
+
+ffdc/Pay1_2026_09_22_16_08_14_NameNotFoundException.txt

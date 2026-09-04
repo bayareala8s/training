@@ -1,0 +1,81 @@
+{
+  "id": "INC-WAS-503",
+  "labId": "INCIDENT-503",
+  "title": "JDBC pool exhaustion on ND",
+  "severity": "SEV-2",
+  "service": "payment.ear",
+  "cluster": "PaymentCluster",
+  "cell": "BayPayCell",
+  "environment": "prod-east",
+  "startedAt": "2026-09-15T17:41:20Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /payment connection-wait timeouts on Pay1; Pay2 and Pay3 still completing most creates. db-east CPU remains low.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting logs."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open logs."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/pmi-pool.md"],
+      "instruction": "Request the PMI pool snapshot only after you write which question the gauges should answer."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-09-15T16:55:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Installed reporting.ear on node-pay-1 (Pay1). Target was not PaymentCluster as a whole; Morgan Hale confirmed the ear started on Pay1 only. Binds jdbc/baypay (cell-scoped)."
+    },
+    {
+      "at": "2026-09-15T17:20:00Z",
+      "actor": "batch-scheduler",
+      "summary": "Settlement preview / reporting job started inside reporting.ear on Pay1 (same JVM as payment.ear)."
+    },
+    {
+      "at": "2026-09-15T17:41:20Z",
+      "actor": "pager",
+      "summary": "SEV-2: Pay1 POST /payment p99 9.1s; ConnectionWaitTimeoutException in SystemOut. Pay2 and Pay3 p99 240 ms."
+    },
+    {
+      "at": "2026-09-15T17:43:05Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "db-east CPU 17%. Writer accepting connections. Did not page Postgres."
+    },
+    {
+      "at": "2026-09-15T17:44:40Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market reports Avery Chen creates failing when routed to was-pay-1. Retries to other members succeed."
+    },
+    {
+      "at": "2026-09-15T17:46:12Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested cluster dashboard (gate 1). Asked Morgan Hale which ears are running on Pay1."
+    },
+    {
+      "at": "2026-09-15T17:47:30Z",
+      "actor": "was-admin",
+      "name": "Morgan Hale",
+      "summary": "Pay1 application list: payment.ear (started), reporting.ear (started, installed this morning). Both look up jdbc/baypay."
+    }
+  ]
+}

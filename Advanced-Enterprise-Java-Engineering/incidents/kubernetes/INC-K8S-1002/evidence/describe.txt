@@ -1,0 +1,67 @@
+# kubectl describe pod — teaching paste
+# Namespace: baypay-prod
+# Gate: 1
+# Synthetic BayPay. Not a live cluster.
+
+Name:             payment-service-8f2a1c3e0-xk2q1
+Namespace:        baypay-prod
+Priority:         0
+Service Account:  default
+Node:             ip-10-8-2-44/10.8.2.44
+Start Time:       Thu, 05 Nov 2026 13:22:08 -0800
+Labels:           app=payment-service
+                  pod-template-hash=8f2a1c3e0
+Status:           Running
+IP:               10.8.19.17
+Controlled By:    ReplicaSet/payment-service-8f2a1c3e0
+Containers:
+  payment:
+    Container ID:   cri-o://c1002b22111140008000111111111002
+    Image:          registry.baypay.example/baypay/payment-service:3.9.1
+    Image ID:       registry.baypay.example/baypay/payment-service@sha256:c1002bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    Port:           8080/TCP
+    State:          Running
+      Started:      Thu, 05 Nov 2026 15:01:11 -0800
+    Last State:     Terminated
+      Reason:       OOMKilled
+      Exit Code:    137
+      Started:      Thu, 05 Nov 2026 14:32:08 -0800
+      Finished:     Thu, 05 Nov 2026 15:01:02 -0800
+    Ready:          True
+    Restart Count:  3
+    Limits:
+      cpu:     1
+      memory:  512Mi
+    Requests:
+      cpu:     250m
+      memory:  512Mi
+    Liveness:   http-get http://:8080/actuator/health/liveness delay=30s timeout=1s period=10s #success=1 #failure=3
+    Readiness:  http-get http://:8080/actuator/health/readiness delay=15s timeout=1s period=5s #success=1 #failure=3
+    Environment Variables from:
+      payment-config  ConfigMap  Optional: false
+    Environment:
+      JAVA_TOOL_OPTIONS:   -Xmx512m
+      BAYPAY_DB_PASSWORD:  <set to the key 'BAYPAY_DB_PASSWORD' in secret 'baypay-db'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-3m9k1 (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+QoS Class:                   Burstable
+Events:
+  Type     Reason     Age                From               Message
+  ----     ------     ----               ----               -------
+  Normal   Scheduled  109m               default-scheduler  Successfully assigned baypay-prod/payment-service-8f2a1c3e0-xk2q1 to ip-10-8-2-44
+  Normal   Pulled     109m               kubelet            Container image "registry.baypay.example/baypay/payment-service:3.9.1" already present
+  Warning  OOMKilled  82m                kubelet            Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+  Warning  OOMKilled  38m                kubelet            Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+  Warning  OOMKilled  9m                 kubelet            Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+  Normal   Started    9m                 kubelet            Started container payment
+
+# Last State: Terminated Reason=OOMKilled Exit Code=137
+# memory limit 512Mi. JAVA_TOOL_OPTIONS=-Xmx512m
+# No java.lang.OutOfMemoryError line on the pod events.
+# Same Last State on payment-service-8f2a1c3e0-m3n4p and payment-service-8f2a1c3e0-q7r8s

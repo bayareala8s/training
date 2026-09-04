@@ -1,0 +1,67 @@
+# Paper Grafana snapshot — payment-service RED
+# Dashboard: BayPay payment-service operations (BUILD-1300 teaching board)
+# Window: 2026-12-22 18:40–19:14 UTC (10:40–11:14 Pacific)
+# Source: synthetic BayPay. Not a live Grafana.
+# Gate: 2
+
+Service: payment-service
+Region:  us-west-2
+URI:     POST /api/v1/payments
+Image:   3.8.4 through 18:52 UTC; 3.10.0 canary after Jordan Voss / BAYPAY-CAP41
+         (task split is not on this snapshot — request deployment history if you need it)
+
+## Rate (completions / s)
+
+| Time (UTC) | Rate RPS | Notes |
+|---|---|---|
+| 18:45 | 178 | weekday evening soak on 3.8.4 |
+| 18:50 | 181 | last healthy window |
+| 18:55 | 151 | canary in service; still completing |
+| 19:02 | 98 | Priya: "thin versus 18:45" |
+| 19:10 | 61 | SEV-1 pager |
+| 19:12 | 58 | still some 2xx; not silent |
+
+## Duration
+
+| Time (UTC) | P50 | P99 | Teaching SLO |
+|---|---|---|---|
+| 18:50 | 44 ms | 122 ms | P99 < 400 ms |
+| 18:55 | 71 ms | 890 ms | SLO missed |
+| 19:02 | 420 ms | 3.41 s | Harbor Market feels stuck |
+| 19:10 | 1.10 s | 8.62 s | 503 path in the tail |
+| 19:12 | 1.18 s | 9.14 s | Avery 503 after ~8 s |
+
+## Errors (this page includes 5xx / 503)
+
+| Time (UTC) | 2xx / min | 4xx / min | 5xx / min | 5xx RPS | 503 / min |
+|---|---|---|---|---|---|
+| 18:50 | 10860 | 36 | 2 | ~0.03 | 0 |
+| 18:55 | 9060 | 38 | 41 | ~0.68 | 39 |
+| 19:02 | 5880 | 40 | 62 | ~1.03 | 58 |
+| 19:10 | 3660 | 37 | 54 | ~0.90 | 51 |
+| 19:12 | 3480 | 35 | 56 | ~0.93 | 53 |
+
+5xx stepped with the throughput drop. Merchant success is calling about **HTTP 503**, not a quiet error tile.
+
+## USE row (context; not a pool outage)
+
+| Time (UTC) | Heap used / max | Hikari active / max | Hikari pending | Servlet busy / max |
+|---|---|---|---|---|
+| 18:50 | 1.12 G / 2.00 G | 12 / 50 | 0 | 24 / 200 |
+| 19:10 | 1.28 G / 2.00 G | 14 / 50 | 0 | 198 / 200 |
+
+Hikari pending stayed **0**. Writer wait is not on this board. Servlet threads are busy. Heap used is a small step; old-gen tile was not shipped on this snapshot.
+
+## One payment (merchant success paste)
+
+Avery Chen `11111111-1111-1111-1111-111111111111`
+account `22222222-2222-2222-2222-222222222221`
+payment `c1404e44-0000-4000-8000-111111111404`
+outcome failed at edge of create, HTTP 503 at 19:10:56Z, duration 8.14 s
+Idempotency-Key reused on one client retry; no duplicate capture.
+
+## Notes from Priya Nair (bridge)
+
+Rate ~180 → ~61. P99 ~120 ms → ~8.6 s. 5xx/503 are part of this page.
+Hikari pending 0. Do not bounce db-east from this graph.
+Requested deployment history after a written next investigation (gate 3).

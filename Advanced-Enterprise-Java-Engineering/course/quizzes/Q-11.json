@@ -1,0 +1,104 @@
+{
+  "id": "Q-11",
+  "moduleId": "module-11",
+  "title": "Module 11 quiz — AWS Container Platforms",
+  "description": "Eight questions on ECR, ECS/Fargate, EKS literacy, ALB health, IAM, cost. us-west-2. Synthetic BayPay.",
+  "questions": [
+    {
+      "id": "Q-11-01",
+      "prompt": "Why is :latest a bad ECR tag for payment-service in us-west-2?",
+      "choices": [
+        "ECR forbids the word latest",
+        "You cannot prove which bits a task ran, and two deploys may pull different images",
+        "Fargate cannot pull tagged images",
+        "Avery Chen’s UUID cannot be in a tag"
+      ],
+      "correctIndex": 1,
+      "explanation": "Pin a version or digest. Same rule as Module 9 registries."
+    },
+    {
+      "id": "Q-11-02",
+      "prompt": "Why is ECS on Fargate the student-apply default instead of EKS?",
+      "choices": [
+        "EKS cannot run Java",
+        "EKS control plane and often NAT/nodes cost more than a 90-minute lab needs; Fargate is enough to learn task defs and ALB",
+        "OpenShift forbids Fargate",
+        "Fargate includes RDS for free"
+      ],
+      "correctIndex": 1,
+      "explanation": "ACCOUNT.md: no EKS/NAT unless cost is the lesson. ARCHITECT-1102 is where EKS can win."
+    },
+    {
+      "id": "Q-11-03",
+      "prompt": "ECS task RUNNING, ALB target unhealthy, GET / returns 404 from Spring. First honest class?",
+      "choices": [
+        "The cluster is out of EC2",
+        "The load balancer health check does not match a 200 the app actually serves",
+        "Route 53 is down worldwide",
+        "dmgr-east must be bounced"
+      ],
+      "correctIndex": 1,
+      "explanation": "Health path/port/matcher — not ‘ECS is dead.’ Use /actuator/health/liveness."
+    },
+    {
+      "id": "Q-11-04",
+      "prompt": "Who should read Secrets Manager for BAYPAY_DB_PASSWORD?",
+      "choices": [
+        "The ALB",
+        "The task role (app) or execution role (inject at start) — never a plaintext env in git",
+        "Anonymous internet",
+        "The ECR scan role"
+      ],
+      "correctIndex": 1,
+      "explanation": "Execution role pulls secrets into the container; task role is for app AWS APIs. Split them."
+    },
+    {
+      "id": "Q-11-05",
+      "prompt": "An idle ALB left over the weekend is a problem because:",
+      "choices": [
+        "ALB is free after 1 hour",
+        "ALB hourly + LCU charges continue with zero traffic; destroy-after-lab exists for this",
+        "Fargate pays the ALB bill",
+        "CloudWatch cannot see ALBs"
+      ],
+      "correctIndex": 1,
+      "explanation": "COST-1105: idle ALB is the classic leftover."
+    },
+    {
+      "id": "Q-11-06",
+      "prompt": "When might EKS or OpenShift beat ECS for BayPay?",
+      "choices": [
+        "Never; this course forbids them",
+        "When you already run Kubernetes/OpenShift skills, need portable YAML, or platform features ECS does not provide — and you accept the cost",
+        "When you want NAT Gateways for fun",
+        "When you must run WebSphere ND"
+      ],
+      "correctIndex": 1,
+      "explanation": "ARCHITECT-1102 is a trade-off, not a slogan."
+    },
+    {
+      "id": "Q-11-07",
+      "prompt": "Student apply in this course should create RDS Multi-AZ because payments need a database. True?",
+      "choices": [
+        "True; always create prod RDS in a 90-minute lab",
+        "False; RDS is literacy in L-11.7; local H2/Postgres or a disclosed estimate — do not spawn Multi-AZ for the lab",
+        "True if the region is us-east-1",
+        "False because Spring cannot use RDS"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cost and cleanup. Do not ‘make it real’ with Multi-AZ."
+    },
+    {
+      "id": "Q-11-08",
+      "prompt": "Can you pass BUILD-1101 without terraform apply?",
+      "choices": [
+        "No; AWS is pass/fail only if the ALB is green",
+        "Yes; paper + terraform validate + a destroy plan is the designed path if you cannot spend",
+        "Only if you use EKS",
+        "Only on OpenShift"
+      ],
+      "correctIndex": 1,
+      "explanation": "Apply is optional. Validate is the bar."
+    }
+  ]
+}

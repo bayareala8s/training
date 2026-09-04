@@ -1,0 +1,70 @@
+{
+  "id": "INC-K8S-1004",
+  "labId": "INCIDENT-1004",
+  "title": "Payment start failures after Secret update",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod",
+  "environment": "prod-east",
+  "startedAt": "2026-11-12T21:18:27Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /api/v1/payments failing after baypay-db Secret change; datasource bind or auth errors",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1004d44-0000-4000-8000-111111111004",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/secret-keys.txt"],
+      "instruction": "Read this timeline and the Secret key list before requesting logs. Values are ***."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open logs."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/deployment-env.yaml"],
+      "instruction": "Open Deployment env YAML only after you write how env name should map to a Secret key."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-12T20:35:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Re-applied Secret baypay-db in baypay-prod (ticket BAYPAY-10044). Said keys were 'simplified to match the generic Postgres chart'."
+    },
+    {
+      "at": "2026-11-12T20:58:11Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Pods Running then erroring on datasource. Asked for Secret *keys* only — no decoded values in Slack."
+    },
+    {
+      "at": "2026-11-12T21:18:27Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service baypay-prod create payment failures after Secret window. Harbor Market retries."
+    },
+    {
+      "at": "2026-11-12T21:19:50Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1004d44-0000-4000-8000-111111111004 failed. Same Idempotency-Key on retry."
+    },
+    {
+      "at": "2026-11-12T21:21:16Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested Secret keys (gate 1). Told Sam not to paste a password into the bridge and not to bounce db-east."
+    }
+  ]
+}

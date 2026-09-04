@@ -1,0 +1,82 @@
+{
+  "id": "INC-SEC-1402",
+  "labId": "INCIDENT-1402",
+  "title": "HTTPS handshake failures while payment tasks stay RUNNING",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod-west",
+  "environment": "us-west-2-prod",
+  "region": "us-west-2",
+  "startedAt": "2026-09-02T07:15:00Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "Merchants fail HTTPS to payments.apps.baypay.example; POST /api/v1/payments never leaves the client; ECS tasks remain RUNNING",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1402b22-0000-4000-8000-111111111402",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/tls-handshake.txt"],
+      "instruction": "Read this timeline and the handshake paste before requesting ACM describe."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/acm-describe.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open the ACM describe paste."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/route53-records.txt"],
+      "instruction": "Open the Route 53 record list only after you write what DNS names the edge or certificate workflow would need."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-08-12T18:40:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Ticket BAYPAY-14021 with Sam Okada: cleaned unused records in the baypay.example hosted zone so the zone 'only has what merchants hit.' Change merged the same afternoon."
+    },
+    {
+      "at": "2026-08-12T19:05:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Confirmed the public ALIAS for payments.apps.baypay.example still pointed at the us-west-2 ALB after the cleanup. Said leftover names that 'nothing resolved' were removed."
+    },
+    {
+      "at": "2026-09-01T00:00:00Z",
+      "actor": "edge",
+      "summary": "Leaf presented on payments.apps.baypay.example :443 reached its notAfter (see handshake paste). No page fired overnight."
+    },
+    {
+      "at": "2026-09-02T07:15:00Z",
+      "actor": "pager",
+      "summary": "SEV-2: payments.apps.baypay.example HTTPS failures. Harbor Market cannot complete the handshake. payment-service tasks RUNNING in baypay-prod-west."
+    },
+    {
+      "at": "2026-09-02T07:16:40Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1402b22-0000-4000-8000-111111111402 never left the browser. Same Idempotency-Key on retry. Certificate / handshake warning. No HTTP status from Spring."
+    },
+    {
+      "at": "2026-09-02T07:18:10Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Tasks RUNNING 2/2. Jump-box HTTP to task :8080 /actuator/health/liveness returns 200. Asked for the client handshake before blaming the security group or Postgres."
+    },
+    {
+      "at": "2026-09-02T07:19:02Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested handshake paste (gate 1). Told Sam not to disable TLS on the ALB to 'restore HTTP' and not to bounce dmgr-east. Asked what ACM shows for the payments host after the August DNS cleanup."
+    }
+  ]
+}

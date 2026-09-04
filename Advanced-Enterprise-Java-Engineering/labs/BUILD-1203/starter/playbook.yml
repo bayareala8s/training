@@ -1,0 +1,19 @@
+# BUILD-1203 starter — intentionally incomplete.
+# Add inventory, vars (BAYPAY_DB_HOST), and template tasks for
+# payment-service.env and Liberty server.env. Local connection only.
+# Do not put a password literal in this file.
+
+---
+- name: Render BayPay payment environment
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    output_dir: ./rendered
+  tasks:
+    - name: Ensure output directory exists
+      ansible.builtin.file:
+        path: "{{ output_dir }}"
+        state: directory
+        mode: "0755"
+    # Add ansible.builtin.template tasks for payment-service.env and server.env.

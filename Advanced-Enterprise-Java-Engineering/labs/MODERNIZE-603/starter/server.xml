@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="BayPay payment — MODERNIZE-603 starter (hardcoded secrets to remove)">
+
+    <!--
+      This file still behaves like a cell console: host, user, and password are literals.
+      Remove changeme-baypay. Move host/user/password/database onto ${env.BAYPAY_DB_*}.
+      Keep isolated jdbc/baypay-payment and the Module 6 feature set.
+    -->
+
+    <featureManager>
+        <feature>servlet-6.0</feature>
+        <feature>jdbc-4.3</feature>
+        <feature>jndi-1.0</feature>
+        <feature>persistence-3.1</feature>
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+                  httpPort="9080"
+                  httpsPort="9443"/>
+
+    <library id="PostgresLib">
+        <fileset dir="${shared.resource.dir}/jdbc" includes="postgresql-*.jar"/>
+    </library>
+
+    <dataSource id="BayPayPaymentDS" jndiName="jdbc/baypay-payment">
+        <jdbcDriver libraryRef="PostgresLib"/>
+        <connectionManager id="BayPayPaymentPool" maxPoolSize="20"/>
+        <properties.postgresql
+            serverName="db-east.baypay.example"
+            portNumber="5432"
+            databaseName="baypay"
+            user="baypay_app"
+            password="changeme-baypay"/>
+    </dataSource>
+
+    <webApplication id="payment-service"
+                    location="payment-service.war"
+                    contextRoot="/payment"/>
+
+</server>

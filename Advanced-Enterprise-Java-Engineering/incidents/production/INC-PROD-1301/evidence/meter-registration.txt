@@ -1,0 +1,61 @@
+# Meter registration snippet — payment-service 3.9.0 vs 3.8.4
+# Source: synthetic git show + /actuator/prometheus sample lines
+# Ticket: BAYPAY-13011
+# Author: Jordan Voss
+# Gate: 3
+# Not a live repository.
+
+## git log --oneline (release paste)
+
+9f13a0c1  BAYPAY-13011 observability: richer payment labels
+c8e38404  payment-service 3.8.4 (last healthy image on the board)
+
+## git show 9f13a0c1 -- PaymentMetrics.java
+
+# 3.8.4 (c8e38404) — last healthy
+
+    Timer.builder("payment.create")
+        .description("Create payment")
+        .tag("uri", "/api/v1/payments")
+        .tag("method", "POST")
+        .tag("outcome", outcome)
+        .tag("status", Integer.toString(status))
+        .register(meterRegistry)
+        .record(elapsed, TimeUnit.MILLISECONDS);
+
+# 3.9.0 (9f13a0c1) — what is running at 18:22 UTC
+
+    Timer.builder("payment.create")
+        .description("Create payment")
+        .tag("uri", "/api/v1/payments")
+        .tag("method", "POST")
+        .tag("outcome", outcome)
+        .tag("status", Integer.toString(status))
+        .tag("customerId", payment.getCustomerId().toString())
+        .tag("accountId", payment.getAccountId().toString())
+        .tag("Idempotency-Key", idempotencyKey)
+        .register(meterRegistry)
+        .record(elapsed, TimeUnit.MILLISECONDS);
+
+Review comment from Sam Okada on the PR (not merged as a blocker):
+"Do these two extra tags stay unique per merchant? Also the header?"
+
+Jordan Voss reply on BAYPAY-13011:
+"Need them to find Avery's create on the dashboard. Ship 3.9.0."
+
+## Sample /actuator/prometheus lines after the roll (truncated)
+
+# HELP payment_create_seconds Create payment
+# TYPE payment_create_seconds summary
+payment_create_seconds_count{Idempotency-Key="8f0c1300-demo-key",accountId="22222222-2222-2222-2222-222222222221",customerId="11111111-1111-1111-1111-111111111111",method="POST",outcome="SUCCESS",status="201",uri="/api/v1/payments"} 1
+payment_create_seconds_count{Idempotency-Key="aa13-other-key",accountId="22222222-2222-2222-2222-222222222229",customerId="33333333-3333-3333-3333-333333333333",method="POST",outcome="SUCCESS",status="201",uri="/api/v1/payments"} 1
+payment_create_seconds_count{Idempotency-Key="bb13-other-key",accountId="22222222-2222-2222-2222-222222222230",customerId="44444444-4444-4444-4444-444444444444",method="POST",outcome="DECLINED",status="422",uri="/api/v1/payments"} 1
+
+# HELP http_server_requests_seconds
+# TYPE http_server_requests_seconds histogram
+http_server_requests_seconds_count{method="POST",outcome="SUCCESS",status="201",uri="/api/v1/payments"} 1260
+
+http_server_requests_* lines in this paste still use uri/method/outcome/status only.
+payment.create in 3.9.0 also attaches customerId, accountId, and Idempotency-Key.
+
+3.8.4 image still in ECR / the previous task family: baypay/payment-service:3.8.4

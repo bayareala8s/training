@@ -1,0 +1,76 @@
+{
+  "id": "INC-AWS-1205",
+  "labId": "INCIDENT-1205",
+  "title": "Failed ECS deploy after a green pipeline",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod-west",
+  "environment": "prod-west",
+  "region": "us-west-2",
+  "startedAt": "2026-12-03T22:07:11Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "HTTP 502/503 on pay-alb-student.baypay.example after a CI deploy; ECS deployment not staying healthy",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1205f55-0000-4000-8000-111111111205",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/pipeline.log"],
+      "instruction": "Read this timeline and the pipeline log before requesting ECS deployments."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/ecs-deployments.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open ECS deployments."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/task-def-diff.txt"],
+      "instruction": "Open the task-definition diff only after you write what you expect to compare between revisions."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-12-03T21:48:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Merged BAYPAY-12051. Said CI would ship payment-service from main. Asked for a fast tag so Harbor Market could demo."
+    },
+    {
+      "at": "2026-12-03T21:56:22Z",
+      "actor": "pipeline",
+      "summary": "Workflow baypay on main reported success. Publish job completed. Deploy step targeted ECS cluster baypay-prod-west / service payment-service in us-west-2."
+    },
+    {
+      "at": "2026-12-03T22:04:40Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "ALB pay-alb-student.baypay.example returning 502. Target group failing health. Asked for pipeline log and ECS deployments before a Postgres hunt."
+    },
+    {
+      "at": "2026-12-03T22:07:11Z",
+      "actor": "pager",
+      "summary": "SEV-2: pay-alb-student.baypay.example HTTP 502/503. payment-service deployment not healthy in us-west-2."
+    },
+    {
+      "at": "2026-12-03T22:08:33Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1205f55-0000-4000-8000-111111111205 HTTP 502. Same Idempotency-Key on retry."
+    },
+    {
+      "at": "2026-12-03T22:10:02Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested pipeline.log (gate 1). Asked Jordan not to push another tag and asked Sam not to bounce db-east."
+    }
+  ]
+}

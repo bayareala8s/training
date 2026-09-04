@@ -1,0 +1,15 @@
+# payment-service logs — pay-prod-east-2
+# Synthetic BayPay. Gate 2. Times in UTC.
+
+2026-10-09T23:55:40.004Z level=INFO  correlationId=none logger=c.b.payment.config.BayPayConfig msg=feature nightly-reversal-job enabled=true instance=pay-prod-east-2 schedule=02:00-America/Los_Angeles
+2026-10-10T09:00:02.110Z level=INFO  correlationId=none logger=c.b.payment.batch.NightlyReversalJob msg=NightlyReversalJob started merchantCount=640 candidateReversals=118
+2026-10-10T09:00:02.440Z level=INFO  correlationId=none logger=c.b.payment.lock.InProcessMoneyLocks msg=LOCK_ACQUIRED name=ledgerLock thread=nightly-reversal-1
+2026-10-10T09:11:01.008Z level=INFO  correlationId=a8030001-1111-4000-8000-000000000101 logger=c.b.payment.api.PaymentController msg=POST /api/v1/payments accepted customer=11111111-1111-1111-1111-111111111111 paymentId=c803d333-0000-4000-8000-111111111803
+2026-10-10T09:11:01.220Z level=INFO  correlationId=a8030001-1111-4000-8000-000000000101 logger=c.b.payment.lock.InProcessMoneyLocks msg=LOCK_ACQUIRED name=accountLock thread=http-nio-8080-exec-16 owner=PaymentApplicationService.create
+2026-10-10T09:11:01.221Z level=INFO  correlationId=a8030001-1111-4000-8000-000000000101 logger=c.b.payment.lock.InProcessMoneyLocks msg=LOCK_WAIT name=ledgerLock thread=http-nio-8080-exec-16 ownerHeldBy=nightly-reversal-1
+2026-10-10T09:11:01.330Z level=INFO  correlationId=none logger=c.b.payment.lock.InProcessMoneyLocks msg=LOCK_WAIT name=accountLock thread=nightly-reversal-1 ownerHeldBy=http-nio-8080-exec-16
+2026-10-10T09:11:04.100Z level=WARN  correlationId=none logger=c.b.payment.api.PaymentController msg=in-flight POST /api/v1/payments count=46 oldestElapsedMs=188104
+2026-10-10T09:12:40.008Z level=WARN  correlationId=a8030001-1111-4000-8000-000000000101 logger=c.b.payment.api.PaymentController msg=POST /api/v1/payments still in flight elapsedMs=99800 customer=11111111-1111-1111-1111-111111111111
+2026-10-10T09:14:02.550Z level=INFO  correlationId=none logger=c.b.payment.batch.NightlyReversalJob msg=NightlyReversalJob still running processed=12 remaining=106 state=waiting
+2026-10-10T09:15:11.440Z level=INFO  correlationId=a8030002-2222-4000-8000-000000000202 logger=c.b.payment.api.PaymentController msg=POST /api/v1/payments accepted customer=11111111-1111-1111-1111-111111111111
+2026-10-10T09:15:11.448Z level=INFO  correlationId=a8030002-2222-4000-8000-000000000202 logger=c.b.payment.lock.InProcessMoneyLocks msg=LOCK_WAIT name=accountLock thread=http-nio-8080-exec-21 ownerHeldBy=http-nio-8080-exec-16

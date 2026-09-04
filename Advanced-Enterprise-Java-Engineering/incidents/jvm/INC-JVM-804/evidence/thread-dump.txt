@@ -1,0 +1,73 @@
+2026-10-13 11:13:22
+Full thread dump OpenJDK 64-Bit Server VM (21.0.4+7-LTS mixed mode, sharing)
+# Synthetic dump for INC-JVM-804. Fictional BayPay canary pay-prod-east-2 pid 23190.
+# Captured with a teaching jstack equivalent. Not a real employer artifact.
+
+Threads class SMR info:
+_java_thread_list=0x000000012a00b800, length=268
+
+"http-nio-8080-exec-4" #21 prio=5 os_prio=0 cpu=88.10ms elapsed=1880.02s tid=0x000000012a880000 nid=0xa004 waiting on condition  [0x00000001728aa000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	- parking to wait for  <0x00000000f0c80001> (a java.util.concurrent.CompletableFuture$Signaller)
+	at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base/java.util.concurrent.CompletableFuture$Signaller.block(CompletableFuture.java:1898)
+	at java.base/java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2117)
+	at com.baypay.payment.fx.FxQuoteClient.quote(FxQuoteClient.java:74)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:79)
+	at com.baypay.payment.api.PaymentController.create(PaymentController.java:54)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-18" #35 prio=5 os_prio=0 cpu=64.02ms elapsed=1879.40s tid=0x000000012a88e000 nid=0xa018 waiting on condition  [0x0000000172912000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at java.base/java.util.concurrent.locks.LockSupport.park(LockSupport.java:371)
+	at java.base/java.util.concurrent.CompletableFuture.join(CompletableFuture.java:2117)
+	at com.baypay.payment.fx.FxQuoteClient.quote(FxQuoteClient.java:74)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:79)
+	at com.baypay.payment.api.PaymentController.create(PaymentController.java:54)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-91" #108 prio=5 os_prio=0 cpu=51.10ms elapsed=640.11s tid=0x000000012b210000 nid=0xa091 waiting on condition  [0x0000000173a12000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1722)
+	at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+	at com.baypay.payment.fx.FxQuoteClient.acquire(FxQuoteClient.java:41)
+	at com.baypay.payment.fx.FxQuoteClient.quote(FxQuoteClient.java:62)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:79)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-140" #157 prio=5 os_prio=0 cpu=40.02ms elapsed=400.08s tid=0x000000012b280000 nid=0xa140 waiting on condition  [0x0000000173c12000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at java.base/java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:435)
+	at com.baypay.payment.fx.FxQuoteClient.acquire(FxQuoteClient.java:41)
+	at com.baypay.payment.fx.FxQuoteClient.quote(FxQuoteClient.java:62)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:79)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-2" #19 prio=5 os_prio=0 cpu=210.55ms elapsed=8801.00s tid=0x000000012a870000 nid=0x9e11 runnable  [0x00000001727e0000]
+   java.lang.Thread.State: RUNNABLE
+	at com.baypay.payment.config.HealthIndicator.health(HealthIndicator.java:22)
+	at org.springframework.boot.actuate.health.HealthEndpointWebExtension.health(HealthEndpointWebExtension.java:91)
+
+"fx-client-1" #80 prio=5 os_prio=0 cpu=12.02ms elapsed=1880.00s tid=0x000000012b300000 nid=0xb001 runnable  [0x0000000174012000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:191)
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:280)
+	at java.net.http.HttpClientImpl.send(HttpClientImpl.java:0)
+	at com.baypay.payment.fx.FxQuoteClient.doGet(FxQuoteClient.java:99)
+
+"fx-client-2" #81 prio=5 os_prio=0 cpu=11.88ms elapsed=1880.00s tid=0x000000012b302000 nid=0xb002 runnable  [0x0000000174023000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/sun.nio.ch.NioSocketImpl.park(NioSocketImpl.java:191)
+	at com.baypay.payment.fx.FxQuoteClient.doGet(FxQuoteClient.java:99)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.11ms elapsed=9001.00s tid=0x000000012a001000 nid=0x9e02 waiting on condition
+   java.lang.Thread.State: RUNNABLE
+
+"VM Periodic Task Thread" os_prio=0 cpu=88.00ms elapsed=9001.00s tid=0x000000012a00a000 nid=0x9e06 waiting on condition
+
+JNI global refs: 40, weak refs: 0

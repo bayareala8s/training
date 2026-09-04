@@ -1,0 +1,49 @@
+# Dependency latency paste — payment-service / pay-prod-west-c
+# Captured: 2026-12-22T19:17:40Z
+# Source: synthetic Micrometer timers + outbound client scrape. Not a live AMP workspace.
+# Gate: 5
+
+job:     payment-service
+task:    pay-prod-west-c
+image:   3.10.0
+region:  us-west-2
+
+## Outbound HTTP — https://fraud.baypay.example/v1/score
+
+| Time (UTC) | in-flight | oldest in-flight started | successes / min | p50 | p99 | client deadline column |
+|---|---|---|---|---|---|---|
+| 18:50 | 0 | — | n/a (3.8.4; no score timer) | — | — | — |
+| 18:55 | 22 | 18:52:44Z | 0 | (no completions) | (no completions) | not present on this scrape |
+| 19:02 | 41 | 18:52:44Z | 0 | (no completions) | (no completions) | not present on this scrape |
+| 19:10 | 47 | 18:52:44Z | 0 | (no completions) | (no completions) | not present on this scrape |
+| 19:17 | 47 | 18:52:44Z | 0 | (no completions) | (no completions) | not present on this scrape |
+
+Oldest score call has been in flight since **18:52:44Z** (~25 minutes at this paste).
+Zero successful samples since the canary started. Host on the timer: fraud.baypay.example.
+
+## jdbc/baypay (same task)
+
+| Time (UTC) | Hikari active / max | Hikari pending | query p99 |
+|---|---|---|---|
+| 18:50 | 12 / 50 | 0 | 7 ms |
+| 19:10 | 14 / 50 | 0 | 8 ms |
+| 19:17 | 13 / 50 | 0 | 9 ms |
+
+No writer wait. No Multi-AZ event on this paste. No RDS failover file shipped in the pack.
+
+## Other named dependencies
+
+| Name | This scrape |
+|---|---|
+| ACM / TLS handshake | not in this paste (HTTPS from merchants is completing to the ALB; 503 is the app response) |
+| ALB Path=/ health | liveness :8080 still 200 (see deployment-history) |
+| debug listener 9080 | not registered on 3.10.0 or 3.8.4 in this paste |
+
+## What this file does not include
+
+Heap dump: omitted.
+Queue depth: omitted.
+Database metrics file / `db-failover.json`: **not shipped**.
+Postgres Multi-AZ event: **not on this paste**.
+
+Riley: quote in-flight age and zero successes. Then evaluate bayops-draft.json against files you opened.

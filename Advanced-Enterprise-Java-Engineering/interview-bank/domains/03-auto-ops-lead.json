@@ -1,0 +1,812 @@
+[
+  {
+    "id": "AEJE-IQ-071",
+    "domain": "Automation",
+    "difficulty": "advanced",
+    "topic": "Git branching for payment releases",
+    "question": "Jordan Voss is about to ship Harbor Bike Co’s next authorize change for fictional BayPay. How should payment-service branches, pull requests, and protected main work so Avery Chen’s POST /api/v1/payments is minted from a reviewed SHA — and what do you refuse to do when a merge goes wrong?",
+    "followUps": [
+      "What belongs in a conventional review of a Terraform or pipeline PR versus a docs typo?",
+      "A teammate wants a long-lived release/east branch as the second trunk. How do you answer?"
+    ],
+    "expectedConcepts": [
+      "Trunk-based short-lived PRs into protected main",
+      "Required CI (./mvnw test on JDK 21) plus human review",
+      "Revert with a new commit; never force-push main",
+      "Git is the release control plane, not the secret store or Terraform state"
+    ],
+    "engineerAnswer": "I cut a short-lived branch, open a PR, wait for ./mvnw test on Java 21 and a review, then merge to main. Main is protected: no force-push, no unsigned hotfix. If 3.8.1 is wrong I revert with a new commit that points the task back at 3.8.0. I never commit BAYPAY_DB_* or AWS keys. BayPay is fictional; the audit still has to say which SHA minted the ECR tag.",
+    "seniorAnswer": "Trunk-based: main is the only integration branch that may publish baypay/payment-service:<immutable-tag> in us-west-2. I require CI plus a conventional review that names tests, secrets, image tag, cost if apply is possible, and rollback. LGTM is not a review. GitFlow with a permanent release/east is a second trunk nobody can delete. If apply went badly, I revert HCL and the image_tag with a new commit — force-pushing main to ‘clean history’ destroys Priya Nair’s timeline. State and Secrets Manager stay out of git.",
+    "staffAnswer": "I treat git as desired state for the pipeline, not as the AWS API. App repo, workflow YAML, and Terraform roots may split, but only main publishes an image or plans the prod/student backend. Blast radius of a bad merge is the next immutable tag plus whatever image_tag Terraform still declares — so rollback is revert plus health, not rewrite. I measure time-to-revert and reject admin exemptions on production protection. Leftover Liberty Ansible lives in its own path; I will not hide server.xml in an ECS module PR. Student sandboxes may loosen protection to learn the shape; I will not interview as if that is how BayPay production works.",
+    "principalAnswer": "I set the org rule: payments, IAM, Terraform, and pipeline credentials need two sets of eyes; history is an audit artifact for a fictional regulated payment API. I fund branch protection that denies force-push and deletion even for admins, and I make revert-plus-validate the taught incident cleanup. Long-lived regional trunks and ‘hotfix on main from a laptop’ are process defects I will name in an exec review. I will not accept BayOps or a model dump as proven RCA for a bad merge. The narrative to finance is reconstructability: which commit charged Avery Chen, and who signed it.",
+    "commonMistakes": [
+      "Force-pushing main after a bad apply so history looks clean.",
+      "Treating a long-lived release/east or develop branch as the default second trunk.",
+      "Approving your own Terraform with a one-word LGTM and no rollback sentence."
+    ],
+    "scoreRubric": "Engineer: names short-lived PR, protected main, revert not force-push, no secrets in git. Senior: conventional review checklist, only main publishes, distinguishes GitFlow from trunk. Staff: blast radius of merge vs Terraform image_tag, no admin exemption, Ansible not hidden in ECS. Principal: org/audit policy, funds protection, refuses proven-AI RCA and laptop hotfixes as culture."
+  },
+  {
+    "id": "AEJE-IQ-072",
+    "domain": "Automation",
+    "difficulty": "senior",
+    "topic": "CI that proves tests before an image exists",
+    "question": "Sam Okada’s runner can build an OCI image in minutes. Why must fictional BayPay’s pipeline prove ./mvnw test on JDK 21 before baypay/payment-service gets a tag in ECR, and what must a pull-request job refuse to do?",
+    "followUps": [
+      "What does a green ./mvnw test not prove about Fargate, Secrets Manager, or Actuator readiness?",
+      "CI used a global mvn on JDK 17 because it was already on the image. What is wrong?"
+    ],
+    "expectedConcepts": [
+      "Verify (compile + test) before publish (image) before apply (Terraform)",
+      "Pinned JDK 21 and repo ./mvnw, not a random global Maven",
+      "No image publish from a red build; no secrets in workflow YAML",
+      "Unit/slice tests are not a merchant-healthy cut"
+    ],
+    "engineerAnswer": "Every PR runs ./mvnw -B test with Java 21 using the wrapper. If tests fail, we do not push an image and we do not merge. I print java -version in the log. I do not put BAYPAY_DB_PASSWORD or access keys in the workflow file. A green test means this SHA still compiles the reactor; it does not mean Harbor Bike Co can pay.",
+    "seniorAnswer": "The locked pipeline is Git → CI test → image → Terraform → validate. Publish is L-12.3; apply is optional and not the student bar. I pin Temurin 21 and ./mvnw so laptop JDK 17 cannot mint production bytes. PR jobs verify only — they must not apply Terraform, push :latest, or publish from a red module. I still say out loud that tests are not ALB health or readiness on 8080. If someone skips tests ‘because Terraform is the real lab,’ I block the merge.",
+    "staffAnswer": "I design the pipeline so main cannot move on a failing payment-service, shared, or sibling module, and so student forks never get the prod apply role. I separate verify, publish, and apply with different identities. I watch for ‘works on my machine’ when CI uses image mvn and developers use ./mvnw. I add a secrets scan, but I do not treat a scan as a substitute for review. I will fail a change that publishes then tests, or that builds the image to ‘save time’ before the reactor is green. terraform validate stays the AWS grade path; CI must not require apply to prove tests.",
+    "principalAnswer": "I fund one cheap proof before we spend ECR storage or an ALB hour: the same Java 21 tests that encode idempotency and the state machine. I will not let a platform optimization (build once, test in the image) invert that gate without an explicit contract. I tell executives that a red build which still tagged 3.8.1 is a change-management failure, not a clever acceleration. I refuse auto-publish from a model-written workflow and I refuse to call a green image proven RCA that the SHA is merchant-safe. Rollback of a never-tested tag is how you burn the 99.9% budget on fiction.",
+    "commonMistakes": [
+      "Publishing baypay/payment-service:latest or any tag from a red ./mvnw test.",
+      "Running CI on JDK 17/22 or a global mvn that is not the repo wrapper.",
+      "Treating a green unit suite as proof the Fargate task is Ready."
+    ],
+    "scoreRubric": "Engineer: ./mvnw test on 21 before image; no secrets in YAML. Senior: verify/publish/apply split; PR cannot apply; tests ≠ readiness. Staff: identities, fork permissions, no test-after-publish, validate not apply as proof. Principal: funds the cheap gate, refuses inverted pipelines and ‘proven’ green-image RCA."
+  },
+  {
+    "id": "AEJE-IQ-073",
+    "domain": "Automation",
+    "difficulty": "senior",
+    "topic": "Terraform state and blast radius for BayPay",
+    "question": "Riley Okonkwo asks who would be hurt if two people applied the student payment stack at once, or if terraform.tfstate landed on main. For fictional BayPay in us-west-2, explain Terraform state, locking, and blast radius — and what the student grade bar actually is.",
+    "followUps": [
+      "What belongs in remote state versus git, and what do you do if state was already committed?",
+      "Which resources must a 90-minute lab refuse even if someone wants ‘realism’?"
+    ],
+    "expectedConcepts": [
+      "State maps addresses to real resources and is not committed",
+      "S3 backend plus DynamoDB lock in production; local/paper for students",
+      "terraform validate is the student AWS bar; apply is optional and destroyable",
+      "Blast radius: ALB, ECS service, IAM, leftover spend; no EKS/NAT/RDS apply"
+    ],
+    "engineerAnswer": "State records real ids. I do not commit *.tfstate. Production uses a remote backend with a lock; students may keep local state on paper. I run terraform validate to pass. If I cannot spend, I stop there. If I apply, I tag Course=AEJE and destroy the same day. I never put BAYPAY_DB_PASSWORD in .tfvars.",
+    "seniorAnswer": "Two applies without a lock can both think they own the ALB or the ECS service and fight. Remote state plus a DynamoDB lock is how Sam Okada prevents that in production. State can contain secret attributes, so a committed tfstate is a security incident: rotate, then revert with a new commit — do not force-push main to hide it. Validate needs no creds and is the grade bar. Plan is useful with creds. Apply costs an ALB day and Fargate hours; I estimate first. I refuse EKS, NAT Gateway, and multi-AZ RDS in a student apply.",
+    "staffAnswer": "I size blast radius by what one root module can destroy: the student ALB, the Fargate service, the ECR repo policy, and IAM that reads Secrets Manager. I split modules so a network change does not rewrite the task definition by accident, and I keep image_tag as a variable so a bad apply is a pin, not a rewrite of the VPC. I will not share one state file across staging and a laptop. Leftover Liberty is not in this state — Ansible must not be the second apply path for ECS. If someone ‘fixed’ drift in the console, I treat that as unreviewed desired-state drift, not as proven RCA.",
+    "principalAnswer": "I fund remote state, locking, and least-privilege apply roles as the control plane for a fictional payment estate. I tell finance that validate is how we teach without a bill, and that an overnight ALB is a process failure. I will not accept console-click HA or a second-region apply as the 99.99% answer. I set policy: state is not git, apply is not the interview flex, and hiding a leaked state file with a force-push is a firing-class audit break. BayPayCell is not a Terraform backend and not a failover target.",
+    "commonMistakes": [
+      "Committing terraform.tfstate or passwords in .tfvars, then force-pushing main to hide it.",
+      "Treating terraform apply as required to pass; ignoring validate.",
+      "Applying EKS, NAT, or multi-AZ RDS ‘for realism’ in a 90-minute lab."
+    ],
+    "scoreRubric": "Engineer: state not in git; validate to pass; no secrets in tfvars. Senior: lock, rotate-if-leaked, validate/plan/apply cost split, refused resources. Staff: module blast radius, one-state-per-env, console drift is not RCA. Principal: funds backend/roles, validate-as-teaching-bar, no cell failover, no force-push cleanup."
+  },
+  {
+    "id": "AEJE-IQ-074",
+    "domain": "Automation",
+    "difficulty": "staff",
+    "topic": "module boundaries vs copy-paste stacks",
+    "question": "Priya Nair found three copy-pasted student stacks that each declare an ALB, ECR, and ECS service with slightly different health paths. How should fictional BayPay draw Terraform module boundaries so staging and a student sandbox share code without sharing blast radius?",
+    "followUps": [
+      "What must the ecs module never own, and what must stay a root variable?",
+      "When is a fourth module the wrong answer compared with a variable?"
+    ],
+    "expectedConcepts": [
+      "Reusable modules: network, ecr, ecs, alb (AEJE-D-055)",
+      "Root wires outputs; image_tag is a variable, never :latest",
+      "Copy-paste stacks drift health checks and tags",
+      "Modules are not Ansible and do not recreate BayPayCell"
+    ],
+    "engineerAnswer": "I extract network, ecr, ecs, and alb modules with variables and outputs instead of an 800-line main.tf. The root sets region us-west-2 and ACCOUNT.md tags. Health stays /actuator/health/liveness and /actuator/health/readiness on 8080. I still terraform validate the root. I do not paste a second copy of the ALB listener ‘just for staging’.",
+    "seniorAnswer": "Copy-paste is how one stack probes /health and another probes /ready while merchants use payments.apps.baypay.example. Modules own one concern: network does not create NAT for realism; ecr does not push bytes; ecs does not template server.xml; alb does not own the production Route 53 zone. image_tag stays a root variable so Jordan Voss can pin 3.8.0 without forking the module. I version module source. Validate remains the student bar for each root.",
+    "staffAnswer": "I draw the boundary at change frequency and blast radius. Network changes rarely and can take staging and student down together if they share a state — so they share a module, not a state file. ECS changes with every tag; I will not bury image_tag inside a released module version that two environments cannot pin independently. I reject a ‘platform mega-module’ that creates EKS plus RDS plus the payment task. I also reject a seventh micro-module for every security-group rule. BUILD-1202 is extract-to-share; it is not an excuse to apply a second region. Leftover cell objects do not get a terraform module that resurrects dmgr-east.",
+    "principalAnswer": "I fund a small module catalog with owners: Sam Okada for network/alb contracts, Riley for ecs health and tag pin, Jordan for the image that module.ecs consumes. I measure drift — how many roots still hard-code a probe path — as a reliability defect against the 99.9% ops SLO, not as style. I will say no to copy-paste ‘speed’ in an ADR and no to a cell module that pretends ND is the HA path. 99.99% is an architecture conversation about failure domains, not about cloning the stack into us-east-1 because modules made it easy.",
+    "commonMistakes": [
+      "Copy-pasting three roots so health paths and tags silently diverge.",
+      "A mega-module that applies EKS, NAT, and RDS, or a module that recreates BayPayCell.",
+      "Hard-coding :latest or the image tag inside the ecs module so environments cannot pin independently."
+    ],
+    "scoreRubric": "Engineer: names the four modules and locked health paths; validate the root. Senior: ownership table, image_tag variable, versioned source. Staff: shared module ≠ shared state; change-frequency boundaries; no cell module. Principal: catalog owners, drift as SLO risk, ADR against clone-a-region-as-HA."
+  },
+  {
+    "id": "AEJE-IQ-075",
+    "domain": "Automation",
+    "difficulty": "staff",
+    "topic": "Ansible vs user-data vs immutable images",
+    "question": "Morgan Hale still has a leftover Liberty host, Jordan Voss wants an EC2 user-data script ‘like the old Pay2 box,’ and the teaching path is an immutable ECR tag on ECS Fargate. For fictional BayPay, when do you use Ansible, when do you refuse user-data as the release, and what is already done by the image?",
+    "followUps": [
+      "What happens if someone Ansibles the Fargate task definition as the primary release path?",
+      "Where may BAYPAY_DB_* live in each model, and where must they never live?"
+    ],
+    "expectedConcepts": [
+      "Immutable image is the Fargate release; no :latest",
+      "Ansible templates leftover Liberty server.xml/env only",
+      "User-data is EC2 bootstrap, not the teaching default",
+      "IaC creates objects; config automation is not a second control plane for ECS"
+    ],
+    "engineerAnswer": "The payment-service release is an immutable tag. Terraform points ECS at that tag. Ansible, if anything, copies a server.xml shape onto a leftover Liberty VM I still own — not onto Fargate, which has no SSH. I do not put passwords in playbooks or user-data. I do not recreate BayPayCell with a playbook.",
+    "seniorAnswer": "Three tools, three lifetimes. The image already contains the Boot 3.5.5 fat JAR and the process that listens on 8080. User-data runs once at instance boot — it is the wrong place for authorize logic and the wrong default because ACCOUNT.md does not want always-on EC2. Ansible is idempotent config for a filesystem you still manage. If I user-data the JAR onto Pay2, I have skipped CI and ECR. If I Ansible the task definition, I have two control planes and the next rollback will lie. Secrets stay in Secrets Manager or server.env, never in git extra-vars.",
+    "staffAnswer": "I write the split as an ADR: Terraform owns existence; the pipeline owns bytes; Ansible owns leftover XML until decommission. I will sunset Ansible with the VM, not grow a 400-task role that federates a node agent (ND-as-Ansible). User-data is acceptable only as a disclosed bootstrap for a box we intend to replace, and it still must not embed BAYPAY_DB_PASSWORD. I measure ‘SSH snowflakes’ as failed change management. I refuse Ansible as the path that mutates desired_count or image_tag. Student labs can template onto ./out/liberty/ at $0; that is enough to prove the contract.",
+    "principalAnswer": "I tell the exec team the leftover Liberty host is a decommission story (Module 6), not a second product. I will not fund a user-data renaissance that recreates Pay2, and I will not fund Ansible as a universal CD for Fargate. The immutable image is how we keep Jordan’s tag, Priya’s rollback, and the 99.9% budget on one object. 99.99% HA is multi-AZ tasks, not two snowflake VMs. Failover to BayPayCell is a finding. I pay for Secrets Manager injection so nobody ‘simplifies’ by baking the ledger password into an AMI or a cloud-init paste.",
+    "commonMistakes": [
+      "Using Ansible or user-data as the primary Fargate release path.",
+      "Recreating BayPayCell / dmgr-east / PaymentCluster with playbooks.",
+      "Embedding BAYPAY_DB_PASSWORD in user-data, extra-vars, or a committed server.env."
+    ],
+    "scoreRubric": "Engineer: image for Fargate; Ansible leftover only; no cell playbook. Senior: three lifetimes; two control planes are a defect; secrets homes. Staff: ADR split, sunset Ansible with the VM, $0 local proof. Principal: decommission narrative, no user-data renaissance, no cell failover."
+  },
+  {
+    "id": "AEJE-IQ-076",
+    "domain": "Automation",
+    "difficulty": "principal",
+    "topic": "pipeline gates that match change management",
+    "question": "Marketing wants the same pipeline that publishes payment-service to also ‘just ship’ a Friday flag. Design the gates for fictional BayPay so Git → test → image → Terraform → validate matches change management — including who may approve, what a freeze does, and what must never auto-execute.",
+    "followUps": [
+      "Which changes still ship during an error-budget freeze, and which wait?",
+      "Where does a BayOps suggestion sit relative to Jordan Voss’s tag and humanApproval?"
+    ],
+    "expectedConcepts": [
+      "Review, CI, immutable tag, Terraform desired state, health before cut",
+      "Freeze features; stabilize/rollback still ships as a reviewed PR",
+      "humanApproval pending until a named human; no auto-remediate",
+      "No force-push, no proven AI RCA, no dmgr-east bounce as a gate"
+    ],
+    "engineerAnswer": "I will not merge without ./mvnw test and a review. I will not cut merchants on a green build. I wait for readiness and ALB health on 8080. If the 99.9% budget is gone, I do not ship a marketing flag. I do not force-push main. A model runbook stays pending until Riley Okonkwo or Priya Nair writes approved.",
+    "seniorAnswer": "Gates map to change types: application tag, observability YAML, capacity flags, platform HCL. Each PR names SLO risk, bake, and rollback to a prior immutable tag plus Terraform revert. A metrics-only PR is still a change. During a freeze, rollback and fail-ready still move; features wait. I will not let CodeBuild or Lambda write approved for itself. I refuse ND-in-Docker, TLS-off ‘for debug,’ and a leftover-cell bounce as pipeline steps. terraform validate is how students prove HCL; apply is a named, estimated change.",
+    "staffAnswer": "I instrument failed changes and time-to-rollback, not CAB hours. I require the same communicator field Priya uses on the bridge: purpose, budget impact, next update. I split pipeline identities so the test role cannot apply and the apply role cannot push a tag. I will fail a gate that treats a fluent BayOps paragraph as proven RCA. I keep Ansible off the Fargate path so leftover XML cannot skip review. Same-day flags need a kill switch and a bake on non-prod or a canary listener — speed is not a missing gate.",
+    "principalAnswer": "I own the policy that the pipeline is change management, not a bypass of it. I brief the exec staff that 99.9% is the operated SLO we spend; 99.99% is architecture we designed, not a reason to skip bake. I fund named human approval for anything that mutates payment-service, and I will stop a program that auto-remediates from a model. I will not trade reconstructability for a Friday demo. Force-push, cell failover, and ‘the AI already proved it’ are disqualifying answers in my org. The story I tell risk is: every merchant-facing byte had a SHA, a reviewer, a tag, a health gate, and a revert path.",
+    "commonMistakes": [
+      "Auto-approving or auto-remediating from a BayOps dump marked proven RCA.",
+      "Force-pushing main or bouncing dmgr-east as the Friday ‘gate’.",
+      "Shipping a marketing flag during a freeze, or treating apply as an unestimated default."
+    ],
+    "scoreRubric": "Engineer: test+review+health; freeze blocks flags; human approval. Senior: change types, bake/rollback, no unsafe runbook steps. Staff: identities, metrics on failed changes, flags still gated. Principal: policy that pipeline=CAB-lite, 99.9 vs 99.99, refuses AI-proven mutation."
+  },
+  {
+    "id": "AEJE-IQ-077",
+    "domain": "Automation",
+    "difficulty": "senior",
+    "topic": "deployment validation you trust more than a green build",
+    "question": "Jordan Voss’s pipeline is green and baypay/payment-service:3.8.1 is in ECR. What evidence would you trust before cutting fictional Harbor Bike Co onto that revision, and what is still only a pipeline word?",
+    "followUps": [
+      "Where do you run the synthetic POST /api/v1/payments, and which account do you use?",
+      "ECS says the deployment finished. Why might you still refuse the cut?"
+    ],
+    "expectedConcepts": [
+      "Readiness and liveness on 8080; ALB target health",
+      "Synthetic idempotent create on non-prod or canary, not unit tests",
+      "Finished is a pipeline word; healthy is an Actuator word",
+      "Green CI does not prove Secrets Manager, SGs, or heap headroom"
+    ],
+    "engineerAnswer": "I wait until tasks run 3.8.1 in us-west-2 and /actuator/health/readiness returns ready. I check ALB targets are healthy. I do not tell merchants ‘deploy finished’ until that is true. I do not bounce dmgr-east to make it look better. A green ./mvnw test is necessary and not sufficient.",
+    "seniorAnswer": "Validate means production-shaped health: immutable tag, probes on the ACCOUNT.md paths, and a synthetic POST with Idempotency-Key for Avery Chen’s active USD account …221 on a non-prod or canary listener. I will not use a live PAN or invent a second hostname. If tasks fail Ready, I keep the old revision and I do not flip a second listener or raise desired count to ‘force it.’ Circuit breaker rollback is stabilize, not a Java RCA. I still have to realign Terraform image_tag if ECS rolled back underneath me.",
+    "staffAnswer": "I treat validation as a time-boxed gate with a named owner (Riley) and a communicator (Priya). I compare RED on the canary — rate, server-error ratio, P99 versus the 400 ms teaching tail — and USE on Hikari jdbc/baypay and servlet threads. I refuse a cut that only screenshots a green GitHub check. I will not require terraform apply to call the lab passed if validate already proved HCL; I will require health evidence if anyone applied. I keep the 99.9% SLO on the dashboard during the bake; I do not relabel it 99.99% because the deploy felt important.",
+    "principalAnswer": "I fund bake time and a canary listener as the difference between a fictional payment API and a JAR drop. I will tell the business that a green build is compile-proof, not merchant-proof, and that skipping validation to hit a webinar is how you spend the monthly error budget in one cut. I refuse to accept ‘the model said the revision is healthy’ as evidence. I keep BayPayCell off the validation path: leftover PMI is a different estate. The executive sentence is: we cut when Ready, not when the pipeline emoji turned green.",
+    "commonMistakes": [
+      "Cutting merchants because CI is green or ECS says finished.",
+      "Raising desired count or bouncing dmgr-east to force an unhealthy revision.",
+      "Using a jump-box :8080 200 as proof merchants can complete HTTPS."
+    ],
+    "scoreRubric": "Engineer: readiness + ALB before cut; tests insufficient. Senior: synthetic idempotent create, circuit breaker vs RCA, realign image_tag. Staff: RED/USE bake, named owners, SLO stays 99.9%, validate≠apply. Principal: funds bake, refuses AI-healthy claims and cell PMI as evidence."
+  },
+  {
+    "id": "AEJE-IQ-078",
+    "domain": "Automation",
+    "difficulty": "principal",
+    "topic": "rollback that is not 'redeploy the last tag and pray'",
+    "question": "A bad payment-service revision is taking Harbor Bike Co creates. Design a rollback for fictional BayPay that a Staff engineer can sign — not ‘redeploy the last tag and pray,’ not a force-push, and not a leftover cell bounce.",
+    "followUps": [
+      "ECS already rolled back via circuit breaker. What is still wrong if Terraform still says 3.8.1?",
+      "What do you snapshot before you hide the scene, and what stays unproven?"
+    ],
+    "expectedConcepts": [
+      "ECS circuit breaker / prior task definition as stabilize",
+      "Git revert plus Terraform apply of the previous image_tag",
+      "Desired state must match the kept revision",
+      "No force-push, no BayPayCell, no proven-AI RCA required to stabilize"
+    ],
+    "engineerAnswer": "I pin the last good ECS revision or let the circuit breaker keep 3.8.0. I open a revert PR — no force-push — so image_tag matches. I watch readiness on 8080. I do not SSH to Fargate and I do not bounce dmgr-east. I do not need a finished RCA to stabilize merchants.",
+    "seniorAnswer": "Rollback is two planes. Control plane: circuit breaker or update-service to the previous task definition. Desired state: a new git commit that sets image_tag back and, if we applied, terraform apply of that pin. If I only click redeploy 3.8.0 and leave HCL forward, the next apply re-breaks production. Ansible rollback is only for a leftover Liberty cut. I quote deployment events; I do not call them proven root cause. I refuse :latest because you cannot roll back a moving tag.",
+    "staffAnswer": "I write rollback as a tested path: prior digest recorded at publish, circuit breaker enabled, revert runbook with a communicator and a time box. I snapshot task events, Ready count, and a correlationId before the scene changes. Stabilize first (fail ready, pin revision), then remediate with the revert. I measure time-to-rollback. I will fail a design that requires a human to remember the previous tag from Slack. I keep terraform validate in the student story so people can prove the revert HCL without spending; production still needs apply of the pin if that is what is live. I will not wait for an AI dump to mark RCA proven before I pin.",
+    "principalAnswer": "I fund rollback as a product feature: immutable tags, recorded digests, circuit breaker, and a policy that desired state is updated in the same incident window. I tell risk we can return Avery Chen to a known SHA without rewriting history. I will not accept ‘redeploy and pray,’ force-push, or failover to BayPayCell as the DR/rollback story. 99.9% is what we spend while we pin; 99.99% is whether one bad task in one AZ can take the year — not a reason to skip the git revert. Models suggest; named humans approve the pin.",
+    "commonMistakes": [
+      "Redeploying ‘the last tag’ while Terraform still points forward, or using :latest.",
+      "Force-pushing main or failing over to BayPayCell / dmgr-east.",
+      "Waiting for proven AI RCA before stabilizing, or bouncing Postgres with no datastore evidence."
+    ],
+    "scoreRubric": "Engineer: pin prior revision + revert PR; no cell bounce. Senior: two planes (ECS vs HCL); no :latest; events ≠ RCA. Staff: recorded digest, snapshot, time-to-rollback, no wait-for-AI. Principal: funds rollback-as-product, policy on desired state, 99.9 vs 99.99, human approval."
+  },
+  {
+    "id": "AEJE-IQ-079",
+    "domain": "Linux/Networking/TLS",
+    "difficulty": "advanced",
+    "topic": "TCP vs application timeout on a payment call",
+    "question": "Avery Chen’s browser sits on POST /api/v1/payments while Riley Okonkwo sees the Fargate task still Running. How do you separate a TCP timeout from an application timeout on fictional BayPay’s authorize path, and why does the layer you pick change the stabilize?",
+    "followUps": [
+      "Which timeouts sit on the ALB, the JVM HTTP client, Hikari, and the servlet container?",
+      "A SYN sits unanswered. Is that the same incident class as a 30-second servlet that finally returns 201?"
+    ],
+    "expectedConcepts": [
+      "TCP connect/handshake vs HTTP read vs application deadline",
+      "ALB idle timeout, servlet/Tomcat, Hikari connection timeout",
+      "Late 201 can still miss the merchant authorize window",
+      "Jump-box TCP to :8080 is not the merchant HTTPS path"
+    ],
+    "engineerAnswer": "I ask whether we failed to connect, connected and got no HTTP, or got a slow 201. TCP problems show in ss/syn. Application timeouts are our client or servlet deadline while the socket is up. I check readiness and I do not call a late COMPLETED a success for Harbor Bike Co. I do not bounce dmgr-east because a socket timed out.",
+    "seniorAnswer": "Connect timeout means the ALB or task never accepted the handshake. Idle/read timeout means bytes stopped. An application timeout is a deadline inside payment-service or its HTTP client to a processor — the TCP session may still be ESTABLISHED. Hikari connection-timeout is a pool wait, not a SYN problem. I align ALB idle, servlet, and client so we fail before the merchant retries and double-posts; Idempotency-Key is what makes the retry safe. A jump-box curl to :8080 only proves the task TCP path, not payments.apps.baypay.example.",
+    "staffAnswer": "I map a timeout budget for the golden create: P99 teaching tail is 400 ms, so a 60-second ALB idle with a 2-second Hikari timeout is a lying stack. I look for CLOSE_WAIT piles versus THREADS blocked on socketRead. I will not ‘fix’ a TCP class by raising every deadline until the 99.9% budget hides a stall. I treat timeout-as-5xx as SLO burn; a correct frozen-account 4xx is not. I refuse a stabilize that fails over to BayPayCell because ‘the network is weird.’ If a model says ‘proven: database down,’ I still need a Hikari or TCP quote.",
+    "principalAnswer": "I fund one timeout story across edge, JVM, and pool so on-call does not argue layers during a page. I tell the business a late authorize is a missed window even when TCP eventually delivers. I will not buy a second region to paper over a connect timeout in us-west-2 — that is HA hygiene, not DR. 99.99% architecture includes the identity and edge path; a TCP success to :8080 with a merchant TLS/read failure still spends the year. I want RCAs that name the layer, not the person who ‘set the timeout wrong.’",
+    "commonMistakes": [
+      "Treating every hang as ‘the database’ or bouncing dmgr-east.",
+      "Raising all timeouts until a late 201 looks green.",
+      "Equating jump-box TCP to :8080 with a successful merchant payment call."
+    ],
+    "scoreRubric": "Engineer: connect vs app deadline; late 201 not success; no cell bounce. Senior: ALB/servlet/Hikari/client alignment; idempotent retry. Staff: budget vs P99, socket vs thread evidence, timeout burns 99.9%. Principal: org timeout contract, layer-named RCA, 99.99% includes edge, no region-as-bandaid."
+  },
+  {
+    "id": "AEJE-IQ-080",
+    "domain": "Linux/Networking/TLS",
+    "difficulty": "senior",
+    "topic": "TLS handshake failure: cert, SNI, or protocol",
+    "question": "Merchants fail HTTPS to payments.apps.baypay.example while a jump box gets HTTP 200 from the task on 8080. For fictional BayPay, how do you decide whether the handshake died on the leaf certificate, SNI, or protocol version — without treating that class as a finished RCA?",
+    "followUps": [
+      "What is the teaching leaf lifetime and the 30-day / 7-day expiry contract?",
+      "How is this plane different from a cluster Secret hostname problem?"
+    ],
+    "expectedConcepts": [
+      "Edge TLS terminates at ALB/Ingress; task stays :8080 unless mTLS",
+      "Name mismatch, SNI host, TLS version/cipher, chain trust",
+      "Merchants-fail-TLS / tasks-healthy is a symptom class",
+      "Cluster Secret TLS versus edge ACM/DNS are different planes"
+    ],
+    "engineerAnswer": "I check the leaf name, expiry, and whether the client sent SNI for payments.apps.baypay.example. A protocol failure looks like version or cipher mismatch. I do not call the jump-box :8080 200 a merchant success. I do not turn TLS off to ‘debug.’ I page if expiry is ≤7 days; I ticket at ≤30.",
+    "seniorAnswer": "Cert class: wrong SAN, expired 90-day teaching leaf, or chain the merchant does not trust. SNI class: client spoke a different name than the ALB listener has a cert for. Protocol class: TLS 1.0 leftover or a cipher the edge disabled. I quote openssl/s_client or an equivalent capture; I do not invent a second public zone. Module 10 Secret payment-tls is a cluster plane; this is edge. Leftover IHS plugin stores are a second trust object — I will not copy them onto Fargate to ‘fix TLS.’",
+    "staffAnswer": "I split ownership: Sam Okada’s edge object, Riley’s JVM cacerts for outbound, Morgan Hale’s leftover plugin store. I will not collapse those into one ticket. I treat handshake failure as identity/TLS domain spend against the architecture year if we are talking 99.99%, and as 99.9% burn if creates never reach RECEIVED. I refuse a stabilize that disables TLS or fails over to BayPayCell. I keep hypotheses unproven until a file in the pack shows the leaf, the SNI, or the protocol alert — a fluent paragraph is not that file.",
+    "principalAnswer": "I fund expiry paging and a single public name so the handshake is an owned product. I tell executives that a healthy task with a dead handshake is a full outage for Harbor Bike Co. I will not accept ND-in-Docker or a cell leaf as the edge. I keep 99.9% as the operated SLO unless we change the contract; I still design 99.99% with identity/TLS as a first-class domain. RCAs name the plane and the object, not ‘Riley broke certs.’",
+    "commonMistakes": [
+      "Declaring RCA from jump-box :8080 success, or turning TLS off.",
+      "Collapsing cluster-Secret TLS and edge TLS into one ‘certs are bad’ story.",
+      "Failing over to BayPayCell or copying an IHS plugin keystore onto Fargate."
+    ],
+    "scoreRubric": "Engineer: name/expiry/SNI/protocol; expiry windows; TLS stays on. Senior: three classes, two planes, leftover store is separate. Staff: owners, SLO vs architecture spend, evidence not prose. Principal: funds handshake-as-product, identity domain in 99.99%, blameless plane-named RCA."
+  },
+  {
+    "id": "AEJE-IQ-081",
+    "domain": "Linux/Networking/TLS",
+    "difficulty": "senior",
+    "topic": "DNS TTL during a regional failover",
+    "question": "TRUST.md’s paper DR for fictional BayPay gives payment authorize 60 minutes RTO if us-west-2 is gone. How does DNS TTL for payments.apps.baypay.example sit inside that hour, and what must you not pretend a record change can do?",
+    "followUps": [
+      "Who may declare the failover, and why is ‘DNS flipped in 30 seconds’ incomplete?",
+      "How do resolver caches and merchant clients interact with a 60-minute RTO?"
+    ],
+    "expectedConcepts": [
+      "TTL plus human declare time consume RTO",
+      "Paper Route 53 failover; no student apply in us-east-1",
+      "Multi-region is DR, not a silent 99.99% upgrade",
+      "Idempotency-Key must mean the same intent after clients switch"
+    ],
+    "engineerAnswer": "If resolvers cache the old answer for the TTL, merchants keep hitting us-west-2 after we flip the paper record. That cache time is part of the 60-minute RTO. I do not apply Route 53 in class. I do not fail over to BayPayCell. I still need the secondary stack actually ready, not just a new name.",
+    "seniorAnswer": "RTO is time until authorize meets contract again, not time until someone edited a record. Teaching: primary us-west-2, paper secondary us-east-1, payment RTO 60 minutes, RPO seconds. TTL, health-check detect, and a named human declare all sit in that hour. A 3600-second TTL can eat the budget alone if you never paid for a lower one. I will not treat multi-AZ in west as DR, and I will not treat a second region as the 99.99% button. Clients may retry; Idempotency-Key must already be on the replica story.",
+    "staffAnswer": "I write the runbook with detect, declare, DNS, warm/pilot capacity, and idempotency store lag as separate lines. I pick a TTL we can defend with the RTO we funded — not a blog default. I warn that some merchants pin IPs or ignore TTL; DNS is not a hard cut. I keep 99.9% as the dashboard SLO unless we change it. I refuse a plan that assumes ECR in east is empty and we will ‘copy the image when we declare’ without counting pull time. No student second-region apply. A model that marks regional failover proven without a declare log is rejected.",
+    "principalAnswer": "I put TTL and declare authority on the funded DR conversation with finance: if they want a 60-minute authorize RTO, they are buying detect + warm-enough capacity + a TTL that fits, not a heroic DNS edit. Reporting can stay 24h/24h. I will not sell them 99.99% by pointing at a failover record. I will not accept leftover ND as the east target. The executive narrative is what we paid to be running in us-east-1 before the clock starts.",
+    "commonMistakes": [
+      "Claiming DNS flip is instant RTO, ignoring TTL and declare time.",
+      "Failing over to BayPayCell / dmgr-east, or applying a second region in class.",
+      "Treating multi-region DNS as a free upgrade of the 99.99% design."
+    ],
+    "scoreRubric": "Engineer: TTL burns RTO; name flip ≠ ready stack; no cell. Senior: detect/declare/TTL in 60 minutes; DR ≠ 99.99%; idempotency. Staff: runbook lines, stubborn clients, image-copy time, no proven-AI declare. Principal: funded TTL+capacity, reporting vs authorize, no ND-as-east."
+  },
+  {
+    "id": "AEJE-IQ-082",
+    "domain": "Linux/Networking/TLS",
+    "difficulty": "staff",
+    "topic": "conntrack and ephemeral port exhaustion",
+    "question": "Creates stall and new outbound sockets from payment-service fail while CPU is calm. How would you investigate conntrack or ephemeral port exhaustion on fictional BayPay’s path — and what must you not apply in a student account to ‘reproduce NAT at scale’?",
+    "followUps": [
+      "What would ss and /proc/net/nf_conntrack (or the platform equivalent) show in this class?",
+      "How does a connection pool change the symptom compared with opening a socket per authorize?"
+    ],
+    "expectedConcepts": [
+      "Ephemeral source ports and conntrack table limits",
+      "TIME_WAIT / NAT table saturation versus application deadlock",
+      "Hikari and HTTP pools reuse tuples; unbounded clients explode them",
+      "Student VPC is public+IGW; do not apply NAT Gateway for realism"
+    ],
+    "engineerAnswer": "I look at ss for TIME_WAIT and whether we cannot bind a new outbound port. I check if every authorize opens a new connection instead of using Hikari jdbc/baypay or an HTTP pool. I do not apply a NAT Gateway to make the lab feel real. I do not bounce dmgr-east.",
+    "seniorAnswer": "This class is tuple exhaustion: source IP:port to dest IP:port fills the NAT/conntrack table or the ephemeral range. Symptoms: connect timeouts, SYN without established, CPU idle. I compare pool max to request rate. A leaking HTTP client that skips keep-alive will burn ports; a healthy Hikari pool should not. On ECS I remember the task ENI is the source. Teaching students use public subnets plus IGW — I describe NAT exhaustion on paper and I terraform validate; I do not spend a NAT hour.",
+    "staffAnswer": "I put conntrack and ephemeral range on the USE row for the network resource: utilization of the table, saturation when inserts fail, errors as dropped NEW. I look for a recent change that raised desired_count or disabled pooling. I will not ‘fix’ it by blindly raising nf_conntrack_max without a budget and a revert. I distinguish this from a thread dump full of lock waiters with few sockets. I refuse a second-region failover or a cell bounce as the stabilize. If BayOps says proven RCA ‘database down,’ I still need ss or a table count.",
+    "principalAnswer": "I fund connection pooling and ENI/capacity planning as reliability work, not a hero sysctl. I tell the platform team that a student NAT apply is out of policy, and that 99.99% multi-AZ must not concentrate all outbound through one exhausted translator we never designed. I want blameless RCAs that name the pool and the table, not ‘Sam under-sized NAT.’ I will not let a model auto-sysctl production.",
+    "commonMistakes": [
+      "Applying a NAT Gateway, EKS, or extra ENIs in a 90-minute student lab to reproduce the story.",
+      "Bouncing the leftover cell or Postgres because new sockets fail.",
+      "Raising conntrack_max with no pool fix and no revert."
+    ],
+    "scoreRubric": "Engineer: ss/TIME_WAIT, pools vs one-socket-per-call, no NAT apply. Senior: tuple math, ENI source, paper NAT, validate not apply. Staff: USE on the table, change-triggered, evidence vs AI. Principal: funds pools/planning, no hero sysctl, no auto-remediate."
+  },
+  {
+    "id": "AEJE-IQ-083",
+    "domain": "Linux/Networking/TLS",
+    "difficulty": "staff",
+    "topic": "mTLS between payment and notification",
+    "question": "A platform proposal wants mTLS between payment-service and notification-service for fictional BayPay. Today those Maven modules share one JVM. When is mTLS the right control, what identity does it buy, and what must you not invent as a required mesh?",
+    "followUps": [
+      "If notification stays in-process, what is a better control than a sidecar?",
+      "If you extract the hop, where do certificates live versus the edge leaf on payments.apps.baypay.example?"
+    ],
+    "expectedConcepts": [
+      "Modular monolith: notification is in-process today",
+      "mTLS authenticates the peer on a real network hop",
+      "Edge TLS and east-west identity are different planes",
+      "No required service mesh product in this course"
+    ],
+    "engineerAnswer": "In the reference app, notification-service is a module in the same process as payment-service — there is no hop to wrap in mTLS. If we extract a network call, both sides present certificates. I still terminate merchant TLS at the edge; the task stays 8080 unless we chose mTLS there. I do not turn public TLS off.",
+    "seniorAnswer": "mTLS answers ‘which workload called me,’ not ‘which merchant completed a handshake.’ I will not add a sidecar to satisfy a slide while PaymentCompletedEvent is still an in-process listener. If we extract, I need a workload CA, rotation, and a failure mode when the notify identity expires — that is the same identity/TLS domain that can spend 99.99% architecture time. Edge ACM for payments.apps.baypay.example stays Sam’s public leaf. I do not require a named mesh product to pass this course.",
+    "staffAnswer": "I write an ADR: stay in-process until the bean boundary and outbox are clean; if we extract, mTLS or an equivalent workload identity is on the threat model for replay and spoofed PaymentCompletedEvent. I will not run plaintext east-west on a shared VPC and call edge HTTPS sufficient. I will not put those certs in a ConfigMap or in git. I keep NetworkPolicy literacy as packet allow/deny, not as identity. Leftover Liberty plugin mTLS is a different store — I will not dual-home IHS as the notify path. Student bar remains describe-and-validate, not apply a mesh.",
+    "principalAnswer": "I will not fund a mesh program to decorate a monolith, and I will not pretend in-process notify needs mTLS. I will fund identity on any hop that can complete or replay a payment side effect. I tell risk that merchant TLS and workload TLS have different owners and different expiry pages. 99.9% stays the create SLO; a broken notify identity is a completeness incident, not a silent upgrade of that SLO. Failover to BayPayCell is not an mTLS strategy.",
+    "commonMistakes": [
+      "Installing a required service mesh on the monolith to ‘do mTLS.’",
+      "Confusing edge HTTPS with workload identity, or putting client certs in a ConfigMap.",
+      "Using leftover IHS / BayPayCell as the notification hop."
+    ],
+    "scoreRubric": "Engineer: in-process today; mTLS only on a real hop; edge stays on. Senior: peer identity vs merchant handshake; no required mesh product. Staff: ADR, threat model, NetworkPolicy ≠ identity, no ConfigMap certs. Principal: funds hop identity not mesh fashion; owners; no cell strategy."
+  },
+  {
+    "id": "AEJE-IQ-084",
+    "domain": "Linux/Networking/TLS",
+    "difficulty": "principal",
+    "topic": "PKI ownership across app, ingress and mesh",
+    "question": "Who owns PKI for fictional BayPay across the JVM, the ingress/ALB leaf, leftover Liberty/IHS, and any future workload identity — and how do you stop those stores from becoming one ‘TLS is broken’ ticket?",
+    "followUps": [
+      "What is the expiry contract Priya Nair pages versus tickets?",
+      "Why must a mesh or sidecar CA not silently replace the public leaf?"
+    ],
+    "expectedConcepts": [
+      "Public leaf for payments.apps.baypay.example at the edge",
+      "JVM cacerts for outbound; leftover plugin store is a second object",
+      "Workload/mesh identity is optional and separately owned",
+      "Planes: cluster Secret vs edge vs outbound"
+    ],
+    "engineerAnswer": "Merchants trust the edge leaf on payments.apps.baypay.example. The JVM has cacerts for outbound DB/processor TLS. Leftover IHS/Liberty has its own store. I do not copy plugin keys onto Fargate. I ticket at 30 days and page at 7. I do not disable TLS to debug.",
+    "seniorAnswer": "Ownership: Sam Okada’s platform owns issuance/validation literacy for the public name (paper ACM/DNS in baypay.example). Riley owns application trust for outbound. Morgan Hale owns leftover plugin material until decommission. A future mesh CA would be a fourth owner — it must not become the merchant leaf. INC-K8S-1005-class cluster Secrets are another plane. I describe this; I do not apply ACM. Jump-box HTTP 200 is not a PKI pass.",
+    "staffAnswer": "I publish a RACI and a store inventory: leaf, intermediates, JVM, leftover, optional workload CA. Each has rotation, paging, and a rollback (previous leaf, not a force-push of a Secret). I will fail a design that mounts the public private key into every task ‘for simplicity.’ I keep mTLS off by default on 8080. I treat identity/TLS as a 99.99% failure domain so a missed rotation can spend the architecture year even when tasks are Running. Hypotheses stay unproven until we quote the store we opened.",
+    "principalAnswer": "I fund PKI as a product with named owners and a decommission date for leftover IHS. I will not buy a mesh that takes ownership of the public name without an exec decision. I tell the board that handshake availability is merchant availability. I keep 99.9% as the operated create SLO and 99.99% as the design that includes this domain. I refuse BayPayCell as a trust anchor. I refuse proven-AI RCA that invents a key alias we do not run. Private keys never appear in tickets, ConfigMaps, or model prompts.",
+    "commonMistakes": [
+      "One ticket that merges edge, JVM, cluster Secret, and leftover IHS.",
+      "Mounting the public private key on every task or pasting it into chat.",
+      "Letting a mesh CA replace the merchant leaf, or failing over to BayPayCell for trust."
+    ],
+    "scoreRubric": "Engineer: three stores, expiry windows, TLS stays on. Senior: named owners, planes, no ACM apply required. Staff: RACI, no key-on-every-task, identity domain spends 99.99%. Principal: PKI product, mesh cannot steal the public name, no cell trust, no key-in-prompt."
+  },
+  {
+    "id": "AEJE-IQ-085",
+    "domain": "Linux/Networking/TLS",
+    "difficulty": "advanced",
+    "topic": "reading ss, netstat and a thread dump together",
+    "question": "Priya Nair hands you ss (or netstat) plus a payment-service thread dump from the same minute Avery Chen’s create stalled. How do you read them together on fictional BayPay, and what contradiction would you call out?",
+    "followUps": [
+      "What does ESTABLISHED plus many BLOCKED servlet threads suggest versus CLOSE_WAIT and RUNNABLE workers?",
+      "Where do Hikari waiting threads show up in each artifact?"
+    ],
+    "expectedConcepts": [
+      "Socket states versus Java thread states",
+      "Correlate port 8080 and jdbc/baypay connections",
+      "Contradiction: idle sockets vs BLOCKED lock waiters (or the reverse)",
+      "Dumps are evidence; they are not proven RCA by themselves"
+    ],
+    "engineerAnswer": "ss shows TCP state; the dump shows what threads are doing. I look for servlet threads on 8080 and pool threads waiting on jdbc/baypay. If sockets are ESTABLISHED but threads are BLOCKED on a lock, I do not blame the NIC. I quote a correlationId if I have a log line. I do not bounce dmgr-east.",
+    "seniorAnswer": "I join on time and on the tuple. Many ESTABLISHED to the ALB plus TIMED_WAITING on socketRead is a downstream or client-timeout class. CLOSE_WAIT piles mean we are not closing. A dump full of BLOCKED on a ReentrantLock with few sockets is not a network incident. Hikari pending shows as threads waiting on checkout, while ss may show the pool’s few DB connections busy. I will not call this proven RCA; it ranks hypotheses. I still check readiness before I mutate.",
+    "staffAnswer": "I use the pair to pick the next gate: more network capture, a Hikari USE panel, or a lock-owner follow-up dump. I refuse a stabilize that pins a tag because a model summarized the dump without the file. I watch for a mismatch between RED (P99 up, rate down) and a dump that looks idle — that is often wait, not CPU. I keep PAN out of the paste. I will not fail over to BayPayCell because netstat on Fargate looked empty; leftover PMI is another estate.",
+    "principalAnswer": "I fund on-call training that reads sockets and dumps as one stitch, and I fund redaction so dumps do not become a data incident. I want RCAs that name the wait (pool, lock, peer), not the engineer who collected the dump. I will not accept a dashboard-only war room that never opened ss. 99.9% is what we spend while we decide; I will not relabel the board 99.99% because the dump looked serious.",
+    "commonMistakes": [
+      "Reading only the dump or only ss and calling the other layer proven.",
+      "Pasting dumps with secrets/PAN, or bouncing the leftover cell.",
+      "Treating a model’s dump summary as the file."
+    ],
+    "scoreRubric": "Engineer: socket state vs thread state; no cell bounce. Senior: join on tuples/time; Hikari vs lock vs socketRead; unproven. Staff: next-gate choice, RED/USE contradiction, no AI-as-file. Principal: training+redaction, wait-named RCA, SLO label stays 99.9%."
+  },
+  {
+    "id": "AEJE-IQ-086",
+    "domain": "Production Engineering",
+    "difficulty": "senior",
+    "topic": "SLI/SLO for authorize vs settle",
+    "question": "Module 13 measures a 99.9% monthly SLI on successful POST /api/v1/payments for fictional BayPay. How should you treat authorize (merchant-facing) versus settle/complete (ledger completeness), and what must you not silently relabel as 99.99%?",
+    "followUps": [
+      "A frozen account …222 returns 4xx. Does that burn the create SLO?",
+      "A create returns late 201 and COMPLETED minutes later. Which promise broke?"
+    ],
+    "expectedConcepts": [
+      "Create SLI: success / (success + server failure); 4xx except 429 not burn by default",
+      "99.9% monthly ops SLO (~43 minutes); P99 < 400 ms teaching tail",
+      "Authorize window vs later PROCESSING→COMPLETED completeness",
+      "99.99% is Module 14 architecture, not a dashboard relabel"
+    ],
+    "engineerAnswer": "The teaching SLI is successful creates versus 5xx/timeouts on POST /api/v1/payments. Frozen …222 is a correct 4xx, not burn. P99 should stay under 400 ms. A late COMPLETED still missed Harbor Bike Co’s authorize window. I do not change the dashboard to 99.99% because the week was important.",
+    "seniorAnswer": "Authorize is the synchronous merchant promise: RECEIVED through AUTHORIZED on the golden URI, 99.9% availability and the 400 ms tail. Settle/posting is the completeness promise: PROCESSING → COMPLETED and the ledger intent. I will not hide a posting stall by only graphing HTTP 201. I keep ordinary 4xx off burn. I page on SLO burn and on saturation that predicts it, not on CPU. If we want a separate settle SLO, we write it — we do not steal the create SLI’s name.",
+    "staffAnswer": "I would add an explicit completeness SLI (authorized rows that reach COMPLETED within a funded window) owned by Riley, while Priya still spends the 99.9% create budget. I will not average authorize and settle into one vanity nine. I keep identity/TLS failures in the create SLI because the merchant never reached RECEIVED. I refuse to ‘help’ the number by excluding timeouts. Multi-AZ 99.99% design is headroom; it does not rewrite OBSERVABILITY.md unless the cohort signs a contract change.",
+    "principalAnswer": "I put two promises in front of risk: merchants can authorize now, and finance can trust completion later. I fund them separately. I will not sell 99.99% as the operated SLO to win a deal. I will not let a completeness incident be called ‘just async’ without an owner. RCAs name which promise broke. BayPay is fictional; the contract shape is what I would take to a real payments exec.",
+    "commonMistakes": [
+      "Relabeling the Module 13 dashboard 99.99% without a contract change.",
+      "Counting frozen-account 4xx as SLO burn, or ignoring late COMPLETED as success.",
+      "Averaging authorize and settle into one vanity availability number."
+    ],
+    "scoreRubric": "Engineer: 99.9% create SLI, 4xx rules, P99 400 ms, no silent 99.99%. Senior: authorize vs completeness, burn vs saturation pages. Staff: separate SLIs/owners, TLS in create, no timeout exclusion games. Principal: two funded promises, refuses 99.99% as a sales SLO."
+  },
+  {
+    "id": "AEJE-IQ-087",
+    "domain": "Production Engineering",
+    "difficulty": "senior",
+    "topic": "RED vs USE when P99 explodes and CPU is idle",
+    "question": "RED shows P99 for POST /api/v1/payments far above 400 ms; USE shows CPU idle. How do you read that split for fictional BayPay, and what do you page versus ticket?",
+    "followUps": [
+      "Which USE rows are more likely than CPU here?",
+      "Why is ‘CPU > 80%’ the wrong primary page even on a different afternoon?"
+    ],
+    "expectedConcepts": [
+      "RED is the request; USE is the resource",
+      "Idle CPU plus bad P99 implies wait: Hikari, servlet queue, lock, peer",
+      "Page on SLO burn and predictive saturation, not CPU threshold",
+      "Rate is not threads busy"
+    ],
+    "engineerAnswer": "RED is rate, errors, duration on the golden URI. USE is heap, CPU, Hikari jdbc/baypay, servlet threads. If P99 explodes and CPU is idle, I look at pool pending and thread queue, not at a CPU graph. I do not page on CPU > 80%. I do not bounce dmgr-east.",
+    "seniorAnswer": "The request is waiting. I open Hikari active/pending and servlet busy/queue. I look for a downstream timeout class or lock wait in a dump. Errors may still be low if we eventually return 201 — that is still a missed tail and can burn the latency SLO. I page on burn or on saturation that predicts burn. A scrape miss is a ticket unless the SLI is already dark. I quote a paymentId; I do not need proven RCA to fail ready.",
+    "staffAnswer": "I treat the contradiction as the diagnostic: RED bad / CPU idle falsifies ‘we need more CPU’ and points at queues and peers. I will not scale Fargate CPU as the first mutate. I check whether rate dropped (merchants bailed) while duration rose. I keep 99.9% on the board. I refuse a model that marks ‘database down’ proven without a Hikari or TCP quote. I will not fail over to BayPayCell because the JVM looks idle.",
+    "principalAnswer": "I fund dashboards that force RED above USE so on-call cannot start at CPU. I tell capacity planners that idle CPU during a tail event is a wait-tax, not spare headroom to reclaim. I want RCAs that name the saturated resource, not the person who ‘didn’t scale.’ 99.99% multi-AZ does not fix a pool of 10 on a waiting fleet.",
+    "commonMistakes": [
+      "Paging on CPU or adding CPU when the tail is wait.",
+      "Treating threads busy as request rate.",
+      "Marking database-down proven from idle CPU, or bouncing the leftover cell."
+    ],
+    "scoreRubric": "Engineer: RED vs USE vocabulary; look at pools not CPU; no cell. Senior: wait class, burn vs scrape ticket, latency SLO. Staff: falsify scale-CPU, evidence gates, SLO stays 99.9%. Principal: RED-first boards, wait-tax narrative, pool vs HA."
+  },
+  {
+    "id": "AEJE-IQ-088",
+    "domain": "Production Engineering",
+    "difficulty": "staff",
+    "topic": "capacity plan from last Black Friday, not a guess",
+    "question": "Finance asks whether fictional BayPay will survive the next Black Friday. How do you build a capacity plan from last year’s evidence instead of a guess — and what will you not apply to look serious?",
+    "followUps": [
+      "Which RED and USE series do you take from last year’s window?",
+      "How does N+1 in us-west-2 differ from buying a second region?"
+    ],
+    "expectedConcepts": [
+      "Last year’s rate, P99, error ratio, Hikari and servlet saturation",
+      "N+1 / one-AZ-away headroom on paper",
+      "No EKS, NAT, or multi-AZ RDS apply to ‘practice peak’",
+      "99.9% ops plan; 99.99% is the HA design, not a weekend apply"
+    ],
+    "engineerAnswer": "I pull last Black Friday’s POST /api/v1/payments rate, P99, and 5xx ratio, plus Hikari and thread saturation. I size desired_count so one task can die. I write the plan on paper. I do not apply RDS Multi-AZ for the exercise. I do not guess ‘double it.’",
+    "seniorAnswer": "I use the same golden URI and the 400 ms tail. I take peak rate and the wait rows that actually saturated — not CPU if CPU was idle. I add headroom for one AZ and one task (L-14.7 literacy) in us-west-2. I record the image tag and pool sizes that survived. I terraform validate any HCL I would change; apply stays optional, tagged, and same-day destroy. I will not use BayPayCell leftover capacity as hidden peak headroom.",
+    "staffAnswer": "I build a worksheet: inbound rate, authorize vs completeness lag, pool max, ALB CU, and the error-budget minutes we would spend if P99 broke for an hour. I scenario a dependency slowdown, not only happy peak. I set a freeze rule for feature flags that week. I refuse a plan whose first line is ‘add us-east-1’ — that is DR funding, not Friday capacity. I will not accept a vendor slide in place of last year’s scrape. Hypotheses about this year stay unproven until we name the series we used.",
+    "principalAnswer": "I take last year’s evidence to the exec staff with a cost to hold N+1 versus a cost to miss authorize. I will not sell them 99.99% as a Black Friday weekend project. I fund the pools and task count the data supports, and I decline a second-region apply or a cell reboot as capacity theater. The narrative is Harbor Bike Co’s peak creates, not a round number from a blog.",
+    "commonMistakes": [
+      "Guessing ‘2x’ without last year’s RED/USE, or using leftover BayPayCell as headroom.",
+      "Applying EKS, NAT, or multi-AZ RDS to rehearse peak.",
+      "Treating a second region as the Black Friday capacity answer."
+    ],
+    "scoreRubric": "Engineer: last year’s rate/P99/pools; paper N+1; no RDS apply. Senior: wait rows, AZ/task headroom, validate not apply, no cell capacity. Staff: budget scenarios, freeze, DR≠Friday, cite series. Principal: funded N+1 vs miss-authorize, no 99.99% weekend, no theater."
+  },
+  {
+    "id": "AEJE-IQ-089",
+    "domain": "Production Engineering",
+    "difficulty": "staff",
+    "topic": "change management when marketing wants a same-day flag",
+    "question": "Marketing wants a same-day feature flag on payment-service so Harbor Bike Co sees a promo banner on authorize. The 99.9% budget is thin. How do you run change management for fictional BayPay without becoming the Department of No?",
+    "followUps": [
+      "The flag is ‘only config.’ Why is it still a production change?",
+      "What do you do if they ask you to force-push main to beat the campaign clock?"
+    ],
+    "expectedConcepts": [
+      "Flags are changes: review, bake, rollback, communicator",
+      "Freeze features when budget is gone; stabilize still ships",
+      "Kill switch and non-prod/canary bake",
+      "No force-push, no cell bounce, no skip of health"
+    ],
+    "engineerAnswer": "I open a PR with rollback (flag off), a bake, and a validate step. I do not force-push main. If Priya Nair has called a freeze, the flag waits. I do not SSH a boolean onto Fargate. I do not bounce dmgr-east to ‘clear cache.’",
+    "seniorAnswer": "Same-day is a compressed CAB-lite ticket: purpose, SLO risk, bake, rollback, communicator. A flag still ships as an immutable tag or a reviewed config object — not a console click. I canary or bake on a non-prod listener, watch RED on POST /api/v1/payments, then cut. If the budget is exhausted, I offer a next-window time, not a secret hotfix. I refuse to disable TLS or skip tests to go faster.",
+    "staffAnswer": "I quantify minutes of budget the flag could spend if authorize P99 breaks, and I name who can kill it without a new image if we designed that path. I will not let ‘config-only’ skip conventional review. I record the decision if we say no — that is an ADR-lite so marketing can see the error budget, not a personality. I keep Jordan Voss on the tag and Priya on the burn. A BayOps suggestion to ship now stays unproven and pending. terraform apply is irrelevant unless the flag actually changes AWS; validate is still enough for any HCL that sneaks in.",
+    "principalAnswer": "I broker a same-day path that is narrow (flag + kill switch) and a hard stop when the 99.9% budget cannot afford a campaign defect. I tell the CMO that 99.99% architecture is not spare risk they can spend. I protect the audit: no force-push, no laptop prod, no cell. I will be the person who says yes to a baked flag and no to a rewritten main. That is influence with risk, not obstruction.",
+    "commonMistakes": [
+      "Force-pushing main or skipping review because it is ‘only a flag.’",
+      "Shipping during a freeze, or bouncing leftover WAS to pick up config.",
+      "Treating marketing urgency as a reason to disable TLS or skip health."
+    ],
+    "scoreRubric": "Engineer: PR+rollback+bake; freeze waits; no force-push. Senior: CAB-lite fields, canary RED, no skip-tests. Staff: budget math, kill switch, written no, AI stays pending. Principal: brokered yes/no, 99.9 vs 99.99 spend, audit intact."
+  },
+  {
+    "id": "AEJE-IQ-090",
+    "domain": "Production Engineering",
+    "difficulty": "principal",
+    "topic": "RCA that names a system, not a person",
+    "question": "After a payment-create burn, a draft RCA says ‘Riley Okonkwo deployed a bad tag’ and a BayOps paragraph marks root cause proven. How do you rewrite that for fictional BayPay so the RCA names a system, stays evidence-based, and does not become a blame memo?",
+    "followUps": [
+      "What must stay in the four buckets before anyone writes root cause?",
+      "How do you treat an AI summary that invents a file or a host?"
+    ],
+    "expectedConcepts": [
+      "Blameless RCA names conditions, gates, and missing controls",
+      "Evidence versus hypothesis; AI RCA stays unproven",
+      "Stabilize then remediate; no force-push to hide the SHA",
+      "People are not the cause; review, bake, and desired-state gaps are"
+    ],
+    "engineerAnswer": "I quote files: tag, deployment events, RED, a correlationId. I write what the system allowed — a tag reached merchants without Ready. I do not name Riley as the cause. I do not mark a model dump proven. I revert with a new commit.",
+    "seniorAnswer": "I replace the sentence with: the pipeline permitted revision 3.8.1 to take traffic while readiness failed, and Terraform image_tag still pointed forward after ECS rolled back. Those are control-plane defects. I keep hypotheses ranked and unproven until the pack’s objects support them. I include what we will change: circuit breaker, bake, revert runbook. I leave persons in the timeline as actors, not as the root.",
+    "staffAnswer": "I run a review that asks which gate was missing, which signal was unread, and which incentive rushed the cut. I will reject a write-up that copies INCIDENT-1205’s solution notes into a different day. I require source citations; an invented S3 key is a hallucination class. I measure whether we can reconstruct the SHA without Slack archaeology. I will not fail over to BayPayCell in the ‘fix’ section. I will not force-push to tidy the story.",
+    "principalAnswer": "I set policy: RCAs name systems and incentives; they never close with a person. I set policy: models do not get a proven stamp. I fund the missing gate the review found. I tell legal and risk that reconstructability is the point of a fictional regulated API — a clean git history that lied is worse than an ugly revert. I use the narrative to get budget for bake and for humanApproval, not to discipline on-call.",
+    "commonMistakes": [
+      "Naming a person as root cause, or marking AI output as proven RCA.",
+      "Force-pushing main to hide the tag, or recommending a BayPayCell failover.",
+      "Writing RCA from a lesson title or another lab’s solution pack."
+    ],
+    "scoreRubric": "Engineer: quotes evidence, no blame, no proven-AI, revert. Senior: control-plane wording, unproven hypotheses, durable fixes. Staff: missing-gate review, citation rules, reconstructability. Principal: org policy on blame and AI, funds the gate, audit over tidy history."
+  },
+  {
+    "id": "AEJE-IQ-091",
+    "domain": "Production Engineering",
+    "difficulty": "advanced",
+    "topic": "what goes on a war-room dashboard first",
+    "question": "Priya Nair opens the war room for a payment-create page. What do you put on the first screen for fictional BayPay, in what order, and what do you keep off that screen?",
+    "followUps": [
+      "Where do scrape health and SLO burn sit relative to a JVM CPU panel?",
+      "Which identifiers belong on a graph versus in a log line?"
+    ],
+    "expectedConcepts": [
+      "RED first: rate, server errors, P99 of POST /api/v1/payments",
+      "Then USE saturation that predicts burn; then SLO / budget",
+      "Scrape/panel errors are tickets unless SLI is dark",
+      "Paper Grafana is enough; no live Grafana required"
+    ],
+    "engineerAnswer": "Row one is RED on the golden URI: rate, 5xx/timeout ratio, P99. Then Hikari and servlet saturation, then the 99.9% budget. I do not lead with CPU. I do not put PAN on a panel. A paper BUILD-1300 board is enough to pass.",
+    "seniorAnswer": "Orientation, not forty vanity charts. I want burn (fast/slow) next to RED so we know if we page. USE rows for jdbc/baypay and threads sit where they predict the tail. Scrape-down is visible but not the hero panel. I annotate the image tag and the change window. I keep 99.9% and 400 ms as the numbers; I do not relabel 99.99% for drama. I link one paymentId in the ticket, not on a metric label.",
+    "staffAnswer": "I design the board so the first five minutes answer: is the merchant promise breaking, is a resource saturated, are we blind? I will remove host-level charts that steal attention. I add a desired-state line: current tag versus last good. I refuse a live-Grafana requirement for the course and I refuse CloudWatch-search-as-trace. I will not put leftover PaymentCluster PMI on this home board as if it were Fargate.",
+    "principalAnswer": "I fund one home board with an owner (Priya) and a change process — a dashboard PR is a change. I tell executives this screen is how we spend the 99.9% budget in public, not a wall of green. I will not buy a second observability product to decorate a cell we are decommissioning. War-room order is a reliability control.",
+    "commonMistakes": [
+      "Leading with CPU or a 40-panel vanity wall.",
+      "Relabeling the SLO 99.99% or mixing leftover cell PMI into the Boot board.",
+      "Requiring live Grafana/AMP to call the war room valid."
+    ],
+    "scoreRubric": "Engineer: RED then USE then 99.9% budget; no CPU-first; no PAN. Senior: burn windows, tag annotation, identifiers in logs. Staff: first-five-minutes design, no cell PMI, paper is enough. Principal: owned home board, dashboard-as-change, no cell product spend."
+  },
+  {
+    "id": "AEJE-IQ-092",
+    "domain": "Production Engineering",
+    "difficulty": "principal",
+    "topic": "error budget policy for a regulated payment API",
+    "question": "Write the error-budget policy you would put in front of risk for fictional BayPay’s payment API. Who spends the 99.9% monthly budget, what a freeze does, and how 99.99% architecture must not rewrite that policy by stealth.",
+    "followUps": [
+      "Who may un-freeze, and which changes are allowed while frozen?",
+      "How do you handle a regulator asking why you are not already at 99.99% operated?"
+    ],
+    "expectedConcepts": [
+      "~43 minutes/30 days at 99.9%; Priya spends, Riley stabilizes, Jordan ships",
+      "Freeze features; rollback/fail-ready still reviewed and shipped",
+      "99.99% (~52 min/year) is architecture unless the contract changes",
+      "Regulation does not justify force-push, auto-remediate, or cell failover"
+    ],
+    "engineerAnswer": "We promise 99.9% successful creates. When the budget is gone, I stop feature flags and I still ship rollbacks. Priya Nair owns the number. I do not force-push main. I do not treat 99.99% as today’s dashboard. I do not bounce BayPayCell to ‘save’ the budget.",
+    "seniorAnswer": "Policy: SLI as OBSERVABILITY.md, multi-window burn pages, saturation pages that predict burn. Fast burn wakes Riley; slow leak wakes Priya before the month dies. Freeze is a named state, not a mood. Emergency PRs are still reviewed. I will not exclude timeouts to decorate the budget. I will not auto-remediate from a model to ‘save nines.’ Student labs still pass on paper plus terraform validate; production policy is about live cuts.",
+    "staffAnswer": "I add spend categories: change-caused, dependency, identity/TLS, capacity. I report them monthly so marketing same-day flags and platform scrapes are visible. I keep a written path to change the SLO — signers, new minutes, dashboard update — so nobody stealth-upgrades to 99.99%. I align the policy with CAB-lite: a freeze that blocks rollback is a defective policy. I reject proven-AI RCA as a budget explanation.",
+    "principalAnswer": "I sign the policy with risk: 99.9% is what we operate and can fund; 99.99% is the HA design (multi-AZ, identity domain) we show in ARCHITECT-1401. A regulator gets honesty about minutes and owners, not a vanity nine. I fund Priya’s authority to freeze and Riley’s authority to stabilize. I will not trade that for an auto-remediate program or a leftover-cell DR story. People are not the budget; missing gates are.",
+    "commonMistakes": [
+      "Silently operating 99.99% on the Module 13 board, or freezing rollback.",
+      "Using AI proven RCA or a cell bounce as the budget story.",
+      "Excluding timeouts or 5xx to keep the number pretty."
+    ],
+    "scoreRubric": "Engineer: 99.9% minutes, freeze vs rollback, no cell. Senior: burn windows, no decorate-the-SLI, no auto-remediate. Staff: spend categories, signed SLO change path. Principal: risk-signed 99.9 vs 99.99, funded freeze authority, honesty over vanity."
+  },
+  {
+    "id": "AEJE-IQ-093",
+    "domain": "HA/Security",
+    "difficulty": "staff",
+    "topic": "failure domains for 99.99 percent payments",
+    "question": "Design 99.99 percent availability for fictional BayPay’s POST /api/v1/payments. Name the failure domains, defend a paper multi-AZ shape in us-west-2, and say what is not the extra nine.",
+    "followUps": [
+      "Why can single-region multi-AZ be a complete 99.99% design?",
+      "What happens to the Module 13 dashboard while you present this architecture?"
+    ],
+    "expectedConcepts": [
+      "Domains: task, AZ, ALB/node, region, identity/TLS, data store",
+      "99.99% ≈ 52 minutes/year; 99.9% remains the operated SLO",
+      "Multi-AZ us-west-2 on paper; no student Multi-AZ RDS or second-region apply",
+      "BayPayCell / dmgr-east / PaymentCluster is not the HA target"
+    ],
+    "engineerAnswer": "I spread desired_count ≥ 2 across two AZs behind a multi-AZ ALB. Health stays on 8080 readiness. I keep the dashboard at 99.9%. I do not fail over to BayPayCell. I do not apply multi-AZ RDS or us-east-1 for the lab. Identity/TLS is on the list because a dead handshake spends the year too.",
+    "seniorAnswer": "Locked domains from TRUST.md: task, AZ, ALB/node, region, identity/TLS, data store. Region loss is DR, not the 99.99% button. I describe Multi-AZ data on paper. ECS Fargate is the AWS default; Kubernetes remains a valid home if Pods and Ingress span AZs. I refuse ND-in-Docker and IHS dual-home. A 30-minute ALB misconfig plus a 25-minute IAM outage already spends ~52 minutes.",
+    "staffAnswer": "I write ARCHITECT-1401 as a table with one HA move per domain and an explicit line that Module 13 still pages on 99.9% burn. I will not let ‘add a region’ substitute for missing N+1 in west. I call out public-subnet+IGW as the student trade-off, not as production gospel. I keep terraform validate as the HCL proof; apply is not how we demonstrate four nines. I reject leftover PaymentCluster members as a domain. I treat TLS expiry paging as HA work, not a side quest.",
+    "principalAnswer": "I present 99.99% as a funded design with ~52 minutes/year of honesty, not a slogan. I keep 99.9% as the contract we operate unless risk signs a change. I will not buy a second region to avoid spreading tasks. I will not accept BayPayCell as insurance. The exec sentence: one task, one AZ, one leaf, or one store can fail and Avery Chen still authorizes in us-west-2.",
+    "commonMistakes": [
+      "Adding us-east-1 as the 99.99% answer, or applying Multi-AZ RDS/NAT/EKS in class.",
+      "Failing over to BayPayCell / dmgr-east / PaymentCluster.",
+      "Relabeling the Module 13 SLO to 99.99% on the dashboard."
+    ],
+    "scoreRubric": "Engineer: two AZs, two tasks, 99.9% stays, no cell. Senior: six domains, region=DR, minutes math, no ND-in-Docker. Staff: ARCHITECT table, N+1 before region, validate not apply. Principal: funded honesty, operated vs designed nines, no cell insurance."
+  },
+  {
+    "id": "AEJE-IQ-094",
+    "domain": "HA/Security",
+    "difficulty": "staff",
+    "topic": "threat model: idempotency store and replay",
+    "question": "Threat-model the Idempotency-Key store on fictional BayPay’s authorize path. What replay, spoof, and wipe cases matter, and what is out of scope for SECURITY-1404?",
+    "followUps": [
+      "A captured key is replayed against a different amount. What should the store do?",
+      "The store is empty after a failover. What promise did you already miss?"
+    ],
+    "expectedConcepts": [
+      "Idempotency-Key binds intent; replay must return the original outcome",
+      "Spoofed or swapped keys, store wipe, frozen account …222",
+      "In scope: payments, refunds, IAM/secrets, edge TLS, monolith boundary",
+      "Out of scope: live PCI ROC, attacking a live account, card-network certification"
+    ],
+    "engineerAnswer": "The same Idempotency-Key must not double-charge Harbor Bike Co. I persist the key with the first outcome. A replay with a different body is a conflict, not a second authorize. I do not put the key on a metric label. I do not log PAN. Frozen …222 stays a correct decline.",
+    "seniorAnswer": "Threats: replay of a succeeded create, replay with a tampered amount, attacker-chosen keys that collide, wipe or split-brain of the store after a regional declare, and a stolen task role that deletes rows. Control: unique constraint, hashed key at rest if the house style says so, TLS on the path, no ConfigMap of store credentials. I keep the teaching RPO at seconds — if the replica is minutes behind, retries can double-post. I do not need a real card network to say that.",
+    "staffAnswer": "I walk STRIDE on POST/GET payments and refunds only. Spoofing a PaymentCompletedEvent is worse if we already extracted notify onto a network hop. I add abuse of frozen-account bypass. I require the store to fail closed if it cannot read — a store-down that authorizes anyway is a threat finding. I will not mark a BayOps paragraph proven. I will not fail over to BayPayCell to ‘restore idempotency.’ Student work stays on paper; no second-region apply to test the replica.",
+    "principalAnswer": "I fund the idempotency store as part of the authorize RPO, not as a cache we can drop. I tell risk that replay is a customer-trust and ledger-integrity issue, in scope for our fictional SOC review, while a real PCI ROC is not a class deliverable. I want RCAs that name a missing uniqueness gate, not a person who ‘retried.’ I refuse to put keys or store passwords in model prompts.",
+    "commonMistakes": [
+      "Treating idempotency as a cache you can flush, or authorizing when the store is down.",
+      "Scoping a live PCI ROC or attacking a real account as the exercise.",
+      "Failing over to BayPayCell, or putting Idempotency-Key on Prometheus labels."
+    ],
+    "scoreRubric": "Engineer: persist key+outcome, conflict on body change, no PAN. Senior: replay/tamper/wipe, unique constraint, seconds RPO. Staff: STRIDE scope, fail-closed, no cell, no proven-AI. Principal: store as funded RPO, fictional SOC vs real ROC, no secrets in prompts."
+  },
+  {
+    "id": "AEJE-IQ-095",
+    "domain": "HA/Security",
+    "difficulty": "principal",
+    "topic": "RTO/RPO the business actually funded",
+    "question": "An exec says ‘we will just fail over’ when us-west-2 dies. How do you walk fictional BayPay through RTO and RPO the business actually funded — including what leftover ND is not?",
+    "followUps": [
+      "What are TRUST.md’s starting numbers for authorize versus merchant reporting?",
+      "Which DR pattern fits payments if they only funded snapshots?"
+    ],
+    "expectedConcepts": [
+      "RPO is data gap; RTO is time to meet the contract",
+      "Authorize: RPO seconds, RTO 60 minutes; reporting 24h/24h",
+      "Pilot light or warm standby on paper in us-east-1; no student apply",
+      "BayPayCell is not a DR target; multi-region is not a free 99.99%"
+    ],
+    "engineerAnswer": "RPO is how much ledger intent we may lose; RTO is how long until authorize works again. Teaching payments: seconds and 60 minutes. Reporting can be yesterday’s backup. I do not fail over to dmgr-east. I do not apply us-east-1 in class. DNS TTL sits inside the hour.",
+    "seniorAnswer": "If they only funded snapshots, they funded reporting-shaped RTO/RPO, not authorize. I will say that in the room. Pilot light or warm standby is what I defend for payments on paper. Active-active is not the teaching default because of split-brain. Idempotency-Key must already replicate or we missed seconds RPO. Empty ECR in east eats the 60 minutes. 99.99% multi-AZ in west is still HA, not this conversation.",
+    "staffAnswer": "I put a bill next to each pattern: idle warm tasks, replication, dual-pipeline. I make the exec pick authorize 60 minutes or admit a longer RTO. I write declare authority (named human, not a model). I refuse a table that lists BayPayCell with an RTO. I keep terraform validate for any HCL we would one day use; I will not apply a second region to win the tabletop. I separate this worksheet from PF-security’s four nines.",
+    "principalAnswer": "I will not sign a DR story the ledger did not fund. I take the starting TRUST.md numbers and I argue deltas with cost. I tell the board leftover ND is a decommission path, not insurance. I will not let them buy 99.99% language as a substitute for warm capacity. Models do not declare a disaster. The narrative is: here is what Harbor Bike Co can still charge on hour one, because we paid for it last quarter.",
+    "commonMistakes": [
+      "Failing over to BayPayCell / dmgr-east / PaymentCluster.",
+      "Treating snapshots as authorize RPO/RTO, or applying us-east-1 in class.",
+      "Using multi-region as a silent 99.99% upgrade, or letting AI declare failover."
+    ],
+    "scoreRubric": "Engineer: defines RPO/RTO, teaching numbers, no cell, no apply. Senior: funded pattern vs snapshots, idempotency replica, HA≠DR. Staff: costed patterns, declare authority, separate four-nines sheet. Principal: will not sign unfunded DR; ND is decommission; honesty to the board."
+  },
+  {
+    "id": "AEJE-IQ-096",
+    "domain": "HA/Security",
+    "difficulty": "principal",
+    "topic": "secrets that must never be in a ConfigMap",
+    "question": "A Kubernetes proposal puts BAYPAY_DB_PASSWORD in a ConfigMap ‘because it is easier to roll.’ Which secrets must never live there for fictional BayPay, where do they live instead, and what else is not a secret store?",
+    "followUps": [
+      "How do ECS execution role versus task role change the blast radius of a stolen JVM?",
+      "What do you do if the password was already committed to git or pasted into a model prompt?"
+    ],
+    "expectedConcepts": [
+      "BAYPAY_DB_*, private keys, access keys, PAN/CVV never in ConfigMap or git",
+      "Secrets Manager / K8s Secret / Liberty server.env — never task-def JSON literals",
+      "ConfigMap is not the secret store; git is not the secret store",
+      "Rotate + revert; do not force-push; do not put secrets in AI prompts"
+    ],
+    "engineerAnswer": "Database password, private keys, AWS keys, and card data never go in a ConfigMap, a committed .tfvars, or Ansible extra-vars. On ECS they come from Secrets Manager as BAYPAY_DB_*. On Kubernetes they are a Secret, not a ConfigMap. I do not paste them into Slack or a prompt. I do not force-push to hide a leak.",
+    "seniorAnswer": "ConfigMaps are designed to be readable and often logged. A Secret object is the K8s home, still with RBAC and encryption-at-rest assumptions you must state. ECS: execution role pulls the secret; task role stays narrow so a stolen JVM does not GetSecretValue on the account. Leftover Liberty uses server.env, not a committed file. I do not invent BAYPAY_DB_PASS. I do not attach AdministratorAccess so the lab works.",
+    "staffAnswer": "I write the deny-list: ledger password, KMS material, edge private key, CI deploy keys, merchant API secrets. Non-secrets (port, URI, feature flag names) may be ConfigMaps. I scan pipelines for literals. If a leak happened, rotate under alias/baypay-payments, purge logs, and revert with a new commit. I will fail a chart that mounts the public leaf key into every Pod. I will not accept a model that reprints the password as ‘helpful context.’ terraform validate must still pass without embedding the secret in HCL.",
+    "principalAnswer": "I set org policy: ConfigMap is not a vault, git is not a vault, BayOps is not a vault. I fund Secrets Manager or the platform equivalent and a break-glass path that is time-bound and logged. I tell risk a leaked ledger password is a security incident even in this fictional estate. I will not let convenience rewrite least privilege. I refuse leftover cell password files as the HA secret story.",
+    "commonMistakes": [
+      "Putting BAYPAY_DB_PASSWORD or private keys in a ConfigMap, git, task-def JSON, or a prompt.",
+      "Force-pushing main to hide a committed secret instead of rotating and reverting.",
+      "One AdministratorAccess role for task and execution, or using BayPayCell as the secret home."
+    ],
+    "scoreRubric": "Engineer: deny-list and correct homes; no prompt paste; no force-push. Senior: ConfigMap vs Secret, role split, no AdministratorAccess. Staff: scan/rotate/purge, no key-on-every-pod, HCL without literals. Principal: org vault policy, funded injection, cell is not the store."
+  },
+  {
+    "id": "AEJE-IQ-097",
+    "domain": "Leadership/Architecture",
+    "difficulty": "principal",
+    "topic": "modular monolith vs microservices for BayPay",
+    "question": "A vendor slide says fictional BayPay must split payment, refund, worker, and notification into four JVMs to ‘be cloud native.’ How do you decide to keep the modular monolith versus extract a service — and what must already be true before you split?",
+    "followUps": [
+      "Which transaction today is atomic only because it is one process and one database?",
+      "What does a seventh network hop do to the 99.9% create SLO and to idempotency?"
+    ],
+    "expectedConcepts": [
+      "Five Maven modules, one JVM, one 8080 probe surface",
+      "Extract when the bean boundary and outbox/saga are already clean",
+      "Authorize and post atomicity is lost when you split the worker",
+      "Microservices are not the 99.99% button and not a Liberty exit"
+    ],
+    "engineerAnswer": "The teaching app is a modular monolith: shared, payment-service, refund-service, transaction-worker, notification-service in one process. Notification is an in-process event. I will not split because a slide said to. I keep one readiness probe. I do not need four pipelines to serve Avery Chen.",
+    "seniorAnswer": "I keep one JVM while authorize and post must share a transaction. Extraction of transaction-worker means an outbox or saga and a new failure domain. Extraction of notification means a hop and an identity story. I will extract a module when it already has a clean API in-process and a team that can own on-call. I will not split to make Terraform look busy. 99.9% is harder with four ways to 5xx the create.",
+    "staffAnswer": "I use an ADR with revisit criteria: independent scale, independent failure, independent release cadence — evidenced, not hoped. I will say no if the only pain is org chart fashion. I will also say no to a mega-PR that extracts four services at once. I keep ECS Fargate as a deploy target for the one process; I do not require EKS to justify a split. I refuse leftover BayPayCell as the ‘microservice platform.’ Student AWS bar remains validate.",
+    "principalAnswer": "I tell the exec team the monolith is a product choice that protects Harbor Bike Co’s atomic authorize, not a failure to modernize. Liberty migration and four nines are orthogonal. I will fund an extraction when the boundary is already clean and the error budget can afford the hop. I will not fund a mesh-and-seven-services program to decorate a payments API. RCAs after a premature split will name the missing saga, not the engineer who ‘resisted microservices.’",
+    "commonMistakes": [
+      "Splitting for fashion, or calling four JVMs the 99.99% / Liberty-exit plan.",
+      "Extracting the worker without an outbox/saga, then double-posting.",
+      "Using BayPayCell or EKS-apply as the required microservices platform."
+    ],
+    "scoreRubric": "Engineer: names the one-process modules; no slide-driven split. Senior: atomicity, hop cost, extract-when-clean. Staff: ADR criteria, no four-at-once, validate not EKS. Principal: monolith as funded choice, orthogonal to Liberty/HA, no fashion program."
+  },
+  {
+    "id": "AEJE-IQ-098",
+    "domain": "Leadership/Architecture",
+    "difficulty": "principal",
+    "topic": "executive narrative for a Liberty migration",
+    "question": "Write the executive narrative for moving fictional BayPay off leftover WebSphere ND toward Liberty and the Spring Boot teaching path. What does the board need to hear, and what must you not promise?",
+    "followUps": [
+      "Where does Morgan Hale’s dmgr-east sit in the story — source estate or HA target?",
+      "How do you talk about cost, risk, and merchant continuity in one sitting?"
+    ],
+    "expectedConcepts": [
+      "ND/BayPayCell is the source estate to decommission, not DR/HA",
+      "Liberty when the ear must stay an ear; Boot for the modular monolith",
+      "Immutable image + Terraform desired state replace JAR-on-Pay2",
+      "No ND-in-Docker, no bounce-the-DMGR stabilize, no 99.99% from a cell"
+    ],
+    "engineerAnswer": "We stop copying JARs onto Pay2. New work stays on the Boot modular monolith. Leftover ears can move to Liberty on a VM we still own, templated by Ansible, then we retire the cell. We do not bounce dmgr-east to stabilize Fargate. We do not call the cell 99.99%.",
+    "seniorAnswer": "Narrative: risk of an unreviewable cell, cost of leftover ND skill and hardware, continuity via the same POST /api/v1/payments contract on 8080. Sequence: protect main and CI, publish immutable tags, run Boot on Fargate in us-west-2, park leftover XML in Ansible, decommission BayPayCell. I will not promise zero downtime from a weekend cutover we did not bake. I will not promise that Liberty in Docker Desktop is production HA.",
+    "staffAnswer": "I attach a dual-run window, a rollback to the last Boot tag (not a cell failback), and a skills plan so Morgan Hale is a decommission partner, not the villain. I keep terraform validate as the cheap proof of the AWS side. I separate this story from the 99.99% multi-AZ design and from the 99.9% SLO. I refuse a program whose first milestone is ‘stand up PaymentCluster in the cloud.’ I will not use a model dump as proven evidence that the cell is already unused.",
+    "principalAnswer": "I ask the board for money to finish decommission, not to modernize twice. I frame Liberty as a landing for ears that cannot yet be Boot, and Boot as the teaching and greenfield path. I commit to merchant continuity, an audit trail of tags, and a date when dmgr-east is dark. I will not sell them four nines from ND, a force-push cutover, or an AI-approved bounce. Success is Avery Chen authorizing on the Boot estate while the cell is a memory.",
+    "commonMistakes": [
+      "Promising HA/DR by failing over to BayPayCell, or ND-in-Docker as the target.",
+      "Treating bounce-the-DMGR as stabilize, or conflating Liberty migration with 99.99%.",
+      "A weekend force-push cutover with no bake or revert to a Boot tag."
+    ],
+    "scoreRubric": "Engineer: Boot path, leftover Liberty, cell is not HA. Senior: risk/cost/continuity sequence, no Docker-ND promise. Staff: dual-run, no cell failback, SLO vs architecture separated. Principal: fund decommission once, date the dark cell, no AI-bounce, no vanity nines."
+  },
+  {
+    "id": "AEJE-IQ-099",
+    "domain": "Leadership/Architecture",
+    "difficulty": "staff",
+    "topic": "ADR that says no to a seventh service",
+    "question": "A team wants a seventh microservice — a ‘promo-service’ — in front of fictional BayPay authorize. Write how you would ADR a no, what alternatives you offer, and when you would reopen the decision.",
+    "followUps": [
+      "What evidence would make you change the ADR in six months?",
+      "How do you keep the no from becoming an unwritten hallway veto?"
+    ],
+    "expectedConcepts": [
+      "ADR records context, decision, consequences, revisit criteria",
+      "In-process module or flag first; hop cost on the 99.9% create path",
+      "Seventh service is a new failure domain, pipeline, and identity",
+      "No is a written engineering product, not a personality"
+    ],
+    "engineerAnswer": "I would write: we stay with the modular monolith and a feature flag inside payment-service. A seventh JVM is another probe, another tag, another way to miss Ready. I offer a module if the code needs a home. I do not need EKS to say no.",
+    "seniorAnswer": "ADR sections: context (campaign speed), decision (no new service on the authorize hop), consequences (flag + kill switch, slightly larger JAR), revisit if the promo team has independent SLO, on-call, and a non-authorize entry point. I cite same-day change management and the 400 ms tail. I will not hide the no in Slack. I will not compromise with a sidecar that is a service in all but name.",
+    "staffAnswer": "I quantify the hop: extra TLS, extra timeout budget, extra idempotency story, extra dashboard. I offer a library/module and a scheduled revisit after Black Friday evidence. I get Jordan and Priya to sign so marketing sees owners, not obstruction. I refuse a ‘temporary’ seventh repo without a decommission date. I keep BayPayCell out of the alternatives. I terraform-validate any edge HCL; I do not apply a new ALB to make the no feel nicer.",
+    "principalAnswer": "I treat a well-written no as architecture leadership. I will defend it to the exec staff as protecting the authorize SLO we actually operate (99.9%) and the atomic monolith we funded. I will reopen it myself if the revisit criteria trip — a no that cannot die is dogma. I will not let a vendor seventh-service program become the Liberty or four-nines story.",
+    "commonMistakes": [
+      "A hallway no with no ADR, or a yes to a ‘temporary’ seventh repo.",
+      "Putting promo-service on leftover ND, or applying a new platform to host it.",
+      "Never listing revisit criteria, so the no cannot be revisited with evidence."
+    ],
+    "scoreRubric": "Engineer: flag/module alternative; hop has a probe. Senior: full ADR shape, revisit, no sidecar-as-service. Staff: quantified hop, signed owners, no cell alternative. Principal: no as a product, will reopen on evidence, not dogma."
+  },
+  {
+    "id": "AEJE-IQ-100",
+    "domain": "Leadership/Architecture",
+    "difficulty": "principal",
+    "topic": "influencing a platform team without authority",
+    "question": "Sam Okada owns the platform. You do not. You need terraform module contracts, a bake listener, and a ban on force-push to main for fictional BayPay. How do you influence without authority — and what do you refuse to do?",
+    "followUps": [
+      "What shared artifact do you put on the table first: SLO burn, cost, or an ADR?",
+      "A BayOps dump ‘proves’ the platform should auto-remediate. How do you respond?"
+    ],
+    "expectedConcepts": [
+      "Shared SLO, cost, and merchant evidence beat escalation theater",
+      "ADRs and portfolio worksheets as the negotiation surface",
+      "Jordan owns tags; Priya spends 99.9%; Riley owns the app estate",
+      "No authority grab, no proven-AI mandate, no cell ultimatum"
+    ],
+    "engineerAnswer": "I bring a green ./mvnw test, a validate-clean module PR, and a ticket that shows merchants failing while tasks are Ready. I ask Sam for the bake listener as a shared goal. I do not demand admin on the platform repo. I do not force-push to make a point.",
+    "seniorAnswer": "I speak Sam’s language: ACCOUNT.md tags, blast radius, leftover ALB cost, and the Git → test → image path. I offer to write the module interface and the review checklist. I use Priya’s burn graph so this is not my preference versus his. I escalate only with a written decision request, not a hallway complaint. I refuse to bypass platform by console-clicking prod.",
+    "staffAnswer": "I set a weekly contract review with owners, not a steering committee. I bring alternatives (validate-only student path vs apply) so Sam is not boxed. I document disagreements in ADRs. I will trade scope — we will not ask for EKS — to get circuit breaker and remote-state lock. I keep Morgan Hale’s cell out of the ask. I reject a model mandate that the platform auto-approve remediations.",
+    "principalAnswer": "I align incentives: Sam’s leftover-ALB page, Priya’s budget, Jordan’s reconstructable tags, finance’s Harbor Bike Co revenue. I give platform public credit for the bake path. I use the Liberty-migration exec narrative so this is company risk, not a personality contest. I will not seize the pipeline, I will not threaten a cell failover, and I will not launder a decision through proven AI RCA. Influence is a funded shared SLO plus a written no/yes that both teams can live with.",
+    "commonMistakes": [
+      "Escalating without evidence, or console-bypassing the platform team.",
+      "Using a proven-AI dump or a BayPayCell ultimatum as leverage.",
+      "Force-pushing main or demanding EKS/NAT apply to win the argument."
+    ],
+    "scoreRubric": "Engineer: evidence-first ask; no force-push; no admin demand. Senior: platform language, shared burn, written decision request. Staff: traded scope, ADRs, no auto-remediate mandate. Principal: aligned incentives, public credit, no authority grab, no AI-laundered decision."
+  }
+]

@@ -1,0 +1,104 @@
+{
+  "id": "Q-05",
+  "moduleId": "module-05",
+  "title": "Module 5 quiz — WebSphere Network Deployment",
+  "description": "Eight questions on BayPayCell, clusters, JNDI, pools, sessions, and operations. Synthetic names only. A live ND cell is not required.",
+  "questions": [
+    {
+      "id": "Q-05-01",
+      "prompt": "dmgr-east is down. Pay1, Pay2, and Pay3 were already started. What still works for Avery Chen’s POST /payment?",
+      "choices": [
+        "Nothing: the payment ear only runs inside the deployment manager",
+        "HTTP to PaymentCluster members that are already up; new cell-wide config changes will not distribute",
+        "Only JNDI lookups, because jdbc/baypay lives exclusively on dmgr-east",
+        "Only RefundCluster, because PaymentCluster cannot run without the console"
+      ],
+      "correctIndex": 1,
+      "explanation": "The deployment manager is the admin plane. Cluster members already running continue to serve. Synchronization and new installs wait for dmgr-east. Payments do not flow through the DMGR JVM."
+    },
+    {
+      "id": "Q-05-02",
+      "prompt": "nodeagent-pay-2 is stopped. What is the immediate operational consequence?",
+      "choices": [
+        "Pay2 and Pay3 are guaranteed stopped, because they are threads inside the node agent",
+        "The entire BayPayCell stops, including IHS",
+        "Pay2 and Pay3 may still serve, but node-pay-2 will not receive configuration sync from dmgr-east",
+        "jdbc/baypay disappears from every node"
+      ],
+      "correctIndex": 2,
+      "explanation": "The node agent replicates configuration and lifecycle commands. Application servers are separate JVMs. A down nodeagent is a management-plane outage on that node, not automatic payment-process death."
+    },
+    {
+      "id": "Q-05-03",
+      "prompt": "Why is a single cell-scoped jdbc/baypay DataSource a modernization smell on BayPayCell?",
+      "choices": [
+        "JNDI cannot bind a DataSource",
+        "Payment, refund, and any reporting ear on the same bind share one pool and one failure domain",
+        "PostgreSQL forbids more than one JNDI name",
+        "Liberty cannot look up JNDI at all"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cell-wide binds are convenient and couple unrelated workloads. A reporting job can exhaust the 50-connection pool that payment creates need. Isolate jdbc/baypay-payment and jdbc/baypay-refund on the way to Liberty."
+    },
+    {
+      "id": "Q-05-04",
+      "prompt": "IHS marks Pay2 up because a TCP connect to the HTTP port succeeds, but merchants still hang on that member. What have you proven so far?",
+      "choices": [
+        "Postgres is down",
+        "The plugin’s liveness check is not the same as ‘the JVM can complete a payment’",
+        "dmgr-east must be recycled first",
+        "You must enable HttpSession replication immediately"
+      ],
+      "correctIndex": 1,
+      "explanation": "TCP-up means a socket accepted. It does not mean web-container threads are free or jdbc/baypay connections are valid. Treat plugin health as a signal, not as application readiness."
+    },
+    {
+      "id": "Q-05-05",
+      "prompt": "A developer wants HttpSession on payment.ear so Avery Chen’s cart survives a Pay1 recycle. What should you say?",
+      "choices": [
+        "Required: enable memory-to-memory session replication on PaymentCluster",
+        "Required: sticky sessions at ihs-east are the payment consistency model",
+        "Reject it: payment state is Idempotency-Key plus database rows; sessions force affinity or replication",
+        "Sessions only work on Liberty, so wait for Module 6"
+      ],
+      "correctIndex": 2,
+      "explanation": "The payment API is stateless. Money lives in tables. Sessions add sticky routing and replication cost without making a retry safe. That is a Module 4 and 5 constant."
+    },
+    {
+      "id": "Q-05-06",
+      "prompt": "Morgan Hale installs payment.ear 4.12 on PaymentCluster. What must be true before you call the rollout complete?",
+      "choices": [
+        "The admin console shows the application as Installed on the cell, even if one nodeagent was down",
+        "Every intended member reports the same edition and the node sync finished on node-pay-1 and node-pay-2",
+        "dmgr-east was restarted twice",
+        "IHS was stopped for the entire window"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cell install is not cluster distribution. A nodeagent outage during sync leaves mixed editions (the INCIDENT-504 class of symptom). Confirm edition on Pay1, Pay2, and Pay3."
+    },
+    {
+      "id": "Q-05-07",
+      "prompt": "A staff engineer proposes a new FX quote service as another ear on PaymentCluster because jdbc/baypay is already there. What is the course default?",
+      "choices": [
+        "Approve: reuse the cell; traditional ND is the 2026 greenfield standard",
+        "Approve only if the ear uses XA",
+        "Reject as default: do not grow the source estate; use Boot or Liberty with its own pool and config",
+        "Approve if LTPA is enabled"
+      ],
+      "correctIndex": 2,
+      "explanation": "BayPayCell is documented so you can operate and shrink it. Sharing the payment pool and class-loader policy is not a reason to add a service. Greenfield is Spring Boot or Liberty."
+    },
+    {
+      "id": "Q-05-08",
+      "prompt": "PMI on PaymentCluster shows the WAS JDBC pool at 50/50 and web-container threads waiting. Database CPU is 18%. What is established?",
+      "choices": [
+        "The database process is down",
+        "This cluster’s pool is exhausted; the cause (leak, shared reporting, hung checkout) is not yet proven",
+        "You must set maxConnections to 500",
+        "The IHS plugin certificate expired"
+      ],
+      "correctIndex": 1,
+      "explanation": "50/50 plus waiters is exhaustion — a symptom. Low DB CPU argues against a dead PostgreSQL. Raising max is not a diagnosis. Same lesson as Module 4, different gauges (PMI vs Hikari)."
+    }
+  ]
+}

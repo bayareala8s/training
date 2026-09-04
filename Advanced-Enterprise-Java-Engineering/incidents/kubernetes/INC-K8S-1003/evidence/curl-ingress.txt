@@ -1,0 +1,32 @@
+# curl against Ingress — teaching paste
+# Gate: 3
+# Host: payments.apps.baypay.example
+# Synthetic BayPay. Captured 2026-11-10T17:45:12Z
+# Not a live cluster. Do not replay against a paid API.
+
+$ curl -sS -D - -o /tmp/body.txt https://payments.apps.baypay.example/api/v1/payments \
+    -H 'Host: payments.apps.baypay.example' \
+    --resolve payments.apps.baypay.example:443:10.8.0.20
+HTTP/1.1 503 Service Temporarily Unavailable
+Date: Tue, 10 Nov 2026 17:45:12 GMT
+Content-Type: text/html
+Content-Length: 190
+Connection: keep-alive
+X-Request-Id: c1003-ing-503-001
+
+<html>
+<head><title>503 Service Temporarily Unavailable</title></head>
+<body>
+<center><h1>503 Service Temporarily Unavailable</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+# TLS handshake completed (cert accepted for this paste). Failure is HTTP 503 from the Ingress controller.
+# Ingress backend: Service payment-service:8080
+# With Endpoints empty, the controller has no Ready address. 503 is the edge symptom, not a Spring 503.
+
+$ curl -sS -o /dev/null -w '%{http_code}\n' https://payments.apps.baypay.example/actuator/health
+503
+
+# Avery Chen payment c1003c33-0000-4000-8000-111111111003 never reached a pod.

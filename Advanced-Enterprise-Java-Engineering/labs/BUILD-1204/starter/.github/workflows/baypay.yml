@@ -1,0 +1,22 @@
+# BUILD-1204 starter — intentionally incomplete.
+# Add a Java 21 test job (./mvnw test) and make publish need it.
+# Tag images with ${{ github.sha }}. Do not put AWS keys in this file.
+
+name: baypay
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t baypay/payment-service:latest reference-apps/baypay
+      - name: Push
+        run: |
+          echo "Teaching push — starter tags :latest only"
+          echo "Add ${{ github.sha }} after tests pass"

@@ -1,0 +1,104 @@
+{
+  "id": "Q-09",
+  "moduleId": "module-09",
+  "title": "Module 9 quiz — Containers for Java",
+  "description": "Eight questions on OCI images, registries, secrets, Java sizing, and hardening for BayPay payment-service. Synthetic only.",
+  "questions": [
+    {
+      "id": "Q-09-01",
+      "prompt": "What is an OCI image for BayPay, in one sentence?",
+      "choices": [
+        "A running payment-service JVM",
+        "A layered, content-addressed filesystem plus config (entrypoint, user, ports) that Docker and Podman can both run",
+        "A WebSphere ND cell packaged as a tarball",
+        "A Kubernetes Service object"
+      ],
+      "correctIndex": 1,
+      "explanation": "Images are build artifacts. Containers are running instances. Docker and Podman consume the same OCI format."
+    },
+    {
+      "id": "Q-09-02",
+      "prompt": "Why is eclipse-temurin:21-jre preferred over a full JDK in the runtime stage?",
+      "choices": [
+        "JRE cannot run Spring Boot",
+        "The runtime image should not ship a compiler and extra attack surface; javac belongs in the build stage",
+        "Temurin cannot be pinned",
+        "OpenShift requires Ubuntu + apt openjdk"
+      ],
+      "correctIndex": 1,
+      "explanation": "Multi-stage: build with JDK/Maven, run with JRE. Smaller image, fewer tools in prod."
+    },
+    {
+      "id": "Q-09-03",
+      "prompt": "A Dockerfile contains ENV BAYPAY_DB_PASSWORD=changeme-baypay. What is wrong?",
+      "choices": [
+        "ENV is illegal in OCI",
+        "The secret is in the image history and every registry copy; supply it at runtime instead",
+        "Spring Boot cannot read ENV",
+        "Only Kubernetes Secrets can hold the letter P"
+      ],
+      "correctIndex": 1,
+      "explanation": "Image layers are forever. Use runtime env / Secret. FIX-902 class of defect."
+    },
+    {
+      "id": "Q-09-04",
+      "prompt": "Why is :latest a production smell for registry.baypay.example/baypay/payment-service?",
+      "choices": [
+        "Registries forbid the word latest",
+        "You cannot tell which bits run, rollbacks are guesswork, and two nodes may pull different images",
+        "Tags are not OCI",
+        "Avery Chen’s account UUID cannot be in a tagged image"
+      ],
+      "correctIndex": 1,
+      "explanation": "Pin a version or digest. latest moves."
+    },
+    {
+      "id": "Q-09-05",
+      "prompt": "Container memory 512Mi and -Xmx512m on payment-service is wrong because:",
+      "choices": [
+        "G1 cannot run in a container",
+        "RSS includes native, stacks, and metaspace; the cgroup kills the process when the heap already reserved the whole limit",
+        "Spring Boot requires 8Gi",
+        "Podman ignores cgroups"
+      ],
+      "correctIndex": 1,
+      "explanation": "Same rule as Modules 7–8. Use MaxRAMPercentage below 100 or an Xmx with headroom."
+    },
+    {
+      "id": "Q-09-06",
+      "prompt": "Which USER line matches the BayPay image contract?",
+      "choices": [
+        "USER root",
+        "USER 10001 (non-root numeric) after the process can bind 8080 without privileged ports",
+        "USER 0 so apt works at runtime",
+        "No USER — Kubernetes will invent one"
+      ],
+      "correctIndex": 1,
+      "explanation": "Non-root is the default. Port 8080 does not need root."
+    },
+    {
+      "id": "Q-09-07",
+      "prompt": "Why copy pom.xml (and the wrapper) before source in a multi-stage build?",
+      "choices": [
+        "Maven forbids copying Java first",
+        "Dependency layers cache until the POM changes; source changes then rebuild only the compile layer",
+        "It hides secrets",
+        "It enables SIBus"
+      ],
+      "correctIndex": 1,
+      "explanation": "Layer cache is the PERFORMANCE-904 point."
+    },
+    {
+      "id": "Q-09-08",
+      "prompt": "Is “put BayPayCell DMGR in a container and call it modern” a valid Module 9 outcome?",
+      "choices": [
+        "Yes; ND is the 2026 greenfield runtime",
+        "No; containers package the Boot/Liberty app; ND remains the source estate to leave",
+        "Yes if the image is Ubuntu",
+        "Only on OpenShift"
+      ],
+      "correctIndex": 1,
+      "explanation": "Do not lift the cell unchanged into Docker and stop. Image the payment process."
+    }
+  ]
+}

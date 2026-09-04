@@ -1,0 +1,104 @@
+{
+  "id": "Q-06",
+  "moduleId": "module-06",
+  "title": "Module 6 quiz — WebSphere Liberty Modernization",
+  "description": "Eight questions on ND vs Liberty, server.xml, compatibility, externalized config, and BayPay migration waves. Synthetic only.",
+  "questions": [
+    {
+      "id": "Q-06-01",
+      "prompt": "What is the best one-line contrast between BayPayCell and a Liberty payment server?",
+      "choices": [
+        "Liberty cannot do JDBC; ND cannot do HTTP",
+        "ND is a managed cell (DMGR, node agents, synchronized nodes); Liberty is a process configured by server.xml and features you enable",
+        "Liberty requires a deployment manager; ND does not",
+        "They are identical operations models with different logos"
+      ],
+      "correctIndex": 1,
+      "explanation": "Traditional ND adds a management plane. Liberty enables Jakarta features in server.xml and is container-friendly. Both can serve a WAR; the operations model is the migration."
+    },
+    {
+      "id": "Q-06-02",
+      "prompt": "A Liberty server.xml for payment-service.war omits jdbc-4.3 and jndi-1.0 but includes servlet-6.0. What fails first?",
+      "choices": [
+        "The JVM cannot start at all",
+        "HTTP works; lookup of jdbc/baypay-payment fails because the JDBC/JNDI features were not enabled",
+        "SIBus BayPayBus starts automatically anyway",
+        "LTPA tokens are minted without a user registry"
+      ],
+      "correctIndex": 1,
+      "explanation": "Liberty is feature-gated. Servlet alone does not give you a DataSource or JNDI. Enable jdbc-4.3 and jndi-1.0 (and persistence-3.1 if you use JPA in the WAR)."
+    },
+    {
+      "id": "Q-06-03",
+      "prompt": "On Liberty, why should payment use jdbc/baypay-payment instead of the historical cell-wide jdbc/baypay?",
+      "choices": [
+        "Liberty forbids the string baypay",
+        "So payment and refund (and reporting) do not share one pool and one outage",
+        "JNDI names cannot contain a hyphen",
+        "The Spring Boot reference app cannot run if any JNDI name exists"
+      ],
+      "correctIndex": 1,
+      "explanation": "Isolation is the point of the move. Re-creating one shared bind on Liberty copies the INCIDENT-503 failure domain into the target runtime."
+    },
+    {
+      "id": "Q-06-04",
+      "prompt": "A compatibility assessment finds payment.ear still compiled against javax.servlet and a SIBus-only MDB. What is the honest classification?",
+      "choices": [
+        "Lift-and-shift this weekend; Liberty is a drop-in ND",
+        "Package-rename may be mechanical; the SIBus MDB is rewrite or defer — not a silent lift",
+        "Delete the ear and tell finance to use spreadsheets",
+        "Keep ND forever because jakarta packages are illegal"
+      ],
+      "correctIndex": 1,
+      "explanation": "javax→jakarta is a known, often toolable change. SIBus is an ND-centric messaging fabric. Treat it as rewrite (JMS on a broker, or in-process events like the Boot app) or defer that ear."
+    },
+    {
+      "id": "Q-06-05",
+      "prompt": "Which server.xml fragment is acceptable for BayPay production secrets?",
+      "choices": [
+        "<properties.postgresql password=\"changeme-baypay\"/>",
+        "<properties.postgresql password=\"${env.BAYPAY_DB_PASSWORD}\"/> plus the value in server.env / a secret store, not in git",
+        "Put the password in featureManager",
+        "Hard-code the J2C alias baypayDbAlias inside the WAR"
+      ],
+      "correctIndex": 1,
+      "explanation": "Externalize like BAYPAY_DB_* on the Boot app. server.xml in git must not contain the live password. server.env or the platform secret injector supplies it."
+    },
+    {
+      "id": "Q-06-06",
+      "prompt": "Why is Wave 1 on BayPay refund, not payment?",
+      "choices": [
+        "RefundCluster has no database",
+        "Refund is lower volume and a smaller blast radius; payment stays on ND until the Liberty path is proven",
+        "Liberty cannot host a payment WAR",
+        "IHS cannot route to more than one cluster"
+      ],
+      "correctIndex": 1,
+      "explanation": "Wave 1 is a learning and rollback rehearsal. Payment is the money path. Prove features, DataSource isolation, and ops on refund first (TOPOLOGY waves)."
+    },
+    {
+      "id": "Q-06-07",
+      "prompt": "Wave 2 puts one Liberty payment replica behind ihs-east. Liberty p99 is 4× ND and error rate climbs. What is the rollback?",
+      "choices": [
+        "Install a new traditional ND cell in AWS",
+        "Drain the canary; send 100% of payment traffic back to PaymentCluster; keep the Liberty config for a fix",
+        "Stop Pay1, Pay2, and Pay3 so Liberty is forced to win",
+        "Raise jdbc/baypay maxConnections on the cell to 500"
+      ],
+      "correctIndex": 1,
+      "explanation": "Rollback is a traffic move, not a platform tantrum. The ND cluster is the safety net until Wave 3. Do not grow maxConnections to hide a Liberty defect."
+    },
+    {
+      "id": "Q-06-08",
+      "prompt": "When is Spring Boot the better BayPay target than a Liberty WAR this quarter?",
+      "choices": [
+        "Never; this course forbids Boot after Module 3",
+        "New modules and the teaching reference app; Liberty when an ear must remain an ear on a short timeline",
+        "Only when you need SIBus",
+        "Only when you need a DMGR"
+      ],
+      "correctIndex": 1,
+      "explanation": "reference-apps/baypay stays Boot. Liberty is the ear-compatible modernization path. Neither choice is ‘put it on a new ND cell.’"
+    }
+  ]
+}

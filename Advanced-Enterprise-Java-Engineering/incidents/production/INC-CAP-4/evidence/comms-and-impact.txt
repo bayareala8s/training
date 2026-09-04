@@ -1,0 +1,62 @@
+# Merchant success + bridge paste — payment-service
+# Window: 2026-12-22 18:45–19:14 UTC (10:45–11:14 Pacific)
+# Source: synthetic BayPay. Not a live Slack export.
+# Gate: 1
+
+Service:  payment-service
+Cluster:  baypay-prod-west
+Region:   us-west-2
+URI:      POST /api/v1/payments
+Severity: SEV-1 at 19:10 UTC (11:10 Pacific)
+
+## Harbor Market (merchant success)
+
+From: Harbor Market merchant success
+At:   2026-12-22T19:11:22Z
+
+Avery Chen customer 11111111-1111-1111-1111-111111111111
+account 22222222-2222-2222-2222-222222222221
+payment c1404e44-0000-4000-8000-111111111404
+Idempotency-Key reused on one client retry.
+
+Client log (redacted):
+  19:10:48Z  POST /api/v1/payments  →  waiting
+  19:10:56Z  HTTP 503  duration 8.14 s  body: {"error":"service unavailable"}
+  19:11:02Z  retry same Idempotency-Key → still waiting
+  19:11:18Z  second 503  duration 16.02 s
+
+Authorization window for this capture closes at 19:25 UTC.
+Finance: this is evening volume, not a test ping.
+
+## Bridge (people named on the timeline)
+
+Jordan Voss (release), 18:52 UTC:
+  BAYPAY-CAP41 canary is on. Last healthy image on the board was 3.8.4.
+  Please do not ship another tag from a laptop during the soak.
+
+Priya Nair (SRE), 19:02 UTC:
+  Completions look thin versus 18:45. P99 climbing. 503s on the error tile.
+  RED board before anyone pages the database team.
+
+Riley Okonkwo (on-call), 19:12 UTC:
+  Gate 1 is this paste. Do not bounce db-east. Do not bounce dmgr-east.
+  Do not disable TLS. Do not scale the service from a laptop.
+
+Sam Okada (platform), 19:13 UTC:
+  No student RDS on this service. Leftover ND is not on the merchant path.
+  Writer wait is not in this paste.
+
+Morgan Hale (WAS / leftover cell), 19:14 UTC:
+  I can pull a BayOps draft if useful. Riley: not until a written next
+  investigation. Human approval stays pending.
+
+## What this file does not include
+
+RED tiles: gated (gate 2).
+Deployment / canary board: gated (gate 3).
+Thread dump: gated (gate 4).
+Dependency latency and BayOps draft: gated (gate 5).
+Database metrics file: omitted from the pack.
+Heap dump: omitted.
+
+Riley: quote Harbor Market impact and the 503 before requesting dashboards.

@@ -1,0 +1,812 @@
+[
+  {
+    "id": "AEJE-IQ-001",
+    "domain": "Java/JVM",
+    "difficulty": "advanced",
+    "topic": "JMM visibility between payment worker threads",
+    "question": "Riley Okonkwo is paging payment-service on Java 21 / Spring Boot 3.5.5 because two posting worker threads share a boolean posted flag on an in-memory Harbor Bike Co create. Thread A writes posted=true after ledger insert; thread B later reads the same field and sometimes still sees false, so Avery Chen's eighty-four dollar payment can be posted twice. As if you were on the interview whiteboard, walk me through Java Memory Model visibility here: what actually makes that write visible to the other worker, and what would you change in this service before you trust the flag?",
+    "followUps": [
+      "Which happens-before edges would you point at if the flag is a plain boolean versus volatile versus a lock release?",
+      "If Priya Nair asks whether a database unique constraint on the payment id is enough by itself, how do you answer without treating the JVM race as solved?"
+    ],
+    "expectedConcepts": [
+      "JMM happens-before and visibility, not just atomicity",
+      "Plain field writes have no inter-thread happens-before",
+      "volatile / lock release-acquire / concurrent utilities as publication",
+      "Idempotent posting and durable uniqueness still required for money movement"
+    ],
+    "engineerAnswer": "A plain boolean write is not guaranteed visible to another payment worker. I would mark the flag volatile or protect both sides with the same lock so the write happens-before the read.",
+    "seniorAnswer": "Visibility is a happens-before problem, not a 'threads are fast' problem. Thread A's store to a plain posted field can sit in a register or store buffer; thread B can keep reading a stale cached false. I would not sprinkle volatile on every field. I would either publish through a lock that both workers share, through an AtomicBoolean, or — better for payment-service — stop using a heap flag as the source of truth and key the post on a unique ledger row for Avery's payment id. Spring Boot 3.5.5 does not change the JMM.",
+    "staffAnswer": "I treat this as a publication failure class. I ask Riley for the exact field, whether it is safely published after construction, and whether workers are platform or virtual threads — the JMM rules are the same, but pinning and carrier reuse can hide races in dumps. I want a regression that two threads can run postAuthorized on the same payment id and only one ledger row survives. I also ask Jordan Voss not to ship a 'volatile everywhere' cleanup PR without a review bar: shared mutable state in the posting path needs an owner, a happens-before story, and a durable uniqueness story. In-memory flags are a teaching smell on a money path.",
+    "principalAnswer": "I will not accept an architecture where Harbor Bike Co money movement is protected only by an unsynchronized boolean. Policy: inter-thread publication on payment-service is either a documented concurrent type or it is not shared. The modular monolith may keep posting in-process; that does not excuse a JMM hole. I fund a unique constraint and an idempotency record, not a style guide that says 'add volatile.' If someone proposes bouncing Morgan Hale's leftover cell because two workers disagreed, I reject that as the wrong estate.",
+    "commonMistakes": [
+      "Saying synchronized is only about mutual exclusion and ignoring visibility.",
+      "Claiming Thread.sleep or a log statement 'fixes' the race because it happens to flush.",
+      "Treating virtual threads as a different memory model than platform threads."
+    ],
+    "scoreRubric": "Engineer: names visibility and a correct publication tool. Senior: separates happens-before from atomicity and prefers a durable uniqueness story for posting. Staff: demands a reproducing test and a review bar for shared mutable state. Principal: sets policy that money movement is not guarded by unsynchronized flags and refuses leftover-cell theater."
+  },
+  {
+    "id": "AEJE-IQ-002",
+    "domain": "Java/JVM",
+    "difficulty": "advanced",
+    "topic": "synchronized vs ReentrantLock vs virtual threads",
+    "question": "Jordan Voss wants to add a per-account lock around PaymentApplicationService.create on BayPay's Java 21 / Spring Boot 3.5.5 payment-service so two Harbor Bike Co creates for Avery Chen's USD account cannot interleave. A teammate says use synchronized, another wants ReentrantLock, and Sam Okada just enabled virtual threads on the Tomcat connector. Talk me through which lock you would pick, what each one does to virtual threads, and what you would refuse to lock.",
+    "followUps": [
+      "What happens if a virtual thread hits a synchronized block that then does JDBC through Hikari?",
+      "When would you drop the in-JVM lock entirely and rely on the database instead?"
+    ],
+    "expectedConcepts": [
+      "synchronized monitor vs ReentrantLock features (tryLock, interruptible, fairness)",
+      "Virtual thread pinning on synchronized / native frames in Java 21",
+      "Lock scope must not cover remote I/O if you can avoid it",
+      "Account-level uniqueness belongs in the ledger, not only in a heap lock"
+    ],
+    "engineerAnswer": "synchronized is a monitor; ReentrantLock can tryLock and unlock in a finally. I would lock the smallest critical section and unlock in finally so a failed create cannot hold Avery's account.",
+    "seniorAnswer": "I would not hold either lock across the authorizer or JDBC. On Java 21, synchronized can pin the virtual thread's carrier if the block does blocking I/O; a long pin starves other creates on that carrier. ReentrantLock in Java 21 is friendlier for virtual threads when you need tryLock and timed waits, but it is still a heap lock: it does not serialize two payment-service tasks. For Harbor Bike Co I prefer a unique idempotency key plus a transactional create, and I only add an in-process lock if we are still in the modular monolith and have measured a hot account race that the database has not yet closed.",
+    "staffAnswer": "I ask Riley for the lock graph and the Hikari wait histogram before I bless a lock. If the proposal is Map<UUID, ReentrantLock> keyed by account id, I want eviction, leak review, and a story for refund-service in the same JVM. I will not accept a fair lock as a default — fairness can collapse throughput on a hot account. I will accept synchronized for a tiny in-memory structure that never does I/O. I will push the team to measure pinning with JFR virtual-thread pinned events after Sam's connector change, not after a SEV-1.",
+    "principalAnswer": "Policy: we do not invent a distributed lock service to decorate POST /api/v1/payments. The modular monolith is valid; in-process locking is allowed only for non-IO critical sections with an owner. Cross-instance correctness is a database uniqueness and transaction story. I will not fund a rewrite to WebSphere ND-in-Docker so someone can use container-scoped monitors. If Priya Nair's SLO is at risk because virtual threads are pinned, we shrink the synchronized regions or move the work off the carrier — we do not set -Xmx equal to the Fargate limit to 'buy more threads.'",
+    "commonMistakes": [
+      "Locking the entire create method including HTTP client and JDBC calls.",
+      "Assuming ReentrantLock is always better, or that virtual threads make locks unnecessary.",
+      "Using a global JVM lock as if it coordinated two Fargate tasks."
+    ],
+    "scoreRubric": "Engineer: contrasts monitor vs ReentrantLock and mentions finally. Senior: discusses pinning, lock scope, and database uniqueness. Staff: reviews lock graphs, fairness, and JFR pinning. Principal: refuses distributed-lock theater and ND-in-Docker, keeps modular monolith valid."
+  },
+  {
+    "id": "AEJE-IQ-003",
+    "domain": "Java/JVM",
+    "difficulty": "advanced",
+    "topic": "volatile vs AtomicInteger for idempotency counters",
+    "question": "A BayPay engineer added a volatile int replayCount on IdempotencyService in payment-service (Java 21, Spring Boot 3.5.5) so Riley can log how many Harbor Bike Co replays hit Avery Chen's create. Under load the count is sometimes lower than the access log. Explain when volatile is enough, when you need AtomicInteger, and whether this counter should exist in the JVM at all for an interview-quality design.",
+    "followUps": [
+      "Why does volatile increment (count++) fail even if each write is visible?",
+      "How would you expose replay rate to Priya Nair without a heap counter?"
+    ],
+    "expectedConcepts": [
+      "volatile guarantees visibility, not atomic read-modify-write",
+      "AtomicInteger CAS / getAndIncrement for counters",
+      "Lost updates under concurrent replay",
+      "Metrics registry vs ad-hoc heap fields"
+    ],
+    "engineerAnswer": "volatile makes the latest int visible but count++ is still read, add, write. Two workers can lose an increment. I would use AtomicInteger.getAndIncrement for a JVM counter.",
+    "seniorAnswer": "Replay of POST /api/v1/payments is concurrent by design. A volatile int is a visibility tool; it does not make increment atomic. I would use AtomicInteger or LongAdder if the number is only a process-local diagnostic. I would not treat that number as an audit of Avery's idempotency keys — those live in the idempotency table with a request hash. If the count disagrees with access logs, I trust the logs and the table, then I delete the homemade counter or replace it with Micrometer on the replay path.",
+    "staffAnswer": "I ask why we are counting in the singleton at all. A heap counter resets on every Jordan Voss deploy, disagrees across Fargate tasks, and invites people to page on a number that is not an SLO. I would have Priya scrape a replay_total counter from Actuator/Micrometer with low-cardinality tags (operation=PAYMENT_CREATE, outcome=replay|fresh) and keep the idempotency row as the source of truth. AtomicInteger is the right primitive for a leftover in-process count; it is the wrong product feature.",
+    "principalAnswer": "Policy: money-path correctness is not a volatile counter. I will not accept a design review that 'proves' idempotency because a heap int looked monotonic. Staff may keep AtomicInteger in a lab; production payment-service counts go through the metrics pipeline with an owner. I refuse PAN in any counter tag or log. I also refuse treating Morgan Hale's cell metrics as a substitute for Boot replay counts — that is the wrong estate.",
+    "commonMistakes": [
+      "Saying volatile increment is atomic because writes are immediately visible.",
+      "Using AtomicInteger as if it coordinated idempotency across two containers.",
+      "Logging or tagging the counter with card numbers or raw keys."
+    ],
+    "scoreRubric": "Engineer: volatile visibility vs atomic increment. Senior: prefers AtomicInteger for local counts and the table for truth. Staff: moves the count to metrics and explains multi-task limits. Principal: policy that idempotency is durable, not a heap int; no PAN in tags."
+  },
+  {
+    "id": "AEJE-IQ-004",
+    "domain": "Java/JVM",
+    "difficulty": "advanced",
+    "topic": "happens-before and duplicate payment races",
+    "question": "Priya Nair shows two COMPLETED rows for the same Harbor Bike Co Idempotency-Key after a retry storm on payment-service (Java 21, Spring Boot 3.5.5). Riley says 'that is impossible because we set a done flag before we return 201.' Using happens-before, explain how two creates can both believe they are first, and what ordering you would actually rely on so Avery Chen is charged once.",
+    "followUps": [
+      "Where does the happens-before edge sit if the uniqueness check is a SELECT then INSERT without a constraint?",
+      "What does a 201 versus a replay 200 tell you about which write won?"
+    ],
+    "expectedConcepts": [
+      "Program order vs inter-thread happens-before",
+      "Check-then-act races on idempotency lookup",
+      "Unique constraint / insert-first as the real ordering",
+      "HTTP status is not a happens-before edge for another JVM"
+    ],
+    "engineerAnswer": "Two threads can both read 'no row' and both insert if there is no happens-before between those reads. A done flag set in one request does not happen-before a second request on another thread or task.",
+    "seniorAnswer": "Happens-before is per the JMM: unlock happens-before a later lock on the same monitor, a volatile write happens-before a later volatile read, thread start and join, and so on. Two Tomcat or virtual threads handling two POSTs have no such edge just because both called create(). A SELECT-then-INSERT on the idempotency table is check-then-act. I would insert the key first (or rely on a unique constraint and handle the conflict as replay), hash the canonical body, and only then authorize. Spring's @Transactional gives SQL ordering inside one transaction, not a global happens-before across retries.",
+    "staffAnswer": "I reconstruct the race with timestamps, the unique index definition, and whether both rows share one payment id or two. If we have two payment ids, the JVM flag story is a distraction. I want Riley to show the isolation level and the constraint name in a review, plus a test that fires two concurrent creates with the same key. I also want Jordan's retry client behavior: a 201 and a 409/200 replay are different products. I will not accept 'we returned 201 so the write is published' as a concurrency proof.",
+    "principalAnswer": "The standard I will sign: one Idempotency-Key plus matching body hash yields one payment resource, proven by a uniqueness constraint and a conflict path, not by a heap flag. Duplicate COMPLETED rows are a SEV-class money defect until proven otherwise. I will not accept a leftover ACM story or a cell bounce as the explanation. I will not split the modular monolith just to make two JVMs 'less racy' — extraction without a uniqueness design makes this worse.",
+    "commonMistakes": [
+      "Confusing happens-before with wall-clock order in logs.",
+      "Believing @Transactional on create() serializes all creates for that account across tasks.",
+      "Using 'we set a flag before 201' as the uniqueness proof."
+    ],
+    "scoreRubric": "Engineer: names check-then-act and missing happens-before. Senior: maps JMM edges and prefers insert-first plus unique constraint. Staff: reconstructs with schema and a concurrency test. Principal: signs a one-key-one-resource standard and refuses wrong-estate stories."
+  },
+  {
+    "id": "AEJE-IQ-005",
+    "domain": "Java/JVM",
+    "difficulty": "senior",
+    "topic": "heap vs metaspace vs native OOM in containers",
+    "question": "Sam Okada's Fargate task for payment-service is 2048 MiB. Riley Okonkwo sees the Java 21 process die during a Harbor Bike Co spike. One log says OutOfMemoryError Java heap space, yesterday's canary said OutOfMemoryError Metaspace, and last week's task vanished with exit 137 and no Java stack. Walk me through how you tell heap versus metaspace versus native/container OOM on this Spring Boot 3.5.5 service, and what you refuse to set on -Xmx.",
+    "followUps": [
+      "What else lives in RSS besides the heap on a 2048 MiB task with -Xmx1024m?",
+      "How would you use NMT without treating it as a production always-on default?"
+    ],
+    "expectedConcepts": [
+      "Heap OOM vs Metaspace OOM vs kernel OOM (137)",
+      "-Xmx is heap only; RSS includes stacks, metaspace, code cache, direct buffers",
+      "Never set -Xmx equal to container / task memory",
+      "NMT categories vs cgroup memory limit"
+    ],
+    "engineerAnswer": "Java heap space is the -Xmx pool. Metaspace is class metadata, off-heap. Exit 137 is usually the kernel killing the task. I would not set -Xmx to 2048m on a 2048 MiB container.",
+    "seniorAnswer": "I split the symptom before I resize anything. Heap space after a failed allocation means GC could not free Payment/Money/byte[] space — look at histogram and live set, not RSS. Metaspace OOM is class metadata; I look at loader count and MaxMetaspaceSize, not Avery's row count. Exit 137 with a cgroup OOM is native-plus-heap exceeding 2048 MiB: stacks, metaspace, JIT code cache, direct buffers, and G1 overhead sit outside -Xmx. Teaching shape is -Xmx1024m on a 2048 MiB task. Setting -Xmx equal to the task memory is an unsafe runbook; I reject it.",
+    "staffAnswer": "I want three artifacts: the Java exception, jcmd GC.heap_info / NMT summary from a sibling task if we can afford the flag in a canary, and the kubelet or ECS OOM killer event. I correlate with thread count (Tomcat + Hikari + compiler) because stacks are a common native surprise after a pool resize. I will not raise -Xmx to the cgroup to 'use the RAM we paid for.' I will ask Jordan for a canary with NativeMemoryTracking=summary when the class is native, then turn it off. I keep Morgan Hale's cell out of this — Boot on Fargate is the estate.",
+    "principalAnswer": "Policy: -Xmx is never equal to the container or Fargate memory limit. Heap headroom is not failover capacity. I fund pool and flag reviews, not a culture of RSS-equals-leak. A principal-level write-up names the pool, the evidence, and the rollback; it does not recommend ND-in-Docker to get a bigger JVM. If someone wants 100 percent MaxRAMPercentage, I treat that as the same forbidden class as -Xmx equals cgroup.",
+    "commonMistakes": [
+      "Setting -Xmx equal to the container memory so 'the heap can use everything.'",
+      "Calling every high RSS a heap leak without naming the pool.",
+      "Bouncing dmgr-east because a Boot task OOM'd."
+    ],
+    "scoreRubric": "Engineer: names the three OOM classes and refuses -Xmx equals cgroup. Senior: maps symptoms to heap/metaspace/native and cites the 1024/2048 teaching shape. Staff: asks for NMT, thread count, and the killer event. Principal: sets the flag policy and refuses ND-in-Docker."
+  },
+  {
+    "id": "AEJE-IQ-006",
+    "domain": "Java/JVM",
+    "difficulty": "senior",
+    "topic": "G1 vs ZGC for a payment API SLA",
+    "question": "Priya Nair holds a 400 millisecond P99 on POST /api/v1/payments for payment-service on Java 21 / Spring Boot 3.5.5. A vendor slide says switch the Fargate JVM from G1 to ZGC to 'remove GC pauses.' How would you decide, what evidence you would collect on a Harbor Bike Co canary, and what you would not change on the same afternoon?",
+    "followUps": [
+      "Which pause and throughput numbers would make you keep G1?",
+      "What heap and CPU tax does ZGC ask for on a 2 GiB task?"
+    ],
+    "expectedConcepts": [
+      "G1 is the BayPay Java 21 default; generational, pause goals",
+      "ZGC / generational ZGC: ultra-low pause, more CPU and coloring tax",
+      "P99 is not only GC; include JDBC, auth, Jackson",
+      "Collector change is a Jordan Voss canary, not an incident toggle"
+    ],
+    "engineerAnswer": "G1 is the default on our Java 21 payment-service. ZGC aims for very short pauses but costs CPU and works better with more heap than a 2 GiB task. I would not flip collectors in a SEV.",
+    "seniorAnswer": "I would not treat a GC slide as an SLO fix. First I split P99: handler time, Hikari wait, external auth, and GC pause time from JFR or -Xlog:gc. If G1 young pauses are 20–40 ms and P99 is 380 ms, the collector is not the budget. ZGC can help when pause time dominates and the heap is large enough to pay the load-barrier and coloring cost. On a 2048 MiB Fargate task with -Xmx1024m, I am skeptical ZGC wins. I would canary one task, watch CPU and allocation rate, and keep G1 unless the pause histogram says otherwise.",
+    "staffAnswer": "I want a written SLO decomposition and a rollback tag from Jordan before any collector flag ships. I compare G1 pause logs against ZGC cycle times under the same Harbor Bike Co replay, same -Xmx (never raised to the cgroup), same Hikari max. I also check mixed-mode and humongous allocations from Payment byte buffers — those are G1-specific knobs that are cheaper than a collector swap. I will not run two collectors in one replica set without a name on the experiment.",
+    "principalAnswer": "Collector choice is a platform standard, not a per-engineer preference. Default remains G1 until a canary owned by Priya and Sam shows pause time is the SLO, ZGC fits the task size, and rollback is one tag. I will not accept ND-in-Docker 'so we can tune GC like the cell.' I will not accept -Xmx equal to task memory as a prerequisite for ZGC. Modular monolith on one JVM is valid; we do not split services to hide a collector experiment.",
+    "commonMistakes": [
+      "Switching to ZGC because a blog said pauses go to zero, without a P99 breakdown.",
+      "Raising -Xmx to the container limit to 'make ZGC happy.'",
+      "Changing the collector during an incident instead of a canary."
+    ],
+    "scoreRubric": "Engineer: knows G1 default and that ZGC is not free. Senior: decomposes P99 and canaries. Staff: requires matched load, rollback, and cheaper G1 knobs first. Principal: sets G1 as standard until evidenced otherwise; refuses ND-in-Docker and -Xmx equals cgroup."
+  },
+  {
+    "id": "AEJE-IQ-007",
+    "domain": "Java/JVM",
+    "difficulty": "senior",
+    "topic": "thread dump: BLOCKED vs WAITING vs TIMED_WAITING",
+    "question": "Riley Okonkwo takes a jcmd Thread.print on a stuck payment-service Java 21 / Spring Boot 3.5.5 process. Some Tomcat threads are BLOCKED on PaymentApplicationService, some are WAITING on a Hikari park, and some are TIMED_WAITING in Object.wait. Harbor Bike Co creates for Avery Chen are hanging. Explain what each state means, what you look for next, and how virtual threads change what you expect to see.",
+    "followUps": [
+      "How do you tell a deadlock from a lock convoy in that dump?",
+      "What would TIMED_WAITING on HttpClient tell you versus WAITING on a Condition?"
+    ],
+    "expectedConcepts": [
+      "BLOCKED: waiting to enter a monitor (synchronized)",
+      "WAITING vs TIMED_WAITING (park / wait / join with and without timeout)",
+      "Lock owner, deadlock cycles, pool wait",
+      "Virtual threads may not all appear as platform threads in a classic dump"
+    ],
+    "engineerAnswer": "BLOCKED means the thread wants a synchronized monitor another thread owns. WAITING is a wait with no timeout; TIMED_WAITING has a timeout. I would find the owner in the dump.",
+    "seniorAnswer": "I treat the dump as a graph. For BLOCKED I name the monitor and the owner — if the owner is in JDBC, we have a lock held across I/O. WAITING on Hikari's parking is often 'pool exhausted,' not a Java deadlock. TIMED_WAITING is commonly sleep, poll, or timed lock attempts; it is not automatically healthy. I look for a cycle (true deadlock) versus a convoy on one hot account lock. Spring Boot 3.5.5 request threads plus Hikari plus scheduled tasks all show up; I do not bounce the task until I know which class I have.",
+    "staffAnswer": "I take more than one dump twenty to thirty seconds apart so I can see who moved. I correlate with Priya's USE gauges: Hikari active/max, Tomcat busy, and CPU. If Sam enabled virtual threads, I say out loud that a classic Thread.print is incomplete — I need JFR or the virtual-thread dump support, or I will mis-count waiters. I will not call every WAITING thread a deadlock. I will not recommend a cell thread dump from Morgan Hale's estate for a Fargate Boot hang.",
+    "principalAnswer": "Evidence standard for a hang: two dumps, the lock graph, and a pool metric, then a stabilize that fails readiness rather than a kill -9 of the only healthy task. I will not accept a dump-less 'deadlock' in a SEV-1 write-up. I will not accept ND-in-Docker so we can attach an old WAS analyzer. The modular monolith may show many bean names in one dump; that is expected, not a reason to extract services during the page.",
+    "commonMistakes": [
+      "Calling every WAITING thread a deadlock.",
+      "Taking one dump and killing the JVM before identifying the monitor owner.",
+      "Ignoring that virtual threads may be missing from a platform-thread dump."
+    ],
+    "scoreRubric": "Engineer: defines the three states. Senior: builds a lock/pool graph and separates deadlock from pool wait. Staff: multi-dump, metrics, virtual-thread caveats. Principal: sets evidence and stabilize policy; refuses wrong-estate dumps and ND-in-Docker."
+  },
+  {
+    "id": "AEJE-IQ-008",
+    "domain": "Java/JVM",
+    "difficulty": "senior",
+    "topic": "heap dump approach without freezing production",
+    "question": "Priya Nair suspects a growing live set of Payment objects on payment-service but Avery Chen's Harbor Bike Co traffic is still inside SLO. Jordan Voss asks you to heap-dump production Java 21 / Spring Boot 3.5.5 without freezing the cut. How do you take the dump, where do you put it, and what do you refuse to do on the hot task?",
+    "followUps": [
+      "When would you dump a canary instead of the task that is serving Harbor Bike Co?",
+      "What is the difference between a live dump and a full dump for leak hunting?"
+    ],
+    "expectedConcepts": [
+      "jcmd GC.heap_dump versus older stop-the-world dump tools",
+      "Dump size, disk, and PII/PAN — never dump card data",
+      "Prefer canary / non-peak / live option; fail readiness if STW risk is high",
+      "Histogram first is cheaper than a dump"
+    ],
+    "engineerAnswer": "I would try jcmd GC.class_histogram first. If I need a dump I use jcmd GC.heap_dump to a volume with space, not /tmp on a tiny task, and I do not dump PAN.",
+    "seniorAnswer": "A heap dump can still pause or inflate RSS. I prefer a canary or a task that has already failed readiness so the ALB is not sending Avery's creates there. I use jcmd <pid> GC.heap_dump with the live option when I only need reachable objects, confirm disk headroom is larger than the heap, and ship the file to a restricted bucket — payment ids and amounts may be in the dump; PAN must not be in the heap in the first place. I will not -XX:+HeapDumpOnOutOfMemoryError onto a full ephemeral disk during a sale event.",
+    "staffAnswer": "I write the decision: histogram versus dump, which replica, who can download, retention, and the rollback if the dump spikes RSS into the cgroup. I coordinate with Sam Okada on task ephemeral storage and with Priya on error-budget spend. I refuse jmap -F and I refuse attaching a GUI profiler to the hot task. If we must dump the live primary, I fail readiness first, dump, then decide whether to replace the task. I never set -Xmx equal to the task memory so the dump 'fits.'",
+    "principalAnswer": "Policy: production heap dumps are a named, approved diagnostic with a data-handling path. No PAN, no public Slack attach, no dump of the only healthy replica at peak. Canary-first. I will not accept 'we froze payments to get a dump' as a heroic story. I will not accept ND-in-Docker so someone can click a heap analyzer on a laptop next to a cell. Histogram and JFR allocation samples are the default; dumps are the exception.",
+    "commonMistakes": [
+      "Dumping the only live task at peak with a stop-the-world tool.",
+      "Writing the dump to a full disk or attaching it where PAN or PII can leak.",
+      "Skipping class histogram and jumping straight to a 1 GiB dump."
+    ],
+    "scoreRubric": "Engineer: histogram first, jcmd dump, no PAN. Senior: canary/live option, disk, readiness. Staff: approval, storage, RSS risk, refuses profiler-on-hot. Principal: data-handling policy and canary-first standard; refuses ND-in-Docker and peak freezes."
+  },
+  {
+    "id": "AEJE-IQ-009",
+    "domain": "Java/JVM",
+    "difficulty": "staff",
+    "topic": "allocation pressure vs cache locality in posting loops",
+    "question": "Riley Okonkwo's posting loop in the Java 21 / Spring Boot 3.5.5 payment-service worker allocates a new Money, a log line, and several Optional wrappers per Harbor Bike Co ledger line. CPU is high, G1 young collections are frequent, and Priya Nair's P99 is drifting. Staff-level: how do you tell allocation pressure from cache-locality problems, and what would you change in that loop versus what you would leave alone?",
+    "followUps": [
+      "What JFR events separate TLAB allocation storms from last-level cache misses?",
+      "When is object pooling the wrong fix on a money type?"
+    ],
+    "expectedConcepts": [
+      "Allocation rate, TLAB, young GC frequency",
+      "Cache misses / data layout vs allocation churn",
+      "Escape analysis and short-lived Money objects",
+      "Do not pool Money or mutate amounts in place for 'speed'"
+    ],
+    "engineerAnswer": "Lots of young GCs and a high allocation rate mean the loop is creating too many short-lived objects. I would look at JFR allocation samples before I rewrite Money.",
+    "seniorAnswer": "Allocation pressure looks like rising young-GC frequency, high TLAB refill, and JFR samples pointing at Money, String concat, and Optional in the hot loop. Cache-locality problems look like high CPI, LLC miss stalls, and a loop that chases pointers across Payment entities without necessarily allocating. I would remove Optional from the per-line path, avoid String format in the inner loop, and keep Money immutable — I would not introduce a Money pool that can leak an amount across Avery Chen and another merchant.",
+    "staffAnswer": "I run a paired experiment: same Harbor Bike Co replay, JFR allocation plus CPU, and a GC log. If allocation rate drops after deleting Optional.map chains and the P99 follows, we were allocation-bound. If allocation is already modest and LLC misses stay high, I look at how we iterate ledger lines — random UUID maps versus sequential batch fetches. I set a review bar: no object pooling of money types, no mutating BigDecimal in place across requests, no -Xmx raise to the cgroup to 'absorb' allocation. I ask Jordan for a microbench that uses the real loop, not a toy JMH that JIT-elides the work.",
+    "principalAnswer": "I will fund measurement and a small inner-loop cleanup; I will not fund a rewrite of the modular monolith into microservices to 'improve cache locality.' Correctness of Money beats a pooled mutable amount. If the posting loop is the SLO, we time-box a staff investigation with JFR, then we stop. I reject ND-in-Docker as a profiler host and I reject PAN in allocation logs.",
+    "commonMistakes": [
+      "Pooling or mutating Money to save allocations.",
+      "Raising -Xmx to the container limit because young GCs were frequent.",
+      "Trusting a JMH bench the JIT optimized away."
+    ],
+    "scoreRubric": "Engineer: connects young GC to allocation. Senior: contrasts allocation vs locality and keeps Money immutable. Staff: paired JFR experiment and review bar against pooling. Principal: funds measurement not a split; refuses ND-in-Docker and -Xmx equals cgroup."
+  },
+  {
+    "id": "AEJE-IQ-010",
+    "domain": "Java/JVM",
+    "difficulty": "staff",
+    "topic": "finalizers, cleaners and off-heap leaks",
+    "question": "Sam Okada sees RSS climb on payment-service while the Java 21 heap histogram stays flat. A library on the Spring Boot 3.5.5 classpath uses DirectByteBuffer and a finalize() method to release native memory. Staff-level: explain why finalizers and cleaners fail you under Harbor Bike Co load, how you would prove an off-heap leak, and what you would replace.",
+    "followUps": [
+      "Why can a DirectByteBuffer leak native memory even after the Java object looks collectible?",
+      "When do you use Cleaner versus try-with-resources / Arena-style lifetime?"
+    ],
+    "expectedConcepts": [
+      "Finalizers are deprecated, unbounded, and delayed",
+      "Cleaner is better but still GC-coupled",
+      "Direct buffers / JNI native memory vs -Xmx",
+      "Explicit close / Arena / reference queues with backpressure"
+    ],
+    "engineerAnswer": "finalize() runs late and on a special thread, so native memory can outlive the heap object. I would close buffers explicitly and avoid finalizers.",
+    "seniorAnswer": "If the histogram of Payment is flat and RSS climbs, I look off-heap: NMT, direct buffer MXBean, and the library's close path. Finalizers are a queue; under allocation pressure they may not run before the cgroup kills the 2048 MiB task. Cleaner is the modern API but it still depends on the wrapper becoming unreachable. For payment-service I want try-with-resources or a bounded pool with explicit release on the request thread, not GC-driven cleanup of TLS or compression buffers.",
+    "staffAnswer": "I prove it with NMT diffs, java.nio.BufferPool MBean (count and memory used), and a canary that holds load then drops it — if RSS does not return, we have a native leak class. I will not raise -Xmx; that is the wrong pool. I will ask Jordan to pull the library version that uses Cleaner plus a reachable close(), and I will add a test that opens and closes many buffers. I document that Cleaner is not a substitute for lifetime on the posting path. I keep PAN out of any buffer log we dump for proof.",
+    "principalAnswer": "Policy: no new finalize() in BayPay code; Cleaner only for true native resources with an explicit close on the happy path. Off-heap growth is a SEV-class reliability issue because it OOMs the task without a Java heap story. I will not accept -Xmx equal to the cgroup as mitigation. I will not move the workload to ND-in-Docker to 'get IBM diagnostics.' We stay on the Boot task, measure native, and replace the library if it cannot bound RSS.",
+    "commonMistakes": [
+      "Raising -Xmx because RSS climbed while the heap was flat.",
+      "Relying on finalize() or Cleaner alone under load.",
+      "Calling the growth a Payment leak without a histogram."
+    ],
+    "scoreRubric": "Engineer: finalizers are late; close explicitly. Senior: NMT/direct buffers vs heap, Cleaner still GC-coupled. Staff: proves with NMT diffs and BufferPool, rejects -Xmx resize. Principal: bans new finalizers, refuses cgroup-sized heap and ND-in-Docker."
+  },
+  {
+    "id": "AEJE-IQ-011",
+    "domain": "Java/JVM",
+    "difficulty": "staff",
+    "topic": "classloader leaks after hot redeploy on Liberty",
+    "question": "Morgan Hale still hot-redeploys a Liberty copy of an older payments WAR in a leftover lab cell. After a few Jordan Voss drops, metaspace climbs and Liberty OOMs. The production estate is Spring Boot 3.5.5 payment-service on Java 21, but staff still has to explain the leak class. What holds a classloader alive after undeploy, how would you prove it, and what do you tell people who want this pattern on Fargate?",
+    "followUps": [
+      "Name two static or ThreadLocal patterns that pin the old WAR classloader.",
+      "Why is replacing the Fargate task a different leak story than Liberty hot replace?"
+    ],
+    "expectedConcepts": [
+      "Web app classloader leak via ThreadLocal, shutdown hooks, JDBC drivers, custom threads",
+      "Metaspace growth across redeploys",
+      "Heap histogram of ClassLoader instances",
+      "Immutable task replace vs in-place hot deploy"
+    ],
+    "engineerAnswer": "If a static cache or a ThreadLocal still points at a class from the old WAR, that classloader cannot be collected and metaspace grows on each redeploy.",
+    "seniorAnswer": "I look for a growing count of the WAR's ClassLoader in a histogram, then I find GC roots: a ThreadLocal on a leftover executor, a JDBC Driver registered in the system loader, a shutdown hook, or a Timer thread started by the app. Each Jordan drop adds another copy of Payment and Spring. On production payment-service we replace the Fargate task — the process dies, so this leak class should not accumulate. I still refuse hot-replace as a prod habit on Liberty for money software.",
+    "staffAnswer": "I prove it with metaspace over time, classloader count, and a path-to-GC-root from a canary dump — not from Avery's live cut. I write a review bar: no ThreadLocals without remove, no raw threads, drivers loaded in the app loader. I tell Sam Okada that Boot on Fargate is not 'fixed' if someone adds a static Map<Class, ...> that pins loaders in a dev Liberty. I will not recommend ND-in-Docker so the team can keep hot-redeploying. I will not bounce dmgr-east as the production stabilize for a Boot page.",
+    "principalAnswer": "Production payment-service is an immutable tag on Fargate, not a hot-redeployed WAR. Liberty lab leaks are a teaching class, not a reason to keep a cell in the paging path. I will not fund ND-in-Docker. I will not treat metaspace growth after task replace as the same defect — that would be a different leak inside one process lifetime. Modular monolith remains valid; we do not extract services to dodge a classloader leak.",
+    "commonMistakes": [
+      "Blaming Avery's Payment row count for metaspace growth.",
+      "Recommending ND-in-Docker or bouncing dmgr-east as the Boot fix.",
+      "Hot-redeploying production money apps to 'save startup time.'"
+    ],
+    "scoreRubric": "Engineer: names a pin (static/ThreadLocal) and metaspace. Senior: GC roots and task-replace versus hot deploy. Staff: proves with loader count and sets a review bar. Principal: immutable prod, no ND-in-Docker, modular monolith still valid."
+  },
+  {
+    "id": "AEJE-IQ-012",
+    "domain": "Java/JVM",
+    "difficulty": "principal",
+    "topic": "when to keep a modular monolith on the JVM",
+    "question": "A principal candidate interview at BayPay: Jordan Voss wants to split payment-service, refund-service, and transaction-worker into separately deployed JVMs because 'that is what a payments platform looks like.' Production today is a Java 21 / Spring Boot 3.5.5 modular monolith. When do you keep one JVM, what evidence would make you extract, and what answers will fail this question?",
+    "followUps": [
+      "Which failure domains actually improve if posting stays in-process?",
+      "What operational cost does a second JVM add before any code is 'cleaner'?"
+    ],
+    "expectedConcepts": [
+      "Modular monolith is a valid production shape",
+      "Extract on failure domain, scale, or team boundary — not fashion",
+      "In-process @Transactional posting vs distributed transactions",
+      "Refuse ND-in-Docker and refuse split-for-appearance"
+    ],
+    "engineerAnswer": "A modular monolith is one JVM with module boundaries. You keep it when the team and the failure domain are still one payment-service and in-process transactions are simpler.",
+    "seniorAnswer": "I keep the modular monolith while create, post, and refund share one database and one release train. Extraction buys independent scale and a separate failure domain; it costs a network hop, a new SLO, dual deploys, and usually an outbox because you lose the single @Transactional create that posts Avery's ledger in-process. I would extract a worker when Priya can show the posting CPU or a queue depth that harms the HTTP SLO, not when a slide says microservices.",
+    "staffAnswer": "I want a written failure-domain map: what dies when the JVM dies, what is independently saturated, and who pages. If refund and create already share the ledger constraint, splitting without an idempotent consumer is a money defect. I would run the worker as a second process only with a contract test, a replay story, and Sam's task sizing that still never sets -Xmx equal to the cgroup. I keep Liberty leftover cells out of the target architecture.",
+    "principalAnswer": "I will sign 'keep the modular monolith' as a first-class architecture, not a halfway house. We extract when a named failure domain, scale curve, or team boundary is evidenced — not to look modern. I reject ND-in-Docker as a platform for the split. I reject 'two JVMs so we can tune GC independently' without an SLO decomposition. One JVM with modules, constructor-injected seams, and a unique idempotency row is a legitimate payments shape for Harbor Bike Co.",
+    "commonMistakes": [
+      "Treating a modular monolith as an incomplete architecture that must be split.",
+      "Extracting services to avoid fixing a JMM or transaction bug.",
+      "Recommending ND-in-Docker as the runtime for the new services."
+    ],
+    "scoreRubric": "Engineer: defines modular monolith and a reason to keep it. Senior: names extract costs and an evidenced trigger. Staff: failure-domain map and outbox/idempotency bar. Principal: explicitly validates the monolith, refuses fashion splits and ND-in-Docker."
+  },
+  {
+    "id": "AEJE-IQ-013",
+    "domain": "Java/JVM",
+    "difficulty": "advanced",
+    "topic": "Optional and stream misuse in money code",
+    "question": "In payment-service on Java 21, a reviewer finds Money math written as Optional.of(payment.getAmount()).filter(a -> a.amount().signum() > 0).map(Money::amount).orElse(BigDecimal.ZERO) inside a stream over ledger lines. Harbor Bike Co refunds can silently become zero. How should Optional and streams be used — and not used — on a Spring Boot 3.5.5 money path?",
+    "followUps": [
+      "When is Optional.orElse(BigDecimal.ZERO) a defect rather than a convenience?",
+      "Why is Optional as a field on Payment a weaker model than a required Money?"
+    ],
+    "expectedConcepts": [
+      "Optional is for return values, not fields or streams of money",
+      "orElse(ZERO) hides missing amounts",
+      "Stream misuse: filter that drops refunds, boxed BigDecimal",
+      "Invariants belong in Money / domain, not in Optional chains"
+    ],
+    "engineerAnswer": "Optional is for a return that might be absent. I would not use orElse(BigDecimal.ZERO) on a refund amount — a missing Money should fail, not become zero.",
+    "seniorAnswer": "I treat that chain as a defect class. Payment and Refund in shared already carry Money; if amount is required, Optional.of plus orElse(ZERO) can post a zero-dollar Harbor Bike Co refund and look successful. Streams that filter signum() > 0 will drop reversals. I want a typed Money.plus/minus with currency checks, a 422/domain error if the command is incomplete, and Bean Validation only at the HTTP edge — not Optional as a second domain.",
+    "staffAnswer": "I set a review bar: no Optional fields on money types, no orElse(ZERO) on ledger paths, no stream pipelines that can drop a line without a counter. I ask for a test where a missing amount fails closed. I also watch allocation: Optional and boxed BigDecimal in an inner posting loop are the IQ-009 pressure class. I will not accept 'it's functional style' as a reason to hide Avery Chen's amount.",
+    "principalAnswer": "Money invariants are a product standard. Silent zero is a money defect, not a style nit. I will not accept Optional as the domain model for amounts. The modular monolith can keep one Money type in shared; we do not invent a stream DSL per service. No PAN in examples. No 'the stream filtered it' in a SEV write-up without a failing test.",
+    "commonMistakes": [
+      "Using Optional.orElse(ZERO) so the compiler is happy.",
+      "Storing Optional<Money> on entities.",
+      "Filtering out non-positive amounts and silently dropping refunds."
+    ],
+    "scoreRubric": "Engineer: Optional is a return type; orElse(ZERO) is dangerous. Senior: ties the chain to a silent refund and prefers domain Money. Staff: review bar and tests, allocation awareness. Principal: silent zero is a money defect; one Money type; no style excuses."
+  },
+  {
+    "id": "AEJE-IQ-014",
+    "domain": "Java/JVM",
+    "difficulty": "advanced",
+    "topic": "records vs beans for payment commands",
+    "question": "BayPay's payment-service CreatePaymentRequest is a Java 21 record with Bean Validation annotations, while some teammates still want a mutable JavaBean for Spring Boot 3.5.5 command objects. In an interview, when do you use a record versus a bean for payment commands, and what must still live in the Payment aggregate rather than the HTTP record?",
+    "followUps": [
+      "Why is a record a poor JPA entity for Payment?",
+      "How do you keep Jackson and validation working on a record without setters?"
+    ],
+    "expectedConcepts": [
+      "Records: immutable commands/DTOs, canonical constructor",
+      "Beans/entities: JPA identity, dirty checking, no-arg constructor",
+      "Invariants in domain, not only on the record",
+      "Validation annotations on records are fine at the HTTP boundary"
+    ],
+    "engineerAnswer": "I use a record for the HTTP create command because it is immutable and has a compact constructor. I keep Payment as a mutable entity because JPA needs identity and a no-arg constructor.",
+    "seniorAnswer": "CreatePaymentRequest as a record is the right command: customerId, accountId, amount, currency, reference — no setters for a Harbor Bike Co POST to mutate after validation. Spring Boot 3.5.5 and Jackson bind records. Payment stays a class with state-machine transitions; a record entity fights JPA lazy loading and dirty checking. Domain rules like account-belongs-to-customer stay in the application service, not only on the record.",
+    "staffAnswer": "I want a seam: record at the edge, domain types inside. If someone adds setters 'for MapStruct' I ask why. I also watch for records that embed JPA relations or that leak internal PaymentStatus to every client. I accept a bean only where a framework forces a no-arg constructor and mutation. I review that Bean Validation on the record is 400 and domain failures are 422 — the record is not the aggregate.",
+    "principalAnswer": "Command/query types at the HTTP edge should be records unless a framework forces otherwise. Aggregates stay objects with invariants. I will not accept a rewrite of Payment into a record to look modern, and I will not accept a mutable command bean 'because that is how we did Spring 4.' Modular monolith shared types can be records for events too. No PAN on the command — ids and amounts only.",
+    "commonMistakes": [
+      "Making JPA entities records and fighting the no-arg constructor.",
+      "Putting domain invariants only on the HTTP record so a worker can bypass them.",
+      "Using a mutable bean so tests can set fields after construction."
+    ],
+    "scoreRubric": "Engineer: record for command, class for JPA entity. Senior: Jackson/validation vs state machine. Staff: seam, 400 vs 422, no leaked internals. Principal: edge records as standard, no PAN, monolith shared types allowed."
+  },
+  {
+    "id": "AEJE-IQ-015",
+    "domain": "Java/JVM",
+    "difficulty": "senior",
+    "topic": "CompletableFuture vs virtual threads for IO fan-out",
+    "question": "Payment-service on Java 21 / Spring Boot 3.5.5 must call an authorizer and a fraud check before Avery Chen's Harbor Bike Co create returns. A senior engineer wants CompletableFuture.allOf on the Tomcat pool; Sam Okada offers virtual threads. Compare the two for this IO fan-out and say which you would ship first.",
+    "followUps": [
+      "What breaks if the authorizer future is not timed and the servlet thread waits forever?",
+      "When is a reactive stack still the wrong answer for this monolith?"
+    ],
+    "expectedConcepts": [
+      "CompletableFuture uses an executor; default ForkJoinPool is the wrong pool for JDBC/HTTP",
+      "Virtual threads: blocking style, one task per remote call, watch pinning and bounds",
+      "Timeouts, cancellation, and thread-pool isolation",
+      "Fan-out still needs a transaction and idempotency story after joins"
+    ],
+    "engineerAnswer": "CompletableFuture fans out on some executor; if I use the common pool for HTTP I can starve the JVM. Virtual threads let me write blocking calls and join them. Both need timeouts.",
+    "seniorAnswer": "I would not run fraud and authorize on ForkJoinPool.commonPool(). If I stay on CompletableFuture I use a named, bounded executor and orTimeout. On Java 21 I prefer structured concurrency or two virtual threads started from the request thread, each with a deadline, then I join before I open the write transaction. I will not hold @Transactional open across the fan-out. Spring Boot 3.5.5 virtual-thread executors are fine if Sam bounded the connector and we do not pin in synchronized JDBC wrappers.",
+    "staffAnswer": "I measure queue time and tail latency for both designs under Harbor Bike Co replay. I want cancellation when the client disconnects, a bulkhead so fraud cannot eat authorize capacity, and logs with correlation id on both legs. I reject 'unlimited virtual threads' as a capacity plan — they are cheap, not free; they still hold HTTP clients and can stampede a dependency. I keep the modular monolith: fan-out is in-process, not a new service per hop.",
+    "principalAnswer": "I will sign blocking virtual threads with deadlines before a reactive rewrite. I will not sign unbounded common-pool futures on a money path. Extraction of fraud into its own JVM is a later failure-domain decision, not a prerequisite. No ND-in-Docker. No PAN on the wire to fraud. Timeouts are a product control, not an afterthought.",
+    "commonMistakes": [
+      "Using ForkJoinPool.commonPool() for blocking HTTP.",
+      "Holding the database transaction open during the fan-out.",
+      "Assuming virtual threads need no bounds or timeouts."
+    ],
+    "scoreRubric": "Engineer: names executor vs virtual threads and timeouts. Senior: bounded pool, no transaction across IO, pinning awareness. Staff: bulkheads, measurement, rejects unlimited VTs. Principal: VT-first over reactive rewrite; no ND-in-Docker; no PAN."
+  },
+  {
+    "id": "AEJE-IQ-016",
+    "domain": "Java/JVM",
+    "difficulty": "senior",
+    "topic": "deadlock vs livelock vs thread starvation",
+    "question": "Harbor Bike Co creates stall on payment-service (Java 21, Spring Boot 3.5.5). Riley says deadlock, Priya says the Hikari pool is starved, and a dump shows threads retrying the same account lock without making progress. Distinguish deadlock, livelock, and thread starvation in this service, and tell me what evidence you would collect for each.",
+    "followUps": [
+      "What dump pattern is a deadlock that a livelock will not show?",
+      "How can a fair lock plus a hot Avery Chen account look like starvation?"
+    ],
+    "expectedConcepts": [
+      "Deadlock: cycle, no progress, classic dump cycle",
+      "Livelock: threads run but keep yielding/retrying",
+      "Starvation: runnable work never gets a carrier, lock, or pool connection",
+      "Evidence differs: dump cycle vs retry metrics vs pool wait"
+    ],
+    "engineerAnswer": "Deadlock is a cycle of locks. Livelock is threads that keep retrying and never finish. Starvation is work that never gets a thread or a connection. I would take a dump and look at Hikari waits.",
+    "seniorAnswer": "Deadlock: two threads each own a monitor the other needs — the dump shows BLOCKED with a cycle. Livelock: both workers run, CPU is not zero, they back off and retry the same Harbor Bike Co account lock or idempotency insert and never commit. Starvation: Tomcat or virtual threads wait on Hikari while a long transaction holds connections, or a fair lock lets one hot account hog. I match the class to a metric before I bounce the task.",
+    "staffAnswer": "I collect two dumps, Hikari active/pending, lock wait traces, and retry counters. I will not call it deadlock without a cycle. I will not raise the pool to 'fix' a lock cycle. I will not raise -Xmx. If Sam's virtual threads are starving carriers because of pinning, that is starvation with a pinning event, not a deadlock. I keep Morgan Hale's cell out of the story unless the dump is actually from that process.",
+    "principalAnswer": "Stabilize first: fail readiness on a stuck task, protect the error budget, then name the class with evidence. I will not accept a SEV-1 that says 'deadlock' with no cycle and no pool graph. I will not accept ND-in-Docker as a deadlock lab that becomes prod. Fix the lock order or the pool ownership; do not split the monolith to dodge a cycle you have not drawn.",
+    "commonMistakes": [
+      "Using deadlock as a synonym for any hang.",
+      "Increasing Hikari max to paper over a lock cycle.",
+      "Ignoring livelock because CPU is not idle."
+    ],
+    "scoreRubric": "Engineer: defines the three classes. Senior: maps each to dump/metric evidence. Staff: refuses mislabeling and pinning-as-deadlock. Principal: evidence standard and stabilize first; no ND-in-Docker; no unearned split."
+  },
+  {
+    "id": "AEJE-IQ-017",
+    "domain": "Java/JVM",
+    "difficulty": "staff",
+    "topic": "safepoints, TTSP and P99 GC pauses",
+    "question": "Priya Nair's P99 on payment-service jumped while G1 pause logs look modest. A staff engineer mentions time-to-safepoint. Explain safepoints and TTSP on Java 21 HotSpot, how they steal Harbor Bike Co tail latency beyond the GC pause number, and what you would measure on this Spring Boot 3.5.5 JVM.",
+    "followUps": [
+      "Which thread states delay a safepoint?",
+      "What logging or JFR would you enable on a canary without leaving it on forever?"
+    ],
+    "expectedConcepts": [
+      "Safepoints: threads must reach a known point for GC/deopt",
+      "TTSP: time to get every thread to the safepoint",
+      "Counted loops, JNI, and disable-explicit-gc myths",
+      "P99 includes TTSP plus pause, not pause alone"
+    ],
+    "engineerAnswer": "A safepoint is where the JVM can stop application threads safely. If one thread takes a long time to reach it, the GC pause log can look short while users still wait.",
+    "seniorAnswer": "TTSP is the wait for every Java thread — Tomcat, Hikari users, compiler — to reach a safepoint. A tight counted loop or a long JNI in a payment library can inflate TTSP while -Xlog:gc still shows a 15 ms pause. Avery Chen's P99 includes that wait. I would enable safepoint logging or JFR Safepoint events on a Jordan canary, not on every task all month, and I would look for threads that arrive last.",
+    "staffAnswer": "I separate 'GC pause' from 'application stop time.' I want SafepointBegin/End, last-thread identity, and whether we are seeing allocation-triggered young GCs versus deopt safepoints after a deploy. I will not set -XX:+UseG1GC flags I cannot name, and I will not set -Xmx to the cgroup to reduce safepoints. I check for System.gc from a library and for uninterruptible native crypto. I report to Priya in milliseconds of stop-the-world including TTSP, not the collector's self-reported pause only.",
+    "principalAnswer": "Staff may enable safepoint diagnostics on a canary with an expiry. Production standard stays G1 with bounded logging. I will not accept a principal review that 'fixed P99' by disabling safepoints or by moving to ND-in-Docker for a different collector UI. If TTSP is the class, we fix the loop or the JNI, we do not invent a new runtime.",
+    "commonMistakes": [
+      "Treating the GC pause number as the full stop-the-world cost.",
+      "Leaving verbose safepoint logging on in production indefinitely.",
+      "Setting -Xmx equal to task memory to 'make GC rarer.'"
+    ],
+    "scoreRubric": "Engineer: defines safepoint and delayed arrival. Senior: TTSP vs GC log, canary JFR. Staff: last-thread identity, deopt vs GC safepoints, reports full stop time. Principal: canary-with-expiry policy; refuses ND-in-Docker and cgroup-sized heaps."
+  },
+  {
+    "id": "AEJE-IQ-018",
+    "domain": "Java/JVM",
+    "difficulty": "staff",
+    "topic": "JIT deoptimization during a traffic spike",
+    "question": "Right after Jordan Voss's canary of payment-service 3.8.x, Harbor Bike Co traffic spikes and CPU jumps on the Java 21 JVM. JFR shows deoptimization events on Money and PaymentApplicationService.create. Staff-level: what is deopt doing, why can a spike trigger it, and what will you not set to 'warm' the Spring Boot 3.5.5 service?",
+    "followUps": [
+      "Why is -Xcomp a bad production warmup for this API?",
+      "How can a new EUR payment after a USD-only warmup cause a deopt storm?"
+    ],
+    "expectedConcepts": [
+      "C2 speculation and deopt back to interpreter/C1",
+      "Polymorphism, uncommon traps, class loading",
+      "-Xcomp / -Xint are not prod warmup",
+      "Canary warmup vs incident bounce"
+    ],
+    "engineerAnswer": "The JIT guessed a type or branch and was wrong, so it throws away compiled code and runs slower code again. A new path like EUR after USD-only traffic can do that.",
+    "seniorAnswer": "C2 speculates: Money currency is always USD, a call is monomorphic, a class is final enough. A spike that first hits EUR, a new subclass, or a rare fail path after Jordan's canary invalidates those guesses. Deopt is correctness, not a crash. I would look at JFR deopt reasons, not raise -Xmx, and not bounce Morgan Hale's cell. I warm with real synthetic traffic that includes USD and EUR, not -Xcomp.",
+    "staffAnswer": "I treat a post-deploy CPU spike as a warmup/deopt class until proven otherwise. I compare the canary's code cache and compiler queue to the old task, confirm the spike correlates with first-seen branches, and decide whether to hold the canary or roll forward. I add a warmup script that hits create, replay, decline, and refund — no PAN. I reject -Xcomp, -Xint, and 'compile everything in CI and copy the code cache.' I watch for deopt loops if a profile never stabilizes.",
+    "principalAnswer": "Warmup is part of the release standard, not heroics on the SEV bridge. I will not accept -Xcomp in Kubernetes. I will not accept a leftover-cell bounce as a JIT fix. If deopt is chronic because the model is megamorphic, we simplify the call site — we do not split the modular monolith to get a 'simpler JIT profile' without evidence.",
+    "commonMistakes": [
+      "Setting -Xcomp in production to skip warmup.",
+      "Calling deopt a JVM bug and bouncing the wrong estate.",
+      "Warming only the USD happy path and then taking EUR traffic."
+    ],
+    "scoreRubric": "Engineer: deopt is speculation undone. Senior: ties spike to new paths, rejects -Xcomp. Staff: canary comparison, warmup coverage, deopt reasons. Principal: warmup as release standard; no -Xcomp in K8s; no cell bounce; monolith valid."
+  },
+  {
+    "id": "AEJE-IQ-019",
+    "domain": "Java/JVM",
+    "difficulty": "principal",
+    "topic": "JVM flags you will and will not set in Kubernetes",
+    "question": "Sam Okada asks you, as a principal, which Java 21 flags you will set on payment-service in Kubernetes or Fargate for Spring Boot 3.5.5, and which you will refuse. Harbor Bike Co is on a 2048 MiB task. Be specific about heap, GC, container awareness, and the flags you will never put in JAVA_TOOL_OPTIONS.",
+    "followUps": [
+      "Why is -Xmx equal to the container memory limit forbidden?",
+      "Which flags belong on a canary only, with an expiry?"
+    ],
+    "expectedConcepts": [
+      "Explicit -Xmx below cgroup; never equal",
+      "UseContainerSupport / RAM percentage caveats",
+      "G1 default; no -Xcomp, no HeapDumpOnOutOfMemoryError onto tiny disks by default",
+      "Lab-only flags (NMT detail, safepoint logs) are not cluster defaults"
+    ],
+    "engineerAnswer": "I set an explicit -Xmx under the task memory, for example 1024m on 2048 MiB, enable G1, and I never set -Xmx equal to the container limit.",
+    "seniorAnswer": "I want -Xms/-Xmx reviewed, container support left on, G1 unless a canary proved ZGC, and a small set of GC logs. I refuse -Xmx2048m on a 2048 MiB task, refuse -Xcomp, refuse DisableExplicitGC as a cargo-cult, and I am careful with MaxRAMPercentage at 100. HeapDumpOnOutOfMemoryError needs a volume and a PII story or it stays off. Always-on NMT detail is a canary flag, not a cluster default.",
+    "staffAnswer": "I publish a flag standard with owners: Sam for the task spec, Riley for app behavior, Priya for SLO impact. Each flag has a reason and a rollback. I review JAVA_TOOL_OPTIONS in the image so we do not stack three Xmx values. I allow JFR on canaries with retention limits. I reject flag soup copied from a cell or from ND. I reject setting thread stack sizes that multiply Tomcat plus Hikari past native headroom.",
+    "principalAnswer": "I will sign a short, owned flag list: explicit heap below the cgroup, G1, container awareness, bounded logging. I will not sign -Xmx equal to container memory, 100 percent RAM percentage, -Xcomp, ND-in-Docker flag packs, or always-on HeapDumpOnOutOfMemoryError without a data path. Modular monolith means one JVM to size, not twelve mystery JAVA_TOOL_OPTIONS. Flags are change-controlled like code.",
+    "commonMistakes": [
+      "Setting -Xmx equal to the pod or Fargate memory limit.",
+      "Copying a large WAS/ND flag set into Boot on Kubernetes.",
+      "Leaving -Xcomp or detailed NMT on in every replica."
+    ],
+    "scoreRubric": "Engineer: Xmx below cgroup, G1, refuses equality. Senior: names refuse-list and dump caveats. Staff: owned standard, no stacked flags, canary-only diagnostics. Principal: signs a short list, forbids cgroup-sized heap and ND-in-Docker packs."
+  },
+  {
+    "id": "AEJE-IQ-020",
+    "domain": "Java/JVM",
+    "difficulty": "principal",
+    "topic": "evidence standard for a JVM SEV-1",
+    "question": "It is a SEV-1 on payment-service. Avery Chen cannot complete Harbor Bike Co creates. Someone on the bridge says 'it's the JVM' and wants to bounce every Java 21 / Spring Boot 3.5.5 task. As principal, what evidence standard do you require before that sentence is allowed to stand, and what do you refuse as a story?",
+    "followUps": [
+      "What is the minimum artifact set before you accept a heap, GC, or thread class?",
+      "How do you keep leftover-cell folklore out of the write-up?"
+    ],
+    "expectedConcepts": [
+      "Quote metrics and artifacts; JVM is a hypothesis class not a RCA slogan",
+      "Stabilize merchants first; no mass bounce without a graph",
+      "Refuse leftover cell, ND-in-Docker, and invented files",
+      "No PAN in the bridge notes"
+    ],
+    "engineerAnswer": "I would not bounce everything because someone said JVM. I want a dump or GC log or OOM message that matches the symptom, then I fail readiness on the bad task.",
+    "seniorAnswer": "Minimum: the user-visible symptom on POST /api/v1/payments, one JVM artifact (exception, GC log, dump, NMT, or killer event), and a pool or RED metric that moved. 'It's the JVM' without a pool name is a slogan. I stabilize by taking a saturated task out of the ALB, not by restarting Morgan Hale's dmgr-east. I will not set -Xmx to the task size as the SEV action.",
+    "staffAnswer": "I run the incident like Module 13: quote, hypothesis, next gate. JVM classes I will accept are named: heap exhaustion, metaspace, native OOM, deadlock cycle, pool starvation, GC stop time including TTSP. Each needs an artifact. I reject a write-up whose only story is a deleted DNS record or a leftover cell FFDC we did not open. I keep PAN and passwords out of the timeline.",
+    "principalAnswer": "The standard I will sign: stabilize Harbor Bike Co first, then a named JVM pool with an artifact, then a change with an owner and rollback. I will not accept 'it's the JVM' as RCA. I will not accept ND-in-Docker, -Xmx equal to cgroup, or a cell bounce as the remedy. I will not accept a story that exists only because it is memorable. If we lack evidence, the hypothesis stays unproven and we do not mass-bounce the fleet.",
+    "commonMistakes": [
+      "Mass-bouncing tasks because someone said JVM.",
+      "Blaming a leftover cell or a folklore DNS story without opening this pack's artifacts.",
+      "Pasting PAN or heap dumps into the public bridge notes."
+    ],
+    "scoreRubric": "Engineer: wants an artifact before bounce. Senior: symptom plus JVM artifact plus metric; stabilize via readiness. Staff: named classes and rejected folklore. Principal: signs stabilize-then-evidence; refuses ND-in-Docker, cgroup heap, and slogan RCA."
+  },
+  {
+    "id": "AEJE-IQ-021",
+    "domain": "Spring/Jakarta",
+    "difficulty": "advanced",
+    "topic": "IoC: constructor injection vs field injection",
+    "question": "Walk me through why BayPay's payment-service on Spring Boot 3.5.5 / Java 21 uses constructor injection on PaymentApplicationService instead of @Autowired fields. What breaks with field injection in tests and at runtime, and when would Jakarta @Inject on a constructor be the same idea on Liberty?",
+    "followUps": [
+      "How does constructor injection reveal a circular dependency at startup?",
+      "Why does field injection make a unit test lie about the graph?"
+    ],
+    "expectedConcepts": [
+      "Constructor injection: required deps, immutability, testability",
+      "Field injection hides the graph and allows half-built beans",
+      "Circular dependencies and @Transactional proxies",
+      "@Inject constructor is the Jakarta equivalent"
+    ],
+    "engineerAnswer": "Constructor injection lists every dependency. Field injection can leave nulls in a plain new PaymentApplicationService() test. BayPay's service takes repositories in the constructor.",
+    "seniorAnswer": "PaymentApplicationService's constructor is the composition contract: customers, accounts, payments, idempotency, authorizer, posting, clock. Missing a bean fails startup instead of NPE on Avery Chen's first create. Field @Autowired is harder to test, allows mutation, and can hide cycles until a request. I keep the constructor even when there are many args — that pressure means the class is doing too much, not that I should switch to fields. Jakarta @Inject on a constructor is the same design on a Liberty bean.",
+    "staffAnswer": "I review PRs that add field injection 'to save lines' and I ask for the cycle they are hiding. I want seams so posting can become a publisher later without rewriting the controller — that only works if dependencies are constructor-visible. I watch for self-injection hacks to break cycles caused by @Transactional proxies. I will not accept @Autowired on 20 fields as a staff-quality service.",
+    "principalAnswer": "Constructor injection is the standard on payment-service and on Jakarta ports. Field injection is a review fail except in a framework extension point we do not own. The modular monolith stays valid because those constructors are the module seams. I will not split services just to shorten a constructor, and I will not move to ND-in-Docker to get a different injection style.",
+    "commonMistakes": [
+      "Using field injection so the constructor 'stays clean.'",
+      "new-ing the service in tests and wondering why repositories are null.",
+      "Breaking a cycle with setter injection instead of splitting the type."
+    ],
+    "scoreRubric": "Engineer: constructor lists deps; fields can be null. Senior: startup failure, tests, Jakarta @Inject. Staff: seams, cycles, review fail on field injection. Principal: standard across Boot and Jakarta; monolith seams; no ND-in-Docker."
+  },
+  {
+    "id": "AEJE-IQ-022",
+    "domain": "Spring/Jakarta",
+    "difficulty": "advanced",
+    "topic": "Bean Validation on payment commands",
+    "question": "A Harbor Bike Co client posts POST /api/v1/payments to payment-service (Spring Boot 3.5.5, Java 21) with amount 0 and currency USDT. Another caller skips HTTP and calls the application service with a negative Money. Explain how Jakarta Bean Validation on CreatePaymentRequest should behave versus domain rules, and which status codes you want.",
+    "followUps": [
+      "What annotation set do you expect on the create record?",
+      "Why must Money still reject a bad amount if Bean Validation never ran?"
+    ],
+    "expectedConcepts": [
+      "@Valid on the body; MethodArgumentNotValidException → 400",
+      "Domain rules (account ownership, frozen) → 422",
+      "Invariants in Money, not only annotations",
+      "Idempotency and validation order"
+    ],
+    "engineerAnswer": "Bean Validation on the request record should fail amount 0 and USDT with HTTP 400. A frozen account or ownership failure is domain and should be 422. Money must still reject negatives.",
+    "seniorAnswer": "CreatePaymentRequest uses @NotNull ids, @DecimalMin(0.01), @Pattern USD|EUR|GBP, @Size on reference. The controller parameter is @Valid, so USDT and 0 never reach authorize. If a worker or test bypasses HTTP, Money's constructor still fails closed. Account-not-owned and frozen-account declines are not Bean Validation; they are application/domain and ApiExceptionHandler maps them to 422. I do not persist a validation failure as a COMPLETED payment.",
+    "staffAnswer": "I review that validation is syntactic and cheap, and that we do not put PAN-shaped fields on the record. I want OpenAPI to match the annotations. I want a test for 400 versus 422 versus 409 idempotency conflict. I reject @Valid on the entity as the only guard. I also reject returning 200 with a body that says error because someone feared Bean Validation.",
+    "principalAnswer": "HTTP 400 for syntax, 422 for domain, 409 for idempotency conflict is a published contract. I will not accept a design that trusts annotations alone for money. No PAN on the command. The same invariant lives in shared so refund-service cannot bypass it. That is a reason to keep the modular monolith's shared module, not to invent a validation microservice.",
+    "commonMistakes": [
+      "Returning 201 or 200 on a Bean Validation failure.",
+      "Putting account-ownership rules only in annotations a worker can skip.",
+      "Validating and then logging raw card numbers."
+    ],
+    "scoreRubric": "Engineer: 400 vs 422 and Money still checks. Senior: names annotations and handler mapping. Staff: contract tests, no PAN, OpenAPI match. Principal: published status contract and shared invariants; monolith shared module is valid."
+  },
+  {
+    "id": "AEJE-IQ-023",
+    "domain": "Spring/Jakarta",
+    "difficulty": "senior",
+    "topic": "@Transactional boundary that silently swallowed a refund",
+    "question": "Riley Okonkwo has a Harbor Bike Co refund that returned 200 from refund-service — same Java 21 / Spring Boot 3.5.5 modular monolith as payment-service — but the ledger never moved and the payment is still COMPLETED. Someone caught an exception inside the @Transactional method and logged it. Explain the transaction boundary, why the refund was silently swallowed, and how you would fix it without a heroic double-write.",
+    "followUps": [
+      "What happens if the same class calls this.refund() instead of going through the proxy?",
+      "Checked versus unchecked exceptions and rollback rules?"
+    ],
+    "expectedConcepts": [
+      "Spring rolls back on unchecked exceptions that leave the proxy",
+      "Swallowed exceptions cause commit of a partial/no-op success",
+      "Self-invocation skips @Transactional",
+      "Ledger and refund row must share one boundary"
+    ],
+    "engineerAnswer": "If you catch the exception inside @Transactional and return normally, Spring commits. The API can look successful while the ledger write never happened. I would let the exception propagate.",
+    "seniorAnswer": "RefundApplicationService should be the boundary, not the controller. PaymentPosting or ledger work must join that transaction. If a catch block logs and returns, Spring sees a clean method and commits whatever was flushed — or commits nothing useful and still returns 200. Self-invocation of a @Transactional helper does nothing. I fix by failing the request, marking rollback, and letting the client retry with the same idempotency key. I do not add a second 'compensate' write from the catch block.",
+    "staffAnswer": "I want a test that throws after the refund row save and asserts no commit and no 200. I review rollbackFor if someone used a checked exception. I look for @Transactional on private methods and for REQUIRES_NEW that committed the refund row while the ledger failed. I will not 'fix' it by bouncing a task. I will not tell Priya this is a GC event. I add a metric for refund_commit_failed and a reconciliation query, but the code fix is the boundary.",
+    "principalAnswer": "A 200 with a missing ledger line is a money defect. The standard is one transaction, exceptions leave the proxy, idempotent retry. I will not accept a catch-and-return as 'resilience.' I will not accept ND-in-Docker to get JTA as a substitute for a correct Spring boundary. Reconciliation is a backstop, not the design. Modular monolith stays valid: refund-service can share the ledger transaction in-process.",
+    "commonMistakes": [
+      "Catching the exception, logging it, and returning 200 so the API 'stays up.'",
+      "Calling this.refund() on the same class and thinking @Transactional ran.",
+      "Adding REQUIRES_NEW on the refund row so something always commits."
+    ],
+    "scoreRubric": "Engineer: swallowed exception commits. Senior: proxy boundary, self-invocation, fail and retry. Staff: tests for rollbackFor and REQUIRES_NEW. Principal: money-defect standard; JTA/ND-in-Docker is not the fix; monolith in-process TX is valid."
+  },
+  {
+    "id": "AEJE-IQ-024",
+    "domain": "Spring/Jakarta",
+    "difficulty": "senior",
+    "topic": "Spring Security vs Jakarta security on Liberty",
+    "question": "BayPay's production payment-service is Spring Boot 3.5.5 on Java 21 with Spring Security in front of POST /api/v1/payments. Morgan Hale still has a Liberty lab with Jakarta Security annotations on an older WAR. A senior candidate: compare the two models, what you would keep equivalent for Harbor Bike Co, and what you would refuse to run as production.",
+    "followUps": [
+      "Where does authentication live versus method authorization on each stack?",
+      "Why is mixing both filters on one Boot app a failure class?"
+    ],
+    "expectedConcepts": [
+      "Spring Security filter chain vs Jakarta Security / SecurityContext",
+      "Same product rules: mTLS or JWT at the edge, method security on money writes",
+      "Do not double-wrap or disable security 'for the lab' in prod",
+      "Liberty leftover is not the Fargate estate"
+    ],
+    "engineerAnswer": "Spring Security uses a filter chain and annotations like @PreAuthorize. Jakarta Security on Liberty uses HttpAuthenticationMechanism and @RolesAllowed. Both should deny an unauthenticated create.",
+    "seniorAnswer": "I would keep one security stack per process. On Boot, the ALB or API Gateway plus Spring Security must authenticate the caller before Bean Validation; method security guards refund and admin. On Liberty, Jakarta Security plus server constraints do the same job. I will not enable both Spring Security and a leftover Jakarta filter on the same payment-service — that is an order-of-filters defect. I will not copy Liberty role names from dmgr-east into Fargate and call it done.",
+    "staffAnswer": "I want a threat model: merchant identity, service-to-service, and actuator. Spring Security resource-server JWT is the Boot default I would review; Jakarta Security is fine on a true Liberty runtime with an owner. I reject security:none profiles in any image Jordan ships. I reject mixing BASIC in the WAR and OAuth on the ALB without a written identity story. I keep PAN out of tokens and logs.",
+    "principalAnswer": "Production identity is the Boot path on Fargate, not Morgan Hale's cell. I will not fund ND-in-Docker so we can 'keep Jakarta Security.' I will not accept two authoritative security filters. Equivalent product rules — who may create, who may refund — must be written once and mapped, not reinvented per runtime. Modular monolith may host both payment and refund if the method security is consistent.",
+    "commonMistakes": [
+      "Running Spring Security and Jakarta Security filters in one app 'to be safe.'",
+      "Disabling security in a prod-like profile because the lab used permitAll.",
+      "Treating the leftover Liberty cell as the production identity provider."
+    ],
+    "scoreRubric": "Engineer: names both models and an unauthenticated deny. Senior: one stack per process, method security on writes. Staff: threat model, no security:none, no PAN. Principal: Boot is prod estate; no ND-in-Docker; consistent rules across modules."
+  },
+  {
+    "id": "AEJE-IQ-025",
+    "domain": "Spring/Jakarta",
+    "difficulty": "staff",
+    "topic": "OpenEntityManagerInView in a payment worker",
+    "question": "Someone enabled OpenEntityManagerInView on BayPay's Java 21 / Spring Boot 3.5.5 payment-service and the same default leaked into the transaction-worker that posts Harbor Bike Co ledger lines. Staff-level: what OSIV is for, why it is the wrong default on a payment worker, and what lazy-load failures you would rather see.",
+    "followUps": [
+      "How does OSIV extend the persistence context past the @Transactional method?",
+      "What happens to connection hold time and Hikari under Avery Chen load?"
+    ],
+    "expectedConcepts": [
+      "OSIV keeps the EntityManager open for the view/request",
+      "Workers have no view; OSIV holds connections across extra work",
+      "LazyInitializationException is a signal to fix the query",
+      "Explicit transaction + fetch plan on the posting path"
+    ],
+    "engineerAnswer": "OpenEntityManagerInView keeps the JPA session open after the service method so a view can lazy-load. A worker is not a view, so I would turn it off and fetch what I need in the transaction.",
+    "seniorAnswer": "On a web request OSIV can hide LazyInitializationException by holding the persistence context until the JSON is written — and it holds a JDBC connection while Jackson walks Payment. On transaction-worker there is no view; OSIV still opens an EM around the listener and can hold Hikari connections across JMS handling or extra logging. I disable spring.jpa.open-in-view for the worker (and I prefer it off for the API too). I want a fetch join or a DTO query inside @Transactional so Avery's post does not lazy-load Account after commit.",
+    "staffAnswer": "I treat OSIV-on as a review fail for any money worker. I measure Hikari active time with OSIV on versus off under Harbor Bike Co replay. I would rather see a lazy-load exception in CI than a connection leak in prod. I set open-in-view=false in shared config and only allow a documented exception on a read-only admin UI, never on posting. I will not raise the pool to hide OSIV hold time, and I will not raise -Xmx.",
+    "principalAnswer": "Default is OSIV off on payment-service and workers. Lazy load in a worker is a design bug, not a reason to keep the session open. I will not accept OSIV as 'Jakarta compatibility.' I will not move posting to ND-in-Docker to get a different persistence context. The modular monolith may share repositories; each process still owns its persistence-context lifetime.",
+    "commonMistakes": [
+      "Leaving open-in-view true because it is the Boot default.",
+      "Raising Hikari max when OSIV holds connections through JSON or JMS.",
+      "Catching LazyInitializationException and opening a new session per field."
+    ],
+    "scoreRubric": "Engineer: OSIV is for views; workers should fetch in-TX. Senior: connection hold and fetch plans. Staff: review fail, measure pool hold, OSIV off. Principal: org default off; no ND-in-Docker; per-process persistence lifetime."
+  },
+  {
+    "id": "AEJE-IQ-026",
+    "domain": "Spring/Jakarta",
+    "difficulty": "staff",
+    "topic": "JTA vs Spring transactions when a JMS send must enlist",
+    "question": "Staff interview: payment-service on Spring Boot 3.5.5 / Java 21 writes the Harbor Bike Co ledger and must send a JMS PaymentAuthorized event so notification-service fires. If the JDBC commit succeeds and the send fails, Avery Chen's merchant is wrong. When do you enlist JMS in JTA, when do you keep Spring DataSourceTransactionManager plus an outbox, and what do you refuse?",
+    "followUps": [
+      "What does last-resource optimization risk on a Boot JVM without a full JTA manager?",
+      "How does the modular monolith change whether you need XA today?"
+    ],
+    "expectedConcepts": [
+      "Spring @Transactional is usually local JDBC, not XA",
+      "JTA/XA enlists JDBC and JMS in one 2PC",
+      "Transactional outbox avoids XA for most Boot deployments",
+      "Liberty JTA vs Boot Atomikos / Narayana — do not invent ND-in-Docker"
+    ],
+    "engineerAnswer": "A local Spring transaction commits the database even if the JMS send fails. JTA would enlist both. An outbox table written in the same JDBC transaction is another way.",
+    "seniorAnswer": "Today the modular monolith can publish in-process and skip the broker. If we extract notification, I will not pretend @Transactional on the service enlists JMS. I prefer an outbox row in the same JDBC transaction, then a poller sends JMS — at-least-once with idempotent consumers. I would only take JTA/XA if we already have a manager we operate (Liberty JTA, or a reviewed Narayana) and we have tested rollback of both legs. I will not add Atomikos on a Friday SEV.",
+    "staffAnswer": "I draw the failure: DB commit / send fail, send success / DB rollback, and broker replay. XA solves the first two at the cost of heuristic mixed outcomes and a transaction manager to page. Outbox solves them with operational simplicity and a reconciliation query Priya can alert on. I reject last-resource gamble as a silent default. I reject running this on ND-in-Docker 'because WAS had JTA.' If we are on Liberty for real, I will use the server's JTA with an owner, not a second TM.",
+    "principalAnswer": "Default for Boot on Fargate is local Spring transactions plus outbox, not XA. JTA is allowed on a supported Liberty runtime with a named owner — not as a reason to keep a leftover cell, and never as ND-in-Docker. Dual-write without a pattern is a money defect. Modular monolith in-process notification remains a valid way to avoid this distributed problem entirely.",
+    "commonMistakes": [
+      "Assuming @Transactional enlists JMS on a local DataSourceTransactionManager.",
+      "Adding XA mid-incident without a transaction manager owner.",
+      "Recommending ND-in-Docker to 'get JTA for free.'"
+    ],
+    "scoreRubric": "Engineer: local TX vs JTA vs outbox. Senior: prefers outbox, XA only if operated. Staff: failure matrix, rejects last-resource and ND-in-Docker. Principal: Boot+outbox default; Liberty JTA only with owner; in-process monolith valid."
+  },
+  {
+    "id": "AEJE-IQ-027",
+    "domain": "Spring/Jakarta",
+    "difficulty": "principal",
+    "topic": "when Spring Boot on Liberty is the wrong runtime",
+    "question": "A principal-level design review: Jordan Voss wants to run the Java 21 / Spring Boot 3.5.5 payment-service fat JAR inside WebSphere Liberty — or even ND — because 'that is our Java standard.' When is Spring Boot on Liberty the wrong runtime for BayPay, what would you run instead, and which answers fail this interview?",
+    "followUps": [
+      "What operational contract does a Boot fat JAR on Fargate already satisfy?",
+      "When is Liberty actually the right host for a Jakarta-shaped module?"
+    ],
+    "expectedConcepts": [
+      "Boot on Fargate/K8s is the production payment-service shape",
+      "Liberty is right for Jakarta EE apps that use server JTA/JCA — not a decorative host",
+      "Never ND-in-Docker",
+      "Two classloaders / two metrics stacks are a cost, not a free standard"
+    ],
+    "engineerAnswer": "If the app is a Spring Boot fat JAR with its own Tomcat and Actuator, putting it inside Liberty adds a second server you do not need. I would run the JAR on Fargate.",
+    "seniorAnswer": "Spring Boot on Liberty is wrong when we only want a process supervisor: we pay for two servlet stacks, two health models, and a classloader story we do not use. Harbor Bike Co creates already work on port 8080 with Boot actuators. Liberty is right when the module is Jakarta EE and needs server JTA, JCA, or a WAR the platform team already operates — with an owner, not a leftover cell. I will not wrap the Boot JAR in ND to satisfy a standard.",
+    "staffAnswer": "I compare failure domains: Fargate task replace versus Liberty rolling app update versus a cell. I count who pages on classloader leaks versus OOM 137. If the only reason is 'Java apps go on Liberty,' I write a dissent. I allow a documented Liberty host for a Jakarta adapter, with Sam owning the image and Priya owning the SLO. I refuse mixing Boot actuators and Liberty monitor in one SEV without a map.",
+    "principalAnswer": "I will sign Boot on Fargate for payment-service. I will sign Liberty for a genuine Jakarta workload with JTA/JCA and a platform owner. I will not sign Spring Boot on Liberty as a decorative standard, and I will never sign ND-in-Docker. Modular monolith on a single Boot JVM is valid. Leftover dmgr-east is not spare capacity and not a runtime strategy.",
+    "commonMistakes": [
+      "Recommending ND-in-Docker as the enterprise-standard host.",
+      "Putting a Boot fat JAR on Liberty with no Jakarta features used.",
+      "Using Morgan Hale's leftover cell as production capacity."
+    ],
+    "scoreRubric": "Engineer: fat JAR does not need a second server. Senior: when Liberty is real vs decorative. Staff: failure-domain comparison and dissent. Principal: Boot/Fargate for payments; Liberty only for Jakarta-with-owner; never ND-in-Docker."
+  },
+  {
+    "id": "AEJE-IQ-028",
+    "domain": "Spring/Jakarta",
+    "difficulty": "advanced",
+    "topic": "Actuator exposure vs production attack surface",
+    "question": "Jordan Voss enabled Spring Boot 3.5.5 Actuator on payment-service so Priya Nair can scrape health. A developer opened /actuator/env and /actuator/heapdump on the ALB hostname. In this Java 21 interview, what do you expose, what do you lock down, and how do liveness and readiness stay available for Harbor Bike Co traffic without handing out the process?",
+    "followUps": [
+      "Which two health endpoints does the Fargate target group need?",
+      "Why is heapdump on a public path a SEV-class exposure?"
+    ],
+    "expectedConcepts": [
+      "Expose liveness and readiness only on the probe path",
+      "env, heapdump, logfile, beans are sensitive",
+      "Separate management port / network policy",
+      "No PAN or secrets in actuator output"
+    ],
+    "engineerAnswer": "I would expose /actuator/health/liveness and /actuator/health/readiness for probes. I would not expose env or heapdump on the public ALB.",
+    "seniorAnswer": "Probes stay on 8080 or a management port that only the load balancer and kubelet can reach. I set management.endpoints.web.exposure.include to health — maybe prometheus on a scrape network — and I leave heapdump, env, configprops, threaddump off the internet. A heapdump endpoint is a production freeze and a PII path. Env can leak datasource URLs. Harbor Bike Co creates do not need those endpoints to succeed.",
+    "staffAnswer": "I want a written exposure list, a network policy, and a test that the ALB hostname returns 404 or 401 for /actuator/env. I review that health groups do not include downstream payment rails in liveness — fail readiness, not liveness, when Hikari is exhausted. I reject Actuator plus Spring Security permitAll. I reject attaching a heapdump from Actuator to Slack. No PAN, no BAYPAY_DB_PASSWORD in env.",
+    "principalAnswer": "Actuator is part of the production attack surface, not a convenience switch. I will sign health and authenticated metrics; I will not sign anonymous dump endpoints. I will not accept 'we needed it for the SEV' as a reason to leave heapdump on. I will not put Actuator on ND-in-Docker to copy WAS admin. Modular monolith means one careful exposure list, not five open admin UIs.",
+    "commonMistakes": [
+      "Exposing * or heapdump/env on the public hostname.",
+      "Putting secrets or PAN into environment variables that /actuator/env would show.",
+      "Failing liveness when a dependency is down and looping restarts."
+    ],
+    "scoreRubric": "Engineer: health only, no public dumps. Senior: include-list, management port, readiness vs liveness. Staff: network policy, tests, no secrets. Principal: attack surface standard; no dump-for-SEV; no ND-in-Docker admin."
+  },
+  {
+    "id": "AEJE-IQ-029",
+    "domain": "Spring/Jakarta",
+    "difficulty": "senior",
+    "topic": "Testcontainers strategy for payment persistence",
+    "question": "Riley Okonkwo's payment-service tests on Java 21 / Spring Boot 3.5.5 use H2 for most slices and a Testcontainers Postgres for Harbor Bike Co create and replay. Design the strategy: what runs in H2, what must run in Postgres, and how you keep CI honest without making every test start a database.",
+    "followUps": [
+      "Which idempotency or locking behaviors will H2 lie about?",
+      "How do you share one container across a test class without leaking rows between Avery cases?"
+    ],
+    "expectedConcepts": [
+      "H2 for unit/slice; Testcontainers for SQL fidelity",
+      "Unique constraints, isolation, JSON/UUID types",
+      "Reuse containers; truncate or transactional rollback between tests",
+      "No PAN in fixtures; DemoIds only"
+    ],
+    "engineerAnswer": "I use H2 for fast unit tests and Testcontainers Postgres for API tests that depend on real constraints, like idempotency unique keys for Avery's create.",
+    "seniorAnswer": "H2 will not faithfully do Postgres unique violations, isolation, or some types. PaymentApiIT and replay tests should use Testcontainers. Domain tests for Money and the state machine stay in-memory. I reuse one Postgres container per class, wrap each test in a transaction or truncate tables, and I never put PAN in fixtures — DemoIds and amounts only. I fail the build if the container cannot start rather than silently falling back to H2 for those ITs.",
+    "staffAnswer": "I split the suite so PR CI runs unit plus one Postgres IT module, and nightly runs the heavier concurrency create test. I pin the Postgres image version Jordan also uses in paper prod notes. I watch for tests that @DirtiesContext the whole Spring Boot 3.5.5 app per method. I reject a strategy that needs Docker-in-ND or a shared dev cell database. Flyway/Liquibase must run against the same container the IT uses.",
+    "principalAnswer": "Persistence tests that guard money invariants run on real Postgres. That is a quality gate, not optional local flavor. I will not accept H2-only as the merge bar for idempotency. I will not accept ND-in-Docker as the Testcontainers host. The modular monolith can share one test database schema across modules; we do not need a database per extracted service to test uniqueness.",
+    "commonMistakes": [
+      "Running idempotency uniqueness only on H2 and calling it done.",
+      "Starting a new container per test method and blowing CI time.",
+      "Loading PAN or live passwords into test fixtures."
+    ],
+    "scoreRubric": "Engineer: H2 vs Testcontainers split. Senior: constraint fidelity, reuse, no PAN. Staff: CI layers, pinned image, migrations. Principal: Postgres as merge bar for money tests; no ND-in-Docker; shared schema valid."
+  },
+  {
+    "id": "AEJE-IQ-030",
+    "domain": "Spring/Jakarta",
+    "difficulty": "staff",
+    "topic": "Jakarta EE mapping for a Spring-trained team",
+    "question": "Staff coaching: BayPay's payment-service team is Spring Boot 3.5.5 / Java 21 fluent and must read a Jakarta EE Liberty module Morgan Hale left behind. Map Spring ideas to Jakarta for them — injection, transactions, validation, persistence — and tell me what you would not tell them to rewrite first.",
+    "followUps": [
+      "What is the Jakarta pair for @Service plus constructor injection?",
+      "Where does @Transactional map, and where does UserTransaction appear?"
+    ],
+    "expectedConcepts": [
+      "@Service/@Component → @ApplicationScoped or @Stateless",
+      "Constructor @Autowired → @Inject",
+      "Spring @Transactional → Jakarta @Transactional / JTA",
+      "Bean Validation and JPA names already shared; do not rewrite the domain first"
+    ],
+    "engineerAnswer": "Spring @Service with a constructor becomes a CDI bean with @Inject. @Transactional has a Jakarta name too. @Valid and JPA look familiar. I would not start by rewriting Money.",
+    "seniorAnswer": "I map PaymentApplicationService to an @ApplicationScoped or @Stateless bean with constructor @Inject of repositories. Spring's @Transactional maps to Jakarta transaction interceptor or container JTA — same 'exceptions must leave the boundary' rule. CreatePaymentRequest validation is already Jakarta Bean Validation. JPA entities in shared stay. I teach the team the server's DataSource and JTA, not a new domain model. I do not tell them to extract microservices to avoid learning CDI.",
+    "staffAnswer": "I run a pairing map: IoC, TX, validation, persistence, security, messaging. I call out the traps: Spring proxies versus CDI interceptors, self-invocation still skips TX, OSIV is not a Jakarta default, and Liberty classloaders are a different leak class. I keep production payment-service on Boot; the Liberty module is a port, not a surprise rewrite. I schedule time for JNDI and JTA labs, not for ND-in-Docker. I use Avery Chen create as the same acceptance test on both stacks.",
+    "principalAnswer": "I will fund a mapping guide and a shared domain, not a rewrite of Harbor Bike Co into two languages of money. Spring-trained engineers should become bilingual; they should not be told the modular monolith is invalid or that ND-in-Docker is how you learn Jakarta. Boot remains the production runtime unless a Jakarta-only adapter is evidenced. Same status codes, same idempotency, same no-PAN rule.",
+    "commonMistakes": [
+      "Telling the team to rewrite the domain before they can map injection and TX.",
+      "Equating Spring @Transactional with a local TX while the Liberty module is JTA without saying so.",
+      "Recommending ND-in-Docker as the Jakarta training environment."
+    ],
+    "scoreRubric": "Engineer: basic annotation map, do not rewrite Money. Senior: CDI vs Spring, TX boundary, shared JPA. Staff: trap list, pairing plan, same acceptance test. Principal: bilingual team, monolith valid, Boot stays prod, never ND-in-Docker."
+  }
+]

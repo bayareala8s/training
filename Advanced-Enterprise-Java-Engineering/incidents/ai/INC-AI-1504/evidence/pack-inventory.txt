@@ -1,0 +1,25 @@
+# Pack inventory — INC-AI-1504
+# Synthetic BayPay. This is the complete evidence list.
+# Captured 2026-09-03T21:14:00Z by Priya Nair (teaching paste).
+
+Shipped in this directory:
+
+  ../README.md
+  ../timeline.json
+  ../student-worksheet.md
+  ecs-tasks.txt
+  alb-and-targets.txt
+  pack-inventory.txt          (this file)
+
+Omitted on purpose:
+
+  Database metrics            — no writer CPU, no RDS events, no Multi-AZ failover paste
+  evidence/db-failover.json   — NOT IN THIS PACK
+  Thread dumps
+  Application logs
+  dmgr-east / PaymentCluster cell dumps
+
+Priya Nair: "If BayOps cites evidence/db-failover.json, that path does not exist here.
+Do not create it to make the model look right. Leftover ND is not on the merchant path."
+
+Riley Okonkwo: "humanApproval stays rejected until a named human reads the files we actually shipped."

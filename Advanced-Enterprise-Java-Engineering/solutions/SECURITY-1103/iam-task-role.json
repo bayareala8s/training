@@ -1,0 +1,33 @@
+{
+  "RoleName": "baypay-1103-task",
+  "Description": "ECS task role for the payment JVM. No AdministratorAccess. No GetSecretValue — ECS injects env via the execution role.",
+  "AssumeRolePolicyDocument": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "EcsTasksAssume",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ecs-tasks.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "InlinePolicyName": "baypay-1103-task",
+  "InlinePolicyDocument": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "NoAccountAdmin",
+        "Effect": "Deny",
+        "Action": [
+          "iam:*",
+          "organizations:*",
+          "account:*"
+        ],
+        "Resource": "*"
+      }
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "RoleName": "baypay-1103-execution",
+  "Description": "ECS execution role: pull image, write logs, read one secret, decrypt one CMK.",
+  "AssumeRolePolicyDocument": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "EcsTasksAssume",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "ecs-tasks.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "InlinePolicyName": "baypay-1103-execution",
+  "InlinePolicyDocument": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "EcrAuth",
+        "Effect": "Allow",
+        "Action": "ecr:GetAuthorizationToken",
+        "Resource": "*"
+      },
+      {
+        "Sid": "EcrPullPayment",
+        "Effect": "Allow",
+        "Action": [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ],
+        "Resource": "arn:aws:ecr:us-west-2:123456789012:repository/baypay/payment-service"
+      },
+      {
+        "Sid": "LogsPayment",
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        "Resource": "arn:aws:logs:us-west-2:123456789012:log-group:/ecs/baypay-1101/payment-service:*"
+      },
+      {
+        "Sid": "ReadPaymentDbSecret",
+        "Effect": "Allow",
+        "Action": [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ],
+        "Resource": "arn:aws:secretsmanager:us-west-2:123456789012:secret:baypay/payment/db*"
+      },
+      {
+        "Sid": "DecryptPaymentCmk",
+        "Effect": "Allow",
+        "Action": [
+          "kms:Decrypt",
+          "kms:DescribeKey"
+        ],
+        "Resource": "arn:aws:kms:us-west-2:123456789012:key/aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeee1103"
+      }
+    ]
+  }
+}

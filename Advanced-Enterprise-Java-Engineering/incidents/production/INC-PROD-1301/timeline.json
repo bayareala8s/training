@@ -1,0 +1,77 @@
+{
+  "id": "INC-PROD-1301",
+  "labId": "INCIDENT-1301",
+  "title": "Throughput collapse and P99 spike",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "pay-prod-west",
+  "environment": "prod-west",
+  "region": "us-west-2",
+  "startedAt": "2026-12-18T18:22:00Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /api/v1/payments completions dropped and P99 rose into seconds; creates still return but late. 5xx are not what merchant success is calling about.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1300a11-0000-4000-8000-111111111300",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboards-red.txt"],
+      "instruction": "Read this timeline and the RED dashboard paste before requesting scrape or JVM numbers."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/scrape-and-jvm.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open scrape and JVM metrics."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/meter-registration.txt"],
+      "instruction": "Open the meter-registration snippet only after you write what you expect 3.9.0 to have registered."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-12-18T18:08:14Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Merged BAYPAY-13011. Rolled payment-service 3.9.0 onto pay-prod-west in us-west-2. Last healthy image on the board was 3.8.4. Asked for a short soak so Harbor Market could demo before close of business."
+    },
+    {
+      "at": "2026-12-18T18:16:40Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Completions on POST /api/v1/payments looking thin versus 18:00. P99 climbing. 5xx tile still boring. Asked for the RED board before a Postgres hunt."
+    },
+    {
+      "at": "2026-12-18T18:22:00Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service us-west-2 throughput collapse and P99 spike. Creates late. 5xx not the dominant signal."
+    },
+    {
+      "at": "2026-12-18T18:23:18Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1300a11-0000-4000-8000-111111111300 took several seconds, then HTTP 201. Same Idempotency-Key not duplicated. Client retried once and felt stuck."
+    },
+    {
+      "at": "2026-12-18T18:24:05Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested dashboards-red.txt (gate 1). Asked Jordan not to ship another tag and asked Sam not to bounce db-east or dmgr-east."
+    },
+    {
+      "at": "2026-12-18T18:25:11Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Confirmed Postgres writer CPU still low on the platform board we are not attaching. Will not bounce the database unless a file shows a wait."
+    }
+  ]
+}

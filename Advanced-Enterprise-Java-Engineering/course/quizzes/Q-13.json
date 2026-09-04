@@ -1,0 +1,104 @@
+{
+  "id": "Q-13",
+  "moduleId": "module-13",
+  "title": "Module 13 quiz — Production Engineering and Observability",
+  "description": "Eight questions on logs/metrics/traces, RED/USE, SLIs/SLOs, alerting, capacity, RCA, change. Synthetic BayPay.",
+  "questions": [
+    {
+      "id": "Q-13-01",
+      "prompt": "Which three signals are the RED method for POST /api/v1/payments?",
+      "choices": [
+        "Replication, encryption, and durability",
+        "Rate, errors, and duration (including a tail such as P99)",
+        "Restarts, events, and deployments",
+        "Region, AZ, and task count"
+      ],
+      "correctIndex": 1,
+      "explanation": "RED is request-centric. USE is for resources such as heap and Hikari."
+    },
+    {
+      "id": "Q-13-02",
+      "prompt": "BayPay’s Module 13 availability SLO for payment create is which number, and what is excluded from burn by default?",
+      "choices": [
+        "99.99%; exclude all 5xx",
+        "99.9%; exclude typical 4xx (except a cohort may treat 429 as capacity)",
+        "99%; include every 4xx as downtime",
+        "100%; any log ERROR burns the budget"
+      ],
+      "correctIndex": 1,
+      "explanation": "OBSERVABILITY.md locks 99.9% and ~43 minutes/month. 99.99% is Module 14 architecture, not the default dashboard SLO."
+    },
+    {
+      "id": "Q-13-03",
+      "prompt": "Which Micrometer labels are acceptable on a payment-create timer?",
+      "choices": [
+        "customerId, accountId, and Idempotency-Key",
+        "uri, method, outcome, and coarse status",
+        "PAN last four and Avery Chen’s UUID",
+        "The raw paymentId on every success"
+      ],
+      "correctIndex": 1,
+      "explanation": "Low cardinality only. Unbounded identity labels blow up series count and scrapes."
+    },
+    {
+      "id": "Q-13-04",
+      "prompt": "Priya pages on which class of signal first?",
+      "choices": [
+        "CPU greater than 80% on any task",
+        "Any log line that contains ERROR",
+        "SLO burn (fast and slow windows) and saturation that predicts burn",
+        "A dashboard panel that failed to load"
+      ],
+      "correctIndex": 2,
+      "explanation": "Page on customer-facing burn and leading saturation, not vanity thresholds."
+    },
+    {
+      "id": "Q-13-05",
+      "prompt": "A JSON access log for a COMPLETED payment should include which field set?",
+      "choices": [
+        "PAN, CVV, and BAYPAY_DB_PASSWORD",
+        "correlationId, paymentId, outcome — never PAN",
+        "The full Idempotency-Key as a Prometheus label",
+        "Avery Chen’s government id"
+      ],
+      "correctIndex": 1,
+      "explanation": "Structured logs are evidence. Secrets and card data are not."
+    },
+    {
+      "id": "Q-13-06",
+      "prompt": "Throughput falls and P99 rises after a release. What is a Staff first move?",
+      "choices": [
+        "Bounce dmgr-east and Postgres Multi-AZ",
+        "Quote RED + a resource/scrape panel, write a hypothesis, then open the next gated file — do not max diagnostic on “database” with no quote",
+        "Set -Xmx equal to the container memory limit",
+        "Declare 99.99% and add a region"
+      ],
+      "correctIndex": 1,
+      "explanation": "INCIDENT-1301 class: method and quotes beat a lucky label."
+    },
+    {
+      "id": "Q-13-07",
+      "prompt": "Capacity planning in Module 13 is primarily about which headroom?",
+      "choices": [
+        "A second region’s idle EKS control plane",
+        "RPS, heap, Hikari pending, and servlet threads against the 99.9% / 400 ms P99 contract",
+        "How many PaymentCluster members Morgan Hale can start",
+        "NAT Gateway throughput"
+      ],
+      "correctIndex": 1,
+      "explanation": "L-13.5 is operational headroom. L-14.7 is failover / DR capacity."
+    },
+    {
+      "id": "Q-13-08",
+      "prompt": "Jordan wants to merge a metrics change to main at 17:50 with no review. What is the change-management answer?",
+      "choices": [
+        "Force-push so history looks clean",
+        "Protected main, conventional review, and a named rollback — a green pipeline is not a merchant-healthy cut",
+        "Skip CI because dashboards are “just JSON”",
+        "Apply EKS so the change is more visible"
+      ],
+      "correctIndex": 1,
+      "explanation": "L-13.7 / Module 12: git is the release control plane."
+    }
+  ]
+}

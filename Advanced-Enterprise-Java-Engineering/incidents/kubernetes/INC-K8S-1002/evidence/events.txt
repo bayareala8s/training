@@ -1,0 +1,28 @@
+# kubectl get events — teaching paste
+# Namespace: baypay-prod
+# Gate: 2
+# Synthetic BayPay. Not a live cluster.
+
+LAST SEEN   TYPE      REASON      OBJECT                                    MESSAGE
+109m        Normal    Scheduled   pod/payment-service-8f2a1c3e0-xk2q1       Successfully assigned baypay-prod/payment-service-8f2a1c3e0-xk2q1 to ip-10-8-2-44
+109m        Normal    Pulled      pod/payment-service-8f2a1c3e0-xk2q1       Container image "registry.baypay.example/baypay/payment-service:3.9.1" already present
+109m        Normal    Created     pod/payment-service-8f2a1c3e0-xk2q1       Created container payment
+109m        Normal    Started     pod/payment-service-8f2a1c3e0-xk2q1       Started container payment
+82m         Warning   OOMKilled   pod/payment-service-8f2a1c3e0-xk2q1       Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+82m         Normal    Killing     pod/payment-service-8f2a1c3e0-xk2q1       Stopping container payment
+82m         Normal    Created     pod/payment-service-8f2a1c3e0-xk2q1       Created container payment
+82m         Normal    Started     pod/payment-service-8f2a1c3e0-xk2q1       Started container payment
+58m         Warning   OOMKilled   pod/payment-service-8f2a1c3e0-m3n4p       Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+38m         Warning   OOMKilled   pod/payment-service-8f2a1c3e0-xk2q1       Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+38m         Normal    Killing     pod/payment-service-8f2a1c3e0-xk2q1       Stopping container payment
+27m         Warning   OOMKilled   pod/payment-service-8f2a1c3e0-q7r8s       Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+9m          Warning   OOMKilled   pod/payment-service-8f2a1c3e0-xk2q1       Container payment exceeded its memory limit (limit 512Mi, usage 512Mi)
+9m          Normal    Killing     pod/payment-service-8f2a1c3e0-xk2q1       Stopping container payment
+9m          Normal    Pulled      pod/payment-service-8f2a1c3e0-xk2q1       Container image "registry.baypay.example/baypay/payment-service:3.9.1" already present
+9m          Normal    Created     pod/payment-service-8f2a1c3e0-xk2q1       Created container payment
+9m          Normal    Started     pod/payment-service-8f2a1c3e0-xk2q1       Started container payment
+4m          Warning   Unhealthy   pod/payment-service-8f2a1c3e0-xk2q1       Readiness probe failed: Get "http://10.8.19.17:8080/actuator/health/readiness": dial tcp 10.8.19.17:8080: connect: connection refused (during last restart window)
+
+# No event of type java.lang.OutOfMemoryError.
+# kubelet killed the container at the cgroup limit 512Mi (exit 137).
+# Deployment/payment-service: ScalingReplicaSet 2h ago (Sam Okada) memory limit 2Gi -> 512Mi

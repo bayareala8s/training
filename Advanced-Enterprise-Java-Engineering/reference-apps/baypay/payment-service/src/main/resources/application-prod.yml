@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${BAYPAY_DB_URL:jdbc:postgresql://localhost:5432/baypay}
+    username: ${BAYPAY_DB_USER:baypay}
+    password: ${BAYPAY_DB_PASSWORD:changeme}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+  h2:
+    console:
+      enabled: false
+
+management:
+  endpoint:
+    health:
+      show-details: never

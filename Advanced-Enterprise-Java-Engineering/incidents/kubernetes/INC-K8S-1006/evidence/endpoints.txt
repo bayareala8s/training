@@ -1,0 +1,26 @@
+# kubectl get endpoints payment-service -n baypay-prod
+# Gate: 3
+# Synthetic BayPay. Captured 2026-11-19T19:39:00Z
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: payment-service
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+subsets: []
+
+# NAME              ENDPOINTS   AGE
+# payment-service   <none>      86d
+
+# kubectl describe endpoints payment-service
+# Name:         payment-service
+# Namespace:    baypay-prod
+# Labels:       app=payment-service
+# Subsets:      (none)
+# Events:       <none>
+
+# Three Ready pods exist (deploy-labels.yaml). Endpoints list zero addresses.
+# Ingress payments.apps.baypay.example returns 503 when Endpoints are empty.
+# Contrast INC-K8S-1003: that pack's pods were Running and not Ready. This pack's pods are Ready 1/1.

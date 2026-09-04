@@ -1,0 +1,29 @@
+# INC-JVM-202 application logs (synthetic)
+# sale-canary-1  pid=4412  service=baypay-payment-canary  version=1.8.15
+# All customers, keys, and amounts are fictional.
+
+2026-08-21T15:03:41.220Z level=INFO corr=corr-202-p110 thread=payment-worker-0 event=POST_BEGIN paymentId=pay-c110 account=22222222-2222-2222-2222-222222222221 amountCents=2500
+2026-08-21T15:03:41.221Z level=INFO corr=corr-202-p110 thread=payment-worker-0 event=POST_COMMIT paymentId=pay-c110 ledgerId=led-90011
+
+2026-08-21T15:03:58.014Z level=INFO corr=corr-202-r044 thread=refund-worker-2 event=REFUND_BEGIN refundId=ref-044 paymentId=pay-7c21 account=22222222-2222-2222-2222-222222222221 amountCents=8400
+2026-08-21T15:03:58.016Z level=INFO corr=corr-202-r044 thread=refund-worker-2 event=REFUND_COMMIT refundId=ref-044 ledgerId=led-90012
+
+2026-08-21T15:04:12.441Z level=INFO corr=corr-202-p884 thread=payment-worker-3 event=POST_BEGIN paymentId=pay-harbor-new account=22222222-2222-2222-2222-222222222221 amountCents=4200 key=harbor-9010
+2026-08-21T15:04:12.442Z level=INFO corr=corr-202-r884 thread=refund-worker-1 event=REFUND_BEGIN refundId=ref-harbor-8841 paymentId=pay-7c22 account=22222222-2222-2222-2222-222222222221 amountCents=8400 key=harbor-8841-refund
+
+2026-08-21T15:04:12.443Z level=DEBUG corr=corr-202-p884 thread=payment-worker-3 event=LOCK_ACQUIRED name=accountLock owner=payment-worker-3 account=22222222-2222-2222-2222-222222222221
+2026-08-21T15:04:12.443Z level=DEBUG corr=corr-202-r884 thread=refund-worker-1 event=LOCK_ACQUIRED name=ledgerLock owner=refund-worker-1
+
+2026-08-21T15:04:12.800Z level=DEBUG corr=corr-202-p884 thread=payment-worker-3 event=LOCK_WAIT name=ledgerLock waiter=payment-worker-3
+2026-08-21T15:04:12.801Z level=DEBUG corr=corr-202-r884 thread=refund-worker-1 event=LOCK_WAIT name=accountLock waiter=refund-worker-1 account=22222222-2222-2222-2222-222222222221
+
+2026-08-21T15:04:43.002Z level=WARN corr=corr-202-http1 thread=http-nio-8080-exec-11 event=REQUEST_SLOW path=/api/v1/payments ageMs=30400 paymentId=pay-harbor-new
+2026-08-21T15:04:43.110Z level=WARN corr=corr-202-http2 thread=http-nio-8080-exec-18 event=REQUEST_SLOW path=/api/v1/refunds ageMs=30800 refundId=ref-harbor-8841
+
+2026-08-21T15:06:15.000Z level=INFO corr=corr-202-hb thread=http-nio-8080-exec-2 event=HTTP_200 path=/actuator/health status=UP
+
+2026-08-21T15:09:20.014Z level=ERROR corr=none thread=alert-forwarder event=PAGE routing_key=PaymentCompletionsLow value=0.0
+2026-08-21T15:09:40.022Z level=ERROR corr=none thread=alert-forwarder event=PAGE routing_key=RefundCompletionsLow value=0.0
+
+# No POST_COMMIT or REFUND_COMMIT lines after 15:03:58 for the 15:04:12 pair.
+# payment-worker-0..2 and refund-worker-0,2,3 produce no further commit lines in this extract.

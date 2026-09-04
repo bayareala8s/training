@@ -1,0 +1,66 @@
+{
+  "id": "INC-EE-402",
+  "labId": "INCIDENT-402",
+  "title": "Payment create timeouts under load",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "pay-prod-east-2",
+  "environment": "prod-east",
+  "startedAt": "2026-08-14T21:05:12Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /api/v1/payments p99 above 8s; subset of creates fail after connection wait",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111"
+  },
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting logs."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open logs."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/jvm-metrics.md"],
+      "instruction": "Request JVM metrics only after you write the question they should answer."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-08-14T20:40:00Z",
+      "actor": "batch-scheduler",
+      "summary": "Merchant settlement preview job started on pay-prod-east-2 (same JVM as API)."
+    },
+    {
+      "at": "2026-08-14T21:05:12Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service prod-east POST /api/v1/payments p99 8.4s (SLO 1.5s)."
+    },
+    {
+      "at": "2026-08-14T21:06:40Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Confirmed Actuator liveness UP. Readiness flickering on pay-prod-east-2 only."
+    },
+    {
+      "at": "2026-08-14T21:08:05Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market (synthetic) reports create payment retries for Avery Chen."
+    },
+    {
+      "at": "2026-08-14T21:12:18Z",
+      "actor": "on-call",
+      "summary": "Requested pool dashboard (gate 1)."
+    }
+  ]
+}

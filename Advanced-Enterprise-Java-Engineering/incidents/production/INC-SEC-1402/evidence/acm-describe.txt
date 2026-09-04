@@ -1,0 +1,84 @@
+# aws acm describe-certificate / list-certificates — teaching paste
+# Gate: 2
+# Region: us-west-2
+# Synthetic BayPay. Captured 2026-09-02T07:24:11Z
+# Not a live account. Do not request-certificate against a paid API.
+
+$ aws acm list-certificates --region us-west-2 \
+    --certificate-statuses PENDING_VALIDATION FAILED EXPIRED ISSUED
+
+{
+    "CertificateSummaryList": [
+        {
+            "CertificateArn": "arn:aws:acm:us-west-2:123456789012:certificate/p1402b22-0000-4000-8000-bbbbbbbb1402",
+            "DomainName": "payments.apps.baypay.example",
+            "Status": "PENDING_VALIDATION",
+            "Type": "AMAZON_ISSUED",
+            "InUse": false
+        },
+        {
+            "CertificateArn": "arn:aws:acm:us-west-2:123456789012:certificate/e1402a11-0000-4000-8000-aaaaaaaa1402",
+            "DomainName": "payments.apps.baypay.example",
+            "Status": "EXPIRED",
+            "Type": "AMAZON_ISSUED",
+            "InUse": true
+        }
+    ]
+}
+
+# No row with Status ISSUED for payments.apps.baypay.example.
+
+$ aws acm describe-certificate --region us-west-2 \
+    --certificate-arn arn:aws:acm:us-west-2:123456789012:certificate/p1402b22-0000-4000-8000-bbbbbbbb1402
+
+{
+    "Certificate": {
+        "CertificateArn": "arn:aws:acm:us-west-2:123456789012:certificate/p1402b22-0000-4000-8000-bbbbbbbb1402",
+        "DomainName": "payments.apps.baypay.example",
+        "SubjectAlternativeNameSummaries": [
+            "payments.apps.baypay.example"
+        ],
+        "Status": "PENDING_VALIDATION",
+        "Type": "AMAZON_ISSUED",
+        "KeyAlgorithm": "RSA-2048",
+        "RenewalEligibility": "INELIGIBLE",
+        "DomainValidationOptions": [
+            {
+                "DomainName": "payments.apps.baypay.example",
+                "ValidationDomain": "payments.apps.baypay.example",
+                "ValidationStatus": "PENDING_VALIDATION",
+                "ValidationMethod": "DNS",
+                "ResourceRecord": {
+                    "Name": "_2f91d4c0.payments.apps.baypay.example.",
+                    "Type": "CNAME",
+                    "Value": "_7c3a1e9f4d2b.acm-validations.aws."
+                }
+            }
+        ],
+        "CreatedAt": "2026-08-28T16:02:11+00:00",
+        "IssuedAt": null,
+        "NotAfter": null
+    }
+}
+
+$ aws acm describe-certificate --region us-west-2 \
+    --certificate-arn arn:aws:acm:us-west-2:123456789012:certificate/e1402a11-0000-4000-8000-aaaaaaaa1402
+
+{
+    "Certificate": {
+        "CertificateArn": "arn:aws:acm:us-west-2:123456789012:certificate/e1402a11-0000-4000-8000-aaaaaaaa1402",
+        "DomainName": "payments.apps.baypay.example",
+        "Status": "EXPIRED",
+        "Type": "AMAZON_ISSUED",
+        "InUse": true,
+        "NotBefore": "2026-06-03T00:00:00+00:00",
+        "NotAfter": "2026-09-01T00:00:00+00:00",
+        "IssuedAt": "2026-06-03T00:12:44+00:00"
+    }
+}
+
+# ALB listener :443 (pay-alb-prod, us-west-2) still presents
+# certificate/e1402a11-0000-4000-8000-aaaaaaaa1402 (EXPIRED, InUse true).
+# Replacement certificate/p1402b22-... is PENDING_VALIDATION, not ISSUED.
+# Teaching validation name: _2f91d4c0.payments.apps.baypay.example
+# (ACM also prints this as _acm / _abc.payments in some consoles).

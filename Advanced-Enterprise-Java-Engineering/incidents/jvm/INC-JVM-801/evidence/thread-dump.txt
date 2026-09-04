@@ -1,0 +1,93 @@
+2026-10-06 10:24:11
+Full thread dump OpenJDK 64-Bit Server VM (21.0.4+7-LTS mixed mode, sharing)
+# Synthetic dump for INC-JVM-801. Fictional BayPay canary pay-prod-east-2 pid 22811.
+# Captured with a teaching jstack equivalent. Not a real employer artifact.
+
+Threads class SMR info:
+_java_thread_list=0x000000012a00b800, length=171
+
+"http-nio-8080-exec-14" #31 prio=5 os_prio=0 cpu=18440.22ms elapsed=2620.11s tid=0x000000012b110000 nid=0xa014 runnable  [0x0000000172aee000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/java.util.regex.Pattern$Curly.match0(Pattern.java:4866)
+	at java.base/java.util.regex.Pattern$Curly.match(Pattern.java:4835)
+	at java.base/java.util.regex.Pattern$GroupHead.match(Pattern.java:4804)
+	at java.base/java.util.regex.Pattern$Start.match(Pattern.java:3628)
+	at java.base/java.util.regex.Matcher.search(Matcher.java:1729)
+	at java.base/java.util.regex.Matcher.matches(Matcher.java:517)
+	at java.base/java.lang.String.matches(String.java:2846)
+	at com.baypay.payment.security.RequestBodyPiiScanner.scan(RequestBodyPiiScanner.java:88)
+	at com.baypay.payment.security.RequestBodyPiiScanner.doFilter(RequestBodyPiiScanner.java:41)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:175)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-19" #36 prio=5 os_prio=0 cpu=15102.88ms elapsed=2620.08s tid=0x000000012b118800 nid=0xa019 runnable  [0x0000000172c12000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/java.util.regex.Pattern$Curly.match0(Pattern.java:4866)
+	at java.base/java.util.regex.Pattern$Curly.match(Pattern.java:4835)
+	at java.base/java.util.regex.Matcher.matches(Matcher.java:517)
+	at java.base/java.lang.String.matches(String.java:2846)
+	at com.baypay.payment.security.RequestBodyPiiScanner.scan(RequestBodyPiiScanner.java:88)
+	at com.baypay.payment.security.RequestBodyPiiScanner.doFilter(RequestBodyPiiScanner.java:41)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-7" #24 prio=5 os_prio=0 cpu=12990.10ms elapsed=2620.20s tid=0x000000012b10a000 nid=0xa007 runnable  [0x0000000172ab8000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/java.util.regex.Pattern$BnM.match(Pattern.java:5592)
+	at java.base/java.util.regex.Pattern$GroupHead.match(Pattern.java:4804)
+	at java.base/java.util.regex.Matcher.search(Matcher.java:1729)
+	at java.base/java.util.regex.Matcher.matches(Matcher.java:517)
+	at java.base/java.lang.String.matches(String.java:2846)
+	at com.baypay.payment.security.RequestBodyPiiScanner.scan(RequestBodyPiiScanner.java:88)
+	at com.baypay.payment.security.RequestBodyPiiScanner.doFilter(RequestBodyPiiScanner.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-22" #39 prio=5 os_prio=0 cpu=11004.55ms elapsed=2619.40s tid=0x000000012b11e000 nid=0xa022 runnable  [0x0000000172d45000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/java.util.regex.Pattern$Curly.match0(Pattern.java:4866)
+	at java.base/java.util.regex.Pattern$Slice.match(Pattern.java:4134)
+	at java.base/java.util.regex.Matcher.matches(Matcher.java:517)
+	at java.base/java.lang.String.matches(String.java:2846)
+	at com.baypay.payment.security.RequestBodyPiiScanner.scan(RequestBodyPiiScanner.java:88)
+	at com.baypay.payment.security.RequestBodyPiiScanner.doFilter(RequestBodyPiiScanner.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-3" #20 prio=5 os_prio=0 cpu=9801.02ms elapsed=2621.00s tid=0x000000012b104000 nid=0xa003 runnable  [0x0000000172a12000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/java.util.regex.Pattern$Curly.match0(Pattern.java:4866)
+	at java.base/java.util.regex.Matcher.matches(Matcher.java:517)
+	at java.base/java.lang.String.matches(String.java:2846)
+	at com.baypay.payment.security.RequestBodyPiiScanner.scan(RequestBodyPiiScanner.java:88)
+	at com.baypay.payment.security.RequestBodyPiiScanner.doFilter(RequestBodyPiiScanner.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-31" #48 prio=5 os_prio=0 cpu=8722.40ms elapsed=1880.06s tid=0x000000012b130000 nid=0xa031 runnable  [0x0000000172e56000]
+   java.lang.Thread.State: RUNNABLE
+	at java.base/java.util.regex.Pattern$GroupTail.match(Pattern.java:4817)
+	at java.base/java.util.regex.Pattern$Curly.match0(Pattern.java:4866)
+	at java.base/java.util.regex.Matcher.matches(Matcher.java:517)
+	at java.base/java.lang.String.matches(String.java:2846)
+	at com.baypay.payment.security.RequestBodyPiiScanner.scan(RequestBodyPiiScanner.java:88)
+	at com.baypay.payment.security.RequestBodyPiiScanner.doFilter(RequestBodyPiiScanner.java:41)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-2" #19 prio=5 os_prio=0 cpu=210.55ms elapsed=8801.00s tid=0x000000012a870000 nid=0x9e11 runnable  [0x00000001727e0000]
+   java.lang.Thread.State: RUNNABLE
+	at com.baypay.payment.config.HealthIndicator.health(HealthIndicator.java:22)
+	at org.springframework.boot.actuate.health.HealthEndpointWebExtension.health(HealthEndpointWebExtension.java:91)
+
+"http-nio-8080-exec-8" #25 prio=5 os_prio=0 cpu=88.10ms elapsed=2618.02s tid=0x000000012a880000 nid=0x9e20 waiting on condition  [0x00000001728aa000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+	at com.zaxxer.hikari.pool.ProxyConnection.isValid(ProxyConnection.java:0)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:64)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.11ms elapsed=9001.00s tid=0x000000012a001000 nid=0x9e02 waiting on condition
+   java.lang.Thread.State: RUNNABLE
+
+"VM Periodic Task Thread" os_prio=0 cpu=88.00ms elapsed=9001.00s tid=0x000000012a00a000 nid=0x9e06 waiting on condition
+
+JNI global refs: 34, weak refs: 0

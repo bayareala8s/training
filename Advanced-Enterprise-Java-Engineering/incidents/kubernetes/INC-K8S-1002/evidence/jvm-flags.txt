@@ -1,0 +1,45 @@
+# JVM flags from last state — payment-service-8f2a1c3e0-xk2q1
+# Gate: 3
+# Captured: 2026-11-05T23:14:20Z (current Running container, ~13 minutes after last OOMKilled)
+# Teaching equivalent: env from describe + emptyDir scrap from the previous container
+# Synthetic BayPay.
+
+## Environment on the pod (describe, last and current)
+
+```text
+JAVA_TOOL_OPTIONS=-Xmx512m
+```
+
+Limits.memory=512Mi. Requests.memory=512Mi.
+
+## Effective flags recovered from the previous container (emptyDir scrap)
+
+```text
+-XX:+UseContainerSupport
+-XX:MaxHeapSize=536870912
+-XX:+UseG1GC
+-XX:NativeMemoryTracking=off
+```
+
+MaxHeapSize is 512 MiB. The pod memory limit is 512Mi. Heap max equals the cgroup limit.
+
+## Last GC line from the previous container (same scrap)
+
+```text
+[2026-11-05T23:00:41.110+0000][info][gc] GC(64) Pause Young (Normal) (G1 Evacuation Pause) 428M->401M(512M) 16.220ms
+```
+
+Last successful young GC finished at about 401M used of 512M shortly before the 15:01 Pacific OOMKilled. No Java heap OutOfMemoryError line in that scrap.
+
+## Contrast (CLUSTER.md healthy pairing, not this roll)
+
+```text
+limit 2Gi
+JAVA_TOOL_OPTIONS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75
+```
+
+That pairing leaves headroom outside the heap. This pack's describe shows -Xmx512m with limit 512Mi.
+
+## Note
+
+Same class as INC-JVM-806. Evidence here is kubectl describe + events + last-state flags, not the Module 8 dashboard pack. Do not copy 806's 389 MB figure; this scrap is 401M used of 512M.

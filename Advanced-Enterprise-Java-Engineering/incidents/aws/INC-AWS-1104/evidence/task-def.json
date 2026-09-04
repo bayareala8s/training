@@ -1,0 +1,57 @@
+{
+  "_comment": "ecs describe-tasks + describe-task-definition excerpt. Gate 2. Synthetic. Captured 2026-11-12T22:16:40Z. Region us-west-2.",
+  "cluster": "baypay-1101-cluster",
+  "taskArn": "arn:aws:ecs:us-west-2:123456789012:task/baypay-1101-cluster/c1104task1104c1104",
+  "lastStatus": "RUNNING",
+  "desiredStatus": "RUNNING",
+  "healthStatus": "UNKNOWN",
+  "launchType": "FARGATE",
+  "cpu": "256",
+  "memory": "512",
+  "startedAt": "2026-11-12T21:22:18Z",
+  "containers": [
+    {
+      "name": "payment",
+      "image": "123456789012.dkr.ecr.us-west-2.amazonaws.com/baypay/payment-service:3.9.2",
+      "lastStatus": "RUNNING",
+      "exitCode": null,
+      "reason": null,
+      "networkInterfaces": [
+        {
+          "privateIpv4Address": "10.20.1.47"
+        }
+      ]
+    }
+  ],
+  "taskDefinition": {
+    "family": "baypay-1101-payment",
+    "revision": 3,
+    "cpu": "256",
+    "memory": "512",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "containerDefinitions": [
+      {
+        "name": "payment",
+        "image": "123456789012.dkr.ecr.us-west-2.amazonaws.com/baypay/payment-service:3.9.2",
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 8080,
+            "protocol": "tcp"
+          }
+        ],
+        "environment": [
+          {
+            "name": "SPRING_PROFILES_ACTIVE",
+            "value": "local"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+# lastStatus RUNNING. containerPort 8080. No stopped reason. ECS container health is UNKNOWN
+# (no ECS-native healthCheck block). ALB target health is a different object — see gate 1.
+# Image tag 3.9.2 is the BUILD-1101 teaching tag. Process has been up since 21:22 UTC.

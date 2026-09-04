@@ -1,0 +1,104 @@
+{
+  "id": "Q-01",
+  "moduleId": "module-01",
+  "title": "Module 1 quiz — Enterprise Java Engineering",
+  "description": "Eight questions on the JDK/JVM, BayPay domain model, collections, exceptions, and enterprise write practices. All names and amounts are synthetic.",
+  "questions": [
+    {
+      "id": "Q-01-01",
+      "prompt": "A BayPay JAR compiled with javac --release 21 fails on a laptop with UnsupportedClassVersionError: class file version 65.0. What is the first fix?",
+      "choices": [
+        "Rewrite Money to avoid BigDecimal so the class file is smaller",
+        "Run the process on a JDK 21 JVM (or point JAVA_HOME at 21)",
+        "Add --enable-preview to the laptop java command",
+        "Downgrade Spring Boot so it emits Java 8 bytecode"
+      ],
+      "correctIndex": 1,
+      "explanation": "Major 65 is Java 21 bytecode. An older JVM cannot load it. Change the runtime (or JAVA_HOME) first. Preview flags and framework downgrades do not address a class-file version mismatch."
+    },
+    {
+      "id": "Q-01-02",
+      "prompt": "Why does BayPay reject new Money(BigDecimal.ZERO, \"USD\") in the constructor rather than in PaymentApplicationService?",
+      "choices": [
+        "Bean Validation cannot run inside a modular monolith",
+        "So every caller — API, worker, test, future module — fails closed without repeating the check",
+        "BigDecimal.ZERO is a preview API on Java 21",
+        "Zero amounts are legal if the Idempotency-Key is present"
+      ],
+      "correctIndex": 1,
+      "explanation": "Invariants belong on the value object. A service-only check is skipped by the next caller. Zero is never legal money on this platform, key or not."
+    },
+    {
+      "id": "Q-01-03",
+      "prompt": "Which transition must PaymentStateMachine reject?",
+      "choices": [
+        "RECEIVED → VALIDATING",
+        "VALIDATING → DECLINED",
+        "RECEIVED → COMPLETED",
+        "COMPLETED → REVERSED"
+      ],
+      "correctIndex": 2,
+      "explanation": "The happy path is RECEIVED → VALIDATING → AUTHORIZED → PROCESSING → COMPLETED. Skipping authorization is an illegal edge. DECLINED from VALIDATING and REVERSED from COMPLETED are documented."
+    },
+    {
+      "id": "Q-01-04",
+      "prompt": "You need allowedNext() for eight PaymentStatus values. Which collection is the best default?",
+      "choices": [
+        "List<String> of status names so product can add statuses in a database row",
+        "Hashtable<PaymentStatus, PaymentStatus>",
+        "EnumSet of PaymentStatus (or an EnumMap table of EnumSets)",
+        "Raw List so erasure is explicit"
+      ],
+      "correctIndex": 2,
+      "explanation": "A closed enum universe belongs in EnumSet. String lists accept typos; Hashtable is a synchronized leftover; raw lists erase type safety."
+    },
+    {
+      "id": "Q-01-05",
+      "prompt": "Avery Chen’s frozen account (22222222-2222-2222-2222-222222222222) is used with a valid 25.00 USD. What should the validator do?",
+      "choices": [
+        "Throw CUSTOMER_NOT_FOUND because frozen customers are deleted",
+        "Return a decline decision (account is not ACTIVE) and allow a DECLINED payment",
+        "Return Optional.empty() and let the controller invent a 404",
+        "Catch Exception and return true so the ledger can sort it out"
+      ],
+      "correctIndex": 1,
+      "explanation": "The request is interpretable. Authorization refuses a non-ACTIVE account. That is a Decision.decline, then payment.decline, not a missing customer and not a swallowed success."
+    },
+    {
+      "id": "Q-01-06",
+      "prompt": "Why is accounts.findById(id).orElse(null) a production defect in payment creation?",
+      "choices": [
+        "Optional cannot hold JPA entities",
+        "It reintroduces null so a missing account becomes an NPE or a skipped ownership check instead of ACCOUNT_NOT_FOUND",
+        "orElse(null) is slower than get()",
+        "BayPay forbids Optional on repository methods"
+      ],
+      "correctIndex": 1,
+      "explanation": "Optional means the lookup may miss. orElse(null) throws away that information. The next field access NPEs or, worse, skips belongsTo. Use orElseThrow with a domain error."
+    },
+    {
+      "id": "Q-01-07",
+      "prompt": "A client retries POST /api/v1/payments with the same Idempotency-Key and a different amount. What must BayPay return?",
+      "choices": [
+        "The original payment as a silent replay so the client is not confused",
+        "A second COMPLETED payment because amounts differ",
+        "IDEMPOTENCY_CONFLICT (409): same key, different canonical body",
+        "200 with an empty body because retries are ignored"
+      ],
+      "correctIndex": 2,
+      "explanation": "Replay requires the same key and the same body hash. A different amount is a conflict. Silent replay would report the old amount as if the new one posted."
+    },
+    {
+      "id": "Q-01-08",
+      "prompt": "Money.equals should use which comparison, and why?",
+      "choices": [
+        "amount.equals(other.amount), because scale is part of the legal tender definition",
+        "amount.compareTo(other.amount) == 0, so 10.0 USD and 10.00 USD are the same value",
+        "Double.compare(amount.doubleValue(), other.amount.doubleValue()) for speed",
+        "System.identityHashCode, because each Money construction is unique"
+      ],
+      "correctIndex": 1,
+      "explanation": "BigDecimal.equals is scale-sensitive. Payments care about numeric value. compareTo plus a hashCode that uses stripTrailingZeros keeps Set/Map keys honest. double is not money; identity is for entities, not values."
+    }
+  ]
+}

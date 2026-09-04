@@ -1,0 +1,98 @@
+[
+  {
+    "id": "module-01",
+    "title": "Module 1: Enterprise Java Engineering",
+    "order": 1,
+    "lessonCount": 10
+  },
+  {
+    "id": "module-02",
+    "title": "Module 2: Advanced Java Concurrency",
+    "order": 2,
+    "lessonCount": 10
+  },
+  {
+    "id": "module-03",
+    "title": "Module 3: Spring Boot Engineering",
+    "order": 3,
+    "lessonCount": 12
+  },
+  {
+    "id": "module-04",
+    "title": "Module 4: Jakarta EE and Enterprise Runtime Concepts",
+    "order": 4,
+    "lessonCount": 9
+  },
+  {
+    "id": "module-05",
+    "title": "Module 5: WebSphere Network Deployment",
+    "order": 5,
+    "lessonCount": 11
+  },
+  {
+    "id": "module-06",
+    "title": "Module 6: WebSphere Liberty Modernization",
+    "order": 6,
+    "lessonCount": 10
+  },
+  {
+    "id": "module-07",
+    "title": "Module 7: JVM Internals and Performance",
+    "order": 7,
+    "lessonCount": 11
+  },
+  {
+    "id": "module-08",
+    "title": "Module 8: JVM Troubleshooting",
+    "order": 8,
+    "lessonCount": 14
+  },
+  {
+    "id": "module-09",
+    "title": "Module 9: Containers for Java",
+    "order": 9,
+    "lessonCount": 12
+  },
+  {
+    "id": "module-10",
+    "title": "Module 10: Kubernetes and OpenShift",
+    "order": 10,
+    "lessonCount": 13
+  },
+  {
+    "id": "module-11",
+    "title": "Module 11: AWS Container Platforms",
+    "order": 11,
+    "lessonCount": 14
+  },
+  {
+    "id": "module-12",
+    "title": "Module 12: Terraform, Ansible and CI/CD",
+    "order": 12,
+    "lessonCount": 12
+  },
+  {
+    "id": "module-13",
+    "title": "Module 13: Production Engineering and Observability",
+    "order": 13,
+    "lessonCount": 10
+  },
+  {
+    "id": "module-14",
+    "title": "Module 14: Security, High Availability and Disaster Recovery",
+    "order": 14,
+    "lessonCount": 12
+  },
+  {
+    "id": "module-15",
+    "title": "Module 15: BayOps AI \u2014 AI-Assisted Operations",
+    "order": 15,
+    "lessonCount": 11
+  },
+  {
+    "id": "module-16",
+    "title": "Module 16: Advanced Engineer Interview Simulator",
+    "order": 16,
+    "lessonCount": 15
+  }
+]

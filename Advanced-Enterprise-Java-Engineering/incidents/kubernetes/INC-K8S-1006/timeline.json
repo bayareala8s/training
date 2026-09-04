@@ -1,0 +1,70 @@
+{
+  "id": "INC-K8S-1006",
+  "labId": "INCIDENT-1006",
+  "title": "Ingress 503 with empty Service endpoints",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod",
+  "environment": "prod-east",
+  "startedAt": "2026-11-19T19:33:18Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "HTTP 503 on payments.apps.baypay.example after a label cleanup; Service Endpoints empty",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1006f66-0000-4000-8000-111111111006",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/service.yaml"],
+      "instruction": "Read this timeline and the Service YAML before requesting Deployment labels."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/deploy-labels.yaml"],
+      "instruction": "Record a hypothesis on the student worksheet, then open Deployment labels."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/endpoints.txt"],
+      "instruction": "Open Endpoints only after you write what a selector versus pod-label mismatch would produce."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-19T18:50:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Label cleanup on Deployment payment-service in baypay-prod (ticket BAYPAY-10066). Said names now match CLUSTER.md 'intended' app label. Service object was not in the same PR."
+    },
+    {
+      "at": "2026-11-19T19:12:44Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Replicas 3. Ingress 503. Asked for Service selector and pod labels before a probe hunt."
+    },
+    {
+      "at": "2026-11-19T19:33:18Z",
+      "actor": "pager",
+      "summary": "SEV-2: payments.apps.baypay.example HTTP 503. payment-service Endpoints empty."
+    },
+    {
+      "at": "2026-11-19T19:34:40Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1006f66-0000-4000-8000-111111111006 HTTP 503. Same Idempotency-Key on retry."
+    },
+    {
+      "at": "2026-11-19T19:36:05Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested Service YAML (gate 1). Asked Sam not to delete the Ingress and not to bounce db-east."
+    }
+  ]
+}

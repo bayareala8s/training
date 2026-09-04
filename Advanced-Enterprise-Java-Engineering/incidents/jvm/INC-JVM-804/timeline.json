@@ -1,0 +1,70 @@
+{
+  "id": "INC-JVM-804",
+  "labId": "INCIDENT-804",
+  "title": "HTTP workers exhausted on canary",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "pay-prod-east-2",
+  "environment": "prod-east",
+  "startedAt": "2026-10-13T18:07:14Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /api/v1/payments hangs then times out on pay-prod-east-2. Tomcat workers at max. pay-prod-east-1 remains healthy.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c804d444-0000-4000-8000-111111111804",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting logs."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open logs."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/thread-dump.txt"],
+      "instruction": "Request a thread dump only after you write the question it should answer."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-13T17:40:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Canary pay-prod-east-2 still on 3.8.2. FX quote on create enabled for multi-currency preview (feature fx-quote-on-create). Change ticket BAYPAY-8044."
+    },
+    {
+      "at": "2026-10-13T18:02:20Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "fx-east.baypay.example p99 jumped from 40ms to no samples (probe timeouts). Did not yet correlate to payment creates."
+    },
+    {
+      "at": "2026-10-13T18:07:14Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service prod-east Tomcat busy threads 200/200 on pay-prod-east-2. POST /api/v1/payments p99 12s. Hikari 8/50."
+    },
+    {
+      "at": "2026-10-13T18:08:50Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c804d444-0000-4000-8000-111111111804 hung then 504. Retry 201 on pay-prod-east-1."
+    },
+    {
+      "at": "2026-10-13T18:10:22Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested dashboard (gate 1). Confirmed DB CPU 15%. Asked Jordan not to raise server.tomcat.threads.max in the incident channel."
+    }
+  ]
+}

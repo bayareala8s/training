@@ -1,0 +1,70 @@
+{
+  "id": "INC-JVM-802",
+  "labId": "INCIDENT-802",
+  "title": "Old generation climb on canary",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "pay-prod-east-2",
+  "environment": "prod-east",
+  "startedAt": "2026-10-08T21:42:08Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "pay-prod-east-2 heap and old generation climb for two days after canary 3.8.2; occasional 502 when the replica is recycled. pay-prod-east-1 remains healthy.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c802d222-0000-4000-8000-111111111802",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting logs."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open logs."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/heap-histogram.md"],
+      "instruction": "Request a heap histogram only after you write the question it should answer."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-06T23:10:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Rolled payment-service 3.8.2 onto pay-prod-east-2 as canary after 3.8.1 was pulled. pay-prod-east-1 stays on 3.8.0. Change ticket BAYPAY-8022."
+    },
+    {
+      "at": "2026-10-07T20:15:00Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Noted old generation on east-2 at 780 MB versus 240 MB on east-1. Did not page; asked Jordan for a cache inventory tomorrow."
+    },
+    {
+      "at": "2026-10-08T21:42:08Z",
+      "actor": "pager",
+      "summary": "SEV-2: payment-service prod-east heap used 1420/1536 MB on pay-prod-east-2. Old generation 1288 MB. Full GC more frequent. Replica recycled twice since noon."
+    },
+    {
+      "at": "2026-10-08T21:44:20Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c802d222-0000-4000-8000-111111111802 HTTP 502 then HTTP 201 on retry. Same Idempotency-Key."
+    },
+    {
+      "at": "2026-10-08T21:46:55Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested heap dashboard (gate 1). Confirmed pay-prod-east-1 heap used 490/1536 MB and flat overnight."
+    }
+  ]
+}

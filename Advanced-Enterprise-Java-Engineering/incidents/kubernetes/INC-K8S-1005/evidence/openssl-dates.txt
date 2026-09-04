@@ -1,0 +1,22 @@
+# openssl x509 -dates -subject — teaching paste from Secret payment-tls
+# Gate: 2
+# Synthetic BayPay. Captured 2026-11-17T16:10:22Z
+# Teaching equivalent: extract tls.crt (public cert only) and run openssl. No private key shipped.
+
+notBefore=Aug  1 00:00:00 2025 GMT
+notAfter=Oct 15 23:59:59 2026 GMT
+
+subject=C = US, O = BayPay Financial Services (fictional), CN = *.baypay.internal
+issuer=C = US, O = BayPay Internal CA (teaching), CN = BayPay Internal CA
+
+# Incident window: 2026-11-17 08:05 Pacific (16:05 UTC)
+# notAfter is 2026-10-15 — before the page.
+# CN is *.baypay.internal. Ingress host is payments.apps.baypay.example
+# DNS names in the cert (SAN):
+#   DNS:*.baypay.internal
+#   DNS:payment.baypay.internal
+# payments.apps.baypay.example is not in SAN.
+
+# Serial: 11:00:05:AE:JE:10:05
+# Signature Algorithm: sha256WithRSAEncryption
+# Public key: RSA 2048 (teaching). tls.key is not in this pack.

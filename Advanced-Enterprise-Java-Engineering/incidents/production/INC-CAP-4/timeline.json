@@ -1,0 +1,97 @@
+{
+  "id": "INC-CAP-4",
+  "labId": "CAPSTONE-4",
+  "title": "POST /api/v1/payments 503 and P99 collapse",
+  "severity": "SEV-1",
+  "service": "payment-service",
+  "instance": "pay-prod-west",
+  "environment": "prod-west",
+  "region": "us-west-2",
+  "launchType": "FARGATE",
+  "cluster": "baypay-prod-west",
+  "startedAt": "2026-12-22T19:10:00Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "POST /api/v1/payments completions dropped and P99 rose into seconds; Harbor Market sees HTTP 503. Hikari is not what merchant success is calling about.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1404e44-0000-4000-8000-111111111404",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/comms-and-impact.txt"],
+      "instruction": "Read this timeline and the merchant/comms impact paste before requesting dashboards."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/dashboards-red.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open the RED dashboard paste."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/deployment-history.txt"],
+      "instruction": "Open the deployment-history paste only after you write what you expect the canary board to show."
+    },
+    {
+      "id": 4,
+      "label": "After next investigation",
+      "unlocks": ["evidence/thread-dump.txt"],
+      "instruction": "Request a thread dump only after you write the question it should answer."
+    },
+    {
+      "id": 5,
+      "label": "After next investigation",
+      "unlocks": ["evidence/dependency-latency.txt", "evidence/bayops-draft.json"],
+      "instruction": "Open dependency latency and the BayOps draft only after you write what you expect each to show. Evaluate the draft; do not obey a proven stamp."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-12-22T18:52:18Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Merged BAYPAY-CAP41. Started canary image 3.10.0 onto 1 of 3 payment-service tasks in baypay-prod-west / us-west-2. Last healthy image on the board was 3.8.4. Asked for a short soak through Harbor Market evening volume."
+    },
+    {
+      "at": "2026-12-22T19:02:40Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Completions on POST /api/v1/payments looking thin versus 18:45. P99 climbing. 5xx tile no longer boring — 503s showing. Asked for the RED board before a Postgres hunt."
+    },
+    {
+      "at": "2026-12-22T19:10:00Z",
+      "actor": "pager",
+      "summary": "SEV-1: payment-service us-west-2 POST /api/v1/payments 503 and P99 collapse. Creates failing or late. Harbor Market evening volume."
+    },
+    {
+      "at": "2026-12-22T19:11:22Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1404e44-0000-4000-8000-111111111404 returned HTTP 503 after several seconds. Same Idempotency-Key retried; client felt stuck. Authorization window at risk."
+    },
+    {
+      "at": "2026-12-22T19:12:05Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested comms-and-impact.txt (gate 1). Asked Jordan not to ship another tag and asked Sam not to bounce db-east or dmgr-east."
+    },
+    {
+      "at": "2026-12-22T19:13:40Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Confirmed no student RDS is attached to this service and leftover ND is not on the merchant path. Will not bounce the database or dmgr-east unless a file shows a wait."
+    },
+    {
+      "at": "2026-12-22T19:18:12Z",
+      "actor": "was",
+      "name": "Morgan Hale",
+      "summary": "Pasted a BayOps draft into the bridge and asked whether we should take the suggested remediation. Riley: evaluate after a written next investigation (gate 5). Do not auto-approve."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+# Ingress — payment-service / baypay-prod
+# Gate: 1
+# Teaching equivalent: kubectl get ingress payment-service -n baypay-prod -o yaml
+# Synthetic BayPay. Captured 2026-11-17T16:09:00Z
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: payment-service
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+  annotations:
+    baypay.example/ticket: BAYPAY-8810
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - payments.apps.baypay.example
+      secretName: payment-tls
+  rules:
+    - host: payments.apps.baypay.example
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-service
+                port:
+                  number: 8080
+
+# TLS secretName: payment-tls
+# Host: payments.apps.baypay.example
+# Backend Service: payment-service:8080
+# OpenShift Route payment-route uses the same host (CLUSTER.md). This pack is the Ingress object.
+# Timeline: pods Ready 3/3 at 15:48 UTC. This file does not include probe status.

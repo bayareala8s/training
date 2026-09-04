@@ -1,0 +1,26 @@
+# INC-JVM-201 application logs (synthetic)
+# sale-canary-1  service=baypay-payment-canary  version=1.8.14
+# All customers, keys, and amounts are fictional.
+
+2026-08-18T18:12:03.102Z level=INFO corr=corr-201-a7f3 thread=baypay-auth-2 event=AUTHORIZE_BEGIN paymentId=pay-7c21 customer=11111111-1111-1111-1111-111111111111 account=22222222-2222-2222-2222-222222222221 key=harbor-8841 amountCents=8400 merchant=merchant-harbor-bike ref=invoice-8841
+2026-08-18T18:12:03.104Z level=INFO corr=corr-201-a7f3 thread=baypay-auth-2 event=AUTHORIZE_POST paymentId=pay-7c21 key=harbor-8841 journalSeq=441902 balanceAfter=8400
+2026-08-18T18:12:03.105Z level=INFO corr=corr-201-a7f3 thread=http-nio-8080-exec-14 event=HTTP_201 path=/api/v1/payments paymentId=pay-7c21 replay=false
+
+2026-08-18T18:12:05.088Z level=INFO corr=corr-201-b9aa thread=baypay-auth-5 event=AUTHORIZE_BEGIN paymentId=pay-7c22 customer=11111111-1111-1111-1111-111111111111 account=22222222-2222-2222-2222-222222222221 key=harbor-8841 amountCents=8400 merchant=merchant-harbor-bike ref=invoice-8841
+2026-08-18T18:12:05.089Z level=INFO corr=corr-201-b9aa thread=baypay-auth-5 event=AUTHORIZE_POST paymentId=pay-7c22 key=harbor-8841 journalSeq=441918 balanceAfter=16800
+2026-08-18T18:12:05.090Z level=INFO corr=corr-201-b9aa thread=http-nio-8080-exec-21 event=HTTP_201 path=/api/v1/payments paymentId=pay-7c22 replay=false
+
+2026-08-18T18:12:05.091Z level=WARN corr=corr-201-b9aa thread=baypay-auth-5 event=DUPLICATE_KEY_SAMPLE key=harbor-8841 postsForKey=2 window=5s
+
+2026-08-18T18:14:11.440Z level=INFO corr=corr-201-c013 thread=baypay-auth-1 event=AUTHORIZE_BEGIN paymentId=pay-91aa customer=11111111-1111-1111-1111-111111111111 account=22222222-2222-2222-2222-222222222221 key=sale-item-10091 amountCents=100
+2026-08-18T18:14:11.441Z level=INFO corr=corr-201-c014 thread=baypay-auth-3 event=AUTHORIZE_BEGIN paymentId=pay-91ab customer=11111111-1111-1111-1111-111111111111 account=22222222-2222-2222-2222-222222222221 key=sale-item-10092 amountCents=100
+2026-08-18T18:14:11.442Z level=INFO corr=corr-201-c013 thread=baypay-auth-1 event=AUTHORIZE_POST paymentId=pay-91aa key=sale-item-10091 journalSeq=452010 balanceAfter=19400
+2026-08-18T18:14:11.442Z level=INFO corr=corr-201-c014 thread=baypay-auth-3 event=AUTHORIZE_POST paymentId=pay-91ab key=sale-item-10092 journalSeq=452010 balanceAfter=19400
+
+2026-08-18T18:16:40.002Z level=ERROR corr=none thread=alert-forwarder event=PAGE routing_key=DuplicatePaymentRateHigh value=0.018
+
+2026-08-18T18:19:33.770Z level=INFO corr=corr-201-e220 thread=http-nio-8080-exec-8 event=HTTP_201 path=/api/v1/payments paymentId=pay-aa11 key=fog-coffee-2201 replay=false
+2026-08-18T18:19:33.771Z level=INFO corr=corr-201-e221 thread=http-nio-8080-exec-9 event=HTTP_201 path=/api/v1/payments paymentId=pay-aa12 key=fog-coffee-2201 replay=false
+2026-08-18T18:19:33.802Z level=WARN corr=corr-201-e221 thread=baypay-auth-0 event=DUPLICATE_KEY_SAMPLE key=fog-coffee-2201 postsForKey=2 window=5s
+
+2026-08-18T18:22:01.015Z level=INFO corr=corr-201-sup1 thread=http-nio-8080-exec-3 event=SUPPORT_LOOKUP key=harbor-8841 payments=[pay-7c21, pay-7c22] journalRows=2

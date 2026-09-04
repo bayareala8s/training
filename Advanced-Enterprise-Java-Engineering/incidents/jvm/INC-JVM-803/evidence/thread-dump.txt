@@ -1,0 +1,87 @@
+2026-10-10 02:16:08
+Full thread dump OpenJDK 64-Bit Server VM (21.0.4+7-LTS mixed mode, sharing)
+# Synthetic dump for INC-JVM-803. Fictional BayPay canary pay-prod-east-2 pid 23018.
+# Captured with a teaching jstack equivalent. Not a real employer artifact.
+
+Threads class SMR info:
+_java_thread_list=0x000000012a00b800, length=148
+
+"nightly-reversal-1" #77 prio=5 os_prio=0 cpu=410.22ms elapsed=976.08s tid=0x000000012b220000 nid=0xb077 waiting for monitor entry  [0x0000000173aee000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.payment.lock.InProcessMoneyLocks.lockAccount(InProcessMoneyLocks.java:41)
+	- waiting to lock <0x00000000f0acc801> (a java.lang.Object)
+	at com.baypay.payment.batch.NightlyReversalJob.reverseOne(NightlyReversalJob.java:118)
+	at com.baypay.payment.batch.NightlyReversalJob.run(NightlyReversalJob.java:62)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+   Locked ownable synchronizers:
+	- None
+	- locked <0x00000000f0ae1880> (a java.lang.Object)
+
+"http-nio-8080-exec-16" #33 prio=5 os_prio=0 cpu=188.41ms elapsed=4120.11s tid=0x000000012b110000 nid=0xa016 waiting for monitor entry  [0x0000000172aee000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.payment.lock.InProcessMoneyLocks.lockLedger(InProcessMoneyLocks.java:56)
+	- waiting to lock <0x00000000f0ae1880> (a java.lang.Object)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:88)
+	at com.baypay.payment.api.PaymentController.create(PaymentController.java:54)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+   Locked ownable synchronizers:
+	- None
+	- locked <0x00000000f0acc801> (a java.lang.Object)
+
+"http-nio-8080-exec-21" #38 prio=5 os_prio=0 cpu=96.02ms elapsed=880.08s tid=0x000000012b118800 nid=0xa021 waiting for monitor entry  [0x0000000172c12000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.payment.lock.InProcessMoneyLocks.lockAccount(InProcessMoneyLocks.java:41)
+	- waiting to lock <0x00000000f0acc801> (a java.lang.Object)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:81)
+	at com.baypay.payment.api.PaymentController.create(PaymentController.java:54)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-9" #26 prio=5 os_prio=0 cpu=80.10ms elapsed=880.20s tid=0x000000012b10a000 nid=0xa009 waiting for monitor entry  [0x0000000172ab8000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+	at com.baypay.payment.lock.InProcessMoneyLocks.lockAccount(InProcessMoneyLocks.java:41)
+	- waiting to lock <0x00000000f0acc801> (a java.lang.Object)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:81)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+"http-nio-8080-exec-2" #19 prio=5 os_prio=0 cpu=210.55ms elapsed=8801.00s tid=0x000000012a870000 nid=0x9e11 runnable  [0x00000001727e0000]
+   java.lang.Thread.State: RUNNABLE
+	at com.baypay.payment.config.HealthIndicator.health(HealthIndicator.java:22)
+	at org.springframework.boot.actuate.health.HealthEndpointWebExtension.health(HealthEndpointWebExtension.java:91)
+
+"http-nio-8080-exec-4" #21 prio=5 os_prio=0 cpu=44.02ms elapsed=8799.40s tid=0x000000012a88e000 nid=0x9e14 waiting on condition  [0x0000000172912000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@21.0.4/Native Method)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:0)
+
+"Reference Handler" #2 daemon prio=10 os_prio=0 cpu=3.11ms elapsed=9001.00s tid=0x000000012a001000 nid=0x9e02 waiting on condition
+   java.lang.Thread.State: RUNNABLE
+
+"VM Periodic Task Thread" os_prio=0 cpu=88.00ms elapsed=9001.00s tid=0x000000012a00a000 nid=0x9e06 waiting on condition
+
+JNI global refs: 36, weak refs: 0
+
+Found one Java-level deadlock:
+=============================
+"nightly-reversal-1":
+  waiting to lock monitor 0x000000012c002100 (object 0x00000000f0acc801, a java.lang.Object),
+  which is held by "http-nio-8080-exec-16"
+
+"http-nio-8080-exec-16":
+  waiting to lock monitor 0x000000012c002180 (object 0x00000000f0ae1880, a java.lang.Object),
+  which is held by "nightly-reversal-1"
+
+Java stack information for the threads listed above:
+===================================================
+"nightly-reversal-1":
+	at com.baypay.payment.lock.InProcessMoneyLocks.lockAccount(InProcessMoneyLocks.java:41)
+	- waiting to lock <0x00000000f0acc801> (a java.lang.Object)
+	- locked <0x00000000f0ae1880> (a java.lang.Object)
+	at com.baypay.payment.batch.NightlyReversalJob.reverseOne(NightlyReversalJob.java:118)
+"http-nio-8080-exec-16":
+	at com.baypay.payment.lock.InProcessMoneyLocks.lockLedger(InProcessMoneyLocks.java:56)
+	- waiting to lock <0x00000000f0ae1880> (a java.lang.Object)
+	- locked <0x00000000f0acc801> (a java.lang.Object)
+	at com.baypay.payment.application.PaymentApplicationService.create(PaymentApplicationService.java:88)
+
+Found 1 deadlock.

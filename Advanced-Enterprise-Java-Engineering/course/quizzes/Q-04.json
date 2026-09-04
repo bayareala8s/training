@@ -1,0 +1,113 @@
+{
+  "id": "Q-04",
+  "moduleId": "module-04",
+  "title": "Module 4 quiz",
+  "questionCount": 8,
+  "includesExplanations": true,
+  "questions": [
+    {
+      "id": "Q-04-01",
+      "type": "multiple-choice",
+      "prompt": "In BayPay’s payment-service, which type is actually a Jakarta servlet?",
+      "choices": [
+        { "id": "a", "text": "PaymentController" },
+        { "id": "b", "text": "DispatcherServlet" },
+        { "id": "c", "text": "PaymentApplicationService" },
+        { "id": "d", "text": "PaymentRepository" }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Spring MVC’s DispatcherServlet is an HttpServlet. PaymentController is a handler the dispatcher invokes. Services and repositories are not servlets."
+    },
+    {
+      "id": "Q-04-02",
+      "type": "multiple-choice",
+      "prompt": "Which pairing is the best Spring → Jakarta mapping for BayPay’s write path?",
+      "choices": [
+        { "id": "a", "text": "@RestController ↔ JTA; @Transactional ↔ JAX-RS" },
+        { "id": "b", "text": "JpaRepository ↔ EntityManager; @Transactional ↔ JTA demarcation" },
+        { "id": "c", "text": "application.yml ↔ EntityManager; JpaRepository ↔ JNDI" },
+        { "id": "d", "text": "Spring IoC ↔ JMS; ApplicationEventPublisher ↔ CDI only" }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Spring Data repositories call an EntityManager. @Transactional is Spring’s facade over JTA-like begin/commit/rollback. YAML maps to JNDI as a binding mechanism, not to JPA."
+    },
+    {
+      "id": "Q-04-03",
+      "type": "multiple-choice",
+      "prompt": "Hikari on pay-prod-east-2 shows active 50 / max 50 and 41 waiters. Database CPU is 19%. What does this establish?",
+      "choices": [
+        { "id": "a", "text": "PostgreSQL is down." },
+        { "id": "b", "text": "The JVM heap is exhausted." },
+        { "id": "c", "text": "This instance’s pool is exhausted; the cause is not yet proven." },
+        { "id": "d", "text": "You must raise maximum-pool-size to 200 immediately." }
+      ],
+      "correctChoiceId": "c",
+      "explanation": "50/50 plus waiters is exhaustion — a symptom. Low DB CPU argues against a dead database. Raising max is not a diagnosis."
+    },
+    {
+      "id": "Q-04-04",
+      "type": "multiple-choice",
+      "prompt": "A Hikari leak-detection line appears in logs. How should an on-call engineer treat it?",
+      "choices": [
+        { "id": "a", "text": "As proof the root cause is a connection leak." },
+        { "id": "b", "text": "As a candidate: confirm checkout age, stacks, and whether connections return." },
+        { "id": "c", "text": "As a reason to disable leak detection in production." },
+        { "id": "d", "text": "As evidence the JNDI name is wrong." }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Leak detection flags checkouts that exceed a threshold. Long legitimate statements can trip it. Stacks and whether in-use stays high after traffic drops turn a candidate into a conclusion."
+    },
+    {
+      "id": "Q-04-05",
+      "type": "multiple-choice",
+      "prompt": "POST /api/v1/payments returns 201 with status COMPLETED, but ledger_transactions has no row for that payment id. What class of failure is this until proven otherwise?",
+      "choices": [
+        { "id": "a", "text": "Load-balancer TLS mismatch" },
+        { "id": "b", "text": "Connection pool exhaustion" },
+        { "id": "c", "text": "A transaction-boundary split between status and ledger" },
+        { "id": "d", "text": "Missing HttpSession replication" }
+      ],
+      "correctChoiceId": "c",
+      "explanation": "HTTP success plus COMPLETED without a ledger row means two units of work disagreed. Pool exhaustion would typically fail the HTTP call. Sessions are not part of the payment API."
+    },
+    {
+      "id": "Q-04-06",
+      "type": "multiple-choice",
+      "prompt": "Why should a new BayPay service not look up jdbc/baypay from a traditional WAS cell JNDI tree as its default design?",
+      "choices": [
+        { "id": "a", "text": "JNDI cannot represent a DataSource." },
+        { "id": "b", "text": "Spring Boot cannot use a DataSource." },
+        { "id": "c", "text": "Traditional WAS ND is a source estate to modernize from, not a greenfield runtime." },
+        { "id": "d", "text": "JNDI names are illegal in Kubernetes." }
+      ],
+      "correctChoiceId": "c",
+      "explanation": "JNDI is valid historical binding and still appears on the existing cell (Module 5). Greenfield BayPay services should use Boot or Liberty with externalized config, not grow the ND cell."
+    },
+    {
+      "id": "Q-04-07",
+      "type": "multiple-choice",
+      "prompt": "Why does BayPay’s payment API avoid HttpServletRequest.getSession(true)?",
+      "choices": [
+        { "id": "a", "text": "Jakarta EE forbids sessions." },
+        { "id": "b", "text": "The conversation is the Idempotency-Key plus rows in the database; a session would force affinity or replication." },
+        { "id": "c", "text": "Spring MVC cannot read cookies." },
+        { "id": "d", "text": "Sessions are only available on WebSphere ND." }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Stateless APIs scale without sticky sessions. Money state belongs in the database. Sessions still exist on some legacy portal ears; they are not a payment-API feature."
+    },
+    {
+      "id": "Q-04-08",
+      "type": "multiple-choice",
+      "prompt": "A deploy adds REQUIRES_NEW on PaymentPostingService.postAuthorized while create() stays @Transactional. What is the risk?",
+      "choices": [
+        { "id": "a", "text": "The HTTP thread can no longer run filters." },
+        { "id": "b", "text": "Payment COMPLETED can commit while the ledger unit rolls back independently." },
+        { "id": "c", "text": "JNDI lookups start failing." },
+        { "id": "d", "text": "Hikari automatically sets max pool size to 1." }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "REQUIRES_NEW suspends the caller’s transaction and starts another. The two commits are independent. That is the INCIDENT-403 mechanism."
+    }
+  ]
+}

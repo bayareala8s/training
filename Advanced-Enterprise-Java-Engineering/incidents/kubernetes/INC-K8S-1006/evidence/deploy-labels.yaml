@@ -1,0 +1,40 @@
+# Deployment labels excerpt — payment-service / baypay-prod
+# Gate: 2
+# Teaching equivalent: kubectl get deploy payment-service -n baypay-prod -o yaml
+# Synthetic BayPay. Captured 2026-11-19T19:38:10Z after ticket BAYPAY-10066
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: baypay-prod
+  labels:
+    app: payment-service
+  annotations:
+    baypay.example/ticket: BAYPAY-10066
+    baypay.example/last-applied-by: sam.okada
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment
+          image: registry.baypay.example/baypay/payment-service:3.9.1
+          ports:
+            - name: http
+              containerPort: 8080
+
+# Pod labels (from kubectl get pods --show-labels teaching paste):
+# payment-service-9c3d2e1b0-a1b2c   Ready 1/1   app=payment-service,pod-template-hash=9c3d2e1b0
+# payment-service-9c3d2e1b0-d4e5f   Ready 1/1   app=payment-service,pod-template-hash=9c3d2e1b0
+# payment-service-9c3d2e1b0-g7h8i   Ready 1/1   app=payment-service,pod-template-hash=9c3d2e1b0
+#
+# Deployment matchLabels.app = payment-service
+# Pod template labels.app = payment-service
+# Service selector (gate 1) is a different value. Quote both.

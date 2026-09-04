@@ -1,0 +1,69 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "BayPay payment-service operations home board (paper). Draft — Riley asked for the rest of RED, USE, and the 99.9% SLO. Synthetic teaching metrics only.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "RED — POST /api/v1/payments",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+      "description": "Completions per second for the golden create. Not threads-busy.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "aeje-prom-paper" },
+          "editorMode": "code",
+          "expr": "sum(rate(http_server_requests_seconds_count{uri=\"/api/v1/payments\",method=\"POST\"}[5m]))",
+          "legendFormat": "POST /api/v1/payments rate",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Rate — POST /api/v1/payments",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": ["baypay", "payment-service", "ops", "aeje-d-061", "draft"],
+  "templating": {
+    "list": [
+      {
+        "current": { "text": "payment-service", "value": "payment-service" },
+        "hide": 0,
+        "label": "job",
+        "name": "job",
+        "query": "payment-service",
+        "type": "constant"
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "BayPay payment-service operations (draft)",
+  "uid": "baypay-ops-1300",
+  "version": 1
+}

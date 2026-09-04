@@ -1,0 +1,66 @@
+# Synthetic aws ecs describe-services --cluster baypay-prod-west --services payment-service
+# plus task image list. Region us-west-2. Teaching paste. Not a live AWS call.
+# Gate: 3
+
+CLUSTER        baypay-prod-west
+SERVICE        payment-service
+LAUNCH_TYPE    FARGATE
+DESIRED        3
+RUNNING        3
+PENDING        0
+REGION         us-west-2
+TICKET         BAYPAY-CAP41
+RELEASE        Jordan Voss
+
+DEPLOYMENT-CIRCUIT-BREAKER  enable=true  rollback=false
+CANARY                      1 of 3 tasks on the new image (manual soak)
+
+## Images on running tasks (19:14 UTC)
+
+| Task | Started (UTC) | Image | Status | Target health |
+|---|---|---|---|---|
+| pay-prod-west-a | 2026-12-21T08:11:04Z | baypay/payment-service:3.8.4 | RUNNING | healthy |
+| pay-prod-west-b | 2026-12-21T08:11:09Z | baypay/payment-service:3.8.4 | RUNNING | healthy |
+| pay-prod-west-c | 2026-12-22T18:52:41Z | baypay/payment-service:3.10.0 | RUNNING | draining / 5xx on POST |
+
+Last healthy image on the board before 18:52 UTC: **3.8.4** (all three tasks).
+
+## PRIMARY deployment
+
+  STATUS     PRIMARY
+  ID         ecs-svc/cap41cafebabe
+  TASK_DEF   payment-service:104
+  DESIRED    3
+  RUNNING    3
+  FAILED     0
+  NOTE       Task definition 104 pins 3.10.0 on the canary task group.
+             Task definition 101 (3.8.4) remains the last all-healthy revision.
+
+## Release ticket BAYPAY-CAP41 (excerpt)
+
+  merged:    2026-12-22T18:48:02Z
+  author:    Jordan Voss
+  image:     baypay/payment-service:3.10.0
+  soak:      1 of 3 tasks in us-west-2
+  notes:     "sync score call on create; soak through Harbor Market evening volume"
+  pipeline:  build green; no outbound-client smoke job on this ticket
+  last good: baypay/payment-service:3.8.4
+
+## Events (newest first)
+
+  2026-12-22T19:12:40Z  (service payment-service, task pay-prod-west-c) target 5xx on POST /api/v1/payments; still RUNNING.
+  2026-12-22T19:02:11Z  (service payment-service) canary 1/3 still in service. Jordan: do not ship another tag.
+  2026-12-22T18:52:41Z  (service payment-service) started 1 task using payment-service:104 image 3.10.0.
+  2026-12-22T18:51:08Z  (service payment-service) registered pay-prod-west-c with target-group pay-prod-west-tg.
+
+## Target group  pay-prod-west-tg
+
+  PROTOCOL    HTTP
+  PORT        8080
+  PATH        /actuator/health/liveness
+  INTERVAL    30
+  HEALTHY     2 consecutive
+  UNHEALTHY   3 consecutive
+  NOTE        Liveness on :8080 still 200 on all three tasks. Merchant 503 is on POST /api/v1/payments, not on the probe path.
+
+Riley: quote 3.10.0 canary 1/3 and last healthy 3.8.4 before requesting a dump.

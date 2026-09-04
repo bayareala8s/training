@@ -1,0 +1,70 @@
+{
+  "id": "INC-K8S-1005",
+  "labId": "INCIDENT-1005",
+  "title": "TLS handshake failures on payments host",
+  "severity": "SEV-2",
+  "service": "payment-service",
+  "instance": "baypay-prod",
+  "environment": "prod-east",
+  "startedAt": "2026-11-17T16:05:41Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "Browsers and clients fail TLS handshake to payments.apps.baypay.example; Ready pods unused",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c1005e55-0000-4000-8000-111111111005",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/ingress.yaml"],
+      "instruction": "Read this timeline and the Ingress YAML before requesting openssl output."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/openssl-dates.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open openssl dates."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/curl-tls.txt"],
+      "instruction": "Open the client curl paste only after you write what handshake error would confirm expiry or name mismatch."
+    }
+  ],
+  "events": [
+    {
+      "at": "2025-08-01T00:00:00Z",
+      "actor": "platform",
+      "name": "Sam Okada",
+      "summary": "Issued teaching cert into Secret payment-tls (ticket BAYPAY-8810). Calendar reminder was a spreadsheet row, not an alert."
+    },
+    {
+      "at": "2026-11-17T15:48:12Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "Pods Ready 3/3. Merchants fail before HTTP. Asked for Ingress TLS secret and openssl dates before a Deployment bounce."
+    },
+    {
+      "at": "2026-11-17T16:05:41Z",
+      "actor": "pager",
+      "summary": "SEV-2: payments.apps.baypay.example TLS handshake failures. Harbor Market cannot POST."
+    },
+    {
+      "at": "2026-11-17T16:07:05Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c1005e55-0000-4000-8000-111111111005 never left the browser. Certificate warning."
+    },
+    {
+      "at": "2026-11-17T16:08:33Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested Ingress YAML (gate 1). Told Sam not to disable TLS to 'restore HTTP' and not to paste tls.key into the bridge."
+    }
+  ]
+}

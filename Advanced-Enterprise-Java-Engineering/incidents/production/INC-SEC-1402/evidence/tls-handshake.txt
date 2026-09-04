@@ -1,0 +1,70 @@
+# openssl / curl TLS — teaching paste from payments.apps.baypay.example
+# Gate: 1
+# Synthetic BayPay. Captured 2026-09-02T07:20:18Z
+# Not a live account. Do not replay against a paid API.
+# No private key shipped.
+
+$ echo | openssl s_client -connect payments.apps.baypay.example:443 \
+    -servername payments.apps.baypay.example -showcerts 2>&1 | head -40
+
+CONNECTED(00000005)
+depth=0 CN = payments.apps.baypay.example
+verify error:num=10:certificate has expired
+notAfter=Sep  1 00:00:00 2026 GMT
+verify return:1
+depth=0 CN = payments.apps.baypay.example
+verify error:num=10:certificate has expired
+notAfter=Sep  1 00:00:00 2026 GMT
+verify return:1
+1402261402:error:1416F086:SSL routines:tls_process_server_certificate:certificate verify failed:ssl/statem/statem_clnt.c:1915:
+---
+Certificate chain
+ 0 s:CN = payments.apps.baypay.example
+   i:C = US, O = Amazon, OU = Server CA 1B, CN = Amazon
+---
+no peer certificate available
+---
+SSL handshake has read 3847 bytes and written 403 bytes
+---
+
+$ echo | openssl s_client -connect payments.apps.baypay.example:443 \
+    -servername payments.apps.baypay.example 2>/dev/null \
+    | openssl x509 -noout -dates -subject -issuer
+
+notBefore=Jun  3 00:00:00 2026 GMT
+notAfter=Sep  1 00:00:00 2026 GMT
+subject=CN = payments.apps.baypay.example
+issuer=C = US, O = Amazon, OU = Server CA 1B, CN = Amazon
+
+# SAN (from the same leaf): DNS:payments.apps.baypay.example
+# Serial: 14:02:AE:JE:14:02 (teaching)
+# Signature Algorithm: sha256WithRSAEncryption
+
+$ curl -vI https://payments.apps.baypay.example/api/v1/payments \
+    -H 'Host: payments.apps.baypay.example' \
+    --resolve payments.apps.baypay.example:443:52.12.14.02
+*   Trying 52.12.14.02:443...
+* Connected to payments.apps.baypay.example (52.12.14.02) port 443
+* ALPN: curl offers h2,http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* SSL certificate problem: certificate has expired
+* Closing connection
+curl: (60) SSL certificate problem: certificate has expired
+
+# HTTP status was never returned. Avery Chen payment
+# c1402b22-0000-4000-8000-111111111402 stayed in the browser.
+
+# Contrast — jump box to the same task, HTTP on the container port (not the merchant path):
+
+$ curl -sS -o /dev/null -w '%{http_code}\n' \
+    http://10.0.14.22:8080/actuator/health/liveness
+200
+
+$ curl -sS -o /dev/null -w '%{http_code}\n' \
+    http://10.0.14.22:8080/api/v1/payments
+405
+
+# Tasks lastStatus=RUNNING (Priya, timeline). Actuator on :8080 answers.
+# Merchants fail the handshake on :443. This is not a Postgres timeout
+# and not a security-group drop (TCP to 443 completed; verify failed).

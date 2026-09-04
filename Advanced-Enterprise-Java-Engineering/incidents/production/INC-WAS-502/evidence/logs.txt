@@ -1,0 +1,39 @@
+# SystemOut excerpts — PaymentCluster
+# Synthetic BayPay. Gate 2. Times in UTC unless the WAS stamp says PDT.
+
+----- Pay1 / node-pay-1 / SystemOut.log (healthy control) -----
+
+[9/8/26 14:18:44:220 PDT] 0000009c WebContainer  I   POST /payment status=201 paymentId=c502a111-0000-4000-8000-111111111502 customer=11111111-1111-1111-1111-111111111111
+[9/8/26 14:20:01:004 PDT] 0000009d ConnectionFac I   jdbc/baypay checkout ok server=Pay1 inUse=8 max=50
+
+----- Pay2 / node-pay-2 / SystemOut.log -----
+
+[9/8/26 14:08:51:118 PDT] 000000b1 ConnectionEve W   J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/baypay.  Exception: java.sql.SQLRecoverableException: I/O Error: Connection reset
+[9/8/26 14:08:51:130 PDT] 000000b2 ConnectionEve W   DSRA0010E: SQL State = 08006, Error Code = 0
+[9/8/26 14:09:02:441 PDT] 000000b3 WebContainer  W   POST /payment customer=11111111-1111-1111-1111-111111111111 still in flight after 12000 ms
+[9/8/26 14:16:11:088 PDT] 000000c0 ConnectionPoo W   J2CA0045E: Connection not available while invoking method createOrWaitForConnection for resource jdbc/baypay.  Waited 180000 ms.  Pool: inUse=50, max=50, waiters=29
+[9/8/26 14:16:11:102 PDT] 000000c1 ServletWrappe E   SRVE0068E: Could not invoke the service() method on servlet PaymentServlet. Exception: com.ibm.websphere.ce.cm.ConnectionWaitTimeoutException: Connection not available, Waited 180000 ms
+[9/8/26 14:18:22:104 PDT] 000000a1 ThreadMonitor W   WSVR0605W: Thread "WebContainer : 37" (000000c5) has been active for 612044 milliseconds and may be hung.  There is/are 47 thread(s) in total in the server that may be hung.
+[9/8/26 14:18:22:188 PDT] 000000a1 ThreadMonitor W     at org.postgresql.core.VisibleBufferedInputStream.readMore(VisibleBufferedInputStream.java)
+[9/8/26 14:18:22:189 PDT] 000000a1 ThreadMonitor W     at com.ibm.ws.rsadapter.jdbc.WSJdbcConnection.prepareStatement
+[9/8/26 14:18:22:190 PDT] 000000a1 ThreadMonitor W     at com.baypay.payment.ejb.PaymentBean.create
+[9/8/26 14:19:40:003 PDT] 000000c8 ThreadMonitor W   WSVR0605W: Thread "WebContainer : 12" (000000aa) has been active for 598102 milliseconds and may be hung.  There is/are 48 thread(s) in total in the server that may be hung.
+[9/8/26 14:19:40:014 PDT] 000000c8 ThreadMonitor W     at com.ibm.ejs.j2c.FreePool.createOrWaitForConnection(FreePool.java)
+[9/8/26 14:19:40:015 PDT] 000000c8 ThreadMonitor W     at com.ibm.ws.rsadapter.jdbc.WSJdbcDataSource.getConnection
+[9/8/26 14:19:40:016 PDT] 000000c8 ThreadMonitor W     at com.baypay.payment.ejb.PaymentBean.create
+[9/8/26 14:21:15:550 PDT] 000000d0 WebContainer  E   POST /payment failed customer=11111111-1111-1111-1111-111111111111 error=ConnectionWaitTimeoutException resource=jdbc/baypay
+
+----- Pay3 / node-pay-2 / SystemOut.log -----
+
+[9/8/26 14:08:52:009 PDT] 000000e1 ConnectionEve W   J2CA0056I: The Connection Manager received a fatal connection error from the Resource Adapter for resource jdbc/baypay.  Exception: java.sql.SQLRecoverableException: I/O Error: Socket closed
+[9/8/26 14:17:03:771 PDT] 000000e4 ConnectionPoo W   J2CA0045E: Connection not available while invoking method createOrWaitForConnection for resource jdbc/baypay.  Waited 180000 ms.  Pool: inUse=50, max=50, waiters=33
+[9/8/26 14:18:55:220 PDT] 000000e8 ThreadMonitor W   WSVR0605W: Thread "WebContainer : 4" (000000f1) has been active for 640118 milliseconds and may be hung.  There is/are 51 thread(s) in total in the server that may be hung.
+[9/8/26 14:18:55:231 PDT] 000000e8 ThreadMonitor W     at java.net.SocketInputStream.socketRead0
+[9/8/26 14:18:55:232 PDT] 000000e8 ThreadMonitor W     at org.postgresql.core.PGStream.receive
+[9/8/26 14:18:55:233 PDT] 000000e8 ThreadMonitor W     at com.baypay.payment.ejb.PaymentBean.create
+[9/8/26 14:20:44:900 PDT] 000000f2 WebContainer  I   server=Pay3 state=STARTED webContainerActive=100 jdbc/baypay inUse=50 idle=0
+
+----- FFDC index (filenames only; bodies omitted from this pack) -----
+
+ffdc/Pay2_2026_09_08_14_16_11_J2CA0045E.txt
+ffdc/Pay3_2026_09_08_14_17_03_J2CA0045E.txt

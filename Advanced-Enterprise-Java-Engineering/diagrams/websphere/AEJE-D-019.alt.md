@@ -1,0 +1,1 @@
+Diagram AEJE-D-019: BayPay WebSphere ND current state. Left-to-right labeled boxes: ihs-east, PaymentCluster, RefundCluster, BayPayBus, database. BayPay is a fictional payment platform used for instruction.

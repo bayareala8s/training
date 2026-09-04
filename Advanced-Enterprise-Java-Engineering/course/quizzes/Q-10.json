@@ -1,0 +1,104 @@
+{
+  "id": "Q-10",
+  "moduleId": "module-10",
+  "title": "Module 10 quiz — Kubernetes and OpenShift",
+  "description": "Eight questions on Deployments, Services, Routes, probes, Secrets, and BayPay incidents. Method over lucky kubectl nouns.",
+  "questions": [
+    {
+      "id": "Q-10-01",
+      "prompt": "A Deployment owns ReplicaSets that own Pods. What does deleting one payment-service pod do?",
+      "choices": [
+        "Deletes the Deployment",
+        "The ReplicaSet creates a replacement to match spec.replicas",
+        "Deletes the Ingress host forever",
+        "Stops dmgr-east"
+      ],
+      "correctIndex": 1,
+      "explanation": "Pods are cattle. The controller restores the replica count."
+    },
+    {
+      "id": "Q-10-02",
+      "prompt": "OpenShift Route vs Kubernetes Ingress for payments.apps.baypay.example?",
+      "choices": [
+        "Routes are L4 only; Ingress is a database",
+        "Different product objects for the same job: L7 front door onto a Service",
+        "Routes require a live ND cell",
+        "Ingress cannot terminate TLS"
+      ],
+      "correctIndex": 1,
+      "explanation": "Teach both. Do not require a live OCP cluster in this course."
+    },
+    {
+      "id": "Q-10-03",
+      "prompt": "Pods are Running but Ready 0/1 and the Service has no Endpoints. First honest class?",
+      "choices": [
+        "The node is OOMKilled",
+        "Readiness (or selector) is failing — traffic will not flow even if the process exists",
+        "CrashLoopBackOff is proven",
+        "The certificate expired"
+      ],
+      "correctIndex": 1,
+      "explanation": "Ready gate + selector both produce empty Endpoints. Describe the pod and the Service before guessing TLS."
+    },
+    {
+      "id": "Q-10-04",
+      "prompt": "Why must liveness and readiness be different URLs on payment-service?",
+      "choices": [
+        "Kubernetes forbids the same path twice",
+        "Liveness = process should be killed; readiness = should receive traffic. A slow DB check on liveness restarts a healthy JVM",
+        "Actuator can only mount one mapping",
+        "OpenShift Routes cannot probe"
+      ],
+      "correctIndex": 1,
+      "explanation": "BayPay contract: /actuator/health/liveness vs /actuator/health/readiness."
+    },
+    {
+      "id": "Q-10-05",
+      "prompt": "kubectl describe shows Last State OOMKilled, limit 512Mi, JAVA_TOOL_OPTIONS=-Xmx512m. Working model?",
+      "choices": [
+        "G1 refused to run",
+        "cgroup killed the process; heap reserved the whole limit; native had nowhere to go",
+        "The Service selector is wrong",
+        "The TLS secret expired"
+      ],
+      "correctIndex": 1,
+      "explanation": "Same JVM rule, kube evidence. Do not raise replica count as the first fix."
+    },
+    {
+      "id": "Q-10-06",
+      "prompt": "A Secret has key password but the container env is BAYPAY_DB_PASSWORD. What happens?",
+      "choices": [
+        "Kubernetes renames keys automatically",
+        "The app does not receive the value it was written for — fail-fast or DB auth errors",
+        "The Ingress host changes",
+        "ReplicaSets stop existing"
+      ],
+      "correctIndex": 1,
+      "explanation": "Key names are the contract. envFrom is not magic synonym matching."
+    },
+    {
+      "id": "Q-10-07",
+      "prompt": "Service selector app=payment, pods labeled app=payment-service. Symptom?",
+      "choices": [
+        "CrashLoopBackOff on every node",
+        "Endpoints empty; Ingress/Route 503 even if pods are Ready",
+        "Automatic HPA to zero",
+        "DMGR sync failure"
+      ],
+      "correctIndex": 1,
+      "explanation": "Routing is labels. INCIDENT-1006 class."
+    },
+    {
+      "id": "Q-10-08",
+      "prompt": "Why is a live OpenShift cluster not required to finish Module 10?",
+      "choices": [
+        "OpenShift is fictional",
+        "The course is simulation-first: YAML, Routes-vs-Ingress, and gated dumps teach the model; OCP is optional extra",
+        "Kubernetes cannot express Routes on paper",
+        "BayPay forbids YAML"
+      ],
+      "correctIndex": 1,
+      "explanation": "Same delivery rule as WebSphere ND: architecture + evidence, not a licensed cluster."
+    }
+  ]
+}

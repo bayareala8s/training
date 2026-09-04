@@ -1,0 +1,82 @@
+{
+  "id": "INC-WAS-504",
+  "labId": "INCIDENT-504",
+  "title": "Deployment failure",
+  "severity": "SEV-2",
+  "service": "payment.ear",
+  "cluster": "PaymentCluster",
+  "cell": "BayPayCell",
+  "environment": "prod-east",
+  "startedAt": "2026-09-22T23:08:00Z",
+  "timezone": "America/Los_Angeles",
+  "synthetic": true,
+  "gatedEvidence": true,
+  "customerImpact": "Intermittent POST /payment failures: NameNotFoundException or unexpected class errors depending on which PaymentCluster member ihs-east selects. Same Idempotency-Key can 201 then 500.",
+  "demoCustomer": {
+    "name": "Avery Chen",
+    "customerId": "11111111-1111-1111-1111-111111111111",
+    "accountId": "22222222-2222-2222-2222-222222222221"
+  },
+  "examplePaymentId": "c504d333-0000-4000-8000-111111111504",
+  "gates": [
+    {
+      "id": 1,
+      "label": "Open the incident",
+      "unlocks": ["evidence/dashboard.md"],
+      "instruction": "Read this timeline and the dashboard before requesting logs."
+    },
+    {
+      "id": 2,
+      "label": "After first hypothesis",
+      "unlocks": ["evidence/logs.txt"],
+      "instruction": "Record a hypothesis on the student worksheet, then open logs."
+    },
+    {
+      "id": 3,
+      "label": "After next investigation",
+      "unlocks": ["evidence/deployment-history.md"],
+      "instruction": "Open deployment history only after you write what a release record would confirm or refute."
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-09-22T22:40:00Z",
+      "actor": "release",
+      "name": "Jordan Voss",
+      "summary": "Started payment.ear 4.12 install targeted at PaymentCluster. Change ticket BAYPAY-5122. Edition 4.11 is the last known good on all three members."
+    },
+    {
+      "at": "2026-09-22T22:47:18Z",
+      "actor": "node-agent",
+      "summary": "nodeagent-pay-2 on node-pay-2 restarted (watchdog after native memory spike). Restart duration 4m12s. nodeagent-pay-1 stayed up."
+    },
+    {
+      "at": "2026-09-22T22:52:00Z",
+      "actor": "was-admin",
+      "name": "Morgan Hale",
+      "summary": "Console shows payment.ear 4.12 as the cell application edition. Sync status for node-pay-2 still 'in progress / incomplete' after the node agent restart."
+    },
+    {
+      "at": "2026-09-22T23:08:00Z",
+      "actor": "pager",
+      "summary": "SEV-2: PaymentCluster error rate 18%. Failures intermittent. Pay1, Pay2, Pay3 remain STARTED."
+    },
+    {
+      "at": "2026-09-22T23:10:22Z",
+      "actor": "merchant-success",
+      "summary": "Harbor Market: Avery Chen payment c504d333-0000-4000-8000-111111111504 HTTP 500 then HTTP 201 on retry. Same Idempotency-Key."
+    },
+    {
+      "at": "2026-09-22T23:12:05Z",
+      "actor": "on-call",
+      "name": "Riley Okonkwo",
+      "summary": "Requested cluster dashboard (gate 1). Asked Jordan not to click Finish again until members are tabled."
+    },
+    {
+      "at": "2026-09-22T23:13:40Z",
+      "actor": "sre",
+      "name": "Priya Nair",
+      "summary": "ihs-east still lists all three members. No plugin regenerate in this window."
+    }
+  ]
+}

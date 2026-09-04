@@ -1,0 +1,51 @@
+# Synthetic aws ecs describe-services --cluster baypay-prod-west --services payment-service
+# Region us-west-2. Teaching paste. Not a live AWS call.
+
+CLUSTER        baypay-prod-west
+SERVICE        payment-service
+LAUNCH_TYPE    FARGATE
+DESIRED        2
+RUNNING        2
+PENDING        0
+REGION         us-west-2
+
+DEPLOYMENT-CIRCUIT-BREAKER  enable=true  rollback=true
+
+DEPLOYMENTS
+  STATUS     FAILED
+  ID         ecs-svc/1205deadbeef
+  TASK_DEF   payment-service:88
+  DESIRED    0
+  PENDING    0
+  RUNNING    0
+  FAILED     4
+  ROLLBACK   started 2026-12-03T22:03:18Z  reason=ELB_HEALTH_CHECK_FAILURE
+  NOTE       Circuit breaker rolled the service toward the last healthy task definition.
+
+  STATUS     PRIMARY
+  ID         ecs-svc/0380cafebabe
+  TASK_DEF   payment-service:80
+  DESIRED    2
+  PENDING    0
+  RUNNING    2
+  FAILED     0
+  ROLLBACK   n/a
+  NOTE       This is the last healthy revision. Image baypay/payment-service:3.8.0
+
+EVENTS (newest first)
+  2026-12-03T22:05:01Z  (service payment-service) rollback to payment-service:80 completed.
+  2026-12-03T22:03:18Z  (service payment-service) deployment ecs-svc/1205deadbeef failed: tasks failed to start.
+  2026-12-03T22:02:44Z  (service payment-service, task 88-a) (port 8080) is unhealthy in target-group pay-alb-student-tg.
+  2026-12-03T22:01:12Z  (service payment-service, task 88-b) (port 8080) is unhealthy in target-group pay-alb-student-tg.
+  2026-12-03T22:00:05Z  (service payment-service, task 88-a) registered with target-group pay-alb-student-tg.
+  2026-12-03T21:55:20Z  (service payment-service) has started 2 tasks using payment-service:88.
+
+TARGET GROUP  pay-alb-student-tg
+  PROTOCOL    HTTP
+  PORT        8080
+  PATH        /actuator/health/liveness
+  INTERVAL    30
+  HEALTHY     2 consecutive
+  UNHEALTHY   2 consecutive
+  HOST        pay-alb-student.baypay.example
+  NOTE        Health checks did not move to any other port during this deploy.

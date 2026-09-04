@@ -1,0 +1,104 @@
+{
+  "id": "Q-16",
+  "moduleId": "module-16",
+  "title": "Module 16 quiz — Interview simulator",
+  "description": "Eight questions on maturity levels, modes, and BayPay interview method.",
+  "questions": [
+    {
+      "id": "Q-16-01",
+      "prompt": "How many questions are in the AEJE interview bank, and may you add a 101st?",
+      "choices": [
+        "50; yes if they are harder",
+        "Exactly 100 with locked domain counts; do not add a 101st",
+        "Unlimited; the simulator generates more",
+        "16; one per module"
+      ],
+      "correctIndex": 1,
+      "explanation": "Spec §25 and COURSE_MANIFEST.json lock the bank at 100."
+    },
+    {
+      "id": "Q-16-02",
+      "prompt": "What is wrong with one memorized paragraph for every seniority?",
+      "choices": [
+        "Nothing; shorter is always better",
+        "Engineer / Senior / Staff / Principal must show different scope and trade-offs",
+        "Principal answers must be longer than 2,000 words",
+        "Staff answers must name a live AWS account"
+      ],
+      "correctIndex": 1,
+      "explanation": "Maturity is the product. The bank stores four answer layers."
+    },
+    {
+      "id": "Q-16-03",
+      "prompt": "Rapid fire grades which behavior?",
+      "choices": [
+        "A complete system-design whiteboard",
+        "Short, correct-enough answers under time — not Staff-depth on every item",
+        "A proven RCA with no evidence",
+        "A Terraform apply in us-west-2"
+      ],
+      "correctIndex": 1,
+      "explanation": "INTERVIEW-1602. Depth is INTERVIEW-1604/1605."
+    },
+    {
+      "id": "Q-16-04",
+      "prompt": "In a troubleshooting interview, a lucky correct RCA with no method should…",
+      "choices": [
+        "Max Diagnostic method because the title matched",
+        "Not max Diagnostic method — quotes and next-gate thinking are required",
+        "Automatically fail Technical accuracy",
+        "Require bouncing dmgr-east"
+      ],
+      "correctIndex": 1,
+      "explanation": "Same rule as incident labs."
+    },
+    {
+      "id": "Q-16-05",
+      "prompt": "Which lab produces the system-design portfolio artifact?",
+      "choices": [
+        "INTERVIEW-1602",
+        "INTERVIEW-1604 (PF-design.md)",
+        "Q-16 only",
+        "AI-1504"
+      ],
+      "correctIndex": 1,
+      "explanation": "Manifest portfolioArtifact for Module 16."
+    },
+    {
+      "id": "Q-16-06",
+      "prompt": "Is the BayLearn interview UI required to pass Module 16?",
+      "choices": [
+        "Yes; otherwise the bank is invalid",
+        "No; Phase A is paper plus interview-bank/simulator.py",
+        "Yes; and you must call Bedrock",
+        "Yes; you must enroll in Interview Accelerator"
+      ],
+      "correctIndex": 1,
+      "explanation": "Phase B is additive. Do not reuse Interview Accelerator."
+    },
+    {
+      "id": "Q-16-07",
+      "prompt": "A Staff answer about ECS vs EKS should…",
+      "choices": [
+        "Say AWS is the only correct platform",
+        "Name when Fargate wins, when EKS wins, and when OpenShift stays — for BayPay this quarter",
+        "Require applying EKS in a 90-minute lab",
+        "Recommend ND-in-Docker"
+      ],
+      "correctIndex": 1,
+      "explanation": "ARCHITECT-1102 literacy, not a slogan."
+    },
+    {
+      "id": "Q-16-08",
+      "prompt": "Full mock loop (INTERVIEW-1605) should include…",
+      "choices": [
+        "Only rapid fire",
+        "More than one mode in one sitting (practice/timed, troubleshooting, and a design slice)",
+        "A live WebSphere cell",
+        "A force-push to main"
+      ],
+      "correctIndex": 1,
+      "explanation": "The loop is the product, not a single trivia item."
+    }
+  ]
+}
