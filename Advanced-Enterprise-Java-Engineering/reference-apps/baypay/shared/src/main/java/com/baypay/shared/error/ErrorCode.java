@@ -1,5 +1,9 @@
 package com.baypay.shared.error;
 
+/**
+ * Stable machine codes on Problem Details. HTTP status is chosen in
+ * {@code ApiExceptionHandler}, not here.
+ */
 public enum ErrorCode {
     VALIDATION_FAILED,
     PAYMENT_NOT_FOUND,

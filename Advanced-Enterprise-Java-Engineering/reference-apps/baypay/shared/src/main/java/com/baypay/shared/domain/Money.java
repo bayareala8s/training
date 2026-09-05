@@ -10,6 +10,14 @@ import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Immutable money value (L-1.2). Two instances with the same numeric value and
+ * currency are interchangeable. There is no setter; {@link #plus} / {@link #minus}
+ * return a new instance.
+ *
+ * <p>Rules: {@code amount > 0}, currency in USD|EUR|GBP, scale exactly 2.
+ * {@code double} is not money. Extra scale throws ({@code UNNECESSARY}).
+ */
 @Embeddable
 public class Money {
 
@@ -21,9 +29,14 @@ public class Money {
     @Column(name = "currency", nullable = false, length = 3)
     private String currency;
 
+    /** JPA only. Do not use from application code — invariants would be skipped. */
     protected Money() {
     }
 
+    /**
+     * Fail closed in the constructor so every caller (API, worker, test) hits
+     * the same rules. Bean Validation on the HTTP request is not a substitute.
+     */
     public Money(BigDecimal amount, String currency) {
         if (amount == null || amount.signum() <= 0) {
             throw new DomainValidationException("amount must be greater than zero");
@@ -31,6 +44,7 @@ public class Money {
         if (currency == null || !SUPPORTED.contains(currency)) {
             throw new DomainValidationException("currency must be one of " + SUPPORTED);
         }
+        // UNNECESSARY: 10.001 is rejected, not rounded. Rounding would invent money.
         this.amount = amount.setScale(2, RoundingMode.UNNECESSARY);
         this.currency = currency;
     }
@@ -75,6 +89,10 @@ public class Money {
         }
     }
 
+    /**
+     * {@code BigDecimal.equals} is scale-sensitive ({@code 10.0} ≠ {@code 10.00}).
+     * Payments compare numeric value, so this uses {@code compareTo}.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {

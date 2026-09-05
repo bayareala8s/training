@@ -6,8 +6,12 @@ import com.baypay.shared.domain.Payment;
 import java.math.BigDecimal;
 
 /**
- * Teaching stand-in for a card network / core-banking authorizer.
- * Decline frozen accounts and obviously implausible amounts.
+ * SOLID D/L seam (L-1.2): the application service depends on this type, not a
+ * card-network SDK. Any implementation — including a test double — must decline
+ * a frozen account. An always-{@code approve()} double is a lying subtype.
+ *
+ * <p>Authorization is a {@link Decision}, not an exception: decline is a
+ * business outcome (L-1.4).
  */
 public interface PaymentAuthorizer {
 
@@ -23,6 +27,7 @@ public interface PaymentAuthorizer {
 
     Decision authorize(Payment payment, Account account);
 
+    /** Deterministic teaching authorizer. No network I/O. */
     class DefaultPaymentAuthorizer implements PaymentAuthorizer {
         static final BigDecimal AUTHORIZATION_CEILING = new BigDecimal("1000000.00");
 

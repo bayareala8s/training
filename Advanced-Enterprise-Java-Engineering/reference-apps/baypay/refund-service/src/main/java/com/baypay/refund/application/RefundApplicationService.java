@@ -32,6 +32,10 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Refund create/get. Posts a REFUND ledger row in the same transaction.
+ * Full remaining amount also transitions the payment to REVERSED.
+ */
 @Service
 public class RefundApplicationService {
 

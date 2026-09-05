@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/** Missing/short keys fail; same body hashes equal; different bodies do not. */
 class IdempotencyKeysTest {
 
     @Test

@@ -8,6 +8,11 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Persists operation + key + body hash. {@link #findReplay} throws
+ * {@link IdempotencyConflictException} when the key is reused with a
+ * different hash. The unique row is the multi-instance control, not a heap map.
+ */
 @Service
 public class IdempotencyService {
 

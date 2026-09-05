@@ -15,6 +15,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
+/**
+ * Seeds Avery Chen and the two USD accounts used in every lab. Disabled on
+ * {@code prod}. All names and amounts are synthetic.
+ */
 @Component
 @Profile("!prod")
 public class DemoDataSeeder implements ApplicationRunner {

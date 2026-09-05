@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+/** Journal line on a {@link LedgerTransaction} (PAYMENT_POSTED, REFUND_POSTED). */
 @Entity
 @Table(name = "transaction_events")
 public class TransactionEvent {

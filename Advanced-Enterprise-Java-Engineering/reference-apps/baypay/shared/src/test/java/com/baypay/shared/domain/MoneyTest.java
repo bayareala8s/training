@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/** L-1.2 contracts: fail closed on zero/JPY, plus same currency, reject mismatch. */
 class MoneyTest {
 
     @Test

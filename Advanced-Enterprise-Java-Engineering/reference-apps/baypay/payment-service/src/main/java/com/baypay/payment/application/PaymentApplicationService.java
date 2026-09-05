@@ -26,6 +26,13 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Orchestrates create/get. Constructs {@link Money}, asks
+ * {@link PaymentAuthorizer}, then posts through {@link PaymentPostingService}
+ * on the same transaction so POST returns COMPLETED.
+ *
+ * <p>Does not send email (SOLID S) and does not construct a card SDK (SOLID D).
+ */
 @Service
 public class PaymentApplicationService {
 
@@ -60,6 +67,10 @@ public class PaymentApplicationService {
     public record CreateResult(Payment payment, boolean replay) {
     }
 
+    /**
+     * Same key + same body → replay (200). Same key + different body → 409.
+     * Frozen account + valid money → DECLINED (422), not a missing customer.
+     */
     @Transactional
     public CreateResult create(CreatePaymentRequest request, String rawIdempotencyKey) {
         String key = IdempotencyKeys.require(rawIdempotencyKey);

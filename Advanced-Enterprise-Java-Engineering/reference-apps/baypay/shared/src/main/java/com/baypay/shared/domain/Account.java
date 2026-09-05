@@ -10,6 +10,11 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Customer funding source. Avery Chen has two synthetic USD accounts:
+ * {@code …2221} ACTIVE and {@code …2222} FROZEN. Frozen must never authorize
+ * (L-1.2 Liskov: any {@code PaymentAuthorizer} honors that).
+ */
 @Entity
 @Table(name = "accounts")
 public class Account {
@@ -61,6 +66,7 @@ public class Account {
         return createdAt;
     }
 
+    /** Only ACTIVE may originate a payment. FROZEN and CLOSED fail closed. */
     public boolean isActive() {
         return status == AccountStatus.ACTIVE;
     }

@@ -51,6 +51,11 @@ public class PaymentPostingService {
         this.clock = clock;
     }
 
+    /**
+     * AUTHORIZED → PROCESSING → ledger row → COMPLETED, then
+     * {@link PaymentCompletedEvent} for the notifier. Hold no lock across I/O
+     * if this is later extracted (L-2.2).
+     */
     public Payment postAuthorized(Payment payment) {
         Instant now = Instant.now(clock);
         payment.transitionTo(PaymentStatus.PROCESSING, now);

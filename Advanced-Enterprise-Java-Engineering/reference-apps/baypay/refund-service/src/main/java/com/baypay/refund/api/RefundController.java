@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.UUID;
 
+/** HTTP edge for refunds. Same idempotency contract as payments. */
 @RestController
 @RequestMapping("/api/v1/refunds")
 @Tag(name = "Refunds")

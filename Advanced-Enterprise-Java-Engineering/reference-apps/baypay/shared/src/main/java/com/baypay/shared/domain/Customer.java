@@ -8,6 +8,10 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Synthetic merchant customer. Demo Avery Chen is
+ * {@code 11111111-1111-1111-1111-111111111111}. Not a real person.
+ */
 @Entity
 @Table(name = "customers")
 public class Customer {

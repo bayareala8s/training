@@ -23,6 +23,18 @@ Customers → payment-service (composition root)
                     └── shared (domain + JPA)
 ```
 
+## How to read the source
+
+Javadoc on types is written for students. Start in this order:
+
+1. `shared/.../domain/package-info.java` — value vs entity, where invariants live
+2. `Money`, `Payment`, `PaymentStatus`, `PaymentStateMachine` — Module 1
+3. `PaymentAuthorizer` then `PaymentApplicationService` — SOLID seams and orchestration
+4. `PaymentPostingService` then `NotificationListener` — why posting and email are not on `Payment`
+5. `IdempotencyService` — replay vs 409
+
+Comments explain *why* (fail closed, happens-before, no `setStatus`). They do not narrate getters.
+
 ## Modules
 
 | Module | Role |

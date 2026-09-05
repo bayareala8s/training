@@ -1,5 +1,6 @@
 package com.baypay.shared.error;
 
+/** Unchecked so application services stay readable. Callers must not swallow these (FIX-103). */
 public class BayPayException extends RuntimeException {
 
     private final ErrorCode code;

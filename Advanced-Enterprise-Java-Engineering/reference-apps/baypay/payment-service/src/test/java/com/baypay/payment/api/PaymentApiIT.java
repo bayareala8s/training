@@ -21,6 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+/**
+ * End-to-end create/get/replay against the modular monolith. Uses Avery's
+ * ACTIVE account. A frozen-account decline is covered in validation labs.
+ */
 class PaymentApiIT {
 
     @Autowired

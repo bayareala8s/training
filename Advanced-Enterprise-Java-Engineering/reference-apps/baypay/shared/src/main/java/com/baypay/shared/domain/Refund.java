@@ -14,6 +14,11 @@ import jakarta.persistence.Version;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Refund entity against a COMPLETED (or already REVERSED) payment.
+ * Amount currency must match the payment; remaining refundable is enforced
+ * in {@code RefundApplicationService}, not here.
+ */
 @Entity
 @Table(name = "refunds")
 public class Refund {

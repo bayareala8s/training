@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** Legal edges pass; {@code RECEIVED → COMPLETED} and other skips throw. */
 class PaymentStateMachineTest {
 
     @ParameterizedTest

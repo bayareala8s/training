@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.UUID;
 
+/**
+ * HTTP edge for payments. Replay → 200; decline → 422; first success → 201.
+ * {@code Idempotency-Key} is required (header may be missing; the service rejects it).
+ */
 @RestController
 @RequestMapping("/api/v1/payments")
 @Tag(name = "Payments")

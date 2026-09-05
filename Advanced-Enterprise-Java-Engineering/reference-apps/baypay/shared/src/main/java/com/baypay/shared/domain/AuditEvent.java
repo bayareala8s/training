@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+/** Append-only who/what/when row. Not a substitute for the ledger. */
 @Entity
 @Table(name = "audit_events")
 public class AuditEvent {

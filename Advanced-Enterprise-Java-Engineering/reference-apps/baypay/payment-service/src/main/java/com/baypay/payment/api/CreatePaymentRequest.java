@@ -9,6 +9,10 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * HTTP command. Annotations are the 400 gate. {@link com.baypay.shared.domain.Money}
+ * still rejects a bad amount if a caller skips HTTP.
+ */
 public record CreatePaymentRequest(
         @NotNull UUID customerId,
         @NotNull UUID accountId,

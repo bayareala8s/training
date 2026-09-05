@@ -8,6 +8,10 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * One row per (operation, key). {@code requestHash} is what makes a retry a
+ * replay versus a conflict.
+ */
 @Entity
 @Table(name = "idempotency_keys")
 public class IdempotencyRecord {

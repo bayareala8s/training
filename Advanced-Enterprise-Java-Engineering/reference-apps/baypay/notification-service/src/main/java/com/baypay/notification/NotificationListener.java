@@ -13,6 +13,10 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * SOLID S: email/webhook records live here, not on {@code Payment}.
+ * In-process {@code @EventListener}; fictional SENT row, no real mail host.
+ */
 @Component
 public class NotificationListener {
 

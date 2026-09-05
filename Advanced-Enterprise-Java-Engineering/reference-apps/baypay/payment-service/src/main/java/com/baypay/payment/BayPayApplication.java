@@ -5,6 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+/**
+ * Composition root of the modular monolith. {@code scanBasePackages = com.baypay}
+ * pulls in refund, worker, and notification so one JVM serves the lifecycle.
+ */
 @SpringBootApplication(scanBasePackages = "com.baypay")
 @EntityScan(basePackages = "com.baypay")
 @EnableJpaRepositories(basePackages = "com.baypay")

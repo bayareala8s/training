@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+/** API view of a {@link Refund}. */
 public record RefundResponse(
         UUID refundId,
         UUID paymentId,

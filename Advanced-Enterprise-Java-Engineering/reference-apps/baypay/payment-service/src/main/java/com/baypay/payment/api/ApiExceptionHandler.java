@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.net.URI;
 import java.util.stream.Collectors;
 
+/**
+ * Maps domain codes to RFC 7807 Problem Details. 400 = bad request shape;
+ * 422 = interpretable request that the domain refused; 409 = conflict
+ * (idempotency or illegal transition). Unknown exceptions become 500 without
+ * leaking stack traces to the client.
+ */
 @RestControllerAdvice
 public class ApiExceptionHandler {
 

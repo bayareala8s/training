@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Clock;
 
+/** Test seams: freeze {@link Clock}; replace {@link PaymentAuthorizer}. */
 @Configuration
 public class BayPayConfig {
 

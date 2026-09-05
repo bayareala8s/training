@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+/** Synthetic outbound notification. Written by {@code NotificationListener}, not by {@code Payment}. */
 @Entity
 @Table(name = "notifications")
 public class NotificationRecord {

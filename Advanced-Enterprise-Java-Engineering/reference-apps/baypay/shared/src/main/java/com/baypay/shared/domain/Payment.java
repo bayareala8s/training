@@ -14,6 +14,14 @@ import jakarta.persistence.Version;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Payment entity (L-1.2). Identity is the UUID, not the amount. {@code Money},
+ * customer, and account do not change after {@link #received}. Status changes
+ * only through {@link #transitionTo} — there is no {@code setStatus}.
+ *
+ * <p>Selectively mutable ({@code status}, {@code failureReason}, {@code updatedAt})
+ * so JPA {@code @Version} dirty-checking works. Money stays immutable.
+ */
 @Entity
 @Table(name = "payments")
 public class Payment {
@@ -56,9 +64,11 @@ public class Payment {
     @Version
     private long version;
 
+    /** JPA only. New payments go through {@link #received}. */
     protected Payment() {
     }
 
+    /** Factory: always starts at {@link PaymentStatus#RECEIVED}. */
     public static Payment received(
             UUID id,
             UUID customerId,
@@ -80,6 +90,10 @@ public class Payment {
         return payment;
     }
 
+    /**
+     * Only legal mutator for status. Asks {@link PaymentStateMachine} first
+     * (Open/Closed: new edges live in {@link PaymentStatus#allowedNext()}).
+     */
     public void transitionTo(PaymentStatus next, Instant now) {
         PaymentStateMachine.assertTransition(status, next);
         this.status = next;

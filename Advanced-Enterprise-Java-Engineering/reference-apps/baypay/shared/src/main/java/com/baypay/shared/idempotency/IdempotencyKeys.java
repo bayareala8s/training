@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.Locale;
 
+/** Header format and canonical-body hash for replay detection. */
 public final class IdempotencyKeys {
 
     public static final int MIN_LENGTH = 8;

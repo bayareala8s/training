@@ -1,5 +1,6 @@
 package com.baypay.shared.error;
 
+/** Constructor / factory invariant failed. Usually HTTP 422 (400 if the key is missing). */
 public class DomainValidationException extends BayPayException {
 
     public DomainValidationException(String message) {

@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+/** API view of a {@link Payment}. Not a domain type — do not persist this. */
 public record PaymentResponse(
         UUID paymentId,
         UUID customerId,

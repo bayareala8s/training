@@ -25,6 +25,7 @@ public enum PaymentStatus {
         return this == COMPLETED || this == REVERSED;
     }
 
+    /** Legal next statuses. Adding a state means extending this table, not new controller {@code if}s. */
     public Set<PaymentStatus> allowedNext() {
         return switch (this) {
             case RECEIVED -> EnumSet.of(VALIDATING);

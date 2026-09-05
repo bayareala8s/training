@@ -3,7 +3,8 @@ package com.baypay.shared.demo;
 import java.util.UUID;
 
 /**
- * Stable fictional BayPay identities used by local seed data and tests.
+ * Locked demo identities (fictional). Do not invent other UUIDs in labs or logs
+ * that look like real account numbers.
  */
 public final class DemoIds {
 
