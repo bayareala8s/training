@@ -41,7 +41,18 @@ Four delivery projects under [capstones/](capstones/README.md): Build, Modernize
 
 ## Interview simulator (Module 16)
 
-Phase A is paper plus `interview-bank/simulator.py`. Exactly 100 questions. A BayLearn interview UI is **not** required. Notes: [datasets/baypay-interview/ROUNDS.md](datasets/baypay-interview/ROUNDS.md).
+Paper plus `interview-bank/simulator.py` still passes the module. Exactly 100 questions. The BayLearn learn page now also has an **Interview simulator** on INTERVIEW-1601–1605 (same bank; Engineer / Senior / Staff / Principal panes). Notes: [datasets/baypay-interview/ROUNDS.md](datasets/baypay-interview/ROUNDS.md).
+
+## Portal engines (Phase B)
+
+On the AEJE learn page only (lessons with `lessonKind` / `labType`):
+
+- **Quiz player** — `Q-01`…`Q-16` JSON, scored separately from course progress
+- **Incident simulator** — gated evidence + worksheet; lucky guess cannot max Diagnostic method
+- **Interview simulator** — Module 16 labs
+- **Assignment submit** — GitHub URL (or notes URL) on portfolio lessons
+
+Existing seven courses are unchanged. Certificates stay manual.
 
 ## BayOps AI (Module 15)
 

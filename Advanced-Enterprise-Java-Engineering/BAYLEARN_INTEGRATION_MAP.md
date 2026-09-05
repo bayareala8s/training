@@ -463,7 +463,7 @@ A portal PR for AEJE is acceptable only if:
 - [x] Catalog + pricing append
 - [x] `aeje-course.ts` + sync script
 - [x] Assignment persist fix in `insertCourseContent`
-- [ ] Optional Phase B types/routes/UI
+- [x] Optional Phase B types/routes/UI (quiz, incident, interview, assignment submit)
 - [x] Frontend rebuild and catalog smoke test
 - [x] Regression on one existing published course (EFT still published)
 - [x] `npm run sync-aeje-catalog` against baylearn-prod (`us-west-2`)

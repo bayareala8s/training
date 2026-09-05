@@ -2,8 +2,27 @@
 
 **Date:** 2026-09-04  
 **Catalog:** `baylearn-aeje-001` — Advanced Enterprise Java Engineering  
-**Latest stage:** 14 (final validation) + portal seed authored + runnable lab smoke  
-**BayLearn Portal:** AEJE synced to prod DynamoDB and frontend deployed. Existing seven courses unchanged.
+**Latest stage:** 14 + portal seed + runnable lab smoke + Phase B portal engines  
+**BayLearn Portal:** AEJE synced to prod DynamoDB. Phase B quiz / incident / interview / assignment UI is additive on the AEJE learn page only.
+
+---
+
+# Phase B — Portal engines
+
+## Verdict
+
+Additive BayLearn engines are implemented. Existing seven courses omit `lessonKind` / `labType` / assignments, so their learn page stays download + mark complete.
+
+| Engine | Mount | Persist | Progress |
+|---|---|---|---|
+| Quiz player | `lessonKind === quiz` | `baylearn-*-submissions` (`engine:quiz:Q-XX`) | Not updated |
+| Incident simulator | INCIDENT labs, BREAKFIX-201, CAPSTONE-4, AI-1504 | `engine:incident:INC-*` | Not updated |
+| Interview simulator | `labType === INTERVIEW` | `engine:interview:{mode}` | Not updated |
+| Assignment submit | lessons with an assignment | real `assignmentId` | Not updated |
+
+Lucky-guess cap: opening two evidence files with zero hypotheses caps Diagnostic method and Efficiency. Certificates stay manual.
+
+---
 
 ---
 
