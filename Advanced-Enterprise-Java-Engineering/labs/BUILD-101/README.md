@@ -135,7 +135,8 @@ A small, tested domain package and a filled worksheet. A reviewer can see `Money
 
 1. Why is `Money` a value object and `Payment` an entity?
 2. Why reject `RECEIVED → COMPLETED` even if a support engineer “knows” the money moved offline?
-3. How would you add `CAD` without scattering `if` statements through the API?
+3. How would you add `CAD` without scattering `if` statements through the API? Which SOLID letter is that?
+4. Spell SOLID. Which BayPay type is the Dependency Inversion seam, and what would a Liskov-violating test double do?
 
 ---
 
@@ -184,6 +185,7 @@ Compare your types with `reference-apps/baypay/shared/src/main/java/com/baypay/s
 - A state machine is a typed collection of legal edges, not a setter.
 - Tests that name illegal transitions are part of the model.
 - Naming (`LedgerTransaction`) is an architectural decision.
+- SOLID is review vocabulary: `Payment` does not send email; new edges live in `allowedNext()`; depend on `PaymentAuthorizer`.
 
 ---
 

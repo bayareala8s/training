@@ -7,7 +7,8 @@
 
 ```mermaid
 flowchart LR
-  Cmd[Payment command] --> Money[Money value]
-  Money --> Payment[Payment entity]
-  Payment --> SM[State machine]
+  S[S no email] --> O[O allowedNext]
+  O --> L[L frozen decline]
+  L --> I[I small API]
+  I --> D[D Authorizer]
 ```

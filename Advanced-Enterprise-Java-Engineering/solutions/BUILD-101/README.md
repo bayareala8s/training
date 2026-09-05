@@ -39,6 +39,18 @@ Spec entity “Transaction” is `LedgerTransaction` in Java. Students who menti
 
 JPA-free instructor sources in this folder: `Money.java`, `PaymentStatus.java`, `PaymentStateMachine.java`, `Payment.java`. Contract tests live in `labs/BUILD-101/src/test` and are smoked with `qa/smoke_runnable_labs.py`.
 
+### SOLID (grade the vocabulary, not extra interfaces)
+
+Students should be able to spell the five letters and point at BayPay, not invent a `MoneyReader`.
+
+| Letter | Keep | Block |
+|---|---|---|
+| S | `Payment` owns lifecycle; email is `NotificationListener` | God `Payment` that posts, emails, and authorizes |
+| O | New edges in `PaymentStatus.allowedNext()`; `CAD` in the currency set | Controller `if`s or a public `setStatus` |
+| L | Any `PaymentAuthorizer` declines a frozen account | Always-`approve()` test double |
+| I | Callers that need `isActive()` do not take `AccountGod` | One 40-method account interface |
+| D | Service depends on `PaymentAuthorizer` | Service constructs a card-network SDK |
+
 ## Reference files
 
 - `reference-apps/baypay/shared/src/main/java/com/baypay/shared/domain/Money.java`

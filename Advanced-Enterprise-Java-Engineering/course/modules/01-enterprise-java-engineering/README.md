@@ -42,7 +42,7 @@ Payment happy path: `RECEIVED → VALIDATING → AUTHORIZED → PROCESSING → C
 After this module you can:
 
 - Explain how the JDK, bytecode, and JVM relate, and why BayPay pins Java 21 LTS.
-- Design value objects and entities so money and payment state cannot be mutated into an illegal combination.
+- Design value objects and entities so money and payment state cannot be mutated into an illegal combination, and apply SOLID as a review vocabulary on those types.
 - Choose collections and generic types that keep a payment state machine and currency set honest at compile time.
 - Use exceptions, records, streams, and `Optional` without hiding failures or inventing nulls.
 - Apply enterprise practices — package boundaries, idempotency, correlation ids, structured logs — to code you would merge on a payments team.
@@ -68,7 +68,7 @@ Complete in order. Each lesson is self-contained; PAKS links are optional.
 | Id | Title | What it unlocks |
 |---|---|---|
 | [L-1.1](lessons/L-1.1.md) | Modern Java, JDK and JVM overview | How BayPay’s runtime is assembled and why version pinning matters |
-| [L-1.2](lessons/L-1.2.md) | Object design, SOLID and immutability | Why `Money` is a value object and `Payment` owns its transitions |
+| [L-1.2](lessons/L-1.2.md) | Object design, SOLID and immutability | SOLID letters on BayPay types; why `Money` is a value and `Payment` owns transitions |
 | [L-1.3](lessons/L-1.3.md) | Collections and generics | `EnumSet` transitions, currency sets, and type-safe ledgers |
 | [L-1.4](lessons/L-1.4.md) | Exceptions, records, streams and Optional | Fail loudly, model decisions as records, query without nulls |
 | [L-1.5](lessons/L-1.5.md) | Enterprise coding practices | Idempotency, correlation, packages, and review habits |

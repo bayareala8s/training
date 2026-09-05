@@ -2,7 +2,7 @@
   "id": "Q-01",
   "moduleId": "module-01",
   "title": "Module 1 quiz — Enterprise Java Engineering",
-  "description": "Eight questions on the JDK/JVM, BayPay domain model, collections, exceptions, and enterprise write practices. All names and amounts are synthetic.",
+  "description": "Eight questions on the JDK/JVM, SOLID and the BayPay domain model, collections, exceptions, and enterprise write practices. All names and amounts are synthetic.",
   "questions": [
     {
       "id": "Q-01-01",
@@ -18,15 +18,15 @@
     },
     {
       "id": "Q-01-02",
-      "prompt": "Why does BayPay reject new Money(BigDecimal.ZERO, \"USD\") in the constructor rather than in PaymentApplicationService?",
+      "prompt": "Which SOLID mapping is correct for BayPay?",
       "choices": [
-        "Bean Validation cannot run inside a modular monolith",
-        "So every caller — API, worker, test, future module — fails closed without repeating the check",
-        "BigDecimal.ZERO is a preview API on Java 21",
-        "Zero amounts are legal if the Idempotency-Key is present"
+        "S: Payment sends the completion email; O: each new status needs a new if in every controller",
+        "S: Payment does not send email; O: new legal edges live in allowedNext(); D: the service depends on PaymentAuthorizer",
+        "L: a test double that always approves a frozen account is acceptable because tests should be fast",
+        "D: the service constructs a concrete card-network SDK so integration tests stay realistic"
       ],
       "correctIndex": 1,
-      "explanation": "Invariants belong on the value object. A service-only check is skipped by the next caller. Zero is never legal money on this platform, key or not."
+      "explanation": "SOLID: one reason to change (Payment is not a notifier), extend edges in allowedNext(), depend on PaymentAuthorizer. An always-approve double violates Liskov; a concrete SDK in the service violates Dependency Inversion. Money still rejects zero in its constructor."
     },
     {
       "id": "Q-01-03",

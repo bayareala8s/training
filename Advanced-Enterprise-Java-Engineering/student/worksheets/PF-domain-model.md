@@ -70,6 +70,20 @@ Why is `public void setStatus(PaymentStatus status)` forbidden?
 
 ---
 
+## 5b. SOLID (L-1.2)
+
+In one phrase each, what does the letter require in *your* excerpt? Name one violation you would block.
+
+| Letter | Meaning in your excerpt | A violation you would block |
+|---|---|---|
+| S — Single responsibility | | |
+| O — Open/closed | | |
+| L — Liskov substitution | | |
+| I — Interface segregation | | |
+| D — Dependency inversion | | |
+
+---
+
 ## 6. Demo fixtures (synthetic)
 
 | Role | UUID | What the model must do |
