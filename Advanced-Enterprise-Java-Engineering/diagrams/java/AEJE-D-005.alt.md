@@ -1,1 +1,1 @@
-Diagram AEJE-D-005: Java memory visibility. Left-to-right labeled boxes: happens-before, worker threads, main memory. BayPay is a fictional payment platform used for instruction.
+Diagram AEJE-D-005: Java memory visibility. Left panel: worker may spin on stale authorized false. Right panel: volatile write or unlock/lock publishes authorized and amount. BayPay is fictional instruction.

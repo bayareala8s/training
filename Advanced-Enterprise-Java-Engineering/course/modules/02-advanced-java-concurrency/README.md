@@ -61,7 +61,7 @@ Complete in order. Each lesson is self-contained; PAKS links are optional.
 
 | Id | Title | What it unlocks |
 |---|---|---|
-| [L-2.1](lessons/L-2.1.md) | Threads and Java memory visibility | Why one thread’s write is invisible until `volatile`, `synchronized`, or `lock`/`unlock` creates a happens-before edge |
+| [L-2.1](lessons/L-2.1.md) | Threads and Java memory visibility | Pictures: stack vs heap, stale `authorized`, then `volatile` / unlock / `lock`. Why a write is invisible until happens-before |
 | [L-2.2](lessons/L-2.2.md) | synchronized, volatile, locks and atomics | Which primitive protects which invariant |
 | [L-2.3](lessons/L-2.3.md) | Concurrent collections | Safe maps and queues — and the compound actions they do not cover |
 | [L-2.4](lessons/L-2.4.md) | Executors and CompletableFuture | Bounded pools, completion stages, timeouts, and shutdown |

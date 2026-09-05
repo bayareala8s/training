@@ -5,7 +5,7 @@
   <marker id="arrowOk" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0d7a4f"/></marker>
 </defs>
 <rect width="100%" height="100%" fill="#f4f7fa"/>
-<text id="t" x="40" y="36" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#0a1f33">AEJE-D-005 — Java memory visibility</text>
+<text id="t" x="40" y="36" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#0a1f33">2. Shared heap ≠ shared view. Stale authorized is legal.</text>
 <text x="40" y="58" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0d8fad">Left: no happens-before. Right: volatile write/read or monitor unlock/lock.</text>
 <desc id="d">Without a happens-before edge the worker may read authorized false after the API wrote true. A volatile write or unlock/lock publishes both authorized and amount.</desc>
 <rect x="40" y="78" width="430" height="300" rx="8" fill="#fdecea" stroke="#b42318" stroke-width="2"/><rect x="490" y="78" width="430" height="300" rx="8" fill="#e8f6ef" stroke="#0d7a4f" stroke-width="2"/>

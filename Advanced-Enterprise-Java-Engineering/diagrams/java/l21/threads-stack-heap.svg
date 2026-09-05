@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="t d">
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a1f33"/></marker>
+  <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#b42318"/></marker>
+  <marker id="arrowOk" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0d7a4f"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#f4f7fa"/>
+<text id="t" x="40" y="36" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#0a1f33">1. A thread owns a stack. The heap is shared.</text>
+<text x="40" y="58" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0d8fad">Locals stay on the stack. Payment lives on the heap. Both threads point at the same object.</text>
+<desc id="d">API thread and worker thread each have a private stack and program counter. Both reference one Payment on the shared heap.</desc>
+<rect x="40" y="80" width="250" height="280" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/><rect x="355" y="110" width="250" height="220" rx="8" fill="#e8f4f8" stroke="#0d8fad" stroke-width="2"/><rect x="670" y="80" width="250" height="280" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/>
+<text x="165" y="108" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#0a1f33">API thread</text>
+<text x="165" y="138" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">program counter</text>
+<rect x="60" y="156" width="210" height="88" rx="4" fill="#f4f7fa" stroke="#0a1f33" stroke-width="1"/>
+<text x="165" y="178" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">stack (private)</text>
+<text x="165" y="200" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">markAuthorized()</text>
+<text x="165" y="220" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">local: payment ref</text>
+<text x="165" y="268" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0d8fad">cannot see worker locals</text>
+
+<text x="480" y="138" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#0a1f33">Shared heap</text>
+<text x="480" y="168" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0a1f33">Payment</text>
+<text x="480" y="196" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">authorized = ?</text>
+<text x="480" y="218" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">amount = 84.00 USD</text>
+<text x="480" y="250" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0d8fad">one object, two threads</text>
+<text x="480" y="300" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">Harbor Bike Co invoice-8841</text>
+
+<text x="795" y="108" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#0a1f33">Worker thread</text>
+<text x="795" y="138" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">program counter</text>
+<rect x="690" y="156" width="210" height="88" rx="4" fill="#f4f7fa" stroke="#0a1f33" stroke-width="1"/>
+<text x="795" y="178" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">stack (private)</text>
+<text x="795" y="200" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">awaitAuthorized()</text>
+<text x="795" y="220" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">local: payment ref</text>
+<text x="795" y="268" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0d8fad">cannot see API locals</text>
+
+<line x1="290" y1="220" x2="355" y2="200" stroke="#0a1f33" stroke-width="2" marker-end="url(#arrow)"/>
+<line x1="670" y1="200" x2="605" y2="200" stroke="#0a1f33" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="40" y="406" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">BayPay Financial Services is fictional. BayLearn AEJE. L-2.1 Threads and Java memory model.</text>
+</svg>

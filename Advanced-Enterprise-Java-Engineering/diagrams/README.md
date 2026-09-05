@@ -2,6 +2,8 @@
 
 Every diagram has editable source, SVG, PNG, and alt text. BayPay is fictional.
 
+L-2.1 extra teaching pictures (not new catalog IDs): [java/l21/README.md](java/l21/README.md) — stack vs heap, stale `authorized`, happens-before APIs. **AEJE-D-005** is picture 2.
+
 | ID | Title | Folder | Maps to |
 |---|---|---|---|
 | AEJE-D-001 | Modern Java, JDK and JVM stack | java | L-1.1 |

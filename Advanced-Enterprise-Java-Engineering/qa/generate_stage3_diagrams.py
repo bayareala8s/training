@@ -22,8 +22,8 @@ DIAGRAMS = [
      "sequenceDiagram\n  Client->>API: POST payment\n  API->>Val: validate amount currency account\n  Val-->>API: ok or decline\n  API-->>Client: 201 COMPLETED or 422 DECLINED",
      ["validate", "DECLINED", "COMPLETED"]),
     ("AEJE-D-005", "java", "concept", 2, "L-2.1", 1, "Java memory visibility",
-     "flowchart LR\n  T1[Worker thread] -->|write| Main[Main memory]\n  T2[Worker thread] -->|stale read without happens-before| Cache[CPU cache]",
-     ["happens-before", "worker threads", "main memory"]),
+     "flowchart LR\n  T1[API thread write] -->|no happens-before| Cache[worker stale authorized false]\n  T1b[volatile or unlock] -->|happens-before| Main[worker sees true and amount]",
+     ["stale authorized", "happens-before", "worker sees amount"]),
     ("AEJE-D-006", "java", "incident", 2, "BREAKFIX-201", 3, "Duplicate payment race",
      "flowchart TB\n  A[Two POSTs same invoice] --> R[Race on ledger map]\n  R --> Dup[Two COMPLETED posts]",
      ["race", "duplicate COMPLETED"]),
@@ -111,6 +111,10 @@ def write_png(path: Path, width: int, height: int, rgb: tuple[int, int, int]) ->
     path.write_bytes(png)
 
 
+# Hand-drawn teaching SVGs. Regenerating boxes would wipe L-1.2 / L-2.1 pictures.
+HAND_DRAWN_SVG = {"AEJE-D-002", "AEJE-D-005"}
+
+
 def main() -> None:
     for did, folder, dtype, module, maps, cx, title, mermaid, boxes in DIAGRAMS:
         d = ROOT / "diagrams" / folder
@@ -121,14 +125,15 @@ def main() -> None:
             f"```mermaid\n{mermaid}\n```\n",
             encoding="utf-8",
         )
-        (d / f"{did}.alt.md").write_text(
-            f"Diagram {did}: {title}. Left-to-right labeled boxes: "
-            + ", ".join(boxes)
-            + ". BayPay is a fictional payment platform used for instruction.\n",
-            encoding="utf-8",
-        )
-        (d / f"{did}.svg").write_text(svg_box_flow(did, title, boxes), encoding="utf-8")
-        write_png(d / f"{did}.png", 960, 420, (244, 247, 250))
+        if did not in HAND_DRAWN_SVG:
+            (d / f"{did}.alt.md").write_text(
+                f"Diagram {did}: {title}. Left-to-right labeled boxes: "
+                + ", ".join(boxes)
+                + ". BayPay is a fictional payment platform used for instruction.\n",
+                encoding="utf-8",
+            )
+            (d / f"{did}.svg").write_text(svg_box_flow(did, title, boxes), encoding="utf-8")
+            write_png(d / f"{did}.png", 960, 420, (244, 247, 250))
         print(did)
     print("wrote", len(DIAGRAMS), "diagrams")
 
