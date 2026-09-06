@@ -1,0 +1,1 @@
+Diagram: Merchants call one payment-service JVM. Payment and refund use cases, an in-process posting worker, and an in-process notification listener sit on shared domain and JPA. One database. BayPay is fictional instruction.

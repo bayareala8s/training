@@ -13,7 +13,7 @@ BayPay is a fictional payments company used throughout this course. It is not a 
 
 BayPay moves money for small and mid-size merchants. A payment is not a row you insert and forget. It is a **lifecycle**: the request is received, validated, authorized, posted to a ledger, and only then marked complete. A retry from a flaky mobile client must not debit Avery Chen twice. A frozen account must not authorize. A USD payment must not post against a GBP account.
 
-The platform that does this work is a **modular monolith** on **Java 21** and **Spring Boot 3.5.5**. Five Maven modules share one process and one database today:
+The platform that does this work is a **modular monolith** on **Java 21** and **Spring Boot 3.5.5**. Five Maven modules share one process and one database today. See the pictures: [diagrams/java/baypay](../../../diagrams/java/baypay/README.md).
 
 | Module | Responsibility |
 |---|---|

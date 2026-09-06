@@ -23,6 +23,8 @@ Customers → payment-service (composition root)
                     └── shared (domain + JPA)
 ```
 
+Pictures (open the SVG): [modular monolith](../../diagrams/java/baypay/modular-monolith.svg) · [runtime stack](../../diagrams/java/baypay/runtime-stack.svg) · [create-payment path](../../diagrams/java/baypay/payment-path.svg). Index: [diagrams/java/baypay/README.md](../../diagrams/java/baypay/README.md).
+
 ## How to read the source
 
 Javadoc on types is written for students. Start in this order:

@@ -16,6 +16,8 @@ Maven Wrapper is included with the reference app. You do not need a global Maven
 
 ## Reference application
 
+BayPay is a **modular monolith**: five Maven modules in one Spring Boot process. Pictures: [diagrams/java/baypay/README.md](diagrams/java/baypay/README.md) (who lives in the JVM, local vs student Fargate, create-payment path).
+
 ```bash
 export JAVA_HOME="${JAVA_HOME:-/opt/homebrew/opt/openjdk@21}"
 cd reference-apps/baypay

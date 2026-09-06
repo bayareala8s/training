@@ -1,0 +1,1 @@
+Diagram: Left, local curl to localhost 8080 on Java 21 Spring Boot with H2. Right, student AWS in us-west-2: ALB to Fargate 256 CPU 512 MiB running the same local profile. No NAT, EKS, or RDS. BayPay is fictional instruction.

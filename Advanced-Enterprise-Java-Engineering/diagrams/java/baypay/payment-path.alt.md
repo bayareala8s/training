@@ -1,0 +1,1 @@
+Diagram: Create payment flows POST with Idempotency-Key, replay check, Money and Authorizer, state machine, ledger post, in-process notify, then 201 COMPLETED. Frozen accounts decline. BayPay is fictional instruction.
