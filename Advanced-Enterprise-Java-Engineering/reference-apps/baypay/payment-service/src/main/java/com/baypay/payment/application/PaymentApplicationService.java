@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -130,6 +131,18 @@ public class PaymentApplicationService {
         return payments.findById(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         ErrorCode.PAYMENT_NOT_FOUND, "Payment not found: " + paymentId));
+    }
+
+    /**
+     * Harbor Market statement read. Known customer with no rows → empty list.
+     * Unknown customer → {@link ErrorCode#CUSTOMER_NOT_FOUND}, not a fake [].
+     */
+    @Transactional(readOnly = true)
+    public List<Payment> listByCustomer(UUID customerId) {
+        customers.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        ErrorCode.CUSTOMER_NOT_FOUND, "Customer not found: " + customerId));
+        return payments.findByCustomerIdOrderByCreatedAtDesc(customerId);
     }
 
     private void audit(String actor, String action, UUID paymentId, String detail, Instant now) {

@@ -1,0 +1,27 @@
+{
+  "Version": "2012-10-17",
+  "Id": "baypay-1103-payment-db-cmk",
+  "Statement": [
+    {
+      "Sid": "AccountRootAdministers",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::123456789012:root"
+      },
+      "Action": "kms:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "ExecutionDecryptsOneKey",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::123456789012:role/baypay-1103-execution"
+      },
+      "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

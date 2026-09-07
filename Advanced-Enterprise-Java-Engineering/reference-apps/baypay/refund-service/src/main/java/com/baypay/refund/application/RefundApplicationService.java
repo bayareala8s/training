@@ -35,6 +35,9 @@ import java.util.UUID;
 /**
  * Refund create/get. Posts a REFUND ledger row in the same transaction.
  * Full remaining amount also transitions the payment to REVERSED.
+ *
+ * <p>FIX-304: do not catch ledger failures. An exception must leave this
+ * method so {@code @Transactional} rolls back the completed refund row.
  */
 @Service
 public class RefundApplicationService {

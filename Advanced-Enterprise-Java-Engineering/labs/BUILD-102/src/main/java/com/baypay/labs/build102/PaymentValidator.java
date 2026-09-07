@@ -3,6 +3,7 @@ package com.baypay.labs.build102;
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -49,6 +50,31 @@ public final class PaymentValidator {
     }
 
     public Decision validate(Command command) {
-        throw new UnsupportedOperationException("implement BUILD-102 PaymentValidator.validate");
+        requireMoney(command.amount(), command.currency());
+        command.customer().orElseThrow(() -> new IllegalArgumentException("CUSTOMER_NOT_FOUND"));
+        AccountView account = command.account()
+                .orElseThrow(() -> new IllegalArgumentException("ACCOUNT_NOT_FOUND"));
+        if (!account.belongsTo(command.customerId())) {
+            throw new IllegalArgumentException("ACCOUNT_CUSTOMER_MISMATCH");
+        }
+        if (!account.active()) {
+            return Decision.decline("account is not ACTIVE", "ACCOUNT_NOT_ACTIVE");
+        }
+        if (!account.currency().equals(command.currency())) {
+            return Decision.decline("account currency does not match payment", "CURRENCY_MISMATCH");
+        }
+        if (command.amount().compareTo(AUTHORIZATION_CEILING) > 0) {
+            return Decision.decline("amount exceeds authorization ceiling", "AUTHORIZATION_DECLINED");
+        }
+        return Decision.approve();
+    }
+
+    private static void requireMoney(BigDecimal amount, String currency) {
+        if (amount == null || amount.signum() <= 0) {
+            throw new IllegalArgumentException("amount must be greater than zero");
+        }
+        if (currency == null || !Set.of("USD", "EUR", "GBP").contains(currency)) {
+            throw new IllegalArgumentException("currency must be one of USD, EUR, GBP");
+        }
     }
 }

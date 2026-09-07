@@ -1,0 +1,57 @@
+# LAB-702 stdout — AllocationHarness (starter, not edited)
+# JAVA_HOME=/opt/homebrew/opt/openjdk@21  2026-09-06
+
+----- retain 250000 -Xmx128m -----
+mode=retain
+count=250000
+elapsedMs=64
+runtimeUsedBeforeBytes=2110112
+runtimeUsedAfterBytes=25663208
+runtimeUsedDeltaBytes=23553096
+runtimeMaxBytes=134217728
+retainedSize=250000
+dieSinkCents=0
+
+----- die 250000 -Xmx128m -----
+mode=die
+count=250000
+elapsedMs=39
+runtimeUsedBeforeBytes=2110112
+runtimeUsedAfterBytes=24614632
+runtimeUsedDeltaBytes=22504520
+runtimeMaxBytes=134217728
+retainedSize=0
+dieSinkCents=1253125000
+
+----- die 250000 second run (warmup check; elapsed did not drop) -----
+mode=die
+count=250000
+elapsedMs=60
+runtimeUsedBeforeBytes=2110112
+runtimeUsedAfterBytes=24048424
+runtimeUsedDeltaBytes=21938312
+runtimeMaxBytes=134217728
+retainedSize=0
+dieSinkCents=1253125000
+
+----- retain 1000000 -Xmx256m  (comparison pair) -----
+mode=retain
+count=1000000
+elapsedMs=159
+runtimeUsedBeforeBytes=2110112
+runtimeUsedAfterBytes=95829840
+runtimeUsedDeltaBytes=93719728
+runtimeMaxBytes=268435456
+retainedSize=1000000
+dieSinkCents=0
+
+----- die 1000000 -Xmx256m  (comparison pair) -----
+mode=die
+count=1000000
+elapsedMs=42
+runtimeUsedBeforeBytes=2110112
+runtimeUsedAfterBytes=25304576
+runtimeUsedDeltaBytes=23194464
+runtimeMaxBytes=268435456
+retainedSize=0
+dieSinkCents=5049010000

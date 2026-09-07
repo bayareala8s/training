@@ -1,0 +1,81 @@
+{
+  "incidentId": "INC-AI-1502",
+  "service": "payment-service",
+  "evidence": [
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "Harbor Market cannot complete HTTPS to payments.apps.baypay.example. verify error:num=10:certificate has expired. notAfter=Sep  1 00:00:00 2026 GMT. curl: (60) SSL certificate problem: certificate has expired. HTTP status was never returned from Spring.",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "Avery Chen payment c1502e44-0000-4000-8000-111111111502 stayed in the browser.",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "Priya Nair: tasks lastStatus=RUNNING 2/2 in baypay-prod-west.",
+      "at": "2026-09-02T07:18:10Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "http://10.0.14.22:8080/actuator/health/liveness → 200. Jump-box HTTP to the container port answers. Merchants fail the handshake on :443.",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1502/starter/evidence-excerpt.txt",
+      "quote": "What this excerpt does not contain: No ACM describe paste. No Route 53 zone dump. No Postgres metrics. No dmgr-east cell dump. Do not mark a hypothesis proven from this excerpt alone.",
+      "at": "2026-09-02T07:20:18Z"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Edge / leaf / handshake problem on payments.apps.baypay.example:443 (openssl verify error num=10, curl 60, notAfter=Sep 1 2026). Merchants never reach Spring.",
+      "status": "unproven",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H2",
+      "statement": "payment-service is down, so Harbor Market cannot POST.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H3",
+      "statement": "Leftover dmgr-east / PaymentCluster is the path; bounce the cell.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H4",
+      "statement": "Postgres writer outage caused the HTTPS failure.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1502/starter/evidence-excerpt.txt"
+      ]
+    }
+  ],
+  "recommendedInvestigation": [
+    "Next omitted kind in the certificate / ACM / DNS class: paper acm:DescribeCertificate (status, InUse, validation) and route53:ListResourceRecordSets for the payments host — do not present those files as already opened.",
+    "Do not request-certificate or change-resource-record-sets against a paid account. Do not skip to bounce. Sam's DNS-cleanup rumor stays a rumor until a zone file exists."
+  ],
+  "suggestedRemediation": [
+    {
+      "action": "Restore merchant HTTPS on :443 (valid leaf on the ALB listener) after ACM/DNS files exist. Do not disable TLS. Do not bounce dmgr-east or Postgres.",
+      "mutatesProduction": true,
+      "approvalRequired": true
+    }
+  ],
+  "humanApproval": {
+    "status": "pending",
+    "note": "BayOps-auto is not a human. Starter bounce of dmgr-east / PaymentCluster is refused. H1 stays unproven until ACM/DNS files are opened."
+  },
+  "provenRootCause": null
+}

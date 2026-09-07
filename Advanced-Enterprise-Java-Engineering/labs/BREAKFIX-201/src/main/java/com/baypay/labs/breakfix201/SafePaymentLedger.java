@@ -1,27 +1,47 @@
 package com.baypay.labs.breakfix201;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
- * BREAKFIX-201 student stub. Repair the race in {@code starter/UnsafePaymentLedger.java}
- * here. The starter stays in the default package so {@code javac && java} still works.
+ * Thread-safe canary ledger. Claim the idempotency key first ({@code putIfAbsent}),
+ * then add the amount atomically. The starter's check-then-act on {@code seenKeys}
+ * and get/put on {@code balances} both race.
  */
 public class SafePaymentLedger {
 
     public record Entry(String paymentId, String idempotencyKey, String accountId, long amountCents) {
     }
 
+    private final ConcurrentHashMap<String, Long> balances = new ConcurrentHashMap<>();
+    private final CopyOnWriteArrayList<Entry> journal = new CopyOnWriteArrayList<>();
+    private final ConcurrentHashMap<String, Boolean> seenKeys = new ConcurrentHashMap<>();
+
     public boolean authorize(String paymentId, String idempotencyKey, String accountId, long amountCents) {
-        throw new UnsupportedOperationException("implement BREAKFIX-201 SafePaymentLedger.authorize");
+        if (amountCents <= 0) {
+            throw new IllegalArgumentException("amountCents must be positive");
+        }
+        if (seenKeys.putIfAbsent(idempotencyKey, Boolean.TRUE) != null) {
+            return false;
+        }
+        balances.merge(accountId, amountCents, Long::sum);
+        journal.add(new Entry(paymentId, idempotencyKey, accountId, amountCents));
+        return true;
     }
 
     public long balanceCents(String accountId) {
-        throw new UnsupportedOperationException("implement BREAKFIX-201");
+        return balances.getOrDefault(accountId, 0L);
     }
 
     public int journalSize() {
-        throw new UnsupportedOperationException("implement BREAKFIX-201");
+        return journal.size();
     }
 
     public long journalSumCents() {
-        throw new UnsupportedOperationException("implement BREAKFIX-201");
+        long sum = 0L;
+        for (Entry entry : journal) {
+            sum += entry.amountCents();
+        }
+        return sum;
     }
 }

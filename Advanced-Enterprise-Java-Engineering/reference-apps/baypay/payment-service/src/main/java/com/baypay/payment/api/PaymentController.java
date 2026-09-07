@@ -5,23 +5,28 @@ import com.baypay.shared.domain.Payment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * HTTP edge for payments. Replay → 200; decline → 422; first success → 201.
  * {@code Idempotency-Key} is required (header may be missing; the service rejects it).
  */
+@Validated
 @RestController
 @RequestMapping("/api/v1/payments")
 @Tag(name = "Payments")
@@ -48,6 +53,15 @@ public class PaymentController {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(body);
         }
         return ResponseEntity.created(URI.create("/api/v1/payments/" + payment.id())).body(body);
+    }
+
+    @GetMapping
+    @Operation(summary = "List payments for a customer. customerId query is required.")
+    public List<PaymentResponse> list(
+            @RequestParam(required = false) @NotNull(message = "customerId is required") UUID customerId) {
+        return payments.listByCustomer(customerId).stream()
+                .map(PaymentResponse::from)
+                .toList();
     }
 
     @GetMapping("/{paymentId}")

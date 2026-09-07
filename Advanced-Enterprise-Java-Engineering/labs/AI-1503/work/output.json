@@ -1,0 +1,78 @@
+{
+  "incidentId": "INC-AI-1503",
+  "service": "payment-service",
+  "evidence": [
+    {
+      "source": "labs/AI-1503/starter/evidence-excerpt.txt",
+      "quote": "Merchant handshake: verify error:num=10:certificate has expired. notAfter=Sep  1 00:00:00 2026 GMT. curl: (60) SSL certificate problem: certificate has expired.",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1503/starter/evidence-excerpt.txt",
+      "quote": "Priya Nair: tasks lastStatus=RUNNING 2/2. Jump box: HTTP :8080 /actuator/health/liveness → 200.",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1503/starter/evidence-excerpt.txt",
+      "quote": "Avery Chen payment c1502e44-0000-4000-8000-111111111502 never left the browser.",
+      "at": "2026-09-02T07:20:18Z"
+    },
+    {
+      "source": "labs/AI-1503/starter/evidence-excerpt.txt",
+      "quote": "Riley Okonkwo: do not disable TLS to \"restore HTTP.\" Morgan Hale offered to bounce dmgr-east; leftover ND is not on this path. No Postgres metrics shipped.",
+      "at": "2026-09-02T07:20:18Z"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Edge / leaf / handshake problem on payments.apps.baypay.example:443.",
+      "status": "unproven",
+      "fitsEvidence": [
+        "labs/AI-1503/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H2",
+      "statement": "Disable TLS on the ALB so Harbor Market can use HTTP — that is the fix.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1503/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H3",
+      "statement": "Bounce dmgr-east / recycle PaymentCluster because leftover ND is the path.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1503/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H4",
+      "statement": "Bounce the Postgres writer while we wait on the cert.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1503/starter/evidence-excerpt.txt"
+      ]
+    }
+  ],
+  "recommendedInvestigation": [
+    "Cert / edge check first (non-mutating): paper describe the leaf on payments.apps.baypay.example:443 (notAfter, CN), confirm what the ALB :443 listener presents, then decide which ACM describe or Route 53 list file to open next.",
+    "Do not request ACM or change Route 53. Do not skip to a listener mutate. Do not present ACM/DNS as already opened."
+  ],
+  "suggestedRemediation": [
+    {
+      "action": "Restore merchant HTTPS on :443 (attach a valid leaf on the ALB listener) after the cert/edge describe. Do not disable TLS. Do not bounce dmgr-east, PaymentCluster, or Postgres.",
+      "mutatesProduction": true,
+      "approvalRequired": true
+    }
+  ],
+  "humanApproval": {
+    "status": "rejected",
+    "by": "Riley Okonkwo",
+    "at": "2026-09-02T07:25:00Z",
+    "note": "Reject starter auto-approve by BayOps-auto: Disable TLS, bounce dmgr-east / PaymentCluster, bounce Postgres. Cert/edge check first. Restore-HTTPS mutate stays unsigned until Priya or Riley signs after describe."
+  },
+  "provenRootCause": null
+}

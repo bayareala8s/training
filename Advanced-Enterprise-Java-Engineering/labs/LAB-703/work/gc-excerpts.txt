@@ -1,0 +1,15 @@
+# LAB-703 excerpts from this laptop (2026-09-06, JDK 21.0.2)
+# Full logs lived in logs/ then deleted per cleanup. These lines are the portfolio evidence.
+
+# Run 1 — G1 -Xmx64m GcVisibleHarness 400 256  → gc-g1.log (young only)
+[2026-09-06T14:56:21.417-0700][0.088s][info][gc] GC(0) Pause Young (Normal) (G1 Evacuation Pause) 23M->1M(64M) 5.793ms
+[2026-09-06T14:56:21.425-0700][0.096s][info][gc] GC(1) Pause Young (Normal) (G1 Evacuation Pause) 36M->1M(64M) 3.168ms
+
+# Run 2 — Serial -Xmx32m same harness → gc-serial.log (young only; more frequent)
+[2026-09-06T14:56:21.576-0700][0.084s][info][gc] GC(0) Pause Young (Allocation Failure) 9M->1M(30M) 3.202ms
+
+# Extra — Serial -Xmx24m AllocationHarness retain 400000 → gc-serial-full.log
+# (OOM after Fulls; data, not a failed lab)
+[2026-09-06T14:56:33.408-0700][0.146s][info][gc] GC(0) Pause Young (Allocation Failure) 7M->7M(23M) 14.353ms
+[2026-09-06T14:56:33.484-0700][0.222s][info][gc] GC(3) Pause Full (Allocation Failure) 19M->19M(23M) 40.474ms
+[2026-09-06T14:56:33.543-0700][0.281s][info][gc] GC(4) Pause Full (Allocation Failure) 23M->23M(23M) 47.017ms

@@ -4,9 +4,20 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * BUILD-101 student stub. Factory received(...) starts at RECEIVED. No public setStatus.
+ * Entity. Factory received(...) starts at RECEIVED. No public setStatus.
  */
 public final class Payment {
+
+    private UUID id;
+    private UUID customerId;
+    private UUID accountId;
+    private Money money;
+    private PaymentStatus status;
+    private String reference;
+    private String failureReason;
+    private String idempotencyKey;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     public static Payment received(
             UUID id,
@@ -16,58 +27,72 @@ public final class Payment {
             String reference,
             String idempotencyKey,
             Instant now) {
-        throw new UnsupportedOperationException("implement BUILD-101 Payment.received");
+        Payment payment = new Payment();
+        payment.id = id;
+        payment.customerId = customerId;
+        payment.accountId = accountId;
+        payment.money = money;
+        payment.status = PaymentStatus.RECEIVED;
+        payment.reference = reference;
+        payment.idempotencyKey = idempotencyKey;
+        payment.createdAt = now;
+        payment.updatedAt = now;
+        return payment;
     }
 
     public void transitionTo(PaymentStatus next, Instant now) {
-        throw new UnsupportedOperationException("implement BUILD-101 Payment.transitionTo");
+        PaymentStateMachine.assertTransition(status, next);
+        this.status = next;
+        this.updatedAt = now;
     }
 
     public void decline(String reason, Instant now) {
-        throw new UnsupportedOperationException("implement BUILD-101 Payment.decline");
+        transitionTo(PaymentStatus.DECLINED, now);
+        this.failureReason = reason;
     }
 
     public void fail(String reason, Instant now) {
-        throw new UnsupportedOperationException("implement BUILD-101 Payment.fail");
+        transitionTo(PaymentStatus.FAILED, now);
+        this.failureReason = reason;
     }
 
     public UUID id() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return id;
     }
 
     public UUID customerId() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return customerId;
     }
 
     public UUID accountId() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return accountId;
     }
 
     public Money money() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return money;
     }
 
     public PaymentStatus status() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return status;
     }
 
     public String reference() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return reference;
     }
 
     public String failureReason() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return failureReason;
     }
 
     public String idempotencyKey() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return idempotencyKey;
     }
 
     public Instant createdAt() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return createdAt;
     }
 
     public Instant updatedAt() {
-        throw new UnsupportedOperationException("implement BUILD-101");
+        return updatedAt;
     }
 }

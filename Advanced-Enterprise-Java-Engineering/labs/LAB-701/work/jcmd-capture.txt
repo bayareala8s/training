@@ -1,0 +1,23 @@
+# LAB-701 capture — MemoryProbe Path A
+# Host: local JDK 21.0.2 Homebrew. Date: 2026-09-06.
+# Start:
+#   java -XX:+UnlockDiagnosticVMOptions -XX:NativeMemoryTracking=summary \
+#     -cp out com.baypay.labs.lab701.MemoryProbe
+# pid=25946  retainedApproxBytes=8388608
+
+----- jcmd 25946 GC.heap_info -----
+ garbage-first heap   total 133120K, used 18917K [0x0000000780000000, 0x0000000800000000)
+  region size 1024K, 2 young (2048K), 0 survivors (0K)
+ Metaspace       used 405K, committed 576K, reserved 1114112K
+  class space    used 29K, committed 128K, reserved 1048576K
+
+----- jcmd 25946 VM.native_memory summary (committed highlights) -----
+Total:      reserved=3605834KB, committed=246378KB
+Java Heap:  reserved=2097152KB, committed=133120KB
+Class:      reserved=1048674KB, committed=226KB  (classes #713)
+Thread:     reserved=37130KB, committed=37130KB  (thread #18, stack committed=37080KB)
+Code:       reserved=247751KB, committed=7639KB
+GC:         reserved=91181KB, committed=52845KB
+Internal:   reserved=214KB, committed=214KB
+Metaspace:  reserved=65548KB, committed=460KB
+Shared class space: committed=12944KB

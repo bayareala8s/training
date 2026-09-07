@@ -1,7 +1,7 @@
 package com.baypay.labs.build101;
 
 /**
- * BUILD-101 student stub. Throw IllegalStateException on an illegal edge.
+ * Single place that rejects illegal edges such as RECEIVED → COMPLETED.
  */
 public final class PaymentStateMachine {
 
@@ -9,6 +9,8 @@ public final class PaymentStateMachine {
     }
 
     public static void assertTransition(PaymentStatus from, PaymentStatus to) {
-        throw new UnsupportedOperationException("implement BUILD-101 PaymentStateMachine");
+        if (!from.canTransitionTo(to)) {
+            throw new IllegalStateException("Cannot transition payment from " + from + " to " + to);
+        }
     }
 }

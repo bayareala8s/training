@@ -1,0 +1,42 @@
+{
+  "family": "baypay-1103-payment",
+  "cpu": "256",
+  "memory": "512",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "executionRoleArn": "arn:aws:iam::123456789012:role/baypay-1103-execution",
+  "taskRoleArn": "arn:aws:iam::123456789012:role/baypay-1103-task",
+  "containerDefinitions": [
+    {
+      "name": "payment",
+      "image": "123456789012.dkr.ecr.us-west-2.amazonaws.com/baypay/payment-service:3.9.2",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "prod"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "BAYPAY_DB_URL",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:baypay/payment/db:url::"
+        },
+        {
+          "name": "BAYPAY_DB_USER",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:baypay/payment/db:username::"
+        },
+        {
+          "name": "BAYPAY_DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:us-west-2:123456789012:secret:baypay/payment/db:password::"
+        }
+      ]
+    }
+  ]
+}

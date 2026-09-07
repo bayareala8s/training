@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server description="BayPay payment — MODERNIZE-602 starter (intentionally incomplete)">
+<server description="BayPay payment — MODERNIZE-602 (jdbc/baypay-payment, isolated pool)">
 
     <!--
-      Defects you must fix (do not treat this file as production):
-      - featureManager is missing jdbc-4.3, jndi-1.0, and persistence-3.1
-      - DataSource still uses cell-wide jdbc/baypay
-      - server.env is incomplete; wire ${env.BAYPAY_DB_*} and isolated JNDI
+      Wave 2 canary shape (AEJE-D-025). Not a cell, not jdbc/baypay.
+      Secrets: ${env.BAYPAY_DB_*}. Password is never a literal.
     -->
 
     <featureManager>
         <feature>servlet-6.0</feature>
+        <feature>jdbc-4.3</feature>
+        <feature>jndi-1.0</feature>
+        <feature>persistence-3.1</feature>
     </featureManager>
 
     <httpEndpoint id="defaultHttpEndpoint"
@@ -21,13 +22,14 @@
         <fileset dir="${shared.resource.dir}/jdbc" includes="postgresql-*.jar"/>
     </library>
 
-    <dataSource id="BayPaySharedDS" jndiName="jdbc/baypay">
+    <dataSource id="baypayPayment" jndiName="jdbc/baypay-payment">
         <jdbcDriver libraryRef="PostgresLib"/>
+        <connectionManager maxPoolSize="20"/>
         <properties.postgresql
-            serverName="db-east.baypay.example"
-            portNumber="5432"
-            databaseName="baypay"
-            user="baypay_app"
+            serverName="${env.BAYPAY_DB_HOST}"
+            portNumber="${env.BAYPAY_DB_PORT}"
+            databaseName="${env.BAYPAY_DB_NAME}"
+            user="${env.BAYPAY_DB_USER}"
             password="${env.BAYPAY_DB_PASSWORD}"/>
     </dataSource>
 

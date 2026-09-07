@@ -1,9 +1,11 @@
 package com.baypay.labs.build101;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * BUILD-101 student stub. Implement isTerminal, isRefundable, allowedNext, canTransitionTo.
+ * Happy path: RECEIVED → VALIDATING → AUTHORIZED → PROCESSING → COMPLETED.
+ * Adding a state means extending allowedNext(), not new ifs in a controller.
  */
 public enum PaymentStatus {
     RECEIVED,
@@ -16,18 +18,25 @@ public enum PaymentStatus {
     REVERSED;
 
     public boolean isTerminal() {
-        throw new UnsupportedOperationException("implement BUILD-101 PaymentStatus.isTerminal");
+        return this == COMPLETED || this == DECLINED || this == FAILED || this == REVERSED;
     }
 
     public boolean isRefundable() {
-        throw new UnsupportedOperationException("implement BUILD-101 PaymentStatus.isRefundable");
+        return this == COMPLETED || this == REVERSED;
     }
 
     public Set<PaymentStatus> allowedNext() {
-        throw new UnsupportedOperationException("implement BUILD-101 PaymentStatus.allowedNext");
+        return switch (this) {
+            case RECEIVED -> EnumSet.of(VALIDATING);
+            case VALIDATING -> EnumSet.of(AUTHORIZED, DECLINED);
+            case AUTHORIZED -> EnumSet.of(PROCESSING, FAILED);
+            case PROCESSING -> EnumSet.of(COMPLETED, FAILED);
+            case COMPLETED -> EnumSet.of(REVERSED);
+            case DECLINED, FAILED, REVERSED -> EnumSet.noneOf(PaymentStatus.class);
+        };
     }
 
     public boolean canTransitionTo(PaymentStatus next) {
-        throw new UnsupportedOperationException("implement BUILD-101 PaymentStatus.canTransitionTo");
+        return allowedNext().contains(next);
     }
 }

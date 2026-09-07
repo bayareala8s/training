@@ -1,0 +1,47 @@
+# BUILD-1204 work — AEJE-D-056
+# Tests always (including PRs). Publish after tests, main only.
+# Deploy tag is ${{ github.sha }}, not :latest. No key literals.
+
+name: baypay
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: reference-apps/baypay
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Temurin 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Unit and module tests
+        run: ./mvnw -B -pl payment-service -am test
+
+  publish:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to teaching registry
+        run: |
+          echo "Would docker login -u \$REGISTRY_USERNAME --password-stdin"
+        env:
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Build and tag immutable SHA
+        env:
+          IMAGE: baypay/payment-service:${{ github.sha }}
+        run: |
+          docker build -t "$IMAGE" reference-apps/baypay
+          echo "Would docker push $IMAGE"
+          echo "Do not deploy :latest to ECS"

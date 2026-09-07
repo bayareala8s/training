@@ -29,5 +29,7 @@ class HealthApiIT {
                 .andExpect(status().isOk());
         mvc.perform(get("/actuator/health/readiness"))
                 .andExpect(status().isOk());
+        mvc.perform(get("/actuator/heapdump"))
+                .andExpect(status().isNotFound());
     }
 }

@@ -1,0 +1,78 @@
+{
+  "incidentId": "INC-AI-1501",
+  "service": "payment-service",
+  "evidence": [
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "Rate 18:05 182 RPS → 18:22 22 RPS. Priya: \"Rate ~180 → ~22. Thin versus 18:00. 5xx tile is not why we paged.\"",
+      "at": "2026-12-18T18:22:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "P99 18:05 118 ms → 18:22 4.82 s (teaching SLO P99 < 400 ms missed). 18:24 P99 4.91 s.",
+      "at": "2026-12-18T18:22:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "5xx stayed ~0.03–0.07 RPS. Merchant success is calling about late 201s, not HTTP 500.",
+      "at": "2026-12-18T18:22:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "At 18:22 UTC: Hikari pending 0. Servlet threads busy 187 / 200. Heap used 1.69 G / 2.00 G. Riley: do not bounce db-east from this graph.",
+      "at": "2026-12-18T18:22:00Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "Avery payment c1501d33-0000-4000-8000-111111111501 COMPLETED HTTP 201 at 18:23:11Z duration 5.14 s. Same Idempotency-Key, no duplicate. Image 3.8.4 through 18:08; 3.9.0 after BAYPAY-13011.",
+      "at": "2026-12-18T18:23:11Z"
+    },
+    {
+      "source": "labs/AI-1501/starter/evidence-excerpt.txt",
+      "quote": "What this excerpt does not contain: No database metrics file. No RDS event. No writer-failover JSON. Do not invent them.",
+      "at": "2026-12-18T18:25:00Z"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Postgres writer is down and that is why completions dropped and P99 rose.",
+      "status": "withdrawn",
+      "fitsEvidence": [
+        "labs/AI-1501/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H2",
+      "statement": "After the 3.9.0 roll (BAYPAY-13011, 18:08 UTC), something on payment-service is holding servlet threads (187/200) so POST /api/v1/payments still returns late 201s.",
+      "status": "unproven",
+      "fitsEvidence": [
+        "labs/AI-1501/starter/evidence-excerpt.txt"
+      ]
+    },
+    {
+      "id": "H3",
+      "statement": "Heap and thread saturation on the JVM (not a writer stall) explain the tail; scrape or meter change after 3.9.0 is a candidate once those files exist.",
+      "status": "unproven",
+      "fitsEvidence": [
+        "labs/AI-1501/starter/evidence-excerpt.txt"
+      ]
+    }
+  ],
+  "recommendedInvestigation": [
+    "Next omitted kind: scrape duration / series count / JVM process numbers (this excerpt has no scrape file and no database metrics). Confirm last healthy image 3.8.4 on the board.",
+    "Do not invent invented/db-down.txt. Do not bounce Postgres or dmgr-east. Do not skip to a proven RCA."
+  ],
+  "suggestedRemediation": [
+    {
+      "action": "Stabilize only after scrape/JVM: roll payment-service to last healthy image 3.8.4 if that file still supports the 3.9.0 timeline — do not bounce Postgres or dmgr-east.",
+      "mutatesProduction": true,
+      "approvalRequired": true
+    }
+  ],
+  "humanApproval": {
+    "status": "pending",
+    "note": "BayOps-auto is not a human. Mixed starter bounce of Postgres and dmgr-east is refused. Hikari pending 0; invented/db-down.txt was never opened."
+  },
+  "provenRootCause": null
+}

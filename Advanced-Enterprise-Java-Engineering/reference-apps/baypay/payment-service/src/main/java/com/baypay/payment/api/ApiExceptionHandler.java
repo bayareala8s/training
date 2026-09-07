@@ -6,14 +6,20 @@ import com.baypay.shared.error.ErrorCode;
 import com.baypay.shared.error.ResourceNotFoundException;
 import com.baypay.shared.idempotency.IdempotencyConflictException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
 import java.util.stream.Collectors;
@@ -58,12 +64,42 @@ public class ApiExceptionHandler {
         String detail = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + " " + error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
-        problem.setTitle("Request validation failed");
-        problem.setType(URI.create("https://baypay.example/errors/VALIDATION_FAILED"));
-        problem.setProperty("code", ErrorCode.VALIDATION_FAILED.name());
+        return validationFailed(detail, request);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ProblemDetail> constraintViolation(
+            ConstraintViolationException ex, HttpServletRequest request) {
+        String detail = ex.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining("; "));
+        return validationFailed(detail, request);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ProblemDetail> methodValidation(
+            HandlerMethodValidationException ex, HttpServletRequest request) {
+        return validationFailed("customerId is required", request);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ProblemDetail> missingQuery(
+            MissingServletRequestParameterException ex, HttpServletRequest request) {
+        return validationFailed(ex.getParameterName() + " is required", request);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ProblemDetail> typeMismatch(
+            MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        return validationFailed(ex.getName() + " must be a valid UUID", request);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ProblemDetail> missing(NoResourceFoundException ex, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Not found");
+        problem.setTitle("Not found");
         problem.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.badRequest().body(problem);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
 
     @ExceptionHandler(Exception.class)
@@ -74,6 +110,15 @@ public class ApiExceptionHandler {
         problem.setTitle("Internal error");
         problem.setInstance(URI.create(request.getRequestURI()));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problem);
+    }
+
+    private static ResponseEntity<ProblemDetail> validationFailed(String detail, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        problem.setTitle("Request validation failed");
+        problem.setType(URI.create("https://baypay.example/errors/VALIDATION_FAILED"));
+        problem.setProperty("code", ErrorCode.VALIDATION_FAILED.name());
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return ResponseEntity.badRequest().body(problem);
     }
 
     private static ResponseEntity<ProblemDetail> problem(
