@@ -7,6 +7,8 @@ Three teaching pictures for [reference-apps/baypay](../../../reference-apps/bayp
 | 1 | [modular-monolith.svg](modular-monolith.svg) | Five Maven modules in one JVM. Posting and notify are in-process. One database. |
 | 2 | [runtime-stack.svg](runtime-stack.svg) | Laptop (`localhost:8080` + H2) versus student Fargate in `us-west-2` (ALB, no NAT/RDS). |
 | 3 | [payment-path.svg](payment-path.svg) | `POST /api/v1/payments` from Idempotency-Key to `201 COMPLETED`. |
+| 4 | [ecs-fargate-rds.source.md](ecs-fargate-rds.source.md) | **Design:** ECS/Fargate + ALB + RDS PostgreSQL. Teaching host `pay-alb-student.baypay.example`. Do not apply RDS. |
+| 5 | [eks-rds.source.md](eks-rds.source.md) | **Design:** EKS Ingress + same image + RDS PostgreSQL. Host `payments.apps.baypay.example`. Do not apply EKS. |
 
 Open the SVG (or the mermaid in `*.source.md`). PNG is a raster sibling for slides.
 
