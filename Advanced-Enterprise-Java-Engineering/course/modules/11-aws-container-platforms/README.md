@@ -61,6 +61,7 @@ After this module you can:
 ## Prerequisites
 
 - Modules 1–3: `payment-service`, Actuator probes, `BAYPAY_DB_*`, idempotency and correlation ids.
+- L-6.6: Liberty waves versus the Boot rewrite; ECS is the first container target, EKS is optional spend.
 - Module 9 image contract: `eclipse-temurin:21-jre`, port `8080`, non-root UID, no `:latest`, secrets not in layers.
 - Module 10: Deployment / Service / Ingress-or-Route in `baypay-prod`. You will map those objects onto ECS + ALB. You will **not** treat AWS as a replacement that invalidates OpenShift.
 - L-7.6 / L-9.6 / L-10.5: do not set `-Xmx` equal to the task memory limit.

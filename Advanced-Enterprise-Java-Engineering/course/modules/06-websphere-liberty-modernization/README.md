@@ -1,6 +1,6 @@
 # Module 6 — WebSphere Liberty Modernization
 
-**Duration:** ~2.5 hours of lessons plus 4 labs  
+**Duration:** ~3 hours of lessons plus 4 labs  
 **Case study:** BayPay Financial Services (fictional)  
 **Theme:** Move BayPay from traditional WAS ND toward Liberty  
 **Portfolio artifact:** Liberty migration assessment from [MODERNIZE-601](../../../labs/MODERNIZE-601/README.md) and [student/worksheets/PF-liberty-assessment.md](../../../student/worksheets/PF-liberty-assessment.md)
@@ -57,6 +57,7 @@ After this module you can:
 - Assess what can move from an ear (servlets, JDBC lookups after rename) and what cannot lift-and-shift (SIBus, cell-wide JNDI, WS-* proprietary bindings, `javax` vs `jakarta`, WAS class-loader tricks).
 - Externalize config with `server.env` and variables so `BAYPAY_DB_*` secrets never live in committed XML.
 - Design waves 0–3 with canary and dual-run, and write rollback for refund then payment without standing up a live cell.
+- Place the **second exit**: rewrite to the Spring Boot teaching app and run it on ECS Fargate (required cheap apply) or an optional EKS overlay — not `payment.ear` in a pod.
 
 ---
 
@@ -82,6 +83,7 @@ Complete in order. Each lesson is self-contained; PAKS links are optional and no
 | [L-6.3](lessons/L-6.3.md) | Compatibility assessment | Ears, JNDI, SIBus, WS-*, loaders, `javax` |
 | [L-6.4](lessons/L-6.4.md) | Configuration externalization | `server.env`, variables, `BAYPAY_DB_*` |
 | [L-6.5](lessons/L-6.5.md) | Migration strategy and rollback | Waves 0–3, canary, dual-run, rollback |
+| [L-6.6](lessons/L-6.6.md) | Spring Boot on ECS and EKS | Rewrite exit; ALB/NLB; required vs optional spend |
 
 ---
 
@@ -120,6 +122,7 @@ This module stands alone. If your cohort has a login at [paks.bayareala8s.com](h
 - Traditional WAS ND is taught so you can **leave** it. Do not recommend a new ND cell for a blank-page BayPay service.
 - Simulation-first: paper assessment, `server.xml` / `server.env` on disk, wave diagrams. Do **not** install WebSphere ND. Live Liberty is optional.
 - Keep `jdbc/baypay` as the source smell. Liberty binds `jdbc/baypay-payment` and `jdbc/baypay-refund`.
-- Local labs and config files cost **$0**.
+- Local labs and config files cost **$0**. Optional `student/work/ecs-rds-lab` / `eks-rds-lab` bill until `./stop.sh`. They are **not** the graded apply (no NAT / EKS / RDS on the required ECS path).
+- Do not treat “ear on EKS” as modernization. The Boot JAR is the container target.
 - Instructor rubrics live under `instructor/rubrics/`. Students should not need them to finish the work.
 - Synthetic only: Avery Chen, Harbor Bike Co, `.baypay.example` hosts, and the on-call names above.

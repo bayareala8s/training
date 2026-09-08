@@ -2,7 +2,7 @@
   "id": "Q-06",
   "moduleId": "module-06",
   "title": "Module 6 quiz — WebSphere Liberty Modernization",
-  "description": "Eight questions on ND vs Liberty, server.xml, compatibility, externalized config, and BayPay migration waves. Synthetic only.",
+  "description": "Nine questions on ND vs Liberty, server.xml, compatibility, externalized config, BayPay migration waves, and the Boot/ECS/EKS exit. Synthetic only.",
   "questions": [
     {
       "id": "Q-06-01",
@@ -99,6 +99,18 @@
       ],
       "correctIndex": 1,
       "explanation": "reference-apps/baypay stays Boot. Liberty is the ear-compatible modernization path. Neither choice is ‘put it on a new ND cell.’"
+    },
+    {
+      "id": "Q-06-09",
+      "prompt": "Jordan wants this weekend’s graded apply to be payment.ear on EKS with NAT and Multi-AZ RDS. What is the honest Module 6 / course answer?",
+      "choices": [
+        "Approve it: EKS plus NAT is the required student path",
+        "Refuse: the ear on EKS is not a Boot rewrite; the graded apply is ECS Fargate without NAT, EKS, or RDS; optional labs are same-day destroy",
+        "Approve NAT only if the pod still looks up jdbc/baypay",
+        "Stand up BayPayCell2 in us-west-2 as the rollback cell"
+      ],
+      "correctIndex": 1,
+      "explanation": "L-6.6: two exits (Liberty wars vs Boot JAR). Containers get the teaching app, not the ear. Required AWS shape omits NAT/EKS/RDS. Optional ecs-rds-lab / eks-rds-lab bill until stop.sh."
     }
   ]
 }

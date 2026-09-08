@@ -772,6 +772,14 @@
           "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.5.md",
           "durationMinutes": 30,
           "status": "implemented"
+        },
+        {
+          "id": "L-6.6",
+          "title": "Spring Boot on ECS and EKS",
+          "kind": "lesson",
+          "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.6.md",
+          "durationMinutes": 30,
+          "status": "implemented"
         }
       ],
       "labs": [
@@ -3207,7 +3215,7 @@
       "title": "Module 6 quiz",
       "path": "course/quizzes/Q-06.json",
       "studentView": "course/quizzes/Q-06.md",
-      "questionCount": 8,
+      "questionCount": 9,
       "includesExplanations": true,
       "status": "implemented"
     },

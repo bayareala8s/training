@@ -494,12 +494,20 @@
     "order": 5
   },
   {
+    "id": "L-6.6",
+    "moduleId": "module-06",
+    "title": "Spring Boot on ECS and EKS",
+    "kind": "lesson",
+    "path": "course/modules/06-websphere-liberty-modernization/lessons/L-6.6.md",
+    "order": 6
+  },
+  {
     "id": "MODERNIZE-601",
     "moduleId": "module-06",
     "title": "WebSphere-to-Liberty assessment",
     "kind": "lab",
     "path": "labs/MODERNIZE-601/README.md",
-    "order": 6,
+    "order": 7,
     "labType": "MODERNIZE",
     "awsLab": false
   },
@@ -509,7 +517,7 @@
     "title": "Adapt BayPay for Liberty",
     "kind": "lab",
     "path": "labs/MODERNIZE-602/README.md",
-    "order": 7,
+    "order": 8,
     "labType": "MODERNIZE",
     "awsLab": false
   },
@@ -519,7 +527,7 @@
     "title": "Externalize configuration",
     "kind": "lab",
     "path": "labs/MODERNIZE-603/README.md",
-    "order": 8,
+    "order": 9,
     "labType": "MODERNIZE",
     "awsLab": false
   },
@@ -529,7 +537,7 @@
     "title": "Migration waves and rollback",
     "kind": "lab",
     "path": "labs/ARCHITECT-604/README.md",
-    "order": 9,
+    "order": 10,
     "labType": "ARCHITECT",
     "awsLab": false
   },
@@ -539,7 +547,7 @@
     "title": "Module 6 quiz",
     "kind": "quiz",
     "path": "course/quizzes/Q-06.md",
-    "order": 10
+    "order": 11
   },
   {
     "id": "L-7.1",
