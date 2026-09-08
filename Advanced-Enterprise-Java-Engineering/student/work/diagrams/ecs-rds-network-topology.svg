@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1180" viewBox="0 0 1600 1180" role="img" aria-labelledby="title desc">
+  <title id="title">BayPay on AWS - ECS Fargate + RDS PostgreSQL network topology</title>
+  <desc id="desc">Internet to IGW to ALB in public subnets to a Fargate task, then JDBC to private RDS. No NAT. Region us-west-2.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#232F3E"/>
+    </marker>
+    <marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#C45500"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1180" fill="#F4F6F8"/>
+
+  <text x="56" y="52" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#16191F">BayPay on AWS - ECS Fargate + RDS PostgreSQL</text>
+  <text x="56" y="82" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" fill="#545B64">us-west-2 - optional demo lab - same Spring Boot JAR as localhost - fictional Harbor Market / Avery Chen</text>
+
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <rect x="56" y="104" width="210" height="28" rx="14" fill="#232F3E"/>
+    <text x="161" y="123" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF">Region us-west-2</text>
+    <rect x="276" y="104" width="168" height="28" rx="14" fill="#FFFFFF" stroke="#D5DBDB"/>
+    <text x="360" y="123" text-anchor="middle" font-size="12" fill="#16191F">No NAT Gateway</text>
+    <rect x="454" y="104" width="150" height="28" rx="14" fill="#FFFFFF" stroke="#D5DBDB"/>
+    <text x="529" y="123" text-anchor="middle" font-size="12" fill="#16191F">No Multi-AZ</text>
+    <rect x="614" y="104" width="200" height="28" rx="14" fill="#FFFFFF" stroke="#D5DBDB"/>
+    <text x="714" y="123" text-anchor="middle" font-size="12" fill="#16191F">Fargate public IP</text>
+    <rect x="824" y="104" width="220" height="28" rx="14" fill="#FFFFFF" stroke="#D5DBDB"/>
+    <text x="934" y="123" text-anchor="middle" font-size="12" fill="#16191F">RDS private :5432</text>
+  </g>
+
+  <!-- Client + IGW -->
+  <rect x="520" y="154" width="280" height="70" rx="6" fill="#FFFFFF" stroke="#232F3E" stroke-width="1.5"/>
+  <text x="660" y="182" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#16191F">Harbor Market (client)</text>
+  <text x="660" y="204" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">Swagger / curl - HTTP :80</text>
+
+  <line x1="660" y1="224" x2="660" y2="248" stroke="#232F3E" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="678" y="242" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">TCP 80</text>
+
+  <rect x="500" y="250" width="320" height="64" rx="6" fill="#232F3E"/>
+  <text x="660" y="276" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#FFFFFF">Internet Gateway</text>
+  <text x="660" y="298" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#D5DBDB">Public route: 0.0.0.0/0 - IGW</text>
+
+  <line x1="660" y1="314" x2="660" y2="348" stroke="#232F3E" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- VPC -->
+  <rect x="40" y="350" width="1520" height="680" rx="10" fill="#FFFFFF" stroke="#232F3E" stroke-width="2"/>
+  <text x="60" y="380" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#16191F">VPC  10.20.0.0/16</text>
+  <text x="60" y="402" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">DNS hostnames on - local route between all subnets - RDS has no path to the internet</text>
+
+  <text x="280" y="436" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">Availability Zone us-west-2a</text>
+  <text x="900" y="436" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">Availability Zone us-west-2b</text>
+
+  <!-- Public band -->
+  <rect x="60" y="452" width="440" height="250" rx="6" fill="#E9F7EF" stroke="#1D8102"/>
+  <rect x="680" y="452" width="440" height="250" rx="6" fill="#E9F7EF" stroke="#1D8102"/>
+  <text x="80" y="476" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#1D8102">PUBLIC  10.20.1.0/24</text>
+  <text x="700" y="476" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#1D8102">PUBLIC  10.20.2.0/24</text>
+  <text x="80" y="494" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#1D8102">map_public_ip_on_launch - IGW route</text>
+  <text x="700" y="494" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#1D8102">map_public_ip_on_launch - IGW route</text>
+
+  <rect x="88" y="510" width="384" height="80" rx="5" fill="#FFFFFF" stroke="#232F3E"/>
+  <text x="280" y="540" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">Application Load Balancer</text>
+  <text x="280" y="562" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">Listener :80 - target group :8080</text>
+
+  <rect x="708" y="510" width="384" height="80" rx="5" fill="#FFFFFF" stroke="#232F3E"/>
+  <text x="900" y="540" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">Application Load Balancer</text>
+  <text x="900" y="562" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">Same ALB - second AZ node</text>
+
+  <line x1="472" y1="550" x2="708" y2="550" stroke="#232F3E" stroke-width="1.5" stroke-dasharray="5 4"/>
+
+  <rect x="708" y="604" width="384" height="80" rx="5" fill="#232F3E"/>
+  <text x="900" y="634" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">Amazon ECS Fargate task</text>
+  <text x="900" y="656" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#D5DBDB">payment-service - 256 CPU / 512 MiB - profile ecs</text>
+
+  <text x="280" y="668" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">ALB spans both public subnets</text>
+
+  <line x1="900" y1="590" x2="900" y2="604" stroke="#232F3E" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="914" y="600" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#C45500">TCP 8080 - SG from ALB only</text>
+
+  <!-- Private band -->
+  <rect x="60" y="724" width="440" height="210" rx="6" fill="#E8F0FE" stroke="#0073BB"/>
+  <rect x="680" y="724" width="440" height="210" rx="6" fill="#E8F0FE" stroke="#0073BB"/>
+  <text x="80" y="748" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0073BB">PRIVATE  10.20.11.0/24</text>
+  <text x="700" y="748" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0073BB">PRIVATE  10.20.12.0/24</text>
+  <text x="80" y="766" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#0073BB">No IGW route - no NAT</text>
+  <text x="700" y="766" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#0073BB">No IGW route - no NAT</text>
+
+  <rect x="88" y="784" width="384" height="128" rx="5" fill="#FFFFFF" stroke="#0073BB" stroke-width="2"/>
+  <text x="280" y="816" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#16191F">Amazon RDS for PostgreSQL 16</text>
+  <text x="280" y="838" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">db.t3.micro - single-AZ (this AZ)</text>
+  <text x="280" y="858" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">database baypay - not publicly accessible</text>
+  <text x="280" y="878" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">JDBC from tasks only - TCP 5432</text>
+
+  <rect x="708" y="784" width="384" height="128" rx="5" fill="#FFFFFF" stroke="#0073BB" stroke-dasharray="6 4"/>
+  <text x="900" y="828" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">DB subnet group member</text>
+  <text x="900" y="852" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">Second AZ required by RDS</text>
+  <text x="900" y="874" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">No instance here (not Multi-AZ)</text>
+
+  <!-- JDBC arrow from task to RDS -->
+  <path d="M 708 644 C 560 644, 400 680, 280 784" fill="none" stroke="#C45500" stroke-width="2.25" marker-end="url(#arrowAccent)"/>
+  <text x="390" y="700" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#C45500">JDBC TCP 5432  -  VPC local route</text>
+
+  <!-- Control plane column -->
+  <rect x="1160" y="452" width="372" height="482" rx="6" fill="#F2F3F3" stroke="#879596"/>
+  <text x="1346" y="480" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#16191F">AWS control plane</text>
+  <text x="1346" y="500" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">Reached by the task via IGW :443</text>
+
+  <rect x="1184" y="520" width="324" height="88" rx="5" fill="#FFFFFF" stroke="#232F3E"/>
+  <text x="1346" y="552" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">Amazon ECR</text>
+  <text x="1346" y="574" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">baypay/payment-service-ecs-demo</text>
+  <text x="1346" y="592" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">linux/amd64 - immutable tag - never :latest</text>
+
+  <rect x="1184" y="624" width="324" height="88" rx="5" fill="#FFFFFF" stroke="#232F3E"/>
+  <text x="1346" y="656" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">AWS Secrets Manager</text>
+  <text x="1346" y="678" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">baypay-ecsrd/db</text>
+  <text x="1346" y="696" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">valueFrom - BAYPAY_DB_URL / USER / PASSWORD</text>
+
+  <rect x="1184" y="728" width="324" height="88" rx="5" fill="#FFFFFF" stroke="#232F3E"/>
+  <text x="1346" y="760" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">Amazon CloudWatch Logs</text>
+  <text x="1346" y="782" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">/ecs/baypay-ecsrd/payment-service</text>
+  <text x="1346" y="800" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">3-day retention - Insights off</text>
+
+  <rect x="1184" y="832" width="324" height="78" rx="5" fill="#FFFFFF" stroke="#232F3E"/>
+  <text x="1346" y="862" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16191F">IAM execution role</text>
+  <text x="1346" y="884" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">ECR pull + logs + GetSecretValue</text>
+
+  <path d="M 1092 644 C 1130 644, 1140 560, 1184 560" fill="none" stroke="#232F3E" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <text x="1104" y="600" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="11" fill="#545B64">TCP 443</text>
+
+  <!-- Legend -->
+  <text x="60" y="1004" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#16191F">Teach this left to right, then down</text>
+  <text x="60" y="1026" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" fill="#16191F">1. Client to IGW to ALB :80     2. ALB to Fargate :8080 (liveness /api/v1/payments)     3. Task to RDS :5432 (never from the laptop)     4. Task to ECR / Secrets / Logs :443 via IGW</text>
+  <text x="60" y="1052" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">Heap is MaxRAMPercentage=75 of the 512 MiB task -- never -Xmx equal to the container limit. Spring profile is ecs (Avery still seeds). Destroy the stack the same day: student/work/ecs-rds-lab/stop.sh</text>
+  <text x="60" y="1076" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" fill="#545B64">Health path: GET /actuator/health/liveness on 8080. POST /api/v1/payments requires Idempotency-Key. This picture is the optional demo, not the required AEJE student apply (no NAT / EKS / RDS on the graded path).</text>
+</svg>
