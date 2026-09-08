@@ -117,3 +117,7 @@ When your cohort has access, the host is [paks.bayareala8s.com](https://paks.bay
 ## Guardrails
 
 All BayPay names, logs, dumps, and metrics in this course are synthetic. Do not treat them as a real employer’s architecture.
+
+http://baypay-ecsrd-alb-437825206.us-west-2.elb.amazonaws.com/swagger-ui/index.html
+
+http://aa611496d08d04fad8fba531253b93f0-9ba7afad249c7b18.elb.us-west-2.amazonaws.com/swagger-ui/index.html
