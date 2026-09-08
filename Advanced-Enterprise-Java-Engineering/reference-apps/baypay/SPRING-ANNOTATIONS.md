@@ -142,7 +142,13 @@ BayPay does **not** use these. Do not add them “for completeness.”
 
 ---
 
-## 9. Read next
+## 9. Where the objects live
+
+Picture: [spring-object-lifetime.svg](../../diagrams/java/baypay/spring-object-lifetime.svg) (slide PNG sibling).
+
+The ApplicationContext keeps **one** `PaymentController` and **one** `PaymentApplicationService` proxy for the life of the process. `CreatePaymentRequest`, `Money`, and `Payment` are ordinary Java objects on the request thread. They are not beans. After `201`, the GC can collect them; the `payments` row is what remains.
+
+## 10. Read next
 
 1. `BayPayApplication` — why three scan annotations
 2. `PaymentController` — HTTP annotations + `@Valid` / `@Validated`

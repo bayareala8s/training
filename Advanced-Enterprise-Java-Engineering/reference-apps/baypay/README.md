@@ -23,7 +23,7 @@ Customers → payment-service (composition root)
                     └── shared (domain + JPA)
 ```
 
-Pictures (open the SVG): [modular monolith](../../diagrams/java/baypay/modular-monolith.svg) · [runtime stack](../../diagrams/java/baypay/runtime-stack.svg) · [create-payment path](../../diagrams/java/baypay/payment-path.svg). Index: [diagrams/java/baypay/README.md](../../diagrams/java/baypay/README.md).
+Pictures (open the SVG): [modular monolith](../../diagrams/java/baypay/modular-monolith.svg) · [runtime stack](../../diagrams/java/baypay/runtime-stack.svg) · [create-payment path](../../diagrams/java/baypay/payment-path.svg) · [Spring object lifetime](../../diagrams/java/baypay/spring-object-lifetime.svg). Index: [diagrams/java/baypay/README.md](../../diagrams/java/baypay/README.md).
 
 ## How to read the source
 

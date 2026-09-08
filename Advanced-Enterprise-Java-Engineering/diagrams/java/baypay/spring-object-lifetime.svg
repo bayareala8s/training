@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="820" viewBox="0 0 1280 820" role="img" aria-labelledby="t d">
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#0a1f33"/></marker>
+  <marker id="arrowGold" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#c47b00"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#f4f7fa"/>
+<text id="t" x="36" y="34" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#0a1f33">How Java objects live in the BayPay Spring Boot process</text>
+<text x="36" y="56" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0d8fad">One JVM. ApplicationContext holds singleton beans until shutdown. Each POST creates short-lived objects the GC can collect after the response.</text>
+<desc id="d">Harbor Market HTTP hits Tomcat in one OS process. The JVM heap holds a Spring ApplicationContext of singleton beans. One POST allocates CreatePaymentRequest, Money, and Payment on a worker thread. After commit the row lives in the database. BayPay is fictional.</desc>
+<rect x="36" y="80" width="168" height="118" rx="8" fill="#e8f4f8" stroke="#0d8fad" stroke-width="2"/>
+<text x="120" y="112" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0a1f33">Harbor Market</text>
+<text x="120" y="134" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">Avery Chen (demo)</text>
+<text x="120" y="156" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">POST /api/v1/payments</text>
+<text x="120" y="178" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0d8fad">not a Spring bean</text>
+<line x1="204" y1="139" x2="248" y2="139" stroke="#0a1f33" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="252" y="72" width="750" height="676" rx="10" fill="#ffffff" stroke="#0a1f33" stroke-width="2"/>
+<text x="627" y="96" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#0a1f33">OS process  ·  java -jar payment-service  ·  one JVM</text>
+<text x="627" y="116" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">HotSpot heap + threads. Spring Boot 3.5  ·  profile local / ecs / eks / test</text>
+<rect x="272" y="130" width="710" height="52" rx="8" fill="#e8f4f8" stroke="#0d8fad" stroke-width="2"/>
+<text x="627" y="152" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0a1f33">Tomcat worker threads  ·  DispatcherServlet  ·  :8080</text>
+<text x="627" y="170" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">Each HTTP request borrows one thread. Singleton beans are shared across those threads and must stay stateless.</text>
+<rect x="272" y="196" width="710" height="248" rx="8" fill="#f4f7fa" stroke="#0a1f33" stroke-width="2"/>
+<text x="627" y="220" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#0a1f33">ApplicationContext  ·  singleton beans  ·  created at boot  ·  die at shutdown</text>
+<text x="627" y="238" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@SpringBootApplication(scanBasePackages = "com.baypay")  ·  constructor injection  ·  one instance of each type</text>
+<rect x="288" y="252" width="210" height="78" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/>
+<text x="393" y="278" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0a1f33">PaymentController</text>
+<text x="393" y="298" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@RestController  ·  thin HTTP</text>
+<text x="393" y="316" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#0d8fad">1 object for the process</text>
+<rect x="512" y="252" width="230" height="78" rx="8" fill="#fff8e8" stroke="#c47b00" stroke-width="2"/>
+<text x="627" y="274" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">PaymentApplicationService</text>
+<text x="627" y="292" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#c47b00">@Service + JDK proxy</text>
+<text x="627" y="310" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@Transactional wraps create()</text>
+<rect x="756" y="252" width="208" height="78" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/>
+<text x="860" y="278" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0a1f33">JpaRepository proxies</text>
+<text x="860" y="298" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">Payment / Account / Customer</text>
+<text x="860" y="316" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#0d8fad">Spring Data, not @Repository</text>
+<rect x="288" y="344" width="154" height="80" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/>
+<text x="365" y="370" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">Clock @Bean</text>
+<text x="365" y="390" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">UTC  ·  test seam</text>
+<text x="365" y="408" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">BayPayConfig</text>
+<rect x="454" y="344" width="154" height="80" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/>
+<text x="531" y="370" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">PaymentAuthorizer</text>
+<text x="531" y="390" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@Bean policy</text>
+<text x="531" y="408" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">frozen to 422</text>
+<rect x="620" y="344" width="168" height="80" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/>
+<text x="704" y="370" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">Posting + Notify</text>
+<text x="704" y="390" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@Service / @Component</text>
+<text x="704" y="408" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">in-process events</text>
+<rect x="800" y="344" width="164" height="80" rx="8" fill="#ffffff" stroke="#0d8fad" stroke-width="2"/>
+<text x="882" y="370" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">Hikari pool</text>
+<text x="882" y="390" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">JDBC connections</text>
+<text x="882" y="408" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">not Payment rows</text>
+<rect x="272" y="458" width="710" height="196" rx="8" fill="#fff8e8" stroke="#c47b00" stroke-width="2"/>
+<text x="627" y="482" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#0a1f33">One POST  ·  objects Spring does not manage  ·  this request only</text>
+<text x="627" y="500" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">Allocated on the worker thread. After 201 they are unreachable and can be collected. The database row remains.</text>
+<rect x="288" y="516" width="160" height="118" rx="8" fill="#ffffff" stroke="#c47b00" stroke-width="2"/>
+<text x="368" y="544" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">CreatePaymentRequest</text>
+<text x="368" y="564" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@RequestBody JSON</text>
+<text x="368" y="582" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@Valid record</text>
+<text x="368" y="604" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#c47b00">not a bean</text>
+<rect x="462" y="516" width="150" height="118" rx="8" fill="#ffffff" stroke="#c47b00" stroke-width="2"/>
+<text x="537" y="544" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">Money</text>
+<text x="537" y="564" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@Embeddable value</text>
+<text x="537" y="582" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">new per create</text>
+<text x="537" y="604" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#c47b00">not a bean</text>
+<rect x="626" y="516" width="160" height="118" rx="8" fill="#ffffff" stroke="#c47b00" stroke-width="2"/>
+<text x="706" y="544" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">Payment entity</text>
+<text x="706" y="564" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">@Entity  ·  UUID id</text>
+<text x="706" y="582" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">state machine</text>
+<text x="706" y="604" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#c47b00">not a bean</text>
+<rect x="800" y="516" width="164" height="118" rx="8" fill="#ffffff" stroke="#c47b00" stroke-width="2"/>
+<text x="882" y="544" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">Persistence context</text>
+<text x="882" y="564" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">EntityManager</text>
+<text x="882" y="582" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">bound to @Transactional</text>
+<text x="882" y="604" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#c47b00">closes on commit</text>
+<line x1="448" y1="575" x2="458" y2="575" stroke="#c47b00" stroke-width="2" marker-end="url(#arrowGold)"/>
+<line x1="612" y1="575" x2="622" y2="575" stroke="#c47b00" stroke-width="2" marker-end="url(#arrowGold)"/>
+<line x1="786" y1="575" x2="796" y2="575" stroke="#c47b00" stroke-width="2" marker-end="url(#arrowGold)"/>
+<text x="627" y="692" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">Controller calls the service proxy so the transaction starts. Posting and notify stay in-process. Then 201 COMPLETED.</text>
+<text x="627" y="728" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">this.create() on the same class skips the proxy. That is why HTTP goes through PaymentController.</text>
+<line x1="1002" y1="575" x2="1038" y2="575" stroke="#0a1f33" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="1042" y="196" width="202" height="248" rx="8" fill="#e8f4f8" stroke="#0d8fad" stroke-width="2"/>
+<text x="1143" y="236" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#0a1f33">Database</text>
+<text x="1143" y="260" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c6b7a">outside the JVM</text>
+<text x="1143" y="292" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#0a1f33">payments row</text>
+<text x="1143" y="314" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">survives GC</text>
+<text x="1143" y="342" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">H2  ·  local / test</text>
+<text x="1143" y="362" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">Postgres  ·  ecs / eks</text>
+<text x="1143" y="396" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#0d8fad">not five databases</text>
+<text x="1143" y="418" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">JDBC via Hikari</text>
+<text x="36" y="800" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#5c6b7a">BayPay Financial Services is fictional. BayLearn AEJE. Singletons live in the ApplicationContext. Avery Chen Payment lives in the heap for one request, then in the table.</text>
+</svg>
