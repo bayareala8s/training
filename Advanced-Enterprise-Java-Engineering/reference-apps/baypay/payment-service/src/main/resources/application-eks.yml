@@ -1,0 +1,25 @@
+# Optional EKS + shared RDS demo (student/work/eks-rds-lab). Same JDBC contract as ecs.
+# Seeder still runs (profile is eks, not prod). Schema via ddl-auto update.
+spring:
+  datasource:
+    url: ${BAYPAY_DB_URL}
+    username: ${BAYPAY_DB_USER}
+    password: ${BAYPAY_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+  h2:
+    console:
+      enabled: false
+
+management:
+  endpoint:
+    health:
+      show-details: never

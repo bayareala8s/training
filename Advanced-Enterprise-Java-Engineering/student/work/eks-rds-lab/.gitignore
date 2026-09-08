@@ -1,0 +1,7 @@
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+generated.auto.tfvars
+k8s/generated-*.yaml
+.DS_Store

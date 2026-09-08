@@ -11,6 +11,13 @@ if [[ ! -d .terraform ]]; then
   exit 1
 fi
 
+EKS_STATE="${LAB_DIR}/../eks-rds-lab/terraform.tfstate"
+if [[ -f "${EKS_STATE}" ]] && grep -q '"resources"' "${EKS_STATE}" && ! grep -q '"resources": \[\]' "${EKS_STATE}"; then
+  echo "EKS lab state exists at ${EKS_STATE}." >&2
+  echo "That cluster reuses this VPC and RDS. Run ../eks-rds-lab/stop.sh first." >&2
+  exit 1
+fi
+
 echo "This destroys the whole stack in us-west-2: ALB, ECS, ECR images, RDS, secrets, IAM, VPC."
 if [[ "${1:-}" != "-y" && "${1:-}" != "--yes" ]]; then
   read -r -p "Type DESTROY to continue: " confirm

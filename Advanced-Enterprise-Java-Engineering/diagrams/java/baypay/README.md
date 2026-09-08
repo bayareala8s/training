@@ -10,6 +10,7 @@ Three teaching pictures for [reference-apps/baypay](../../../reference-apps/bayp
 | 4 | [ecs-fargate-rds.source.md](ecs-fargate-rds.source.md) | **Design:** ECS/Fargate + ALB + RDS PostgreSQL. Teaching host `pay-alb-student.baypay.example`. Do not apply RDS. |
 | 5 | [eks-rds.source.md](eks-rds.source.md) | **Design:** EKS Ingress + same image + RDS PostgreSQL. Host `payments.apps.baypay.example`. Do not apply EKS. |
 | 6 | [ecs-rds-network-topology.png](ecs-rds-network-topology.png) | **Live optional lab:** AZ × public/private topology (ALB, Fargate, RDS, ECR). Slides: PNG. Edit: [svg](ecs-rds-network-topology.svg). |
+| 7 | [eks-rds-network-topology.png](eks-rds-network-topology.png) | **Live optional lab:** EKS node + NLB on the **same VPC/RDS** as ECS. Slides: PNG. Edit: [svg](eks-rds-network-topology.svg). |
 
 Open the SVG (or the mermaid in `*.source.md`). PNG is a raster sibling for slides.
 
