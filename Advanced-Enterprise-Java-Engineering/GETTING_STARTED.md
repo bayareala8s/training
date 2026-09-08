@@ -121,3 +121,12 @@ All BayPay names, logs, dumps, and metrics in this course are synthetic. Do not 
 http://baypay-ecsrd-alb-437825206.us-west-2.elb.amazonaws.com/swagger-ui/index.html
 
 http://aa611496d08d04fad8fba531253b93f0-9ba7afad249c7b18.elb.us-west-2.amazonaws.com/swagger-ui/index.html
+
+{
+  "customerId": "11111111-1111-1111-1111-111111111111",
+  "accountId": "22222222-2222-2222-2222-222222222221",
+  "amount": 25.00,
+  "currency": "USD",
+  "reference": "linkedin-eks-invoice-1"
+}
+
