@@ -34,6 +34,7 @@ Javadoc on types is written for students. Start in this order:
 3. `PaymentAuthorizer` then `PaymentApplicationService` — SOLID seams and orchestration
 4. `PaymentPostingService` then `NotificationListener` — why posting and email are not on `Payment`
 5. `IdempotencyService` — replay vs 409
+6. [SPRING-ANNOTATIONS.md](SPRING-ANNOTATIONS.md) — every Spring / Jakarta / test annotation in this tree
 
 Comments explain *why* (fail closed, happens-before, no `setStatus`). They do not narrate getters.
 
