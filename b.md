@@ -58,3 +58,226 @@ I would summarize the architecture to the team as:
 > **“The canonical JSON gives us one representation of a File Flow as a Service. Business, operations, engineering and migration teams consume different views of the same record, while the permanent Flow ID provides traceability across EFEDS and AWS throughout the service lifecycle.”**
 
 That is probably the clearest framing for your AWS Phase 2 discussion because it positions the JSON as a **shared enterprise contract**, rather than an AWS-specific onboarding payload.
+
+
+I’d finalize the concept as a **Unified NIS File Flow Service Catalog** supporting existing EFEDS flows, migration, new AWS flows, operations, and future changes. The JSON below is intentionally business-readable at the top and progressively technical deeper down.
+
+### Final canonical JSON
+
+```json
+{
+  "schemaVersion": "1.0",
+
+  "flowId": "NIS-CASH-000123",
+  "flowName": "Cash Settlement Files",
+
+  "service": {
+    "customer": "FedCash",
+    "businessService": "Cash Settlement",
+    "description": "Transfers settlement files from FedCash to the Cash Processing application.",
+    "businessPurpose": "Supports daily cash settlement processing.",
+    "environment": "PROD",
+    "status": "ACTIVE",
+    "criticality": "HIGH"
+  },
+
+  "flow": {
+    "from": {
+      "organization": "FedCash",
+      "application": "FedCash Source System"
+    },
+    "to": {
+      "organization": "Federal Reserve",
+      "application": "Cash Processing"
+    },
+    "direction": "INBOUND",
+    "flowType": "APPLICATION_TO_APPLICATION"
+  },
+
+  "files": {
+    "businessFileType": "Settlement Files",
+    "filePattern": "CASH_*.DAT",
+    "fileFormat": "DAT",
+    "expectedVolume": {
+      "filesPerHour": 100,
+      "filesPerDay": 2400
+    },
+    "fileSize": {
+      "averageMB": 25,
+      "maximumMB": 500
+    }
+  },
+
+  "schedule": {
+    "frequency": "HOURLY",
+    "trigger": "FILE_ARRIVAL",
+    "serviceWindow": "24x7"
+  },
+
+  "serviceLevel": {
+    "serviceLevel": "BUSINESS_CRITICAL",
+    "expectedDelivery": "Within 15 minutes",
+    "missingFileThreshold": "60 minutes"
+  },
+
+  "ownership": {
+    "businessOwner": "FedCash",
+    "applicationOwner": "Cash Processing",
+    "serviceOwner": "NIS File Transfer",
+    "supportTeam": "NIS File Transfer"
+  },
+
+  "monitoring": {
+    "transferFailureAlert": true,
+    "missingFileAlert": true,
+    "volumeMonitoring": true,
+    "latencyMonitoring": true,
+    "hourlyVolumeReport": true,
+    "dailyVolumeReport": true
+  },
+
+  "technical": {
+    "platform": "EFEDS",
+    "technology": "IBM Sterling File Gateway",
+
+    "source": {
+      "protocol": "SFTP",
+      "endpoint": "fedcash-source",
+      "port": 22,
+      "directory": "/outbound/cash"
+    },
+
+    "destination": {
+      "protocol": "SFTP",
+      "endpoint": "cash-target",
+      "port": 22,
+      "directory": "/incoming/cash"
+    },
+
+    "security": {
+      "authentication": "SSH_KEY",
+      "transportEncryption": "SSH",
+      "fileEncryption": "PGP",
+      "dataClassification": "CONFIDENTIAL"
+    },
+
+    "platformConfiguration": {
+      "partnerId": "FEDCASH",
+      "routingChannel": "CASH_SETTLEMENT_IN",
+      "mailbox": "FEDCASH_INBOUND",
+      "businessProcess": "CASH_INBOUND_BP"
+    }
+  },
+
+  "lifecycle": {
+    "origin": "EXISTING",
+    "onboardingMethod": "LEGACY_DISCOVERY",
+    "catalogStatus": "REGISTERED",
+    "createdDate": "2024-01-15",
+    "lastReviewedDate": "2026-09-17"
+  },
+
+  "migration": {
+    "candidate": true,
+    "status": "NOT_ASSESSED",
+    "sourcePlatform": "EFEDS",
+    "targetPlatform": "AWS_NIS",
+    "complexity": "NOT_ASSESSED",
+    "migrationWave": null,
+
+    "dependencies": [],
+
+    "validation": {
+      "businessValidated": false,
+      "technicalValidated": false,
+      "securityValidated": false
+    },
+
+    "testing": {
+      "connectivityTest": "NOT_STARTED",
+      "fileTransferTest": "NOT_STARTED",
+      "volumeTest": "NOT_STARTED",
+      "businessValidation": "NOT_STARTED"
+    },
+
+    "cutover": {
+      "plannedDate": null,
+      "actualDate": null
+    }
+  }
+}
+```
+
+This one record supports five logical views:
+
+```text
+                    NIS FILE FLOW
+                  NIS-CASH-000123
+                         │
+      ┌──────────────────┼──────────────────┐
+      │                  │                  │
+ BUSINESS VIEW     OPERATIONS VIEW    TECHNICAL VIEW
+      │                  │                  │
+ Service             Monitoring         Platform
+ Flow                Volume             Protocol
+ Files               Alerts             Endpoints
+ Schedule            SLA                Security
+      │                  │                  │
+      └──────────────────┼──────────────────┘
+                         │
+               GOVERNANCE / MIGRATION
+                         │
+                  Lifecycle
+                  Ownership
+                  Migration
+                  Testing/Cutover
+```
+
+The same schema supports the complete lifecycle:
+
+**Existing EFEDS:** `Discover → Catalog → Assess → Migrate → AWS`
+
+**New AWS:** `Request → Catalog → Validate → Provision → AWS`
+
+**Existing AWS:** `Catalog → Monitor → Change → Operate`
+
+**Retirement:** `Assess → Deactivate → Retire`
+
+The `flowId` remains the permanent identity throughout.
+
+### Teams message
+
+Team — as we move into the next phase of NIS Self-Service File Transfer, I’d like to propose a **Unified NIS File Flow Service Catalog** as an architectural building block.
+
+The concept is to establish **one canonical JSON representation and permanent Flow ID for every NIS-managed file flow**, regardless of whether the flow currently runs on EFEDS/IBM Sterling or is implemented on the new AWS NIS platform.
+
+The JSON would provide different logical views from the same record:
+
+• **Business View** – customer, business purpose, source, destination, files and schedule
+• **Service View** – criticality, SLA and ownership
+• **Operations View** – expected volume, monitoring, alerts and reporting
+• **Technical View** – EFEDS/AWS platform, protocols, endpoints, security and implementation details
+• **Governance/Migration View** – lifecycle, migration readiness, dependencies, testing and cutover status
+
+This gives us a technology-neutral definition of a **File Flow as a Service**, with EFEDS and AWS becoming the underlying execution platforms.
+
+I see several immediate use cases:
+
+**Existing EFEDS flows:** discover and register them in a normalized format, understand dependencies and use the catalog to drive migration assessment and wave planning.
+
+**New flows:** capture the business requirement first, create the Flow ID/catalog record, validate it and use the technical portion to drive AWS self-service provisioning.
+
+**Operations:** use the same Flow ID across monitoring, hourly/daily volume reporting, SLA tracking and support.
+
+**Future changes:** additions or modifications to a flow become lifecycle changes to an existing service rather than disconnected configuration requests.
+
+Conceptually:
+
+**Customer → Business Service → File Flow → Service Catalog → EFEDS / AWS NIS**
+
+Over time, I believe the catalog could become the common foundation for **discovery → onboarding → provisioning → operations → migration → retirement**, and potentially enable automation to transform an existing EFEDS flow definition into an AWS onboarding request.
+
+I’d like us to discuss whether we can incorporate this into the Phase 2 architecture so the self-service JSON evolves beyond just a provisioning contract and becomes part of the broader File Flow service lifecycle.
+
+The strongest point to emphasize in discussion is: **we are not proposing another inventory database. We are defining the canonical identity and lifecycle of a file flow.** That distinction should help both the AWS team and internal stakeholders see why this belongs in Phase 2.
+
