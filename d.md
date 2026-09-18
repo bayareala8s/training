@@ -46,7 +46,7 @@
   },
 
   "serviceLevel": {
-    "serviceLevel": "BUSINESS_CRITICAL",
+    "classification": "BUSINESS_CRITICAL",
     "expectedDeliveryMinutes": 30,
     "missingFileThresholdMinutes": 60
   },
@@ -77,22 +77,26 @@
   "implementation": {
     "platform": "CLOUD_MFT",
     "implementationPattern": "SFTP_TO_OBJECT_STORAGE",
+
     "source": {
       "protocol": "SFTP",
       "endpoint": "source-endpoint",
       "port": 22,
       "directory": "/outbound/data"
     },
+
     "destination": {
       "type": "OBJECT_STORAGE",
       "endpoint": "target-storage",
       "directory": "/incoming/data"
     },
+
     "resiliency": {
       "highAvailabilityRequired": true,
       "disasterRecoveryRequired": true
     }
   },
+
   "lifecycle": {
     "origin": "EXISTING",
     "onboardingMethod": "MIGRATION",
@@ -116,6 +120,7 @@
     "selfServiceEligible": false,
     "decision": "PIPELINE_GAP",
     "implementationPattern": "SFTP_TO_OBJECT_STORAGE",
+
     "domainAssessments": {
       "catalog": "PASS",
       "architecture": "PASS",
@@ -125,6 +130,7 @@
       "pipelineCapability": "GAP",
       "migration": "NOT_READY"
     },
+
     "guardrailValidation": {
       "supportedProtocol": true,
       "supportedSourceDestination": true,
@@ -135,6 +141,7 @@
       "securityRequirementsSupported": true,
       "resiliencyRequirementsSupported": true
     },
+
     "gaps": [
       {
         "domain": "PIPELINE_CAPABILITY",
@@ -142,6 +149,7 @@
         "description": "The approved flow requires PGP encryption, but the current GitLab provisioning pipeline does not automate this capability."
       }
     ],
+
     "requiredReviews": {
       "architectureReview": false,
       "securityReview": false,
@@ -150,11 +158,14 @@
       "pipelineEngineeringReview": true,
       "migrationReview": true
     },
+
     "decisionReason": "The flow meets the approved architecture, security, operational and resiliency guardrails, but the current provisioning pipeline cannot implement all required capabilities.",
+
     "recommendedAction": {
       "owner": "PIPELINE_ENGINEERING",
       "action": "ADD_PGP_PROVISIONING_CAPABILITY"
     },
+
     "reviewStatus": "BLOCKED_BY_PIPELINE_CAPABILITY",
     "lastEvaluatedDate": "2026-09-17"
   }
