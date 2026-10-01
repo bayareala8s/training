@@ -64,3 +64,22 @@ Thank you again for your time, understanding, and guidance.
 
 Best regards,  
 Himanshu
+
+
+
+
+
+Hi Balaji,
+
+Thank you for your response and for being open to discussing my concerns. I appreciate your acknowledgment that challenging ideas, raising technical concerns, and escalating delivery blockers are important aspects of our responsibilities and should not, in themselves, be viewed negatively.
+
+I would appreciate an initial one-on-one discussion with you to share my perspective, better understand the feedback, and seek your guidance. I am also open to a subsequent discussion with Ashok to ensure transparency and establish a shared understanding of expectations.
+
+My objective is to ensure that the feedback is considered in its appropriate context and that my year-end performance assessment fairly reflects my contributions, professional conduct, and cross-functional collaboration. I remain fully receptive to constructive feedback and committed to improving my communication and leadership effectiveness.
+
+I have scheduled time for us tomorrow and look forward to a constructive discussion.
+
+Thank you again for your time and guidance.
+
+Best regards,  
+Himanshu
