@@ -39,3 +39,10 @@ Thank you for your time and consideration. I would appreciate an opportunity to 
 
 Best regards,  
 Himanshu
+
+
+Hi [Name], I’ve sent you an email regarding the feedback from my recent year-end performance review and have copied [Manager’s Name] for transparency.
+
+Given the importance of this feedback to my professional development and career progression, I would appreciate an opportunity to discuss my concerns and seek your perspective and guidance.
+
+Please let me know a convenient time for a call. Thank you for your time and support.
