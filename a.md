@@ -46,3 +46,21 @@ Hi [Name], I’ve sent you an email regarding the feedback from my recent year-e
 Given the importance of this feedback to my professional development and career progression, I would appreciate an opportunity to discuss my concerns and seek your perspective and guidance.
 
 Please let me know a convenient time for a call. Thank you for your time and support.
+
+
+Hi Balaji,
+
+Thank you for your response and for being open to discussing my concerns. I particularly appreciate your acknowledgment that challenging ideas, raising technical concerns, and escalating delivery blockers are essential parts of our responsibilities and should not, in themselves, be viewed negatively.
+
+I would appreciate an initial one-on-one discussion with you to share my perspective and better understand the feedback. I am also open to a subsequent discussion with Ashok to ensure transparency, establish a common understanding of expectations, and agree on a constructive path forward.
+
+My primary objective is to ensure that the feedback is considered in its appropriate context and that my year-end performance assessment fairly reflects my contributions, professional conduct, and cross-functional collaboration. I am fully receptive to constructive feedback and committed to continuously improving my communication and leadership effectiveness.
+
+I value the relationships I have built across FRB and remain committed to fostering an environment where we can respectfully challenge ideas, openly discuss technical concerns, and work together toward successful outcomes.
+
+I will schedule some time with you for our initial discussion.
+
+Thank you again for your time, understanding, and guidance.
+
+Best regards,  
+Himanshu
